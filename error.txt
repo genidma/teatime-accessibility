@@ -1,0 +1,10 @@
+Sound played using: strategy_paplay
+adeel@ubuntu-server-macbook:~/GitHub/teatime-accessibility$ G_DEBUG=fatal-warnings ./bin/teatime.py
+/home/adeel/GitHub/teatime-accessibility/./bin/teatime.py:79: DeprecationWarning: Gtk.Widget.set_margin_left is deprecated
+  main_box.set_margin_left(20)
+/home/adeel/GitHub/teatime-accessibility/./bin/teatime.py:80: DeprecationWarning: Gtk.Widget.set_margin_right is deprecated
+  main_box.set_margin_right(20)
+Timer started
+
+(teatime.py:402795): Gtk-WARNING **: 19:08:12.038: Failed to set text '<span size="small">Refinements by Gemini & Adeel Khan</span>' from markup due to error parsing markup: Error on line 1: Entity did not end with a semicolon; most likely you used an ampersand character without intending to start an entity — escape ampersand as &amp;
+Trace/breakpoint trap (core dumped)
