@@ -39,7 +39,7 @@ An improved version of the Tea Timer application with enhanced accessibility fea
 
 ### Command Line Options
 ```bash
-# Set default duration (1-60 minutes)
+# Set default duration (1-999 minutes)
 ./teatime-accessible --duration 5
 ```
 
