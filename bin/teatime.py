@@ -6,6 +6,7 @@ import locale
 import subprocess
 import os
 from pathlib import Path
+from datetime import datetime
 import colorsys
 import threading
 
@@ -27,6 +28,7 @@ APP_VERSION = "1.3.0"
 
 # Configuration file for font size persistence
 CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
+STATS_LOG_FILE = Path.home() / ".local/share/teatime_stats.json"
 DEFAULT_FONT_SCALE = 1.0
 FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
@@ -39,6 +41,7 @@ class TeaTimerApp(Gtk.Application):
         self.window = None
         self.timer_id = None
         self.time_left = 0
+        self.current_timer_duration = 0
         self.font_scale_factor = self._load_font_scale()
         self.sound_enabled = True
         self.rainbow_timer_id = None
@@ -65,6 +68,9 @@ class TeaTimerApp(Gtk.Application):
             about_menu = Gtk.Menu()
             about_item = Gtk.MenuItem(label="About")
             about_item.connect("activate", self.on_about_activated)
+            stats_item = Gtk.MenuItem(label="Statistics")
+            stats_item.connect("activate", self.on_stats_activated)
+            about_menu.append(stats_item)
             about_menu.append(about_item)
             about_menu.show_all()
 
@@ -159,6 +165,11 @@ class TeaTimerApp(Gtk.Application):
         about_dialog.run()
         about_dialog.destroy()
 
+    def on_stats_activated(self, widget):
+        """Shows the Statistics dialog."""
+        stats_dialog = StatisticsWindow(parent=self.window)
+        stats_dialog.run()
+        stats_dialog.destroy()
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
         if not self.sound_enabled:
@@ -396,6 +407,7 @@ class TeaTimerApp(Gtk.Application):
         self._apply_font_size() # Reset color
 
         self.time_left = int(self.duration_spin.get_value()) * 60
+        self.current_timer_duration = self.duration_spin.get_value()
         self.start_timer()
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
@@ -460,6 +472,9 @@ class TeaTimerApp(Gtk.Application):
             # Play notification sound
             self._play_notification_sound()
             
+            # Log the completed timer
+            self._log_timer_completion()
+            
             accessible = self.time_label.get_accessible()
             if accessible:
                 accessible.set_description("Tea is ready! The timer has finished.")
@@ -470,6 +485,103 @@ class TeaTimerApp(Gtk.Application):
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
+    def _log_timer_completion(self):
+        """Logs a completed timer session to the stats file."""
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "duration": self.current_timer_duration
+        }
+        
+        try:
+            STATS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+            
+            if STATS_LOG_FILE.exists():
+                with open(STATS_LOG_FILE, 'r') as f:
+                    logs = json.load(f)
+            else:
+                logs = []
+            
+            logs.append(log_entry)
+            
+            with open(STATS_LOG_FILE, 'w') as f:
+                json.dump(logs, f, indent=2)
+            
+            print(f"Logged timer: {log_entry['duration']} minutes.")
+            
+        except Exception as e:
+            print(f"Error logging statistics: {e}")
+
+
+class StatisticsWindow(Gtk.Dialog):
+    def __init__(self, parent):
+        super().__init__(title="Timer Statistics", transient_for=parent, flags=0)
+        self.add_buttons(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
+        self.set_default_size(400, 300)
+
+        box = self.get_content_area()
+        
+        # Summary Labels
+        self.summary_grid = Gtk.Grid(column_spacing=10, row_spacing=5, margin=10)
+        self.total_breaks_label = Gtk.Label(label="Total Breaks: 0")
+        self.total_time_label = Gtk.Label(label="Total Time: 0 minutes")
+        self.avg_duration_label = Gtk.Label(label="Average Duration: 0 minutes")
+        self.summary_grid.attach(self.total_breaks_label, 0, 0, 1, 1)
+        self.summary_grid.attach(self.total_time_label, 1, 0, 1, 1)
+        self.summary_grid.attach(self.avg_duration_label, 0, 1, 2, 1)
+        box.pack_start(self.summary_grid, False, False, 0)
+
+        # TreeView for detailed logs
+        scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.set_hexpand(True)
+        scrolled_window.set_vexpand(True)
+        box.pack_start(scrolled_window, True, True, 0)
+
+        # Model: Date (string), Duration (int)
+        self.store = Gtk.ListStore(str, int)
+        self.treeview = Gtk.TreeView(model=self.store)
+
+        # Date Column
+        renderer_text = Gtk.CellRendererText()
+        column_date = Gtk.TreeViewColumn("Date", renderer_text, text=0)
+        column_date.set_sort_column_id(0)
+        self.treeview.append_column(column_date)
+
+        # Duration Column
+        renderer_text = Gtk.CellRendererText()
+        column_duration = Gtk.TreeViewColumn("Duration (minutes)", renderer_text, text=1)
+        column_duration.set_sort_column_id(1)
+        self.treeview.append_column(column_duration)
+
+        scrolled_window.add(self.treeview)
+        self._load_stats()
+        self.show_all()
+
+    def _load_stats(self):
+        if not STATS_LOG_FILE.exists():
+            return
+
+        try:
+            with open(STATS_LOG_FILE, 'r') as f:
+                logs = json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Could not read statistics file: {e}")
+            return
+
+        total_duration = 0
+        for log in logs:
+            timestamp_str = log.get("timestamp")
+            duration = log.get("duration", 0)
+            dt_object = datetime.fromisoformat(timestamp_str)
+            friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+            self.store.append([friendly_date, duration])
+            total_duration += duration
+
+        # Update summary
+        self.total_breaks_label.set_text(f"Total Breaks: {len(logs)}")
+        self.total_time_label.set_text(f"Total Time: {total_duration} minutes")
+        if logs:
+            avg_duration = total_duration / len(logs)
+            self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
 
 if __name__ == "__main__":
     import sys
