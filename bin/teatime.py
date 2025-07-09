@@ -29,6 +29,9 @@ class TeaTimerApp(Gtk.Application):
         self.time_left = 0
         self.font_scale_factor = self._load_font_scale()
         self.sound_enabled = True
+        self.rainbow_enabled = False
+        self.rainbow_timer_id = None
+        self.rainbow_hue = 0
 
     def do_activate(self):
         """
@@ -84,6 +87,13 @@ class TeaTimerApp(Gtk.Application):
             sound_box.pack_start(self.sound_toggle, False, False, 0)
             main_box.pack_start(sound_box, False, False, 0)
 
+            # Rainbow toggle
+            rainbow_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            self.rainbow_toggle = Gtk.CheckButton(label="Rainbow Mode 🌈")
+            self.rainbow_toggle.set_active(self.rainbow_enabled)
+            rainbow_box.pack_start(self.rainbow_toggle, False, False, 0)
+            main_box.pack_start(rainbow_box, False, False, 0)
+
             self.window.add(main_box)
 
             # Connect signals
@@ -92,6 +102,7 @@ class TeaTimerApp(Gtk.Application):
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
+            self.rainbow_toggle.connect("toggled", self.on_rainbow_toggled)
 
             # Initial state for buttons
             self.stop_button.set_sensitive(False)
@@ -198,6 +209,11 @@ class TeaTimerApp(Gtk.Application):
             accessible.set_name("Sound Toggle")
             accessible.set_description("Enable or disable sound notifications")
 
+        accessible = self.rainbow_toggle.get_accessible()
+        if accessible:
+            accessible.set_name("Rainbow Mode Toggle")
+            accessible.set_description("Enable or disable rainbow color effects")
+
     def do_command_line(self, command_line):
         """Handle command line arguments."""
         self.activate()
@@ -228,11 +244,27 @@ class TeaTimerApp(Gtk.Application):
     def _apply_font_size(self):
         """Applies the current font scale factor using CSS."""
         css_provider = Gtk.CssProvider()
+        
+        # Base CSS for font size
         css = f"""
         * {{
             font-size: {self.font_scale_factor * 100}%;
         }}
         """
+        
+        # Add rainbow effect if enabled
+        if self.rainbow_enabled:
+            # Convert HSV to RGB for CSS
+            import colorsys
+            r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
+            color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
+            css += f"""
+            label {{
+                color: {color};
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }}
+            """
+        
         css_provider.load_from_data(css.encode())
 
         # Get the default screen and add the CSS provider
@@ -280,6 +312,35 @@ class TeaTimerApp(Gtk.Application):
         self.sound_enabled = button.get_active()
         status = "enabled" if self.sound_enabled else "disabled"
         print(f"Sound notifications {status}")
+
+    def on_rainbow_toggled(self, button):
+        """Toggle rainbow mode on/off."""
+        self.rainbow_enabled = button.get_active()
+        if self.rainbow_enabled:
+            self._start_rainbow_timer()
+            print("Rainbow mode enabled! 🌈")
+        else:
+            self._stop_rainbow_timer()
+            print("Rainbow mode disabled")
+        self._apply_font_size()
+
+    def _start_rainbow_timer(self):
+        """Start the rainbow color cycling timer."""
+        if self.rainbow_timer_id:
+            GLib.source_remove(self.rainbow_timer_id)
+        self.rainbow_timer_id = GLib.timeout_add(100, self._update_rainbow)
+
+    def _stop_rainbow_timer(self):
+        """Stop the rainbow color cycling timer."""
+        if self.rainbow_timer_id:
+            GLib.source_remove(self.rainbow_timer_id)
+            self.rainbow_timer_id = None
+
+    def _update_rainbow(self):
+        """Update the rainbow color effect."""
+        self.rainbow_hue = (self.rainbow_hue + 5) % 360
+        self._apply_font_size()
+        return GLib.SOURCE_CONTINUE
 
     def on_start_clicked(self, button):
         self.time_left = int(self.duration_spin.get_value()) * 60
