@@ -235,11 +235,6 @@ class TeaTimerApp(Gtk.Application):
             accessible.set_name("Sound Toggle")
             accessible.set_description("Enable or disable sound notifications")
 
-        accessible = self.rainbow_toggle.get_accessible()
-        if accessible:
-            accessible.set_name("Rainbow Mode Toggle")
-            accessible.set_description("Enable or disable rainbow color effects")
-
     def do_command_line(self, command_line):
         """Handle command line arguments."""
         self.activate()
