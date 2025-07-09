@@ -1,0 +1,18 @@
+# Virtual Environment
+venv/
+.venv/
+ENV/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Distribution / packaging
+# The 'lib' directory seems to be for vendored dependencies, which is not a good practice.
+# Using a venv and requirements.txt is preferred.
+build/
+dist/
+*.egg-info/
+lib/
+lib64/
