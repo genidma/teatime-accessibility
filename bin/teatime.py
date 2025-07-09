@@ -6,6 +6,7 @@ import locale
 import subprocess
 import os
 from pathlib import Path
+import threading
 
 import gi
 # Use GTK 3 for better compatibility
@@ -27,6 +28,7 @@ class TeaTimerApp(Gtk.Application):
         self.timer_id = None
         self.time_left = 0
         self.font_scale_factor = self._load_font_scale()
+        self.sound_enabled = True
 
     def do_activate(self):
         """
@@ -75,6 +77,13 @@ class TeaTimerApp(Gtk.Application):
             font_box.pack_start(self.increase_font_button, True, True, 0)
             main_box.pack_start(font_box, False, False, 0)
 
+            # Sound toggle
+            sound_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            self.sound_toggle = Gtk.CheckButton(label="Enable Sound")
+            self.sound_toggle.set_active(self.sound_enabled)
+            sound_box.pack_start(self.sound_toggle, False, False, 0)
+            main_box.pack_start(sound_box, False, False, 0)
+
             self.window.add(main_box)
 
             # Connect signals
@@ -82,6 +91,7 @@ class TeaTimerApp(Gtk.Application):
             self.stop_button.connect("clicked", self.on_stop_clicked)
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
+            self.sound_toggle.connect("toggled", self.on_sound_toggled)
 
             # Initial state for buttons
             self.stop_button.set_sensitive(False)
@@ -94,7 +104,48 @@ class TeaTimerApp(Gtk.Application):
 
         self.window.show_all()
 
-    def _set_accessibility_properties(self):
+    def _play_notification_sound(self):
+        """Play a sound notification when timer finishes."""
+        if not self.sound_enabled:
+            return
+            
+        def play_sound():
+            try:
+                # Method 1: Try playsound (install with: pip install playsound)
+                try:
+                    from playsound import playsound
+                    # You can replace this with your own sound file
+                    sound_file = "/usr/share/sounds/alsa/Front_Right.wav"  # Common system sound
+                    if os.path.exists(sound_file):
+                        playsound(sound_file)
+                    else:
+                        # Fallback to system beep
+                        subprocess.run(["paplay", "/usr/share/sounds/alsa/Front_Left.wav"], 
+                                     check=False, capture_output=True)
+                except ImportError:
+                    # Method 2: Use system commands
+                    # Try different system sound commands
+                    commands = [
+                        ["paplay", "/usr/share/sounds/alsa/Front_Right.wav"],
+                        ["aplay", "/usr/share/sounds/alsa/Front_Right.wav"],
+                        ["speaker-test", "-t", "sine", "-f", "1000", "-l", "1"],
+                        ["beep"],
+                        ["echo", "-e", "\\a"]  # Terminal bell
+                    ]
+                    
+                    for cmd in commands:
+                        try:
+                            result = subprocess.run(cmd, check=False, capture_output=True, timeout=3)
+                            if result.returncode == 0:
+                                break
+                        except (subprocess.TimeoutExpired, FileNotFoundError):
+                            continue
+                            
+            except Exception as e:
+                print(f"Could not play sound: {e}")
+        
+        # Play sound in separate thread to avoid blocking UI
+        threading.Thread(target=play_sound, daemon=True).start()
         """Set accessibility properties using GTK 3 methods."""
         # Set accessible names and descriptions using GTK 3 methods
         accessible = self.time_label.get_accessible()
@@ -126,6 +177,11 @@ class TeaTimerApp(Gtk.Application):
         if accessible:
             accessible.set_name("Decrease Font Size")
             accessible.set_description("Make the text smaller")
+
+        accessible = self.sound_toggle.get_accessible()
+        if accessible:
+            accessible.set_name("Sound Toggle")
+            accessible.set_description("Enable or disable sound notifications")
 
     def do_command_line(self, command_line):
         """Handle command line arguments."""
@@ -204,6 +260,12 @@ class TeaTimerApp(Gtk.Application):
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
 
+    def on_sound_toggled(self, button):
+        """Toggle sound notifications on/off."""
+        self.sound_enabled = button.get_active()
+        status = "enabled" if self.sound_enabled else "disabled"
+        print(f"Sound notifications {status}")
+
     def on_start_clicked(self, button):
         self.time_left = int(self.duration_spin.get_value()) * 60
         self.start_timer()
@@ -257,6 +319,9 @@ class TeaTimerApp(Gtk.Application):
         if self.time_left <= 0:
             self.stop_timer()
             self.time_label.set_markup("<span size='xx-large'>Tea Ready!</span>")
+            
+            # Play notification sound
+            self._play_notification_sound()
             
             accessible = self.time_label.get_accessible()
             if accessible:
