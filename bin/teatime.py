@@ -37,7 +37,7 @@ MAX_FONT_SCALE = 2.0
 class TeaTimerApp(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="org.example.TeaTimer",
-                         flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.NON_UNIQUE)
+                         flags=Gio.ApplicationFlags.NON_UNIQUE) # <-- Changed this line
         self.window = None
         self.timer_id = None
         self.time_left = 0
@@ -369,7 +369,7 @@ class TeaTimerApp(Gtk.Application):
             self._apply_font_size()
             self._save_font_scale()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
-            self._update_font_size_announcement()
+            self_._update_font_size_announcement()
 
     def on_sound_toggled(self, button):
         """Toggle sound notifications on/off."""
