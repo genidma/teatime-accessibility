@@ -518,7 +518,7 @@ class StatisticsWindow(Gtk.Window): # <-- Changed from Gtk.Dialog to Gtk.Window
         self.set_default_size(400, 300)
         self.set_transient_for(parent) # Set the main window as parent
         self.set_modal(False) # Ensure it's not modal
-        self.set_hide_on_delete(True) # Hide instead of destroy when closed by user
+        self.hide_on_delete(True) # Hide instead of destroy when closed by user
 
         # For Gtk.Window, you add directly to the window, usually wrapped in a main box
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
