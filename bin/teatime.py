@@ -84,39 +84,38 @@ class TeaTimerApp(Gtk.Application):
             self.time_label.set_markup("<span size='xx-large'>00:00</span>")
             main_box.pack_start(self.time_label, False, False, 0)
 
-            # Duration selection
-            duration_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            # --- Use a Grid for a clean, aligned layout ---
+            grid = Gtk.Grid()
+            grid.set_column_spacing(10)
+            grid.set_row_spacing(10)
+            grid.set_halign(Gtk.Align.CENTER) # Center the grid horizontally
+            main_box.pack_start(grid, False, False, 0)
+
+            # Row 0: Duration selection
             duration_label = Gtk.Label(label="Minutes:")
-            # Allow up to 3 digits for the timer
             self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
             self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
             self.duration_spin.set_value(5)
-            duration_box.pack_start(duration_label, False, False, 0)
-            duration_box.pack_start(self.duration_spin, False, False, 0)
-            main_box.pack_start(duration_box, False, False, 0)
+            grid.attach(duration_label, 0, 0, 1, 1)
+            grid.attach(self.duration_spin, 1, 0, 1, 1)
 
-            # Control buttons
-            button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            # Row 1: Control buttons
             self.start_button = Gtk.Button(label="Start")
             self.stop_button = Gtk.Button(label="Stop")
-            button_box.pack_start(self.start_button, True, True, 0)
-            button_box.pack_start(self.stop_button, True, True, 0)
-            main_box.pack_start(button_box, False, False, 0)
+            grid.attach(self.start_button, 0, 1, 1, 1)
+            grid.attach(self.stop_button, 1, 1, 1, 1)
 
-            # Font size controls
-            font_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            # Row 2: Font size controls
             self.decrease_font_button = Gtk.Button(label="A-")
             self.increase_font_button = Gtk.Button(label="A+")
-            font_box.pack_start(self.decrease_font_button, True, True, 0)
-            font_box.pack_start(self.increase_font_button, True, True, 0)
-            main_box.pack_start(font_box, False, False, 0)
+            grid.attach(self.decrease_font_button, 0, 2, 1, 1)
+            grid.attach(self.increase_font_button, 1, 2, 1, 1)
 
-            # Sound toggle
-            sound_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            # Row 3: Sound toggle (spans both columns)
             self.sound_toggle = Gtk.CheckButton(label="Enable Sound")
             self.sound_toggle.set_active(self.sound_enabled)
-            sound_box.pack_start(self.sound_toggle, False, False, 0)
-            main_box.pack_start(sound_box, False, False, 0)
+            grid.attach(self.sound_toggle, 0, 3, 2, 1)
+
             self.window.add(main_box)
 
             # Connect signals
