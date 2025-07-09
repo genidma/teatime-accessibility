@@ -9,6 +9,13 @@ from pathlib import Path
 import colorsys
 import threading
 
+# Attempt to import playsound, but don't fail if it's not installed
+try:
+    from playsound import playsound
+    PLAYSOUND_AVAILABLE = True
+except ImportError:
+    PLAYSOUND_AVAILABLE = False
+
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
@@ -150,56 +157,46 @@ class TeaTimerApp(Gtk.Application):
         if not self.sound_enabled:
             return
             
-        def play_sound():
-            try:
-                # Method 1: Try playsound (install with: pip install playsound)
-                try:
-                    from playsound import playsound
-                    # Try common notification sound files
-                    sound_files = [
-                        "/usr/share/sounds/freedesktop/stereo/complete.oga",
-                        "/usr/share/sounds/freedesktop/stereo/bell.oga",
-                        "/usr/share/sounds/ubuntu/stereo/notification.ogg",
-                        "/usr/share/sounds/alsa/Front_Right.wav"  # Last resort
-                    ]
-                    
-                    played = False
-                    for sound_file in sound_files:
-                        if os.path.exists(sound_file):
-                            playsound(sound_file)
-                            played = True
-                            break
-                    
-                    if not played:
-                        # Fallback to system beep
-                        subprocess.run(["paplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"], 
-                                     check=False, capture_output=True)
-                except ImportError:
-                    # Method 2: Use system commands
-                    # Try different system sound commands with better notification sounds
-                    commands = [
-                        ["paplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"],
-                        ["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"],
-                        ["aplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"],
-                        ["notify-send", "--urgency=normal", "Tea Timer", "Your tea is ready!"],
-                        ["speaker-test", "-t", "sine", "-f", "800", "-l", "1"],  # Nice 800Hz tone
-                        ["beep"],
-                        ["echo", "-e", "\\a"]  # Terminal bell
-                    ]
-                    
-                    for cmd in commands:
-                        try:
-                            result = subprocess.run(cmd, check=False, capture_output=True, timeout=3)
-                            if result.returncode == 0:
-                                break
-                        except (subprocess.TimeoutExpired, FileNotFoundError):
-                            continue
-                            
-            except Exception as e:
-                print(f"Could not play sound: {e}")
+        def play_sound_task():
+            """Defines and tries different strategies to play a sound."""
+            sound_files = [
+                "/usr/share/sounds/freedesktop/stereo/complete.oga",
+                "/usr/share/sounds/freedesktop/stereo/bell.oga",
+                "/usr/share/sounds/ubuntu/stereo/notification.ogg",
+            ]
+
+            def strategy_playsound():
+                if not PLAYSOUND_AVAILABLE:
+                    return False
+                for sound_file in sound_files:
+                    if os.path.exists(sound_file):
+                        playsound(sound_file)
+                        return True
+                return False
+
+            def strategy_paplay():
+                for sound_file in sound_files:
+                    if os.path.exists(sound_file):
+                        result = subprocess.run(["paplay", sound_file], capture_output=True)
+                        if result.returncode == 0:
+                            return True
+                return False
+
+            def strategy_system_beep():
+                # A simple, reliable fallback
+                print("\a", flush=True)
+                return True
+
+            strategies = [strategy_playsound, strategy_paplay, strategy_system_beep]
+
+            for strategy in strategies:
+                if strategy():
+                    print(f"Sound played using: {strategy.__name__}")
+                    return
+            print("Could not play any notification sound.")
         
         # Play sound in separate thread to avoid blocking UI
-        threading.Thread(target=play_sound, daemon=True).start()
+        threading.Thread(target=play_sound_task, daemon=True).start()
 
     def _set_accessibility_properties(self):
         """Set accessibility properties using GTK 3 methods."""
