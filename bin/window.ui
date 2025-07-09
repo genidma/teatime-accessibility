@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- GtkBuilder Document -->
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="adw" version="1.0"/> <!-- Changed version from "1" to "1.0" -->
+  <object class="AdwApplicationWindow" id="main_window">
+    <property name="title">Tea Timer</property>
+    <property name="default-width">350</property>
+    <property name="default-height">200</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <property name="margin-top">20</property>
+        <property name="margin-bottom">20</property>
+        <property name="margin-start">20</property>
+        <property name="margin-end">20</property>
+        <child>
+          <object class="GtkLabel" id="time_label">
+            <property name="label">00:00</property>
+            <property name="halign">center</property>
+            <property name="wrap">true</property>
+            <property name="css-classes">title-1</property> <!-- Apply a larger style by default -->
+          </object>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="duration_spin">
+            <property name="range-min">1</property>
+            <property name="range-max">10</property>
+            <property name="value">3</property>
+            <property name="digits">0</property>
+            <property name="halign">center</property>
+            <property name="tooltip-text">Set tea brewing duration in minutes</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">10</property>
+            <property name="halign">center</property>
+            <child>
+              <object class="GtkButton" id="start_button">
+                <property name="label">Start</property>
+                <property name="tooltip-text">Start the tea timer</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="stop_button">
+                <property name="label">Stop</property>
+                <property name="tooltip-text">Stop the tea timer</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">5</property>
+            <property name="halign">center</property>
+            <child>
+              <object class="GtkButton" id="decrease_font_button">
+                <property name="label">A-</property>
+                <property name="tooltip-text">Decrease Font Size</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="increase_font_button">
+                <property name="label">A+</property>
+                <property name="tooltip-text">Increase Font Size</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
