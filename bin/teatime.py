@@ -369,7 +369,7 @@ class TeaTimerApp(Gtk.Application):
             self._apply_font_size()
             self._save_font_scale()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
-            self_._update_font_size_announcement()
+            self._update_font_size_announcement()
 
     def on_sound_toggled(self, button):
         """Toggle sound notifications on/off."""
