@@ -136,7 +136,7 @@ class TeaTimerApp(Gtk.Application):
         about_dialog.set_comments("A simple and accessible tea timer.")
         about_dialog.set_website("https://github.com/genidma/teatime-accessibility")
         # Giving credit where it's due!
-        about_dialog.set_authors(["Adeel Khan", "Initial script by Claude AI", "Refinements by Gemini"])
+        about_dialog.set_authors(["Adeel Khan - genidma", "Initial script by Claude AI", "Refinements by Gemini"])
         about_dialog.set_logo_icon_name("accessories-clock")
         about_dialog.run()
         about_dialog.destroy()
