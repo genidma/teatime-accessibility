@@ -36,7 +36,6 @@ class TeaTimerApp(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="org.example.TeaTimer",
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.NON_UNIQUE)
-                         flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.window = None
         self.timer_id = None
         self.time_left = 0
