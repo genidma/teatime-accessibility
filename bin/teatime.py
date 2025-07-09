@@ -76,8 +76,8 @@ class TeaTimerApp(Gtk.Application):
             main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             main_box.set_margin_top(20)
             main_box.set_margin_bottom(20)
-            main_box.set_margin_left(20)
-            main_box.set_margin_right(20)
+            main_box.set_margin_start(20) # Use modern property for left margin
+            main_box.set_margin_end(20)   # Use modern property for right margin
 
             # Time display
             self.time_label = Gtk.Label(label="00:00")
@@ -144,11 +144,12 @@ class TeaTimerApp(Gtk.Application):
         about_dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
         about_dialog.set_program_name(APP_NAME)
         about_dialog.set_version(APP_VERSION)
-        about_dialog.set_copyright("Copyright © 2025 Adeel Khan")
-        about_dialog.set_comments("A simple timer for low vision users. Larger size for Accessibility.")
+        about_dialog.set_copyright("Copyright © 2024 Adeel Khan")
+        # Escape the '&' character to prevent a Pango markup parsing error.
+        about_dialog.set_comments("A simple and accessible tea timer, with refinements by Gemini &amp; Adeel Khan.")
         about_dialog.set_website("https://github.com/genidma/teatime-accessibility")
         # Giving credit where it's due!
-        about_dialog.set_authors(["Adeel Khan (GitHub: genidma)", "Initial script by Claude AI", "Refinements by Gemini & Adeel Khan"])
+        about_dialog.set_authors(["Adeel Khan (GitHub: genidma)", "Initial script by Claude AI"])
         about_dialog.set_logo_icon_name("accessories-clock")
         about_dialog.run()
         about_dialog.destroy()
