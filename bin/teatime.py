@@ -6,6 +6,7 @@ import locale
 import subprocess
 import os
 from pathlib import Path
+import colorsys
 import threading
 
 import gi
@@ -109,6 +110,9 @@ class TeaTimerApp(Gtk.Application):
 
             # Apply initial font size
             self._apply_font_size()
+
+            # Add a style class to the time label for specific targeting
+            self.time_label.get_style_context().add_class("time-display")
 
             # Set GTK 3 accessibility properties (after all widgets are created)
             self._set_accessibility_properties()
@@ -255,13 +259,11 @@ class TeaTimerApp(Gtk.Application):
         # Add rainbow effect if enabled
         if self.rainbow_enabled:
             # Convert HSV to RGB for CSS
-            import colorsys
             r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
             color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
             css += f"""
-            label {{
+            .rainbow-text {{
                 color: {color};
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             }}
             """
         
@@ -316,11 +318,15 @@ class TeaTimerApp(Gtk.Application):
     def on_rainbow_toggled(self, button):
         """Toggle rainbow mode on/off."""
         self.rainbow_enabled = button.get_active()
+        style_context = self.time_label.get_style_context()
+
         if self.rainbow_enabled:
             self._start_rainbow_timer()
+            style_context.add_class("rainbow-text")
             print("Rainbow mode enabled! 🌈")
         else:
             self._stop_rainbow_timer()
+            style_context.remove_class("rainbow-text")
             print("Rainbow mode disabled")
         self._apply_font_size()
 
