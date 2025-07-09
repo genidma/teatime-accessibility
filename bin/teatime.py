@@ -99,7 +99,7 @@ class TeaTimerApp(Gtk.Application):
             # Apply initial font size
             self._apply_font_size()
 
-            # Set GTK 3 accessibility properties
+            # Set GTK 3 accessibility properties (after all widgets are created)
             self._set_accessibility_properties()
 
         self.window.show_all()
