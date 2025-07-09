@@ -14,6 +14,10 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk
 
+# Application metadata
+APP_NAME = "Accessible Tea Timer"
+APP_VERSION = "1.3.0"
+
 # Configuration file for font size persistence
 CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
 DEFAULT_FONT_SCALE = 1.0
@@ -30,7 +34,6 @@ class TeaTimerApp(Gtk.Application):
         self.time_left = 0
         self.font_scale_factor = self._load_font_scale()
         self.sound_enabled = True
-        self.rainbow_enabled = False
         self.rainbow_timer_id = None
         self.rainbow_hue = 0
 
@@ -41,7 +44,7 @@ class TeaTimerApp(Gtk.Application):
         if not self.window:
             # Create window programmatically since UI file might not exist
             self.window = Gtk.ApplicationWindow(application=self)
-            self.window.set_title("Tea Timer")
+            self.window.set_title(APP_NAME)
             self.window.set_default_size(300, 200)
 
             # Create main container
@@ -50,6 +53,20 @@ class TeaTimerApp(Gtk.Application):
             main_box.set_margin_bottom(20)
             main_box.set_margin_left(20)
             main_box.set_margin_right(20)
+
+            # --- Menu Bar ---
+            menu_bar = Gtk.MenuBar()
+            help_menu_item = Gtk.MenuItem(label="Help")
+            help_menu = Gtk.Menu()
+            about_item = Gtk.MenuItem(label="About")
+            about_item.connect("activate", self.on_about_activated)
+            help_menu.append(about_item)
+            help_menu_item.set_submenu(help_menu)
+            menu_bar.append(help_menu_item)
+            main_box.pack_start(menu_bar, False, False, 0)
+
+            # Separator after menu
+            main_box.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 10)
 
             # Time display
             self.time_label = Gtk.Label(label="00:00")
@@ -87,14 +104,6 @@ class TeaTimerApp(Gtk.Application):
             self.sound_toggle.set_active(self.sound_enabled)
             sound_box.pack_start(self.sound_toggle, False, False, 0)
             main_box.pack_start(sound_box, False, False, 0)
-
-            # Rainbow toggle
-            rainbow_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-            self.rainbow_toggle = Gtk.CheckButton(label="Rainbow Mode 🌈")
-            self.rainbow_toggle.set_active(self.rainbow_enabled)
-            rainbow_box.pack_start(self.rainbow_toggle, False, False, 0)
-            main_box.pack_start(rainbow_box, False, False, 0)
-
             self.window.add(main_box)
 
             # Connect signals
@@ -103,7 +112,6 @@ class TeaTimerApp(Gtk.Application):
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
-            self.rainbow_toggle.connect("toggled", self.on_rainbow_toggled)
 
             # Initial state for buttons
             self.stop_button.set_sensitive(False)
@@ -118,6 +126,20 @@ class TeaTimerApp(Gtk.Application):
             self._set_accessibility_properties()
 
         self.window.show_all()
+
+    def on_about_activated(self, widget):
+        """Shows the About dialog."""
+        about_dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
+        about_dialog.set_program_name(APP_NAME)
+        about_dialog.set_version(APP_VERSION)
+        about_dialog.set_copyright("Copyright © 2024 Adeel Khan")
+        about_dialog.set_comments("A simple and accessible tea timer.")
+        about_dialog.set_website("https://github.com/genidma/teatime-accessibility")
+        # Giving credit where it's due!
+        about_dialog.set_authors(["Adeel Khan", "Initial script by Claude AI", "Refinements by Gemini"])
+        about_dialog.set_logo_icon_name("accessories-clock")
+        about_dialog.run()
+        about_dialog.destroy()
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
@@ -256,12 +278,10 @@ class TeaTimerApp(Gtk.Application):
         }}
         """
         
-        # Add rainbow effect if enabled
-        if self.rainbow_enabled:
-            # Convert HSV to RGB for CSS
-            r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
-            color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
-            css += f"""
+        # Add rainbow effect (always calculated, but only applied if class is present)
+        r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
+        color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
+        css += f"""
             .rainbow-text {{
                 color: {color};
             }}
@@ -315,21 +335,6 @@ class TeaTimerApp(Gtk.Application):
         status = "enabled" if self.sound_enabled else "disabled"
         print(f"Sound notifications {status}")
 
-    def on_rainbow_toggled(self, button):
-        """Toggle rainbow mode on/off."""
-        self.rainbow_enabled = button.get_active()
-        style_context = self.time_label.get_style_context()
-
-        if self.rainbow_enabled:
-            self._start_rainbow_timer()
-            style_context.add_class("rainbow-text")
-            print("Rainbow mode enabled! 🌈")
-        else:
-            self._stop_rainbow_timer()
-            style_context.remove_class("rainbow-text")
-            print("Rainbow mode disabled")
-        self._apply_font_size()
-
     def _start_rainbow_timer(self):
         """Start the rainbow color cycling timer."""
         if self.rainbow_timer_id:
@@ -349,6 +354,11 @@ class TeaTimerApp(Gtk.Application):
         return GLib.SOURCE_CONTINUE
 
     def on_start_clicked(self, button):
+        # Stop any previous rainbow effect
+        self._stop_rainbow_timer()
+        self.time_label.get_style_context().remove_class("rainbow-text")
+        self._apply_font_size() # Reset color
+
         self.time_left = int(self.duration_spin.get_value()) * 60
         self.start_timer()
         self.start_button.set_sensitive(False)
@@ -364,6 +374,11 @@ class TeaTimerApp(Gtk.Application):
             accessible.set_description(f"Tea timer started for {self.duration_spin.get_value()} minutes.")
 
     def on_stop_clicked(self, button):
+        # Stop any rainbow effect
+        self._stop_rainbow_timer()
+        self.time_label.get_style_context().remove_class("rainbow-text")
+        self._apply_font_size() # Reset color
+
         self.stop_timer()
         self.time_left = 0
         self.time_label.set_markup("<span size='xx-large'>00:00</span>")
@@ -402,6 +417,10 @@ class TeaTimerApp(Gtk.Application):
             self.stop_timer()
             self.time_label.set_markup("<span size='xx-large'>Tea Ready!</span>")
             
+            # Start the celebratory rainbow effect!
+            self.time_label.get_style_context().add_class("rainbow-text")
+            self._start_rainbow_timer()
+
             # Play notification sound
             self._play_notification_sound()
             
