@@ -35,6 +35,7 @@ MAX_FONT_SCALE = 2.0
 class TeaTimerApp(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="org.example.TeaTimer",
+                         flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.NON_UNIQUE)
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.window = None
         self.timer_id = None
@@ -43,6 +44,8 @@ class TeaTimerApp(Gtk.Application):
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.rainbow_hue = 0
+        # Set up keyboard shortcuts
+        self._setup_actions()
 
     def do_activate(self):
         """
@@ -145,11 +148,14 @@ class TeaTimerApp(Gtk.Application):
         about_dialog.set_program_name(APP_NAME)
         about_dialog.set_version(APP_VERSION)
         about_dialog.set_copyright("Copyright © 2024 Adeel Khan")
-        # Escape the '&' character to prevent a Pango markup parsing error.
-        about_dialog.set_comments("A simple and accessible tea timer, with refinements by Claude, Gemini and Adeel Khan.")
+        about_dialog.set_comments("A simple and accessible tea timer.")
         about_dialog.set_website("https://github.com/genidma/teatime-accessibility")
         # Giving credit where it's due!
-        about_dialog.set_authors(["Adeel Khan (GitHub: genidma)", "Initial script by Claude AI"])
+        about_dialog.set_authors([
+            "Adeel Khan (GitHub: genidma)",
+            "Initial script by Claude AI",
+            "Refinements by Gemini"
+        ])
         about_dialog.set_logo_icon_name("accessories-clock")
         about_dialog.run()
         about_dialog.destroy()
@@ -238,6 +244,39 @@ class TeaTimerApp(Gtk.Application):
             accessible.set_name("Sound Toggle")
             accessible.set_description("Enable or disable sound notifications")
 
+    def _setup_actions(self):
+        """Sets up application-level actions and keyboard shortcuts."""
+        # Start action
+        start_action = Gio.SimpleAction.new("start", None)
+        start_action.connect("activate", self.on_start_clicked)
+        self.add_action(start_action)
+        self.set_accels_for_action("app.start", ["<Control>s"])
+
+        # Stop action
+        stop_action = Gio.SimpleAction.new("stop", None)
+        stop_action.connect("activate", self.on_stop_clicked)
+        self.add_action(stop_action)
+        self.set_accels_for_action("app.stop", ["<Control>p"]) # 'p' for pause/stop
+
+        # Increase font action
+        increase_action = Gio.SimpleAction.new("increase-font", None)
+        increase_action.connect("activate", self.on_increase_font_clicked)
+        self.add_action(increase_action)
+        # 'plus' and 'equal' are often the same physical key
+        self.set_accels_for_action("app.increase-font", ["<Control>plus", "<Control>equal"])
+
+        # Decrease font action
+        decrease_action = Gio.SimpleAction.new("decrease-font", None)
+        decrease_action.connect("activate", self.on_decrease_font_clicked)
+        self.add_action(decrease_action)
+        self.set_accels_for_action("app.decrease-font", ["<Control>minus"])
+
+        # Quit action
+        quit_action = Gio.SimpleAction.new("quit", None)
+        quit_action.connect("activate", lambda a, p: self.quit())
+        self.add_action(quit_action)
+        self.set_accels_for_action("app.quit", ["<Control>q"])
+
     def do_command_line(self, command_line):
         """Handle command line arguments."""
         self.activate()
@@ -309,7 +348,7 @@ class TeaTimerApp(Gtk.Application):
         if accessible:
             accessible.set_description(description)
 
-    def on_increase_font_clicked(self, button):
+    def on_increase_font_clicked(self, *args):
         """Increases the font size."""
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor += FONT_SCALE_INCREMENT
@@ -318,7 +357,7 @@ class TeaTimerApp(Gtk.Application):
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
 
-    def on_decrease_font_clicked(self, button):
+    def on_decrease_font_clicked(self, *args):
         """Decreases the font size."""
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor -= FONT_SCALE_INCREMENT
@@ -351,7 +390,7 @@ class TeaTimerApp(Gtk.Application):
         self._apply_font_size()
         return GLib.SOURCE_CONTINUE
 
-    def on_start_clicked(self, button):
+    def on_start_clicked(self, *args):
         # Stop any previous rainbow effect
         self._stop_rainbow_timer()
         self.time_label.get_style_context().remove_class("rainbow-text")
@@ -371,7 +410,7 @@ class TeaTimerApp(Gtk.Application):
         if accessible:
             accessible.set_description(f"Tea timer started for {self.duration_spin.get_value()} minutes.")
 
-    def on_stop_clicked(self, button):
+    def on_stop_clicked(self, *args):
         # Stop any rainbow effect
         self._stop_rainbow_timer()
         self.time_label.get_style_context().remove_class("rainbow-text")
