@@ -146,7 +146,7 @@ class TeaTimerApp(Gtk.Application):
         about_dialog.set_version(APP_VERSION)
         about_dialog.set_copyright("Copyright © 2024 Adeel Khan")
         # Escape the '&' character to prevent a Pango markup parsing error.
-        about_dialog.set_comments("A simple and accessible tea timer, with refinements by Gemini &amp; Adeel Khan.")
+        about_dialog.set_comments("A simple and accessible tea timer, with refinements by Claude, Gemini and Adeel Khan.")
         about_dialog.set_website("https://github.com/genidma/teatime-accessibility")
         # Giving credit where it's due!
         about_dialog.set_authors(["Adeel Khan (GitHub: genidma)", "Initial script by Claude AI"])
