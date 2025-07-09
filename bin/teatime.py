@@ -151,6 +151,12 @@ class TeaTimerApp(Adw.Application):
         else:
             print("Warning: No default display found to apply CSS. Are you running in a graphical environment?")
 
+    def _update_font_size_announcement(self):
+        """Updates the accessible description for the font size buttons."""
+        description = f"Font size is now {int(self.font_scale_factor * 100)} percent of normal."
+        self.increase_font_button.set_accessible_description(description)
+        self.decrease_font_button.set_accessible_description(description)
+
     def on_increase_font_clicked(self, button):
         """Increases the font size."""
         if self.font_scale_factor < MAX_FONT_SCALE:
@@ -158,9 +164,7 @@ class TeaTimerApp(Adw.Application):
             self._apply_font_size()
             self._save_font_scale()
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
-            # Update accessible description for screen readers
-            self.increase_font_button.set_accessible_description(f"Font size is now {int(self.font_scale_factor * 100)} percent of normal.")
-            self.decrease_font_button.set_accessible_description(f"Font size is now {int(self.font_scale_factor * 100)} percent of normal.")
+            self._update_font_size_announcement()
 
     def on_decrease_font_clicked(self, button):
         """Decreases the font size."""
@@ -169,9 +173,7 @@ class TeaTimerApp(Adw.Application):
             self._apply_font_size()
             self._save_font_scale()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
-            # Update accessible description for screen readers
-            self.increase_font_button.set_accessible_description(f"Font size is now {int(self.font_scale_factor * 100)} percent of normal.")
-            self.decrease_font_button.set_accessible_description(f"Font size is now {int(self.font_scale_factor * 100)} percent of normal.")
+            self._update_font_size_announcement()
 
     def on_start_clicked(self, button):
         self.time_left = int(self.duration_spin.get_value()) * 60
@@ -226,9 +228,6 @@ class TeaTimerApp(Adw.Application):
             self.stop_button.set_sensitive(False)
             # You would also play a sound and/or send a desktop notification here
             print("Tea is ready!")
-            # Reset font scale description for buttons after timer finishes
-            self.increase_font_button.set_accessible_description("Increase Font Size")
-            self.decrease_font_button.set_accessible_description("Decrease Font Size")
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
