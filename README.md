@@ -67,4 +67,4 @@ The application consists of:
 - `bin/window.ui`: The GTK UI definition file.
 
 ## License
-This is an improved version of the original Tea Timer application with accessibility enhancements.
+Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is significantly different with a different licensing policy.
