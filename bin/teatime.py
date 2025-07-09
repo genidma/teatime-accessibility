@@ -266,7 +266,7 @@ class TeaTimerApp(Gtk.Application):
         stop_action = Gio.SimpleAction.new("stop", None)
         stop_action.connect("activate", self.on_stop_clicked)
         self.add_action(stop_action)
-        self.set_accels_for_action("app.stop", ["<Control>p"]) # 'p' for pause/stop
+        self.set_accels_for_action("app.stop", ["<Control>t"]) # 't' for sTop
 
         # Increase font action
         increase_action = Gio.SimpleAction.new("increase-font", None)
@@ -286,11 +286,6 @@ class TeaTimerApp(Gtk.Application):
         quit_action.connect("activate", lambda a, p: self.quit())
         self.add_action(quit_action)
         self.set_accels_for_action("app.quit", ["<Control>q"])
-
-    def do_command_line(self, command_line):
-        """Handle command line arguments."""
-        self.activate()
-        return 0
 
     def _load_font_scale(self):
         """Loads the font scale factor from the config file."""
@@ -515,7 +510,7 @@ class TeaTimerApp(Gtk.Application):
 class StatisticsWindow(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(title="Timer Statistics", transient_for=parent, flags=0)
-        self.add_buttons(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
+        self.add_buttons("Close", Gtk.ResponseType.CLOSE)
         self.set_default_size(400, 300)
 
         box = self.get_content_area()
