@@ -43,9 +43,27 @@ class TeaTimerApp(Gtk.Application):
         """
         if not self.window:
             # Create window programmatically since UI file might not exist
-            self.window = Gtk.ApplicationWindow(application=self)
-            self.window.set_title(APP_NAME)
+            self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
             self.window.set_default_size(300, 200)
+
+            # --- HeaderBar for a modern look ---
+            header_bar = Gtk.HeaderBar()
+            header_bar.set_show_close_button(True)
+            header_bar.props.title = APP_NAME
+            self.window.set_titlebar(header_bar)
+
+            # Create a menu for the "About" option
+            about_menu = Gtk.Menu()
+            about_item = Gtk.MenuItem(label="About")
+            about_item.connect("activate", self.on_about_activated)
+            about_menu.append(about_item)
+            about_menu.show_all()
+
+            # Create a menu button and add it to the header bar
+            menu_button = Gtk.MenuButton(popup=about_menu)
+            icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
+            menu_button.add(icon)
+            header_bar.pack_end(menu_button)
 
             # Create main container
             main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -53,20 +71,6 @@ class TeaTimerApp(Gtk.Application):
             main_box.set_margin_bottom(20)
             main_box.set_margin_left(20)
             main_box.set_margin_right(20)
-
-            # --- Menu Bar ---
-            menu_bar = Gtk.MenuBar()
-            help_menu_item = Gtk.MenuItem(label="Help")
-            help_menu = Gtk.Menu()
-            about_item = Gtk.MenuItem(label="About")
-            about_item.connect("activate", self.on_about_activated)
-            help_menu.append(about_item)
-            help_menu_item.set_submenu(help_menu)
-            menu_bar.append(help_menu_item)
-            main_box.pack_start(menu_bar, False, False, 0)
-
-            # Separator after menu
-            main_box.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 10)
 
             # Time display
             self.time_label = Gtk.Label(label="00:00")
