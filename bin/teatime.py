@@ -146,6 +146,8 @@ class TeaTimerApp(Gtk.Application):
         
         # Play sound in separate thread to avoid blocking UI
         threading.Thread(target=play_sound, daemon=True).start()
+
+    def _set_accessibility_properties(self):
         """Set accessibility properties using GTK 3 methods."""
         # Set accessible names and descriptions using GTK 3 methods
         accessible = self.time_label.get_accessible()
@@ -333,9 +335,9 @@ class TeaTimerApp(Gtk.Application):
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
-import sys
 
 if __name__ == "__main__":
+    import sys
     app = TeaTimerApp()
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
