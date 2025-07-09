@@ -114,21 +114,34 @@ class TeaTimerApp(Gtk.Application):
                 # Method 1: Try playsound (install with: pip install playsound)
                 try:
                     from playsound import playsound
-                    # You can replace this with your own sound file
-                    sound_file = "/usr/share/sounds/alsa/Front_Right.wav"  # Common system sound
-                    if os.path.exists(sound_file):
-                        playsound(sound_file)
-                    else:
+                    # Try common notification sound files
+                    sound_files = [
+                        "/usr/share/sounds/freedesktop/stereo/complete.oga",
+                        "/usr/share/sounds/freedesktop/stereo/bell.oga",
+                        "/usr/share/sounds/ubuntu/stereo/notification.ogg",
+                        "/usr/share/sounds/alsa/Front_Right.wav"  # Last resort
+                    ]
+                    
+                    played = False
+                    for sound_file in sound_files:
+                        if os.path.exists(sound_file):
+                            playsound(sound_file)
+                            played = True
+                            break
+                    
+                    if not played:
                         # Fallback to system beep
-                        subprocess.run(["paplay", "/usr/share/sounds/alsa/Front_Left.wav"], 
+                        subprocess.run(["paplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"], 
                                      check=False, capture_output=True)
                 except ImportError:
                     # Method 2: Use system commands
-                    # Try different system sound commands
+                    # Try different system sound commands with better notification sounds
                     commands = [
-                        ["paplay", "/usr/share/sounds/alsa/Front_Right.wav"],
-                        ["aplay", "/usr/share/sounds/alsa/Front_Right.wav"],
-                        ["speaker-test", "-t", "sine", "-f", "1000", "-l", "1"],
+                        ["paplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"],
+                        ["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"],
+                        ["aplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"],
+                        ["notify-send", "--urgency=normal", "Tea Timer", "Your tea is ready!"],
+                        ["speaker-test", "-t", "sine", "-f", "800", "-l", "1"],  # Nice 800Hz tone
                         ["beep"],
                         ["echo", "-e", "\\a"]  # Terminal bell
                     ]
