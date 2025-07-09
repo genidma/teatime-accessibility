@@ -1,0 +1,52 @@
+name: teatime
+version: "24.06"
+confinement: strict
+grade: stable
+summary: Simple egg timer application for the Unity Desktop
+description:  A simple egg-timer type application to time your teas. 
+ Rings an alarm and displays an desktop notification, when the tea is ready. 
+ Supports saving several pre-set timers.
+base: core20
+
+apps:
+  teatime:
+    command: bin/teatime.py
+    plugs: [unity7, pulseaudio]
+    extensions: [gnome-3-38]
+    environment:
+      PYTHONPATH: $SNAP/gnome-platform/usr/lib/python3/dist-packages:$SNAP/usr/lib/python3/dist-packages
+
+slots:
+  # for GtkApplication registration
+  teatime:
+    interface: dbus
+    bus: session
+    name: net.rojtberg.teatime
+
+parts:
+    teatime:
+        plugin: python
+        source: .
+        python-packages: ["--target", $SNAPCRAFT_PART_INSTALL, "."]
+        build-snaps:
+          - gnome-3-38-2004
+        build-environment:
+            - SNAPCRAFT_PYTHON_VENV_ARGS: --system-site-packages
+        build-packages:
+            - python3-distutils-extra
+        stage-packages:
+            - gir1.2-unity-5.0
+            - gir1.2-notify-0.7
+        stage:
+            - -bin/python3 # workaround for gnome-3-38-2004
+    cleanup:
+        after:  [teatime]
+        plugin: nil
+        build-snaps:
+          - core20
+          - gnome-3-38-2004
+        override-prime: |
+          set -eux
+          for snap in "core20" "gnome-3-38-2004"; do  # List all content-snaps you're using here
+            cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+          done
