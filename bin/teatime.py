@@ -87,7 +87,9 @@ class TeaTimerApp(Gtk.Application):
             # Duration selection
             duration_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
             duration_label = Gtk.Label(label="Minutes:")
-            self.duration_spin = Gtk.SpinButton.new_with_range(1, 60, 1)
+            # Allow up to 3 digits for the timer
+            self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
+            self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
             self.duration_spin.set_value(5)
             duration_box.pack_start(duration_label, False, False, 0)
             duration_box.pack_start(self.duration_spin, False, False, 0)
