@@ -1,0 +1,12 @@
+./setup.sh
+Setting up Accessible Tea Timer...
+./setup.sh: line 8: [Desktop: command not found
+./setup.sh: line 10: Tea: command not found
+./setup.sh: line 11: tea: command not found
+/home/adeel/GitHub/teatime-accessibility/bin/teatime.py:113: DeprecationWarning: Gtk.Widget.override_font is deprecated
+  self.duration_spin.override_font(Pango.FontDescription("Sans Bold 24"))
+Traceback (most recent call last):
+  File "/home/adeel/GitHub/teatime-accessibility/bin/teatime.py", line 20, in <module>
+    import gi
+ModuleNotFoundError: No module named 'gi'
+./setup.sh: line 20: EOF: command not found
