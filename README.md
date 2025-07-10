@@ -63,8 +63,7 @@ Run the setup script:
 
 ## Development
 The application consists of:
-- `bin/teatime.py`: The main Python application script.
-- `bin/window.ui`: The GTK UI definition file.
+- `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
 ## License
 Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is significantly different with a different licensing policy.
