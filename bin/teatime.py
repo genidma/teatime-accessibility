@@ -101,6 +101,7 @@ class TeaTimerApp(Gtk.Application):
 
             # Row 0: Duration selection
             duration_label = Gtk.Label(label="Minutes:")
+            duration_label.get_style_context().add_class("input-label") # Add this line
             self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
             self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
             self.duration_spin.set_value(5)
@@ -325,7 +326,7 @@ class TeaTimerApp(Gtk.Application):
         # Target the main time_label directly using its class
         # For buttons, spinbuttons, and checkbuttons, target their internal 'label' node
         css = f"""
-        .time-display {{
+        .time-display, .input-label {{ /* Added .input-label here */
             font-size: {self.font_scale_factor * 100}%;
         }}
         button label, spinbutton label, checkbutton label {{
