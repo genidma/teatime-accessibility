@@ -36,6 +36,12 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 - **Desktop Notifications**: System notifications for timer completion
 - **Fallback Sounds**: System bell if audio files aren't available
 
+## Installation
+Run the setup script:
+
+```bash
+./setup.sh
+```
 ## Usage
 
 ### Running the Application
@@ -61,12 +67,8 @@ Settings are automatically saved to `~/.config/teatime/settings.json` including:
 - PyGObject
 - PulseAudio (for sound notifications)
 
-## Installation
-Run the setup script:
+## Uninstalling the Application (If you'd like to)
 
-```bash
-./setup.sh
-```
 
 ## Development
 The application consists of:
