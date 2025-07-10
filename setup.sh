@@ -5,9 +5,9 @@
 # This script automates the setup process by:
 # 1. Initializing a Git repository if one doesn't exist.
 # 2. Creating a Python virtual environment with access to system GTK libraries.
-# 3. Installing the necessary Python dependencies (`playsound`).
-# 4. Creating a robust launcher script (`teatime-accessible`).
-# 5. Creating a standard Linux desktop shortcut (`.desktop` file).
+# 3. Checking for required system packages (like PyGObject for GTK).
+# 4. Creating a robust launcher script (`teatime-accessible`) to run the app.
+# 5. Creating a standard Linux desktop shortcut (`.desktop` file) for menu integration.
 #
 
 # Exit immediately if a command exits with a non-zero status.
@@ -22,6 +22,18 @@ if [ ! -f "bin/teatime.py" ]; then
     echo "Error: Please run this script from the teatime-accessibility directory"
     exit 1
 fi
+
+# --- Dependency Check ---
+# Check if PyGObject (the 'gi' module for GTK) is available. This is a system-level
+# dependency and cannot be installed reliably with pip in this context.
+echo "Checking for required system dependencies..."
+if ! python3 -c "import gi; gi.require_version('Gtk', '3.0')" &> /dev/null; then
+    echo "Error: Python GObject/GTK3 bindings are not installed or found." >&2
+    echo "Please install them using your system's package manager." >&2
+    echo "For Debian/Ubuntu, run: sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0" >&2
+    exit 1
+fi
+echo "System dependencies are satisfied."
 
 # --- Initialize Git Repository (if not already initialized) ---
 # This makes it easy to start tracking changes right after setup.
