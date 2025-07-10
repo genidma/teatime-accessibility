@@ -2,6 +2,9 @@
 
 An improved version of the Tea Timer application with enhanced accessibility features.
 
+Here is a screenshot from APP_VERSION = "1.3.2"
+![screenshot](./debug/error_logs_and_screenshots/2025-07-10/2025-07-10-1927-UTC-.png-screenshot-for-readme.png)
+
 ## Accessibility Features
 
 ### Visual Accessibility
