@@ -168,11 +168,15 @@ class TeaTimerApp(Gtk.Application):
     def on_stats_activated(self, widget):
         """Shows the Statistics window."""
         # Create a new StatisticsWindow instance
-        stats_window = StatisticsWindow(application=self, parent=self.window)
+        # We need to ensure only one stats window is open at a time.
+        # This is a common pattern for secondary windows in GTK.
+        if not hasattr(self, '_stats_window') or not self._stats_window.get_visible():
+            self._stats_window = StatisticsWindow(application=self, parent=self.window)
+        
         # Show the window (not run() as it's not a dialog anymore)
-        stats_window.show_all()
+        self._stats_window.show_all()
         # Ensure it's brought to front and focused if it already exists
-        stats_window.present()
+        self._stats_window.present()
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
@@ -518,7 +522,7 @@ class StatisticsWindow(Gtk.Window): # <-- Changed from Gtk.Dialog to Gtk.Window
         self.set_default_size(400, 300)
         self.set_transient_for(parent) # Set the main window as parent
         self.set_modal(False) # Ensure it's not modal
-        self.hide_on_delete(True) # Hide instead of destroy when closed by user
+        self.hide_on_delete = True # <-- Corrected: this is a property, not a method
 
         # For Gtk.Window, you add directly to the window, usually wrapped in a main box
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
