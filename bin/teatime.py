@@ -9,7 +9,6 @@ from pathlib import Path
 from datetime import datetime
 import colorsys
 import threading
-from gi.repository import Gtk, GLib, Gio, Gdk, Pango
 
 # Attempt to import playsound, but don't fail if it's not installed
 try:
@@ -21,7 +20,7 @@ except ImportError:
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk
+from gi.repository import Gtk, GLib, Gio, Gdk, Pango  # MOVE THIS LINE HERE
 
 # Application metadata
 APP_NAME = "Accessible Tea Timer"
