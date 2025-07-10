@@ -321,9 +321,10 @@ class TeaTimerApp(Gtk.Application):
         """Applies the current font scale factor using CSS."""
         css_provider = Gtk.CssProvider()
         
-        # Base CSS for font size
+        # Base CSS for font size - TARGETING SPECIFIC WIDGETS
+        # Only apply font scaling to GtkLabel (for time), GtkButton, GtkSpinButton, GtkCheckButton
         css = f"""
-        * {{
+        GtkLabel, GtkButton, GtkSpinButton, GtkCheckButton {{
             font-size: {self.font_scale_factor * 100}%;
         }}
         """
@@ -515,22 +516,20 @@ class TeaTimerApp(Gtk.Application):
             print(f"Error logging statistics: {e}")
 
 
-class StatisticsWindow(Gtk.Window): # <-- Changed from Gtk.Dialog to Gtk.Window
-    def __init__(self, application, parent): # Added 'application' and 'parent' arguments
-        super().__init__(title="Timer Statistics", application=application) # Pass application to Gtk.Window
-        # No need for add_buttons for a Gtk.Window
+class StatisticsWindow(Gtk.Window):
+    def __init__(self, application, parent):
+        super().__init__(title="Timer Statistics", application=application)
         self.set_default_size(400, 300)
-        self.set_transient_for(parent) # Set the main window as parent
-        self.set_modal(False) # Ensure it's not modal
-        self.hide_on_delete = True # <-- Corrected: this is a property, not a method
+        self.set_transient_for(parent)
+        self.set_modal(False)
+        self.hide_on_delete = True
 
-        # For Gtk.Window, you add directly to the window, usually wrapped in a main box
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main_box.set_margin_top(10)
         main_box.set_margin_bottom(10)
         main_box.set_margin_start(10)
         main_box.set_margin_end(10)
-        self.add(main_box) # Add the main box to the window
+        self.add(main_box)
 
         # Summary Labels
         self.summary_grid = Gtk.Grid(column_spacing=10, row_spacing=5, margin=10)
@@ -540,13 +539,13 @@ class StatisticsWindow(Gtk.Window): # <-- Changed from Gtk.Dialog to Gtk.Window
         self.summary_grid.attach(self.total_breaks_label, 0, 0, 1, 1)
         self.summary_grid.attach(self.total_time_label, 1, 0, 1, 1)
         self.summary_grid.attach(self.avg_duration_label, 0, 1, 2, 1)
-        main_box.pack_start(self.summary_grid, False, False, 0) # Add to main_box
+        main_box.pack_start(self.summary_grid, False, False, 0)
 
         # TreeView for detailed logs
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_hexpand(True)
         scrolled_window.set_vexpand(True)
-        main_box.pack_start(scrolled_window, True, True, 0) # Add to main_box
+        main_box.pack_start(scrolled_window, True, True, 0)
 
         # Model: Date (string), Duration (int)
         self.store = Gtk.ListStore(str, int)
@@ -566,7 +565,6 @@ class StatisticsWindow(Gtk.Window): # <-- Changed from Gtk.Dialog to Gtk.Window
 
         scrolled_window.add(self.treeview)
         self._load_stats()
-        # self.show_all() # Will be called by the application instance
 
     def _load_stats(self):
         if not STATS_LOG_FILE.exists():
