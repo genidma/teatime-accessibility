@@ -378,17 +378,24 @@ class TeaTimerApp(Gtk.Application):
             css_provider = Gtk.CssProvider()
             
             # Base CSS for font size - TARGETING SPECIFIC WIDGETS
-            # Target the main time_label directly using its class
-            # For buttons, spinbuttons, and checkbuttons, target their internal 'label' node
+            # Target the main time_label and duration_label directly using their classes.
+            # For buttons, checkbuttons, and spinbuttons, target their internal 'label' or 'entry' nodes.
             css = f"""
-            .time-display, .input-label {{
+            .time-display {{
                 font-size: {self.font_scale_factor * 100}%;
             }}
-            button label, checkbutton label {{
+            /* Target labels within the main grid that might be affected by font scaling, e.g., "Minutes:" */
+            .input-label {{
                 font-size: {self.font_scale_factor * 100}%;
             }}
-            .duration-spinbutton entry {{
-                font-size: {self.font_scale_factor * 100}% !important;
+             /* Target the text inside Gtk.Button and Gtk.CheckButton widgets */
+             button label, checkbutton label {{
+                font-size: {self.font_scale_factor * 100}% !important; /* Use !important for stronger override */
+            }}
+
+            /* Target the text inside the Gtk.SpinButton's entry field */
+            spinbutton entry {{
+                font-size: {self.font_scale_factor * 100}% !important
             }}
             """
             
