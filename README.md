@@ -2,8 +2,11 @@
 
 An improved version of the Tea Timer application with enhanced accessibility features.
 
-Here is a screenshot from APP_VERSION = "1.3.2"
-![screenshot](./debug/error_logs_and_screenshots/2025-07-10/2025-07-10-1927-UTC-.png-screenshot-for-readme.png)
+Screenshot of the main GUI (graphical user interface) from version 1.3.2 of the app
+![screenshot](./screenshots/2025-07-10-1927-UTC-.png-screenshot-for-README.png)
+
+Screenshot of the Statistics engine that is built into the app. It automatically records the number of sessions by date. As well, giving you a breakdown of the Total number of breaks, Total Time for your Sessions and the Average Duration of your Sessions
+![screenshot for stats](./screenshots/2025-07-10-1927-UTC-.png-screenshot-for-README-STATS.png)
 
 ## Accessibility Features
 
