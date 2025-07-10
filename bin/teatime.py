@@ -377,10 +377,29 @@ class TeaTimerApp(Gtk.Application):
         try:
             css_provider = Gtk.CssProvider()
 
-            # Define multipl# From _update_font_size_announcement
-            except Exception as e:
-                print(f"Warning: Could not update font size announcement: {e}")
-            "rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
+            # Define multipliers for a clear visual hierarchy
+            timer_font_multiplier = 2.5  # 250% of the base scale
+            control_font_multiplier = 1.2 # 120% of the base scale, making controls more readable
+
+            timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
+            control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
+
+            css = f"""
+            /* Target the main timer display to make it large and scalable */
+            .time-display {{
+                font-size: {timer_font_percentage}%;
+                font-weight: bold;
+            }}
+
+            /* Apply a larger font to controls for better readability */
+            .input-label, button label, checkbutton label, .duration-spinbutton entry {{
+                font-size: {control_font_percentage}%;
+            }}
+            """
+            
+            # Add rainbow effect (always calculated, but only applied if class is present)
+            r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
+            color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
             css += f"""
                 .rainbow-text {{
                     color: {color};
