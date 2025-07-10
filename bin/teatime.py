@@ -322,9 +322,13 @@ class TeaTimerApp(Gtk.Application):
         css_provider = Gtk.CssProvider()
         
         # Base CSS for font size - TARGETING SPECIFIC WIDGETS
-        # Only apply font scaling to GtkLabel (for time), GtkButton, GtkSpinButton, GtkCheckButton
+        # Target the main time_label directly using its class
+        # For buttons, spinbuttons, and checkbuttons, target their internal 'label' node
         css = f"""
-        GtkLabel, GtkButton, GtkSpinButton, GtkCheckButton {{
+        .time-display {{
+            font-size: {self.font_scale_factor * 100}%;
+        }}
+        button label, spinbutton label, checkbutton label {{
             font-size: {self.font_scale_factor * 100}%;
         }}
         """
@@ -343,12 +347,12 @@ class TeaTimerApp(Gtk.Application):
         # Get the default screen and add the CSS provider
         screen = Gdk.Screen.get_default()
         if screen:
+            # We are using APPLICATION priority, which is generally good for overriding theme defaults
             Gtk.StyleContext.add_provider_for_screen(
                 screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
         else:
             print("Warning: No default screen found to apply CSS.")
-
     def _update_font_size_announcement(self):
         """Updates the accessible description for the font size buttons."""
         description = f"Font size is now {int(self.font_scale_factor * 100)} percent of normal."
