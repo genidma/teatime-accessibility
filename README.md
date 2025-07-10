@@ -39,6 +39,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 ## Usage
 
 ### Running the Application
+From the project's root directory, run the following command:
 ```bash
 ./teatime-accessible
 ```
