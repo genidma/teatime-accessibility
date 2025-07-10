@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- GtkBuilder Document -->
+<!-- This is a GTK4/Adwaita UI definition file for the Tea Timer. -->
+<!-- It describes the layout and widgets for the application window. -->
+<!-- NOTE: This file is not currently used by the main Python script, -->
+<!-- which builds the UI programmatically using GTK3. -->
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="adw" version="1.0"/> <!-- Changed version from "1" to "1.0" -->
