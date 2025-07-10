@@ -9,6 +9,7 @@ from pathlib import Path
 from datetime import datetime
 import colorsys
 import threading
+from gi.repository import Gtk, GLib, Gio, Gdk, Pango
 
 # Attempt to import playsound, but don't fail if it's not installed
 try:
