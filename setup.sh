@@ -96,7 +96,7 @@ cat > "${DESKTOP_FILE}" << EOF
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Accessible Tea Timer
+Name=Accessible Timer
 Comment=A tea timer with accessibility features
 # The 'Exec' path must be absolute and point to our launcher script.
 Exec=${APP_PATH}/${LAUNCHER_SCRIPT}
