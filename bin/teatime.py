@@ -380,7 +380,7 @@ class TeaTimerApp(Gtk.Application):
             # Define multipliers for a clear visual hierarchy
             timer_font_multiplier = 2.5   # 250% of the base scale
             control_font_multiplier = 1.2 # 120% for general controls like labels and buttons
-            spinbutton_font_multiplier = 2.8 # 220% for the spin button input, making it stand out
+            spinbutton_font_multiplier = 5 # 220% for the spin button input, making it stand out
 
             timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
             control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
