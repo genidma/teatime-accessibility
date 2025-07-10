@@ -45,17 +45,14 @@ if [ ! -d "venv" ]; then
     python3 -m venv --system-site-packages venv
 fi
 
-echo "Activating virtual environment and installing 'playsound'..."
+echo "Activating virtual environment..."
 # We must activate the environment to ensure 'pip' installs packages into it.
 source venv/bin/activate
-
-# Install playsound for audio notifications
-pip install playsound
 
 # Deactivate after installation
 deactivate
 
-echo "Dependencies set up."
+echo "Virtual environment is set up."
 
 # --- Create Launcher Script ---
 # This script provides a simple, one-command way to run the application.
