@@ -91,7 +91,7 @@ class TeaTimerApp(Gtk.Application):
 
             # Time display
             self.time_label = Gtk.Label(label="00:00")
-            self.time_label.set_markup("<span size='xx-large'>00:00</span>")
+            self.time_label.set_markup("<span>00:00</span>")
             main_box.pack_start(self.time_label, False, False, 0)
 
             # --- Use a Grid for a clean, aligned layout ---
@@ -376,26 +376,21 @@ class TeaTimerApp(Gtk.Application):
         """Applies the current font scale factor using CSS."""
         try:
             css_provider = Gtk.CssProvider()
-            
-            # Base CSS for font size - TARGETING SPECIFIC WIDGETS
-            # Target the main time_label and duration_label directly using their classes.
-            # For buttons, checkbuttons, and spinbuttons, target their internal 'label' or 'entry' nodes.
+
+            base_font_percentage = self.font_scale_factor * 100
+            # Make the timer display significantly larger than other elements for visibility
+            timer_font_percentage = self.font_scale_factor * 250 
+
             css = f"""
+            /* Target the main timer display to make it large and scalable */
             .time-display {{
-                font-size: {self.font_scale_factor * 100}%;
-            }}
-            /* Target labels within the main grid that might be affected by font scaling, e.g., "Minutes:" */
-            .input-label {{
-                font-size: {self.font_scale_factor * 100}%;
-            }}
-             /* Target the text inside Gtk.Button and Gtk.CheckButton widgets */
-             button label, checkbutton label {{
-                font-size: {self.font_scale_factor * 100}% !important; /* Use !important for stronger override */
+                font-size: {timer_font_percentage}%;
+                font-weight: bold;
             }}
 
-            /* Target the text inside the Gtk.SpinButton's entry field */
-            spinbutton entry {{
-                font-size: {self.font_scale_factor * 100}% !important
+            /* Apply base scaling to other labels and controls */
+            .input-label, button > label, checkbutton > label, .duration-spinbutton > entry {{
+                font-size: {base_font_percentage}%;
             }}
             """
             
@@ -410,10 +405,8 @@ class TeaTimerApp(Gtk.Application):
             
             css_provider.load_from_data(css.encode())
 
-            # Get the default screen and add the CSS provider
             screen = Gdk.Screen.get_default()
             if screen:
-                # We are using APPLICATION priority, which is generally good for overriding theme defaults
                 Gtk.StyleContext.add_provider_for_screen(
                     screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
                 )
@@ -494,7 +487,7 @@ class TeaTimerApp(Gtk.Application):
         print("Timer started")
         
         # Update time display
-        self.time_label.set_markup(f"<span size='xx-large'>{self.time_left // 60:02d}:{self.time_left % 60:02d}</span>")
+        self.time_label.set_markup(f"<span>{self.time_left // 60:02d}:{self.time_left % 60:02d}</span>")
         
         # Update accessibility description
         try:
@@ -512,7 +505,7 @@ class TeaTimerApp(Gtk.Application):
 
         self.stop_timer()
         self.time_left = 0
-        self.time_label.set_markup("<span size='xx-large'>00:00</span>")
+        self.time_label.set_markup("<span>00:00</span>")
         self.start_button.set_sensitive(True)
         self.stop_button.set_sensitive(False)
         print("Timer stopped")
@@ -539,7 +532,7 @@ class TeaTimerApp(Gtk.Application):
         self.time_left -= 1
         minutes = self.time_left // 60
         seconds = self.time_left % 60
-        self.time_label.set_markup(f"<span size='xx-large'>{minutes:02d}:{seconds:02d}</span>")
+        self.time_label.set_markup(f"<span>{minutes:02d}:{seconds:02d}</span>")
         
         # Update accessibility description at key moments
         if self.time_left % 10 == 0 or self.time_left <= 5:
@@ -552,7 +545,7 @@ class TeaTimerApp(Gtk.Application):
 
         if self.time_left <= 0:
             self.stop_timer()
-            self.time_label.set_markup("<span size='xx-large'>Tea Ready!</span>")
+            self.time_label.set_markup("<span>Tea Ready!</span>")
             
             # Start the celebratory rainbow effect!
             self.time_label.get_style_context().add_class("rainbow-text")
