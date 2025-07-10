@@ -10,13 +10,6 @@ from datetime import datetime
 import colorsys
 import threading
 
-# Attempt to import playsound, but don't fail if it's not installed
-try:
-    from playsound import playsound
-    PLAYSOUND_AVAILABLE = True
-except ImportError:
-    PLAYSOUND_AVAILABLE = False
-
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
@@ -227,19 +220,6 @@ class TeaTimerApp(Gtk.Application):
                 "/usr/share/sounds/alsa/Front_Left.wav",
             ]
 
-            def strategy_playsound():
-                if not PLAYSOUND_AVAILABLE:
-                    return False
-                for sound_file in sound_files:
-                    if os.path.exists(sound_file):
-                        try:
-                            playsound(sound_file)
-                            return True
-                        except Exception as e:
-                            print(f"playsound failed for {sound_file}: {e}")
-                            continue
-                return False
-
             def strategy_paplay():
                 for sound_file in sound_files:
                     if os.path.exists(sound_file):
@@ -272,7 +252,7 @@ class TeaTimerApp(Gtk.Application):
                 except:
                     return False
 
-            strategies = [strategy_playsound, strategy_paplay, strategy_aplay, strategy_system_beep]
+            strategies = [strategy_paplay, strategy_aplay, strategy_system_beep]
 
             for strategy in strategies:
                 try:
