@@ -46,6 +46,7 @@ class TeaTimerApp(Gtk.Application):
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.rainbow_hue = 0
+        self._stats_window = None
         # Set up keyboard shortcuts
         self._setup_actions()
 
@@ -57,6 +58,7 @@ class TeaTimerApp(Gtk.Application):
             # Create window programmatically since UI file might not exist
             self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
             self.window.set_default_size(300, 200)
+            self.window.connect("destroy", self._on_window_destroy)
 
             # --- HeaderBar for a modern look ---
             header_bar = Gtk.HeaderBar()
@@ -66,10 +68,10 @@ class TeaTimerApp(Gtk.Application):
 
             # Create a menu for the "About" option
             about_menu = Gtk.Menu()
-            about_item = Gtk.MenuItem(label="About")
-            about_item.connect("activate", self.on_about_activated)
             stats_item = Gtk.MenuItem(label="Statistics")
             stats_item.connect("activate", self.on_stats_activated)
+            about_item = Gtk.MenuItem(label="About")
+            about_item.connect("activate", self.on_about_activated)
             about_menu.append(stats_item)
             about_menu.append(about_item)
             about_menu.show_all()
@@ -149,6 +151,23 @@ class TeaTimerApp(Gtk.Application):
 
         self.window.show_all()
 
+    def _on_window_destroy(self, widget):
+        """Handle window destruction properly."""
+        # Clean up timers
+        if self.timer_id:
+            GLib.source_remove(self.timer_id)
+            self.timer_id = None
+        if self.rainbow_timer_id:
+            GLib.source_remove(self.rainbow_timer_id)
+            self.rainbow_timer_id = None
+        
+        # Close stats window if open
+        if self._stats_window and self._stats_window.get_visible():
+            self._stats_window.destroy()
+        
+        # Quit the application
+        self.quit()
+
     def on_about_activated(self, widget):
         """Shows the About dialog."""
         about_dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
@@ -172,7 +191,7 @@ class TeaTimerApp(Gtk.Application):
         # Create a new StatisticsWindow instance
         # We need to ensure only one stats window is open at a time.
         # This is a common pattern for secondary windows in GTK.
-        if not hasattr(self, '_stats_window') or not self._stats_window.get_visible():
+        if not self._stats_window or not self._stats_window.get_visible():
             self._stats_window = StatisticsWindow(application=self, parent=self.window)
         
         # Show the window (not run() as it's not a dialog anymore)
@@ -191,6 +210,8 @@ class TeaTimerApp(Gtk.Application):
                 "/usr/share/sounds/freedesktop/stereo/complete.oga",
                 "/usr/share/sounds/freedesktop/stereo/bell.oga",
                 "/usr/share/sounds/ubuntu/stereo/notification.ogg",
+                "/usr/share/sounds/alsa/Front_Right.wav",
+                "/usr/share/sounds/alsa/Front_Left.wav",
             ]
 
             def strategy_playsound():
@@ -198,29 +219,56 @@ class TeaTimerApp(Gtk.Application):
                     return False
                 for sound_file in sound_files:
                     if os.path.exists(sound_file):
-                        playsound(sound_file)
-                        return True
+                        try:
+                            playsound(sound_file)
+                            return True
+                        except Exception as e:
+                            print(f"playsound failed for {sound_file}: {e}")
+                            continue
                 return False
 
             def strategy_paplay():
                 for sound_file in sound_files:
                     if os.path.exists(sound_file):
-                        result = subprocess.run(["paplay", sound_file], capture_output=True)
-                        if result.returncode == 0:
-                            return True
+                        try:
+                            result = subprocess.run(["paplay", sound_file], 
+                                                  capture_output=True, timeout=5)
+                            if result.returncode == 0:
+                                return True
+                        except (subprocess.TimeoutExpired, FileNotFoundError):
+                            continue
+                return False
+
+            def strategy_aplay():
+                for sound_file in sound_files:
+                    if os.path.exists(sound_file):
+                        try:
+                            result = subprocess.run(["aplay", sound_file], 
+                                                  capture_output=True, timeout=5)
+                            if result.returncode == 0:
+                                return True
+                        except (subprocess.TimeoutExpired, FileNotFoundError):
+                            continue
                 return False
 
             def strategy_system_beep():
                 # A simple, reliable fallback
-                print("\a", flush=True)
-                return True
+                try:
+                    print("\a", end="", flush=True)
+                    return True
+                except:
+                    return False
 
-            strategies = [strategy_playsound, strategy_paplay, strategy_system_beep]
+            strategies = [strategy_playsound, strategy_paplay, strategy_aplay, strategy_system_beep]
 
             for strategy in strategies:
-                if strategy():
-                    print(f"Sound played using: {strategy.__name__}")
-                    return
+                try:
+                    if strategy():
+                        print(f"Sound played using: {strategy.__name__}")
+                        return
+                except Exception as e:
+                    print(f"Strategy {strategy.__name__} failed: {e}")
+                    continue
             print("Could not play any notification sound.")
         
         # Play sound in separate thread to avoid blocking UI
@@ -229,40 +277,43 @@ class TeaTimerApp(Gtk.Application):
     def _set_accessibility_properties(self):
         """Set accessibility properties using GTK 3 methods."""
         # Set accessible names and descriptions using GTK 3 methods
-        accessible = self.time_label.get_accessible()
-        if accessible:
-            accessible.set_name("Timer Display")
-            accessible.set_description("Displays the remaining time for the tea timer")
+        try:
+            accessible = self.time_label.get_accessible()
+            if accessible:
+                accessible.set_name("Timer Display")
+                accessible.set_description("Displays the remaining time for the tea timer")
 
-        accessible = self.start_button.get_accessible()
-        if accessible:
-            accessible.set_name("Start Tea Timer")
-            accessible.set_description("Start the tea brewing timer")
+            accessible = self.start_button.get_accessible()
+            if accessible:
+                accessible.set_name("Start Tea Timer")
+                accessible.set_description("Start the tea brewing timer")
 
-        accessible = self.stop_button.get_accessible()
-        if accessible:
-            accessible.set_name("Stop Tea Timer")
-            accessible.set_description("Stop the tea brewing timer")
+            accessible = self.stop_button.get_accessible()
+            if accessible:
+                accessible.set_name("Stop Tea Timer")
+                accessible.set_description("Stop the tea brewing timer")
 
-        accessible = self.duration_spin.get_accessible()
-        if accessible:
-            accessible.set_name("Tea brewing duration")
-            accessible.set_description("Set the tea brewing duration in minutes")
+            accessible = self.duration_spin.get_accessible()
+            if accessible:
+                accessible.set_name("Tea brewing duration")
+                accessible.set_description("Set the tea brewing duration in minutes")
 
-        accessible = self.increase_font_button.get_accessible()
-        if accessible:
-            accessible.set_name("Increase Font Size")
-            accessible.set_description("Make the text larger")
+            accessible = self.increase_font_button.get_accessible()
+            if accessible:
+                accessible.set_name("Increase Font Size")
+                accessible.set_description("Make the text larger")
 
-        accessible = self.decrease_font_button.get_accessible()
-        if accessible:
-            accessible.set_name("Decrease Font Size")
-            accessible.set_description("Make the text smaller")
+            accessible = self.decrease_font_button.get_accessible()
+            if accessible:
+                accessible.set_name("Decrease Font Size")
+                accessible.set_description("Make the text smaller")
 
-        accessible = self.sound_toggle.get_accessible()
-        if accessible:
-            accessible.set_name("Sound Toggle")
-            accessible.set_description("Enable or disable sound notifications")
+            accessible = self.sound_toggle.get_accessible()
+            if accessible:
+                accessible.set_name("Sound Toggle")
+                accessible.set_description("Enable or disable sound notifications")
+        except Exception as e:
+            print(f"Warning: Could not set accessibility properties: {e}")
 
     def _setup_actions(self):
         """Sets up application-level actions and keyboard shortcuts."""
@@ -303,9 +354,11 @@ class TeaTimerApp(Gtk.Application):
             try:
                 with open(CONFIG_FILE, 'r') as f:
                     config = json.load(f)
-                    return config.get("font_scale_factor", DEFAULT_FONT_SCALE)
-            except json.JSONDecodeError:
-                print(f"Error decoding config file: {CONFIG_FILE}. Using default font scale.")
+                    scale = config.get("font_scale_factor", DEFAULT_FONT_SCALE)
+                    # Ensure the loaded scale is within valid bounds
+                    return max(MIN_FONT_SCALE, min(MAX_FONT_SCALE, scale))
+            except (json.JSONDecodeError, KeyError, TypeError) as e:
+                print(f"Error decoding config file: {CONFIG_FILE}. Using default font scale. Error: {e}")
             except Exception as e:
                 print(f"An unexpected error occurred while loading config: {e}. Using default font scale.")
         return DEFAULT_FONT_SCALE
@@ -315,67 +368,73 @@ class TeaTimerApp(Gtk.Application):
         try:
             CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(CONFIG_FILE, 'w') as f:
-                json.dump({"font_scale_factor": self.font_scale_factor}, f)
+                json.dump({"font_scale_factor": self.font_scale_factor}, f, indent=2)
         except Exception as e:
             print(f"Error saving config file: {e}")
 
     def _apply_font_size(self):
         """Applies the current font scale factor using CSS."""
-        css_provider = Gtk.CssProvider()
-        
-        # Base CSS for font size - TARGETING SPECIFIC WIDGETS
-        # Target the main time_label directly using its class
-        # For buttons, spinbuttons, and checkbuttons, target their internal 'label' node
-        css = f"""
-        .time-display, .input-label {{
-            font-size: {self.font_scale_factor * 100}%;
-        }}
-        button label, checkbutton label {{
-            font-size: {self.font_scale_factor * 100}%;
-        }}
-        .duration-spinbutton entry {{
-            font-size: {self.font_scale_factor * 100}% !important; /* <--- ADDED !important HERE */
-        }}
-        """
-        
-        # Add rainbow effect (always calculated, but only applied if class is present)
-        r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
-        color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
-        css += f"""
-            .rainbow-text {{
-                color: {color};
+        try:
+            css_provider = Gtk.CssProvider()
+            
+            # Base CSS for font size - TARGETING SPECIFIC WIDGETS
+            # Target the main time_label directly using its class
+            # For buttons, spinbuttons, and checkbuttons, target their internal 'label' node
+            css = f"""
+            .time-display, .input-label {{
+                font-size: {self.font_scale_factor * 100}%;
+            }}
+            button label, checkbutton label {{
+                font-size: {self.font_scale_factor * 100}%;
+            }}
+            .duration-spinbutton entry {{
+                font-size: {self.font_scale_factor * 100}% !important;
             }}
             """
-        
-        css_provider.load_from_data(css.encode())
+            
+            # Add rainbow effect (always calculated, but only applied if class is present)
+            r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
+            color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
+            css += f"""
+                .rainbow-text {{
+                    color: {color};
+                }}
+                """
+            
+            css_provider.load_from_data(css.encode())
 
-        # Get the default screen and add the CSS provider
-        screen = Gdk.Screen.get_default()
-        if screen:
-            # We are using APPLICATION priority, which is generally good for overriding theme defaults
-            Gtk.StyleContext.add_provider_for_screen(
-                screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-            )
-        else:
-            print("Warning: No default screen found to apply CSS.")
+            # Get the default screen and add the CSS provider
+            screen = Gdk.Screen.get_default()
+            if screen:
+                # We are using APPLICATION priority, which is generally good for overriding theme defaults
+                Gtk.StyleContext.add_provider_for_screen(
+                    screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+            else:
+                print("Warning: No default screen found to apply CSS.")
+        except Exception as e:
+            print(f"Error applying font size: {e}")
 
     def _update_font_size_announcement(self):
         """Updates the accessible description for the font size buttons."""
-        description = f"Font size is now {int(self.font_scale_factor * 100)} percent of normal."
-        
-        # Update accessibility description for GTK 3
-        accessible = self.increase_font_button.get_accessible()
-        if accessible:
-            accessible.set_description(description)
-        
-        accessible = self.decrease_font_button.get_accessible()
-        if accessible:
-            accessible.set_description(description)
+        try:
+            description = f"Font size is now {int(self.font_scale_factor * 100)} percent of normal."
+            
+            # Update accessibility description for GTK 3
+            accessible = self.increase_font_button.get_accessible()
+            if accessible:
+                accessible.set_description(description)
+            
+            accessible = self.decrease_font_button.get_accessible()
+            if accessible:
+                accessible.set_description(description)
+        except Exception as e:
+            print(f"Warning: Could not update font size announcement: {e}")
 
     def on_increase_font_clicked(self, *args):
         """Increases the font size."""
         if self.font_scale_factor < MAX_FONT_SCALE:
-            self.font_scale_factor += FONT_SCALE_INCREMENT
+            self.font_scale_factor = min(MAX_FONT_SCALE, self.font_scale_factor + FONT_SCALE_INCREMENT)
             self._apply_font_size()
             self._save_font_scale()
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
@@ -384,7 +443,7 @@ class TeaTimerApp(Gtk.Application):
     def on_decrease_font_clicked(self, *args):
         """Decreases the font size."""
         if self.font_scale_factor > MIN_FONT_SCALE:
-            self.font_scale_factor -= FONT_SCALE_INCREMENT
+            self.font_scale_factor = max(MIN_FONT_SCALE, self.font_scale_factor - FONT_SCALE_INCREMENT)
             self._apply_font_size()
             self._save_font_scale()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
@@ -431,9 +490,12 @@ class TeaTimerApp(Gtk.Application):
         self.time_label.set_markup(f"<span size='xx-large'>{self.time_left // 60:02d}:{self.time_left % 60:02d}</span>")
         
         # Update accessibility description
-        accessible = self.time_label.get_accessible()
-        if accessible:
-            accessible.set_description(f"Tea timer started for {self.duration_spin.get_value()} minutes.")
+        try:
+            accessible = self.time_label.get_accessible()
+            if accessible:
+                accessible.set_description(f"Tea timer started for {self.duration_spin.get_value()} minutes.")
+        except Exception as e:
+            print(f"Warning: Could not update accessibility description: {e}")
 
     def on_stop_clicked(self, *args):
         # Stop any rainbow effect
@@ -449,9 +511,12 @@ class TeaTimerApp(Gtk.Application):
         print("Timer stopped")
         
         # Update accessibility description
-        accessible = self.time_label.get_accessible()
-        if accessible:
-            accessible.set_description("Tea timer stopped and reset.")
+        try:
+            accessible = self.time_label.get_accessible()
+            if accessible:
+                accessible.set_description("Tea timer stopped and reset.")
+        except Exception as e:
+            print(f"Warning: Could not update accessibility description: {e}")
 
     def start_timer(self):
         if self.timer_id:
@@ -471,9 +536,12 @@ class TeaTimerApp(Gtk.Application):
         
         # Update accessibility description at key moments
         if self.time_left % 10 == 0 or self.time_left <= 5:
-            accessible = self.time_label.get_accessible()
-            if accessible:
-                accessible.set_description(f"Time remaining: {minutes} minutes and {seconds} seconds.")
+            try:
+                accessible = self.time_label.get_accessible()
+                if accessible:
+                    accessible.set_description(f"Time remaining: {minutes} minutes and {seconds} seconds.")
+            except Exception as e:
+                print(f"Warning: Could not update accessibility description: {e}")
 
         if self.time_left <= 0:
             self.stop_timer()
@@ -489,9 +557,12 @@ class TeaTimerApp(Gtk.Application):
             # Log the completed timer
             self._log_timer_completion()
             
-            accessible = self.time_label.get_accessible()
-            if accessible:
-                accessible.set_description("Tea is ready! The timer has finished.")
+            try:
+                accessible = self.time_label.get_accessible()
+                if accessible:
+                    accessible.set_description("Tea is ready! The timer has finished.")
+            except Exception as e:
+                print(f"Warning: Could not update accessibility description: {e}")
             
             self.start_button.set_sensitive(True)
             self.stop_button.set_sensitive(False)
@@ -532,7 +603,9 @@ class StatisticsWindow(Gtk.Window):
         self.set_default_size(400, 300)
         self.set_transient_for(parent)
         self.set_modal(False)
-        self.hide_on_delete = True
+        
+        # Handle window close properly
+        self.connect("delete-event", self._on_delete_event)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main_box.set_margin_top(10)
@@ -555,6 +628,7 @@ class StatisticsWindow(Gtk.Window):
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_hexpand(True)
         scrolled_window.set_vexpand(True)
+        scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         main_box.pack_start(scrolled_window, True, True, 0)
 
         # Model: Date (string), Duration (int)
@@ -565,18 +639,26 @@ class StatisticsWindow(Gtk.Window):
         renderer_text = Gtk.CellRendererText()
         column_date = Gtk.TreeViewColumn("Date", renderer_text, text=0)
         column_date.set_sort_column_id(0)
+        column_date.set_resizable(True)
         self.treeview.append_column(column_date)
 
         # Duration Column
         renderer_text = Gtk.CellRendererText()
         column_duration = Gtk.TreeViewColumn("Duration (minutes)", renderer_text, text=1)
         column_duration.set_sort_column_id(1)
+        column_duration.set_resizable(True)
         self.treeview.append_column(column_duration)
 
         scrolled_window.add(self.treeview)
         self._load_stats()
 
+    def _on_delete_event(self, widget, event):
+        """Handle window close event."""
+        self.hide()
+        return True  # Prevent actual destruction
+
     def _load_stats(self):
+        """Load statistics from the log file."""
         if not STATS_LOG_FILE.exists():
             return
 
@@ -587,12 +669,20 @@ class StatisticsWindow(Gtk.Window):
             print(f"Could not read statistics file: {e}")
             return
 
+        # Clear existing data
+        self.store.clear()
+
         total_duration = 0
         for log in logs:
-            timestamp_str = log.get("timestamp")
+            timestamp_str = log.get("timestamp", "")
             duration = log.get("duration", 0)
-            dt_object = datetime.fromisoformat(timestamp_str)
-            friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+            
+            try:
+                dt_object = datetime.fromisoformat(timestamp_str)
+                friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+            except ValueError:
+                friendly_date = timestamp_str  # Use raw string if parsing fails
+            
             self.store.append([friendly_date, duration])
             total_duration += duration
 
@@ -602,6 +692,8 @@ class StatisticsWindow(Gtk.Window):
         if logs:
             avg_duration = total_duration / len(logs)
             self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
+        else:
+            self.avg_duration_label.set_text("Average Duration: 0 minutes")
 
 if __name__ == "__main__":
     import sys
