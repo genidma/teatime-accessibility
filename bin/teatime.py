@@ -358,6 +358,7 @@ class TeaTimerApp(Gtk.Application):
             )
         else:
             print("Warning: No default screen found to apply CSS.")
+
     def _update_font_size_announcement(self):
         """Updates the accessible description for the font size buttons."""
         description = f"Font size is now {int(self.font_scale_factor * 100)} percent of normal."
