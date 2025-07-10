@@ -4,7 +4,7 @@
 # where the user runs the launcher from.
 cd "$(dirname "$0")"
 # Activate the virtual environment
-source venv/bin/activate
+source teatime-venv/bin/activate
 # Execute the Python script. "$@" passes along any command-line arguments
 # from the launcher to the Python application.
 python3 bin/teatime.py "$@"
