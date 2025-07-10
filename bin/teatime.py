@@ -409,8 +409,10 @@ class TeaTimerApp(Gtk.Application):
             }}
 
             /* Apply a specific, even larger font to the spinbutton's text entry */
-            .duration-spinbutton entry {{
-                font-size: {spinbutton_font_percentage}%;
+            .duration-spinbutton entry,
+            .duration-spinbutton spinbutton,
+            .duration-spinbutton * {{
+                font-size: {spinbutton_font_percentage}% !important;
             }}
             """
             
