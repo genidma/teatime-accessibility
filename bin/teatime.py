@@ -558,7 +558,7 @@ class TeaTimerApp(Gtk.Application):
 
         if self.time_left <= 0:
             self.stop_timer()
-            self.time_label.set_markup("<span>Tea Ready!</span>")
+            self.time_label.set_markup("<span>Session Complete</span>")
             
             # Start the celebratory rainbow effect!
             self.time_label.get_style_context().add_class("rainbow-text")
