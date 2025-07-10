@@ -388,8 +388,8 @@ class TeaTimerApp(Gtk.Application):
                 font-weight: bold;
             }}
 
-            /* Apply base scaling to other labels and controls */
-            .input-label, button > label, checkbutton > label, .duration-spinbutton > entry {{
+            /* Apply base scaling to other labels and controls using more robust descendant selectors (space instead of '>') */
+            .input-label, button label, checkbutton label, .duration-spinbutton entry {{
                 font-size: {base_font_percentage}%;
             }}
             """
