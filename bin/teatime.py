@@ -378,11 +378,13 @@ class TeaTimerApp(Gtk.Application):
             css_provider = Gtk.CssProvider()
 
             # Define multipliers for a clear visual hierarchy
-            timer_font_multiplier = 2.5  # 250% of the base scale
-            control_font_multiplier = 1.2 # 120% of the base scale, making controls more readable
+            timer_font_multiplier = 2.5   # 250% of the base scale
+            control_font_multiplier = 1.2 # 120% for general controls like labels and buttons
+            spinbutton_font_multiplier = 1.8 # 180% for the spin button input, making it stand out
 
             timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
             control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
+            spinbutton_font_percentage = self.font_scale_factor * spinbutton_font_multiplier * 100
 
             css = f"""
             /* Target the main timer display to make it large and scalable */
@@ -391,9 +393,14 @@ class TeaTimerApp(Gtk.Application):
                 font-weight: bold;
             }}
 
-            /* Apply a larger font to controls for better readability */
-            .input-label, button label, checkbutton label, .duration-spinbutton entry {{
+            /* Apply a larger font to general controls for better readability */
+            .input-label, button label, checkbutton label {{
                 font-size: {control_font_percentage}%;
+            }}
+
+            /* Apply a specific, even larger font to the spinbutton's text entry */
+            .duration-spinbutton entry {{
+                font-size: {spinbutton_font_percentage}%;
             }}
             """
             
