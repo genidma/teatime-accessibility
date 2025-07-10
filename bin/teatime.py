@@ -32,7 +32,7 @@ STATS_LOG_FILE = Path.home() / ".local/share/teatime_stats.json"
 DEFAULT_FONT_SCALE = 1.0
 FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
-MAX_FONT_SCALE = 4.0
+MAX_FONT_SCALE = 6.0
 
 class TeaTimerApp(Gtk.Application):
     def __init__(self):
