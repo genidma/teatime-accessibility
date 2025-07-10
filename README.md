@@ -47,7 +47,7 @@ Run the setup script:
 ### Running the Application
 From the project's root directory, run the following command:
 ```bash
-./teatime-accessible
+./teatime-accessible.sh
 ```
 
 ### Command Line Options
