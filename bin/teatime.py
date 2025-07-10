@@ -45,6 +45,7 @@ class TeaTimerApp(Gtk.Application):
         self.font_scale_factor = self._load_font_scale()
         self.sound_enabled = True
         self.rainbow_timer_id = None
+        self.css_provider = Gtk.CssProvider()
         self.rainbow_hue = 0
         self._stats_window = None
         # Set up keyboard shortcuts
@@ -136,6 +137,16 @@ class TeaTimerApp(Gtk.Application):
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
+
+            # Add the single CSS provider to the screen. We will update this provider
+            # later instead of adding new ones.
+            screen = Gdk.Screen.get_default()
+            if screen:
+                Gtk.StyleContext.add_provider_for_screen(
+                    screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+            else:
+                print("Warning: No default screen found to apply CSS.")
 
             # Initial state for buttons
             self.stop_button.set_sensitive(False)
@@ -375,12 +386,11 @@ class TeaTimerApp(Gtk.Application):
     def _apply_font_size(self):
         """Applies the current font scale factor using CSS."""
         try:
-            css_provider = Gtk.CssProvider()
-
             # Define multipliers for a clear visual hierarchy
             timer_font_multiplier = 2.5   # 250% of the base scale
             control_font_multiplier = 1.2 # 120% for general controls like labels and buttons
-            spinbutton_font_multiplier = 10 # 220% for the spin button input, making it stand out
+            # A very large value like 2.8 makes the input number highly visible.
+            spinbutton_font_multiplier = 2.8 # 280% for the spin button input
 
             timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
             control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
@@ -412,16 +422,7 @@ class TeaTimerApp(Gtk.Application):
                     color: {color};
                 }}
                 """
-            
-            css_provider.load_from_data(css.encode())
-
-            screen = Gdk.Screen.get_default()
-            if screen:
-                Gtk.StyleContext.add_provider_for_screen(
-                    screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-            else:
-                print("Warning: No default screen found to apply CSS.")
+            self.css_provider.load_from_data(css.encode())
         except Exception as e:
             print(f"Error applying font size: {e}")
 
