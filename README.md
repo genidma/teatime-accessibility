@@ -69,6 +69,15 @@ Settings are automatically saved to `~/.config/teatime/settings.json` including:
 
 ## Uninstalling the Application (If you'd like to)
 
+First make the script executable
+```bash
+chmod +x uninstall.sh
+```
+Then, run the uninstall script to remove the application
+
+```bash
+./uninstall.sh
+```
 
 ## Development
 The application consists of:
