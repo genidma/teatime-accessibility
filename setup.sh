@@ -23,6 +23,22 @@ if [ ! -f "bin/teatime.py" ]; then
     exit 1
 fi
 
+# --- System Dependency Check ---
+# This application requires PyGObject (python3-gi) to interact with GTK.
+# This package must be installed at the system level, not in the venv.
+echo "Checking for required system dependencies..."
+if ! dpkg -s python3-gi >/dev/null 2>&1; then
+    echo "--------------------------------------------------------------------" >&2
+    echo "ERROR: The required system package 'python3-gi' is not installed." >&2
+    echo "This package is necessary for the application to run." >&2
+    echo "" >&2
+    echo "Please install it by running the following command:" >&2
+    echo "  sudo apt-get update && sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0" >&2
+    echo "--------------------------------------------------------------------" >&2
+    exit 1
+fi
+echo "System dependencies are satisfied."
+
 # --- Initialize Git Repository (if not already initialized) ---
 # This makes it easy to start tracking changes right after setup.
 if [ ! -d ".git" ]; then
@@ -44,13 +60,6 @@ if [ ! -d "venv" ]; then
     # best managed by the system's package manager (apt, dnf, etc.).
     python3 -m venv --system-site-packages venv
 fi
-
-echo "Activating virtual environment..."
-# We must activate the environment to ensure 'pip' installs packages into it.
-source venv/bin/activate
-
-# Deactivate after installation
-deactivate
 
 echo "Virtual environment is set up."
 
