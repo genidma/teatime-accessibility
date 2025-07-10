@@ -110,6 +110,8 @@ class TeaTimerApp(Gtk.Application):
             self.duration_spin.get_style_context().add_class("duration-spinbutton") # Add this line
             self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
             self.duration_spin.set_value(5)
+            # 2025-07-10 - 1851 UTC. This line directly below recommended by Claude. To fix issue of making the numerical value for 'Minutes' become larger and more accessible
+            self.duration_spin.override_font(Pango.FontDescription("Sans Bold 24"))
             grid.attach(duration_label, 0, 0, 1, 1)
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
