@@ -23,22 +23,6 @@ if [ ! -f "bin/teatime.py" ]; then
     exit 1
 fi
 
-# --- System Dependency Check ---
-# This application requires PyGObject (python3-gi) to interact with GTK.
-# This package must be installed at the system level, not in the venv.
-echo "Checking for required system dependencies..."
-if ! dpkg -s python3-gi >/dev/null 2>&1; then
-    echo "--------------------------------------------------------------------" >&2
-    echo "ERROR: The required system package 'python3-gi' is not installed." >&2
-    echo "This package is necessary for the application to run." >&2
-    echo "" >&2
-    echo "Please install it by running the following command:" >&2
-    echo "  sudo apt-get update && sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0" >&2
-    echo "--------------------------------------------------------------------" >&2
-    exit 1
-fi
-echo "System dependencies are satisfied."
-
 # --- Initialize Git Repository (if not already initialized) ---
 # This makes it easy to start tracking changes right after setup.
 if [ ! -d ".git" ]; then
@@ -53,13 +37,20 @@ fi
 
 # --- Create Python Virtual Environment and Install Dependencies ---
 # We check for an existing 'venv' directory to avoid re-creating it on subsequent runs.
-if [ ! -d "venv" ]; then
-    echo "Creating Python virtual environment in 'venv/'..."
+if [ ! -d "teatime-venv" ]; then
+    echo "Creating Python virtual environment in 'teatime-venv/'..."
     # The --system-site-packages flag is crucial. It allows the virtual environment
     # to access system-level libraries like PyGObject (for GTK), which are
     # best managed by the system's package manager (apt, dnf, etc.).
-    python3 -m venv --system-site-packages venv
+    python3 -m venv --system-site-packages teatime-venv
 fi
+
+echo "Activating virtual environment..."
+# We must activate the environment to ensure 'pip' installs packages into it.
+source teatime-venv/bin/activate
+
+# Deactivate after installation
+deactivate
 
 echo "Virtual environment is set up."
 
@@ -77,7 +68,7 @@ cat > "${LAUNCHER_SCRIPT}" << 'EOF'
 # where the user runs the launcher from.
 cd "$(dirname "$0")"
 # Activate the virtual environment
-source venv/bin/activate
+source teatime-venv/bin/activate
 # Execute the Python script. "$@" passes along any command-line arguments
 # from the launcher to the Python application.
 python3 bin/teatime.py "$@"
