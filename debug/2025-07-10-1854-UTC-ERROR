@@ -1,12 +1,11 @@
-17:47Junk at end of value for font-size (1)
-Increased font to: 4.5x
-Error applying font size: gtk-css-provider-error-quark: <data>:17:47Junk at end of value for font-size (1)
-Timer started
-Error applying font size: gtk-css-provider-error-quark: <data>:17:47Junk at end of value for font-size (1)
-Increased font to: 4.6x
-Error applying font size: gtk-css-provider-error-quark: <data>:17:47Junk at end of value for font-size (1)
-Increased font to: 4.7x
-Error applying font size: gtk-css-provider-error-quark: <data>:17:47Junk at end of value for font-size (1)
-Increased font to: 4.8x
-Error applying font size: gtk-css-provider-error-quark: <data>:17:47Junk at end of value for font-size (1)
-Decreased font to: 4.7x
+G_DEBUG=fatal-warnings ./bin/teatime.py 
+/home/exoplanetfun/GitHub/teatime-accessibility/./bin/teatime.py:12: PyGIWarning: Gtk was imported without specifying a version first. Use gi.require_version('Gtk', '4.0') before import to ensure that the right version gets loaded.
+  from gi.repository import Gtk, GLib, Gio, Gdk, Pango
+Traceback (most recent call last):
+  File "/home/exoplanetfun/GitHub/teatime-accessibility/./bin/teatime.py", line 23, in <module>
+    gi.require_version("Gtk", "3.0")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/gi/__init__.py", line 113, in require_version
+    raise ValueError('Namespace %s is already loaded with version %s' %
+                     (namespace, loaded_version))
+ValueError: Namespace Gtk is already loaded with version 4.0
