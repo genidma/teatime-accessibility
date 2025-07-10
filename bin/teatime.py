@@ -333,7 +333,7 @@ class TeaTimerApp(Gtk.Application):
             font-size: {self.font_scale_factor * 100}%;
         }}
         spinbutton entry {{ /* <-- IMPORTANT CHANGE: Targets the text inside the spin button's entry */
-            font-size: {self.font_scale_factor * 100}%;
+            font-size: {self.font_scale_factor * 300}%;
         }}
         """
         
