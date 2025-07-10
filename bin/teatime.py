@@ -29,7 +29,7 @@ APP_VERSION = "1.3.0"
 # Configuration file for font size persistence
 CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
 STATS_LOG_FILE = Path.home() / ".local/share/teatime_stats.json"
-DEFAULT_FONT_SCALE = 1.0
+DEFAULT_FONT_SCALE = 1.5
 FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
