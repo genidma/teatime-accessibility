@@ -377,9 +377,12 @@ class TeaTimerApp(Gtk.Application):
         try:
             css_provider = Gtk.CssProvider()
 
-            base_font_percentage = self.font_scale_factor * 100
-            # Make the timer display significantly larger than other elements for visibility
-            timer_font_percentage = self.font_scale_factor * 250 
+            # Define multipliers for a clear visual hierarchy
+            timer_font_multiplier = 2.5  # 250% of the base scale
+            control_font_multiplier = 1.2 # 120% of the base scale, making controls more readable
+
+            timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
+            control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
 
             css = f"""
             /* Target the main timer display to make it large and scalable */
@@ -388,9 +391,9 @@ class TeaTimerApp(Gtk.Application):
                 font-weight: bold;
             }}
 
-            /* Apply base scaling to other labels and controls using more robust descendant selectors (space instead of '>') */
+            /* Apply a larger font to controls for better readability */
             .input-label, button label, checkbutton label, .duration-spinbutton entry {{
-                font-size: {base_font_percentage}%;
+                font-size: {control_font_percentage}%;
             }}
             """
             
