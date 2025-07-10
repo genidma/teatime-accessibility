@@ -56,14 +56,14 @@ Settings are automatically saved to `~/.config/teatime/settings.json` including:
 - Default timer duration
 
 ## Dependencies
-- GTK 4.0+
-- libadwaita 1.0+
+- GTK 3.0+
 - Python 3.8+
 - PyGObject
 - PulseAudio (for sound notifications)
 
 ## Installation
 Run the setup script:
+
 ```bash
 ./setup.sh
 ```
