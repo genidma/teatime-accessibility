@@ -327,14 +327,14 @@ class TeaTimerApp(Gtk.Application):
         # Target the main time_label directly using its class
         # For buttons, spinbuttons, and checkbuttons, target their internal 'label' node
         css = f"""
-        .time-display, .input-label {{ /* Targets the main timer and the "Minutes:" label */
+        .time-display, .input-label {{
             font-size: {self.font_scale_factor * 100}%;
         }}
-        button label, checkbutton label {{ /* Targets text inside buttons and checkbuttons */
+        button label, checkbutton label {{
             font-size: {self.font_scale_factor * 100}%;
         }}
-        spinbutton entry {{ /* <-- IMPORTANT CHANGE: Targets the text inside the spin button's entry */
-            font-size: {self.font_scale_factor * 100}%;
+        .duration-spinbutton entry {{
+            font-size: {self.font_scale_factor * 100}% !important; /* <--- ADDED !important HERE */
         }}
         """
         
