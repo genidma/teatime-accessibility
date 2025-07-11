@@ -434,6 +434,13 @@ class TeaTimerApp(Gtk.Application):
                 font-size: {control_font_percentage}%;
             }}
 
+            /* Add a smooth transition to the focus glow */
+            button,
+            checkbutton,
+            spinbutton {{
+                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            }}
+
             /* Add a glow effect to focused widgets for better keyboard navigation visibility */
             button:focus,
             checkbutton:focus,
