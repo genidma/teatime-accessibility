@@ -94,7 +94,9 @@ class TeaTimerApp(Gtk.Application):
 
             # Row 3: Time display
             self.time_label = Gtk.Label(label="00:00")
-            self.time_label.modify_font(Pango.FontDescription(f"monospace {int(24 * self.font_scale_factor)}"))
+            # Apply font size using CSS instead of modify_font
+            self.time_label.get_style_context().add_class("time-display")
+            self.time_label.set_markup("<span>00:00</span>")
             grid.attach(self.time_label, 0, 3, 2, 1)
 
             # Row 4: Font size controls
@@ -156,6 +158,26 @@ class TeaTimerApp(Gtk.Application):
         }
         checkbutton {
             color: #333333;
+        }
+
+        /* Target the main timer display to make it large and scalable */
+        .time-display {
+            font-size: 250%;
+            font-weight: bold;
+        }
+
+        /* Apply a larger font to general controls for better readability */
+        .input-label, button label, checkbutton label {
+            font-size: 120%;
+        }
+
+        /* Add a glow effect to focused widgets for better keyboard navigation visibility */
+        button:focus,
+        checkbutton:focus,
+        spinbutton:focus {
+            outline: none; /* Remove the default dotted outline */
+            box-shadow: 0 0 8px 3px rgba(255, 0, 0, 0.8); /* A nice red glow */
+            border-color: rgb(255, 0, 0); /* A matching border color for consistency */
         }
         """
         self.css_provider.load_from_data(css.encode())
