@@ -617,9 +617,11 @@ class TeaTimerApp(Gtk.Application):
             print(f"Error logging statistics: {e}")
 
     def on_preset_clicked(self, button, minutes):
-        """Sets the duration spin button to a preset value."""
+        """Sets the duration spin button to a preset value and starts the timer."""
         self.duration_spin.set_value(minutes)
-        print(f"Preset selected: {minutes} minutes.")
+        print(f"Preset selected: {minutes} minutes. Starting timer automatically.")
+        # Automatically start the timer
+        self.on_start_clicked()
 
 
 class StatisticsWindow(Gtk.Window):
