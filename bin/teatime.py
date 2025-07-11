@@ -43,14 +43,7 @@ class TeaTimerApp(Gtk.Application):
         self.css_provider = Gtk.CssProvider()
         self.rainbow_hue = 0
         self._stats_window = None
-        # Define a list of colors for the focus glow effect
-        self.glow_colors = [
-            ('rgba(70, 130, 180, 0.8)', '#4682b4'),   # SteelBlue
-            ('rgba(60, 179, 113, 0.8)', '#3cb371'),   # MediumSeaGreen
-            ('rgba(255, 140, 0, 0.8)', '#ff8c00'),    # DarkOrange
-            ('rgba(147, 112, 219, 0.8)', '#9370db'),  # MediumPurple
-        ]
-        self.glow_color_index = 0
+        self.focus_hue = 0 # Hue for the focus glow, 0-359
         self._load_config()  # Load settings from file
         # Set up keyboard shortcuts
         self._setup_actions()
@@ -216,7 +209,7 @@ class TeaTimerApp(Gtk.Application):
         """Cycles the focus glow color when the focused widget changes."""
         # We only want to cycle color if a new widget has focus
         if window.get_focus():
-            self.glow_color_index = (self.glow_color_index + 1) % len(self.glow_colors)
+            self.focus_hue = (self.focus_hue + 40) % 360 # Cycle through the hue spectrum
             self._apply_font_size() # Re-apply CSS with the new color
 
     def on_about_activated(self, widget):
@@ -424,8 +417,10 @@ class TeaTimerApp(Gtk.Application):
             timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
             control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
 
-            # Get the current glow color for focus effect
-            glow_rgba, border_hex = self.glow_colors[self.glow_color_index]
+            # Calculate focus glow color from the current hue
+            fr, fg, fb = colorsys.hsv_to_rgb(self.focus_hue / 360.0, 0.9, 1.0)
+            glow_rgba = f"rgba({int(fr*255)}, {int(fg*255)}, {int(fb*255)}, 0.8)"
+            border_rgb = f"rgb({int(fr*255)}, {int(fg*255)}, {int(fb*255)})"
 
             css = f"""
             /* Target the main timer display to make it large and scalable */
@@ -444,8 +439,8 @@ class TeaTimerApp(Gtk.Application):
             checkbutton:focus,
             spinbutton:focus {{
                 outline: none; /* Remove the default dotted outline */
-                box-shadow: 0 0 8px 3px {glow_rgba}; /* A nice glow */
-                border-color: {border_hex}; /* A matching border color for consistency */
+                box-shadow: 0 0 8px 3px {glow_rgba}; /* A nice rainbow glow */
+                border-color: {border_rgb}; /* A matching border color for consistency */
             }}
             """
             
