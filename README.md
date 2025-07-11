@@ -47,10 +47,19 @@ Run the setup script:
 ## Usage
 
 ### Running the Application
-From the project's root directory, run the following command:
+From the project's root directory, run either of the following options:
+
+**Option 1: Command line**
 ```bash
 ./teatime-accessible.sh
 ```
+
+**Option 2: GUI Startup Menu**
+1. Open your desktop environment's application menu
+2. Look for "TeaTime Accessibility" under the "Utilities" or "Accessories" category
+3. Click on the application icon to launch it
+
+The application will appear in your system tray (notification area) and can be controlled from there.
 
 ### Command Line Options
 ```bash
