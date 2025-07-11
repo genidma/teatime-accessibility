@@ -16,6 +16,18 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk, Pango  # MOVE THIS LINE HERE
 
+import argparse
+
+# Add after imports, before the class:
+parser = argparse.ArgumentParser(description='Accessible Tea Timer')
+parser.add_argument('--duration', type=int, default=5, help='Timer duration in minutes (1-999)')
+args = parser.parse_args()
+
+# In __init__, replace:
+self.last_duration = 5
+# With:
+self.last_duration = args.duration
+
 # Application metadata
 APP_NAME = "Accessible Tea Timer"
 APP_VERSION = "1.3.3"
