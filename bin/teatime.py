@@ -670,12 +670,34 @@ class StatisticsWindow(Gtk.Window):
 
     def _load_stats(self):
         """Load statistics from the log file."""
+        print(f"Attempting to load statistics from: {STATS_LOG_FILE}")
+        
         if not STATS_LOG_FILE.exists():
+            print(f"Error: Statistics file not found at {STATS_LOG_FILE}")
+            # Show error message in UI
+            dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text="Statistics file not found",
+            )
+            dialog.format_secondary_text(
+                f"The statistics file could not be found at {STATS_LOG_FILE}.\n"
+                "Please make sure you have completed at least one timer session."
+            )
+            dialog.run()
+            dialog.destroy()
             return
 
         try:
             with open(STATS_LOG_FILE, 'r') as f:
                 logs = json.load(f)
+            print(f"Loaded {len(logs)} log entries")
+            
+            # Check format of first log entry if available
+            if logs:
+                print(f"First log entry format: {logs[0]}")
         except (json.JSONDecodeError, IOError) as e:
             print(f"Could not read statistics file: {e}")
             return
