@@ -418,6 +418,13 @@ class TeaTimerApp(Gtk.Application):
             .input-label, button label, checkbutton label {{
                 font-size: {control_font_percentage}%;
             }}
+
+            /* Add a glow effect to focused buttons for better keyboard navigation visibility */
+            button:focus {{
+                outline: none; /* Remove the default dotted outline */
+                box-shadow: 0 0 8px 3px rgba(70, 130, 180, 0.8); /* A nice 'SteelBlue' glow */
+                border-color: #4682b4; /* A matching border color for consistency */
+            }}
             """
             
             # Add rainbow effect (always calculated, but only applied if class is present)
