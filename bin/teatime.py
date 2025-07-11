@@ -138,7 +138,7 @@ class TeaTimerApp(Gtk.Application):
             presets_box.set_valign(Gtk.Align.CENTER)
             content_box.pack_start(presets_box, False, False, 0)
 
-            presets_label = Gtk.Label(label="<b>Session Presets</b>")
+            presets_label = Gtk.Label(label="<span size='large'><b>Session Presets</b></span>")
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
 
