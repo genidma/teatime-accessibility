@@ -173,7 +173,7 @@ class TeaTimerApp(Gtk.Application):
             self.rainbow_timer_id = None
         
         # Close stats window if open
-        if self._stats_window and self._stats_window.get_visible():
+        if self._stats_window:
             self._stats_window.destroy()
         
         # Quit the application
@@ -200,14 +200,11 @@ class TeaTimerApp(Gtk.Application):
     def on_stats_activated(self, widget):
         """Shows the Statistics window."""
         # Create a new StatisticsWindow instance
-        # We need to ensure only one stats window is open at a time.
-        # This is a common pattern for secondary windows in GTK.
-        if not self._stats_window or not self._stats_window.get_visible():
+        # if the window doesn't exist yet, create it.
+        if self._stats_window is None:
             self._stats_window = StatisticsWindow(application=self, parent=self.window)
-        
-        # Show the window (not run() as it's not a dialog anymore)
-        self._stats_window.show_all()
-        # Ensure it's brought to front and focused if it already exists
+
+        # Present the window, which shows it and brings it to the front.
         self._stats_window.present()
 
     def _play_notification_sound(self):
