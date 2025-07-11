@@ -651,6 +651,9 @@ class StatisticsWindow(Gtk.Window):
         scrolled_window.add(self.treeview)
         self._load_stats()
 
+        # Make all widgets inside the window visible
+        self.show_all()
+
     def _on_delete_event(self, widget, event):
         """Handle window close event."""
         self.hide()
