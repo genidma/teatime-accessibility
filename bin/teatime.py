@@ -688,8 +688,32 @@ class StatisticsWindow(Gtk.Window):
             )
             dialog.run()
             dialog.destroy()
-            return
-
+            # Create sample data for testing
+            sample_data = [
+                {
+                    "timestamp": "2025-07-09T10:00:00",
+                    "duration": 5
+                },
+                {
+                    "timestamp": "2025-07-10T11:00:00",
+                    "duration": 10
+                },
+                {
+                    "timestamp": "2025-07-11T12:00:00",
+                    "duration": 15
+                }
+            ]
+            
+            try:
+                STATS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+                with open(STATS_LOG_FILE, 'w') as f:
+                    json.dump(sample_data, f, indent=2)
+                print(f"Created sample data at {STATS_LOG_FILE}")
+                logs = sample_data
+            except Exception as e:
+                print(f"Error creating sample data: {e}")
+                return
+            
         try:
             with open(STATS_LOG_FILE, 'r') as f:
                 logs = json.load(f)
