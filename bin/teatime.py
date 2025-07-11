@@ -109,6 +109,10 @@ class TeaTimerApp(Gtk.Application):
             self.duration_spin.get_style_context().add_class("duration-spinbutton") # Add this line
             self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
             self.duration_spin.set_value(self.last_duration)
+            # Manually set a large, fixed font size for the spin button's input
+            # This is independent of the CSS scaling for user preference.
+            font_desc = Pango.FontDescription("Sans Bold 24")
+            self.duration_spin.override_font(font_desc)
             grid.attach(duration_label, 0, 0, 1, 1)
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
@@ -399,12 +403,9 @@ class TeaTimerApp(Gtk.Application):
             # Define multipliers for a clear visual hierarchy
             timer_font_multiplier = 2.5   # 250% of the base scale
             control_font_multiplier = 1.2 # 120% for general controls like labels and buttons
-            # A very large value like 2.8 makes the input number highly visible.
-            spinbutton_font_multiplier = 5.0 # 500% for the spin button input
 
             timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
             control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
-            spinbutton_font_percentage = self.font_scale_factor * spinbutton_font_multiplier * 100
 
             css = f"""
             /* Target the main timer display to make it large and scalable */
@@ -416,11 +417,6 @@ class TeaTimerApp(Gtk.Application):
             /* Apply a larger font to general controls for better readability */
             .input-label, button label, checkbutton label {{
                 font-size: {control_font_percentage}%;
-            }}
-
-            /* Apply a specific, even larger font to the spinbutton's text entry */
-            .duration-spinbutton entry {{
-                font-size: {spinbutton_font_percentage}%;
             }}
             """
             
