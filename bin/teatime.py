@@ -31,27 +31,49 @@ MAX_FONT_SCALE = 6.0
 class TeaTimerApp(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="org.example.TeaTimer",
-                         flags=Gio.ApplicationFlags.NON_UNIQUE)
+                         flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.window = None
         self.timer_id = None
         self.time_left = 0
-        self.current_timer_duration = 0
+        self.current_timer_duration = 0  # Add this line
+        self.cli_duration = None  # Store command line duration here
         self.font_scale_factor = DEFAULT_FONT_SCALE
-        self.last_duration = 5  # Default duration
+        self.last_duration = 5  # Default duration from config
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
         self.rainbow_hue = 0
         self._stats_window = None
-        self.focus_hue = 0 # Hue for the focus glow, 0-359
+        self.focus_hue = 0
         self._load_config()  # Load settings from file
         # Set up keyboard shortcuts
         self._setup_actions()
 
+    def do_command_line(self, command_line):
+        """Handle command line arguments."""
+        try:
+            # Parse command line options
+            options = command_line.get_options_dict()
+            
+            # Handle --duration option
+            if options.contains("duration"):
+                duration = options.lookup_value("duration", GLib.VariantType("i")).get_int32()
+                if 1 <= duration <= 999:  # Validate duration range
+                    self.cli_duration = duration
+                    print(f"Command line duration set to {duration} minutes")
+                else:
+                    raise ValueError("Duration must be between 1 and 999 minutes")
+            
+            # Pass through to parent class
+            return Gtk.Application.do_command_line(self, command_line)
+            
+        except Exception as e:
+            print(f"Error parsing command line: {e}")
+            self.quit()
+            return -1
+
     def do_activate(self):
-        """
-        This method is called when the application is activated.
-        """
+        """This method is called when the application is activated."""
         if not self.window:
             # Create window programmatically since UI file might not exist
             self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
@@ -105,36 +127,35 @@ class TeaTimerApp(Gtk.Application):
             grid.set_halign(Gtk.Align.CENTER) # Center the grid horizontally
             content_box.pack_start(grid, True, True, 0)
 
-            # Row 0: Duration selection
+            # Row 1: Duration selection
             duration_label = Gtk.Label(label="Minutes:")
-            duration_label.get_style_context().add_class("input-label") # Add this line
-            self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
-            self.duration_spin.get_style_context().add_class("duration-spinbutton") # Add this line
-            self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
-            self.duration_spin.set_value(self.last_duration)
-            # Manually set a large, fixed font size for the spin button's input
-            # This is independent of the CSS scaling for user preference.
-            font_desc = Pango.FontDescription("Sans Bold 24")
-            self.duration_spin.override_font(font_desc)
-            grid.attach(duration_label, 0, 0, 1, 1)
-            grid.attach(self.duration_spin, 1, 0, 1, 1)
+            self.duration_spin = Gtk.SpinButton()
+            self.duration_spin.set_range(1, 999)
+            self.duration_spin.set_increments(1, 5)
+            
+            # Use command line duration if provided, otherwise use last_duration from config
+            initial_duration = self.cli_duration if hasattr(self, 'cli_duration') and self.cli_duration is not None else self.last_duration
+            self.duration_spin.set_value(initial_duration)
+            self.duration_spin.set_width_chars(3)  # Ensure enough width for 3 digits
+            grid.attach(duration_label, 0, 1, 1, 1)
+            grid.attach(self.duration_spin, 1, 1, 1, 1)
 
-            # Row 1: Control buttons
+            # Row 2: Control buttons
             self.start_button = Gtk.Button(label="Start")
             self.stop_button = Gtk.Button(label="Stop")
-            grid.attach(self.start_button, 0, 1, 1, 1)
-            grid.attach(self.stop_button, 1, 1, 1, 1)
+            grid.attach(self.start_button, 0, 2, 1, 1)
+            grid.attach(self.stop_button, 1, 2, 1, 1)
 
-            # Row 2: Font size controls
+            # Row 3: Font size controls
             self.decrease_font_button = Gtk.Button(label="A-")
             self.increase_font_button = Gtk.Button(label="A+")
-            grid.attach(self.decrease_font_button, 0, 2, 1, 1)
-            grid.attach(self.increase_font_button, 1, 2, 1, 1)
+            grid.attach(self.decrease_font_button, 0, 3, 1, 1)
+            grid.attach(self.increase_font_button, 1, 3, 1, 1)
 
-            # Row 3: Sound toggle (spans both columns)
+            # Row 4: Sound toggle (spans both columns)
             self.sound_toggle = Gtk.CheckButton(label="Enable Sound")
             self.sound_toggle.set_active(self.sound_enabled)
-            grid.attach(self.sound_toggle, 0, 3, 2, 1)
+            grid.attach(self.sound_toggle, 0, 4, 2, 1)
 
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -790,7 +811,9 @@ class StatisticsWindow(Gtk.Window):
 
             except Exception as e:
                 error_dialog = Gtk.MessageDialog(
-                    transient_for=self, modal=True, message_type=Gtk.MessageType.ERROR,
+                    transient_for=self,
+                    modal=True,
+                    message_type=Gtk.MessageType.ERROR,
                     buttons=Gtk.ButtonsType.OK, text="Export Failed",
                 )
                 error_dialog.format_secondary_text(f"Could not save the file.\nError: {e}")
@@ -928,6 +951,16 @@ class StatisticsWindow(Gtk.Window):
 
 if __name__ == "__main__":
     import sys
+    
+    # Create a new Gio.Application with --duration option
     app = TeaTimerApp()
+    app.add_main_option(
+        "duration", ord("d"),
+        GLib.OptionFlags.NONE,
+        GLib.OptionArg.INT,
+        "Set default duration (1-999 minutes)",
+        "MINUTES"
+    )
+    
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
