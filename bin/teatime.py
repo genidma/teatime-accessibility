@@ -682,13 +682,9 @@ class StatisticsWindow(Gtk.Window):
         except (json.JSONDecodeError, IOError):
             return
 
-        # Remove duplicates based on timestamp, keeping the newest entry
-        unique_logs = {log['timestamp']: log for log in reversed(logs)}
-        logs = list(unique_logs.values())
-
         # Clear existing data
         self.store.clear()
-
+        
         total_duration = 0
 
         # Sort logs by timestamp correctly using datetime objects
@@ -700,7 +696,7 @@ class StatisticsWindow(Gtk.Window):
             except ValueError:
                 return datetime.min  # Use minimum datetime for invalid timestamps
 
-        # Sort logs using actual datetime objects
+        # Sort logs by timestamp (newest first) for display
         sorted_logs = sorted(logs, key=get_datetime, reverse=True)
 
         for log in sorted_logs:
@@ -713,15 +709,16 @@ class StatisticsWindow(Gtk.Window):
             except ValueError:
                 friendly_date = timestamp_str  # Use raw string if parsing fails
 
-            # Insert at position 0 to build list from newest to oldest
-            self.store.insert(0, [friendly_date, duration])
+            # Append to the store. This is more efficient than insert(0, ...)
+            # and since we sorted newest-first, this will display newest-first.
+            self.store.append([friendly_date, duration])
             total_duration += duration
 
         # Update summary
-        self.total_breaks_label.set_text(f"Total Breaks: {len(logs)}")
+        self.total_breaks_label.set_text(f"Total Breaks: {len(sorted_logs)}")
         self.total_time_label.set_text(f"Total Time: {total_duration} minutes")
-        if logs:
-            avg_duration = total_duration / len(logs)
+        if sorted_logs:
+            avg_duration = total_duration / len(sorted_logs)
             self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
         else:
             self.avg_duration_label.set_text("Average Duration: 0 minutes")
