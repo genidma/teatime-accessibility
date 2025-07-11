@@ -36,12 +36,14 @@ class TeaTimerApp(Gtk.Application):
         self.timer_id = None
         self.time_left = 0
         self.current_timer_duration = 0
-        self.font_scale_factor = self._load_font_scale()
+        self.font_scale_factor = DEFAULT_FONT_SCALE
+        self.last_duration = 5  # Default duration
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
         self.rainbow_hue = 0
         self._stats_window = None
+        self._load_config()  # Load settings from file
         # Set up keyboard shortcuts
         self._setup_actions()
 
@@ -106,7 +108,7 @@ class TeaTimerApp(Gtk.Application):
             self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
             self.duration_spin.get_style_context().add_class("duration-spinbutton") # Add this line
             self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
-            self.duration_spin.set_value(5)
+            self.duration_spin.set_value(self.last_duration)
             grid.attach(duration_label, 0, 0, 1, 1)
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
@@ -179,6 +181,8 @@ class TeaTimerApp(Gtk.Application):
 
     def _on_window_destroy(self, widget):
         """Handle window destruction properly."""
+        self._save_config() # Save settings on exit
+
         # Clean up timers
         if self.timer_id:
             GLib.source_remove(self.timer_id)
@@ -358,27 +362,34 @@ class TeaTimerApp(Gtk.Application):
         self.add_action(quit_action)
         self.set_accels_for_action("app.quit", ["<Control>q"])
 
-    def _load_font_scale(self):
-        """Loads the font scale factor from the config file."""
+    def _load_config(self):
+        """Loads configuration from the config file."""
         if CONFIG_FILE.exists():
             try:
                 with open(CONFIG_FILE, 'r') as f:
                     config = json.load(f)
+                    # Load font scale
                     scale = config.get("font_scale_factor", DEFAULT_FONT_SCALE)
-                    # Ensure the loaded scale is within valid bounds
-                    return max(MIN_FONT_SCALE, min(MAX_FONT_SCALE, scale))
+                    self.font_scale_factor = max(MIN_FONT_SCALE, min(MAX_FONT_SCALE, scale))
+                    # Load last duration
+                    self.last_duration = config.get("last_duration", 5)
             except (json.JSONDecodeError, KeyError, TypeError) as e:
-                print(f"Error decoding config file: {CONFIG_FILE}. Using default font scale. Error: {e}")
+                print(f"Error decoding config file: {CONFIG_FILE}. Using defaults. Error: {e}")
             except Exception as e:
-                print(f"An unexpected error occurred while loading config: {e}. Using default font scale.")
-        return DEFAULT_FONT_SCALE
+                print(f"An unexpected error occurred while loading config: {e}. Using defaults.")
 
-    def _save_font_scale(self):
-        """Saves the current font scale factor to the config file."""
+    def _save_config(self):
+        """Saves the current configuration to the config file."""
+        if not self.window:  # Don't save if window wasn't created
+            return
         try:
+            config_data = {
+                "font_scale_factor": self.font_scale_factor,
+                "last_duration": self.duration_spin.get_value_as_int()
+            }
             CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(CONFIG_FILE, 'w') as f:
-                json.dump({"font_scale_factor": self.font_scale_factor}, f, indent=2)
+                json.dump(config_data, f, indent=2)
         except Exception as e:
             print(f"Error saving config file: {e}")
 
@@ -446,7 +457,7 @@ class TeaTimerApp(Gtk.Application):
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor = min(MAX_FONT_SCALE, self.font_scale_factor + FONT_SCALE_INCREMENT)
             self._apply_font_size()
-            self._save_font_scale()
+            self._save_config()
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
 
@@ -455,7 +466,7 @@ class TeaTimerApp(Gtk.Application):
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor = max(MIN_FONT_SCALE, self.font_scale_factor - FONT_SCALE_INCREMENT)
             self._apply_font_size()
-            self._save_font_scale()
+            self._save_config()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
 
