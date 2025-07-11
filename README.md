@@ -1,6 +1,6 @@
 # Accessible Tea Timer
 
-An improved version of the Tea Timer application with enhanced accessibility features.
+An simpler version of the Tea Timer application with enhanced accessibility features.
 
 Screenshot of the main GUI (graphical user interface) from version 1.3.2 of the app
 ![screenshot](./screenshots/2025-07-10-1927-UTC-.png-screenshot-for-README.png)
