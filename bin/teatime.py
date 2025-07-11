@@ -684,8 +684,10 @@ class StatisticsWindow(Gtk.Window):
         self.store.clear()
 
         total_duration = 0
-        # Insert items at position 0 to display newest first
-        for log in reversed(logs):
+        # Get logs and sort them in descending order by timestamp
+        sorted_logs = sorted(logs, key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        for log in sorted_logs:
             timestamp_str = log.get("timestamp", "")
             duration = log.get("duration", 0)
             
