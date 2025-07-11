@@ -671,7 +671,8 @@ class StatisticsWindow(Gtk.Window):
         self.store.clear()
 
         total_duration = 0
-        for log in logs:
+        # Insert items at position 0 to display newest first
+        for log in reversed(logs):
             timestamp_str = log.get("timestamp", "")
             duration = log.get("duration", 0)
             
@@ -681,7 +682,8 @@ class StatisticsWindow(Gtk.Window):
             except ValueError:
                 friendly_date = timestamp_str  # Use raw string if parsing fails
             
-            self.store.append([friendly_date, duration])
+            # Insert at position 0 to build list from newest to oldest
+            self.store.insert(0, [friendly_date, duration])
             total_duration += duration
 
         # Update summary
