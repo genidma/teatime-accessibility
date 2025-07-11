@@ -629,6 +629,14 @@ class StatisticsWindow(Gtk.Window):
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         main_box.pack_start(scrolled_window, True, True, 0)
 
+        # Add a refresh button at the bottom
+        refresh_button = Gtk.Button(label="Refresh Statistics")
+        refresh_button.connect("clicked", self._on_refresh_clicked)
+        main_box.pack_start(refresh_button, False, False, 0)
+
+        # Set button margin for better appearance
+        refresh_button.set_margin_top(10)
+
         # Model: Date (string), Duration (int)
         self.store = Gtk.ListStore(str, int)
         self.treeview = Gtk.TreeView(model=self.store)
@@ -654,6 +662,11 @@ class StatisticsWindow(Gtk.Window):
         """Handle window close event."""
         self.hide()
         return True  # Prevent actual destruction
+
+    def _on_refresh_clicked(self, button):
+        """Handle refresh button click."""
+        print("Refreshing statistics...")
+        self._load_stats()
 
     def _load_stats(self):
         """Load statistics from the log file."""
