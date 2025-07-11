@@ -670,60 +670,13 @@ class StatisticsWindow(Gtk.Window):
 
     def _load_stats(self):
         """Load statistics from the log file."""
-        print(f"Attempting to load statistics from: {STATS_LOG_FILE}")
-        
         if not STATS_LOG_FILE.exists():
-            print(f"Error: Statistics file not found at {STATS_LOG_FILE}")
-            # Show error message in UI
-            dialog = Gtk.MessageDialog(
-                transient_for=self,
-                flags=0,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text="Statistics file not found",
-            )
-            dialog.format_secondary_text(
-                f"The statistics file could not be found at {STATS_LOG_FILE}.\n"
-                "Please make sure you have completed at least one timer session."
-            )
-            dialog.run()
-            dialog.destroy()
-            # Create sample data for testing
-            sample_data = [
-                {
-                    "timestamp": "2025-07-09T10:00:00",
-                    "duration": 5
-                },
-                {
-                    "timestamp": "2025-07-10T11:00:00",
-                    "duration": 10
-                },
-                {
-                    "timestamp": "2025-07-11T12:00:00",
-                    "duration": 15
-                }
-            ]
-            
-            try:
-                STATS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-                with open(STATS_LOG_FILE, 'w') as f:
-                    json.dump(sample_data, f, indent=2)
-                print(f"Created sample data at {STATS_LOG_FILE}")
-                logs = sample_data
-            except Exception as e:
-                print(f"Error creating sample data: {e}")
-                return
-            
+            return
+
         try:
             with open(STATS_LOG_FILE, 'r') as f:
                 logs = json.load(f)
-            print(f"Loaded {len(logs)} log entries")
-            
-            # Check format of first log entry if available
-            if logs:
-                print(f"First log entry format: {logs[0]}")
-        except (json.JSONDecodeError, IOError) as e:
-            print(f"Could not read statistics file: {e}")
+        except (json.JSONDecodeError, IOError):
             return
 
         # Clear existing data
@@ -753,18 +706,31 @@ class StatisticsWindow(Gtk.Window):
             except ValueError:
                 friendly_date = timestamp_str  # Use raw string if parsing fails
             
-            # Insert at position 0 to build list from newest to oldest
-            self.store.insert(0, [friendly_date, duration])
-            total_duration += duration
+            # Sort logs using actual datetime objects in descending order
+            sorted_logs = sorted(logs, key=get_datetime, reverse=True)
+            
+            for log in sorted_logs:
+                timestamp_str = log.get("timestamp", "")
+                duration = log.get("duration", 0)
+                
+                try:
+                    dt_object = datetime.fromisoformat(timestamp_str)
+                    friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+                except ValueError:
+                    friendly_date = timestamp_str  # Use raw string if parsing fails
+                
+                # Insert at position 0 to build list from newest to oldest
+                self.store.insert(0, [friendly_date, duration])
+                total_duration += duration
 
-        # Update summary
-        self.total_breaks_label.set_text(f"Total Breaks: {len(logs)}")
-        self.total_time_label.set_text(f"Total Time: {total_duration} minutes")
-        if logs:
-            avg_duration = total_duration / len(logs)
-            self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
-        else:
-            self.avg_duration_label.set_text("Average Duration: 0 minutes")
+            # Update summary
+            self.total_breaks_label.set_text(f"Total Breaks: {len(logs)}")
+            self.total_time_label.set_text(f"Total Time: {total_duration} minutes")
+            if logs:
+                avg_duration = total_duration / len(logs)
+                self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
+            else:
+                self.avg_duration_label.set_text("Average Duration: 0 minutes")
 
 if __name__ == "__main__":
     import sys
