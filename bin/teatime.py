@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 import colorsys
+import csv
 import threading
 
 import gi
@@ -83,6 +84,10 @@ class TeaTimerApp(Gtk.Application):
             main_box.set_margin_start(20) # Use modern property for left margin
             main_box.set_margin_end(20)   # Use modern property for right margin
 
+            # --- Create a horizontal box to hold main controls and presets ---
+            content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
+            main_box.pack_start(content_box, True, True, 0)
+
             # Time display
             self.time_label = Gtk.Label(label="00:00")
             self.time_label.set_markup("<span>00:00</span>")
@@ -93,7 +98,7 @@ class TeaTimerApp(Gtk.Application):
             grid.set_column_spacing(10)
             grid.set_row_spacing(10)
             grid.set_halign(Gtk.Align.CENTER) # Center the grid horizontally
-            main_box.pack_start(grid, False, False, 0)
+            content_box.pack_start(grid, True, True, 0)
 
             # Row 0: Duration selection
             duration_label = Gtk.Label(label="Minutes:")
@@ -121,6 +126,23 @@ class TeaTimerApp(Gtk.Application):
             self.sound_toggle = Gtk.CheckButton(label="Enable Sound")
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
+
+            # --- Presets Box (RIGHT SIDE) ---
+            presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+            presets_box.set_valign(Gtk.Align.CENTER)
+            content_box.pack_start(presets_box, False, False, 0)
+
+            presets_label = Gtk.Label(label="<b>Session Presets</b>")
+            presets_label.set_use_markup(True)
+            presets_box.pack_start(presets_label, False, False, 0)
+
+            preset_45_button = Gtk.Button(label="45 Minutes")
+            preset_45_button.connect("clicked", self.on_preset_clicked, 45)
+            presets_box.pack_start(preset_45_button, False, False, 0)
+
+            preset_1_hour_button = Gtk.Button(label="1 Hour")
+            preset_1_hour_button.connect("clicked", self.on_preset_clicked, 60)
+            presets_box.pack_start(preset_1_hour_button, False, False, 0)
 
             self.window.add(main_box)
 
@@ -587,6 +609,11 @@ class TeaTimerApp(Gtk.Application):
         except Exception as e:
             print(f"Error logging statistics: {e}")
 
+    def on_preset_clicked(self, button, minutes):
+        """Sets the duration spin button to a preset value."""
+        self.duration_spin.set_value(minutes)
+        print(f"Preset selected: {minutes} minutes.")
+
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
@@ -623,13 +650,18 @@ class StatisticsWindow(Gtk.Window):
         main_box.pack_start(scrolled_window, True, True, 0)
         
         # --- Button Box ---
-        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6, halign=Gtk.Align.CENTER)
+        button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, halign=Gtk.Align.CENTER)
         main_box.pack_start(button_box, False, False, 0)
 
         # Refresh button
         refresh_button = Gtk.Button(label="Refresh Statistics")
         refresh_button.connect("clicked", self._on_refresh_clicked)
         button_box.pack_start(refresh_button, False, False, 0)
+
+        # Export to CSV button
+        export_button = Gtk.Button(label="Export to CSV")
+        export_button.connect("clicked", self._on_export_clicked)
+        button_box.pack_start(export_button, False, False, 0)
 
         # Clear History button
         clear_button = Gtk.Button(label="Clear History")
@@ -667,6 +699,66 @@ class StatisticsWindow(Gtk.Window):
         """Handle window close event."""
         self.hide()
         return True  # Prevent actual destruction
+
+    def _on_export_clicked(self, button):
+        """Handles exporting the statistics to a CSV file."""
+        if len(self.store) == 0:
+            info_dialog = Gtk.MessageDialog(
+                transient_for=self, modal=True, message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK, text="No Statistics to Export",
+            )
+            info_dialog.format_secondary_text("The statistics log is currently empty.")
+            info_dialog.run()
+            info_dialog.destroy()
+            return
+
+        dialog = Gtk.FileChooserDialog(
+            title="Save Statistics as CSV",
+            transient_for=self,
+            action=Gtk.FileChooserAction.SAVE
+        )
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT
+        )
+
+        # Suggest a filename
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        dialog.set_current_name(f"teatime_stats_{today_str}.csv")
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = dialog.get_filename()
+            if not filename.lower().endswith(".csv"):
+                filename += ".csv"
+            
+            try:
+                with open(filename, 'w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    # Write header
+                    writer.writerow(["Timestamp", "Duration (minutes)"])
+                    # Write data from the ListStore
+                    for row in self.store:
+                        writer.writerow([row[0], row[1]])
+                
+                success_dialog = Gtk.MessageDialog(
+                    transient_for=self, modal=True, message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK, text="Export Successful",
+                )
+                success_dialog.format_secondary_text(f"Statistics saved to:\n{filename}")
+                success_dialog.run()
+                success_dialog.destroy()
+
+            except Exception as e:
+                error_dialog = Gtk.MessageDialog(
+                    transient_for=self, modal=True, message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK, text="Export Failed",
+                )
+                error_dialog.format_secondary_text(f"Could not save the file.\nError: {e}")
+                error_dialog.run()
+                error_dialog.destroy()
+
+        dialog.destroy()
 
     def _on_clear_history_clicked(self, button):
         """Handles the first confirmation dialog for clearing history."""
