@@ -360,5 +360,10 @@ class TeaTimerApp(Gtk.Application):
             json.dump(config, f)
 
 if __name__ == "__main__":
+    import sys
+    
+    # Create a new Gio.Application
     app = TeaTimerApp()
-    app.run(None)
+    
+    exit_status = app.run(sys.argv)
+    sys.exit(exit_status)
