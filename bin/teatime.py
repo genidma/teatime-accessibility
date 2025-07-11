@@ -18,7 +18,7 @@ from gi.repository import Gtk, GLib, Gio, Gdk, Pango  # MOVE THIS LINE HERE
 
 # Application metadata
 APP_NAME = "Accessible Tea Timer"
-APP_VERSION = "1.3.2"
+APP_VERSION = "1.3.3"
 
 # Configuration file for font size persistence
 CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
