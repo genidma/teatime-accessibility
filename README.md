@@ -61,7 +61,7 @@ From the project's root directory, run either of the following options:
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
-### Command Line Options
+### Command Line Options - broken at the moment. tracked in issue.
 ```bash
 # Set default duration (1-999 minutes)
 ./teatime-accessible --duration 5
