@@ -2,6 +2,8 @@
 
 An simpler version of the Tea Timer application with enhanced accessibility features.
 
+![Demo](teatime-accessibility/screenshots_and_demo/demo-2025-07-11.gif)
+
 Screenshot of the main GUI (graphical user interface) from version 1.3.2 of the app
 ![screenshot](./screenshots/2025-07-10-1927-UTC-.png-screenshot-for-README.png)
 
