@@ -621,14 +621,23 @@ class StatisticsWindow(Gtk.Window):
         scrolled_window.set_vexpand(True)
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         main_box.pack_start(scrolled_window, True, True, 0)
+        
+        # --- Button Box ---
+        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6, halign=Gtk.Align.CENTER)
+        main_box.pack_start(button_box, False, False, 0)
 
-        # Add a refresh button at the bottom
+        # Refresh button
         refresh_button = Gtk.Button(label="Refresh Statistics")
         refresh_button.connect("clicked", self._on_refresh_clicked)
-        main_box.pack_start(refresh_button, False, False, 0)
+        button_box.pack_start(refresh_button, False, False, 0)
 
-        # Set button margin for better appearance
-        refresh_button.set_margin_top(10)
+        # Clear History button
+        clear_button = Gtk.Button(label="Clear History")
+        clear_button.get_style_context().add_class("destructive-action") # Makes it red in many themes
+        clear_button.connect("clicked", self._on_clear_history_clicked)
+        button_box.pack_start(clear_button, False, False, 0)
+
+        button_box.set_margin_top(10)
         
         # Model: Date (string), Duration (int)
         self.store = Gtk.ListStore(str, int)
@@ -659,14 +668,84 @@ class StatisticsWindow(Gtk.Window):
         self.hide()
         return True  # Prevent actual destruction
 
+    def _on_clear_history_clicked(self, button):
+        """Handles the first confirmation dialog for clearing history."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            modal=True,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.YES_NO,
+            text="Clear All Timer Statistics?",
+        )
+        dialog.format_secondary_text(
+            "This will permanently delete all recorded timer sessions. This action cannot be undone."
+        )
+        
+        response = dialog.run()
+        dialog.destroy()
+
+        if response == Gtk.ResponseType.YES:
+            self._show_second_confirmation()
+
+    def _show_second_confirmation(self):
+        """Handles the second, final confirmation dialog."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            modal=True,
+            message_type=Gtk.MessageType.WARNING, # Use WARNING for more emphasis
+            buttons=Gtk.ButtonsType.YES_NO,
+            text="Are You Absolutely Sure?",
+        )
+        dialog.format_secondary_text(
+            "This is the final confirmation. Pressing 'Yes' will erase all statistics forever."
+        )
+        
+        response = dialog.run()
+        dialog.destroy()
+
+        if response == Gtk.ResponseType.YES:
+            self._perform_clear_history()
+
+    def _perform_clear_history(self):
+        """Deletes the stats file and clears the view."""
+        try:
+            if STATS_LOG_FILE.exists():
+                STATS_LOG_FILE.unlink() # Use unlink() from pathlib
+            
+            # Clear the model which updates the TreeView
+            self.store.clear()
+            
+            # Reset the summary labels
+            self._reset_summary_labels()
+            
+            print("Statistics history has been cleared.")
+            
+        except Exception as e:
+            print(f"Error clearing statistics: {e}")
+            error_dialog = Gtk.MessageDialog(
+                transient_for=self, modal=True, message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK, text="Failed to Clear History",
+            )
+            error_dialog.format_secondary_text(str(e))
+            error_dialog.run()
+            error_dialog.destroy()
+
     def _on_refresh_clicked(self, button):
         """Handle refresh button click."""
         print("Refreshing statistics...")
         self._load_stats()
 
+    def _reset_summary_labels(self):
+        """Resets the summary labels to their default state."""
+        self.total_breaks_label.set_text("Total Breaks: 0")
+        self.total_time_label.set_text("Total Time: 0 minutes")
+        self.avg_duration_label.set_text("Average Duration: 0 minutes")
+
     def _load_stats(self):
         """Load statistics from the log file."""
         if not STATS_LOG_FILE.exists():
+            self.store.clear()
+            self._reset_summary_labels()
             return
 
         try:
@@ -714,7 +793,7 @@ class StatisticsWindow(Gtk.Window):
             avg_duration = total_duration / len(sorted_logs)
             self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
         else:
-            self.avg_duration_label.set_text("Average Duration: 0 minutes")
+            self._reset_summary_labels()
 
 if __name__ == "__main__":
     import sys
