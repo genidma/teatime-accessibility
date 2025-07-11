@@ -23,11 +23,6 @@ parser = argparse.ArgumentParser(description='Accessible Tea Timer')
 parser.add_argument('--duration', type=int, default=5, help='Timer duration in minutes (1-999)')
 args = parser.parse_args()
 
-# In __init__, replace:
-self.last_duration = 5
-# With:
-self.last_duration = args.duration
-
 # Application metadata
 APP_NAME = "Accessible Tea Timer"
 APP_VERSION = "1.3.3"
@@ -49,7 +44,7 @@ class TeaTimerApp(Gtk.Application):
         self.time_left = 0
         self.current_timer_duration = 0
         self.font_scale_factor = DEFAULT_FONT_SCALE
-        self.last_duration = 5  # Default duration
+        self.last_duration = args.duration  # Default duration from config
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
