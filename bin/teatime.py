@@ -684,8 +684,18 @@ class StatisticsWindow(Gtk.Window):
         self.store.clear()
 
         total_duration = 0
-        # Get logs and sort them in descending order by timestamp
-        sorted_logs = sorted(logs, key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        # Sort logs by timestamp correctly using datetime objects
+        def get_datetime(log):
+            """Helper function to convert log timestamp to datetime object."""
+            timestamp_str = log.get("timestamp", "")
+            try:
+                return datetime.fromisoformat(timestamp_str)
+            except ValueError:
+                return datetime.min  # Use minimum datetime for invalid timestamps
+        
+        # Sort logs using actual datetime objects
+        sorted_logs = sorted(logs, key=get_datetime, reverse=True)
         
         for log in sorted_logs:
             timestamp_str = log.get("timestamp", "")
