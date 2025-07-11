@@ -636,7 +636,7 @@ class StatisticsWindow(Gtk.Window):
 
         # Set button margin for better appearance
         refresh_button.set_margin_top(10)
-
+        
         # Model: Date (string), Duration (int)
         self.store = Gtk.ListStore(str, int)
         self.treeview = Gtk.TreeView(model=self.store)
@@ -667,6 +667,70 @@ class StatisticsWindow(Gtk.Window):
         """Handle refresh button click."""
         print("Refreshing statistics...")
         self._load_stats()
+
+    def _load_stats(self):
+        """Load statistics from the log file."""
+        if not STATS_LOG_FILE.exists():
+            return
+
+        try:
+            with open(STATS_LOG_FILE, 'r') as f:
+                logs = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            return
+
+        # Clear existing data
+        self.store.clear()
+
+        total_duration = 0
+        
+        # Sort logs by timestamp correctly using datetime objects
+        def get_datetime(log):
+            """Helper function to convert log timestamp to datetime object."""
+            timestamp_str = log.get("timestamp", "")
+            try:
+                return datetime.fromisoformat(timestamp_str)
+            except ValueError:
+                return datetime.min  # Use minimum datetime for invalid timestamps
+        
+        # Sort logs using actual datetime objects
+        sorted_logs = sorted(logs, key=get_datetime, reverse=True)
+        
+        for log in sorted_logs:
+            timestamp_str = log.get("timestamp", "")
+            duration = log.get("duration", 0)
+            
+            try:
+                dt_object = datetime.fromisoformat(timestamp_str)
+                friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+            except ValueError:
+                friendly_date = timestamp_str  # Use raw string if parsing fails
+            
+            # Sort logs using actual datetime objects in descending order
+            sorted_logs = sorted(logs, key=get_datetime, reverse=True)
+            
+            for log in sorted_logs:
+                timestamp_str = log.get("timestamp", "")
+                duration = log.get("duration", 0)
+                
+                try:
+                    dt_object = datetime.fromisoformat(timestamp_str)
+                    friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+                except ValueError:
+                    friendly_date = timestamp_str  # Use raw string if parsing fails
+                
+                # Insert at position 0 to build list from newest to oldest
+                self.store.insert(0, [friendly_date, duration])
+                total_duration += duration
+
+            # Update summary
+            self.total_breaks_label.set_text(f"Total Breaks: {len(logs)}")
+            self.total_time_label.set_text(f"Total Time: {total_duration} minutes")
+            if logs:
+                avg_duration = total_duration / len(logs)
+                self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
+            else:
+                self.avg_duration_label.set_text("Average Duration: 0 minutes")
 
     def _load_stats(self):
         """Load statistics from the log file."""
