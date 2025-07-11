@@ -57,8 +57,8 @@ class TeaTimerApp(Gtk.Application):
             self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
             self.window.set_default_size(300, 200)
             self.window.connect("destroy", self._on_window_destroy)
-            # Connect to focus change to cycle glow color
-            self.window.connect("notify::focus-widget", self._on_focus_changed)
+            # Use "set-focus-child" signal, which is more reliable for this purpose
+            self.window.connect("set-focus-child", self._on_focus_changed)
 
             # --- HeaderBar for a modern look ---
             header_bar = Gtk.HeaderBar()
@@ -205,12 +205,11 @@ class TeaTimerApp(Gtk.Application):
         # Quit the application
         self.quit()
 
-    def _on_focus_changed(self, window, param):
+    def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
-        # We only want to cycle color if a new widget has focus
-        if window.get_focus():
-            self.focus_hue = (self.focus_hue + 40) % 360 # Cycle through the hue spectrum
-            self._apply_font_size() # Re-apply CSS with the new color
+        # This signal reliably fires when a new child widget gets focus.
+        self.focus_hue = (self.focus_hue + 40) % 360 # Cycle through the hue spectrum
+        self._apply_font_size() # Re-apply CSS with the new color
 
     def on_about_activated(self, widget):
         """Shows the About dialog."""
