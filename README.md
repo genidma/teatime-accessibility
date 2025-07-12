@@ -34,7 +34,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 - **Live Regions**: Timer updates are announced appropriately
 
 ### Audio Accessibility
-- **Sound Notifications**: Audio feedback for start, stop, and completion
+- **Sound Notifications**: Audio feedback (bell 🔔 )at the completion of each session 
 - **Desktop Notifications**: System notifications for timer completion
 - **Fallback Sounds**: System bell if audio files aren't available
 
