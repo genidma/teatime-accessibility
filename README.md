@@ -16,7 +16,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 - **Adjustable Font Size**: Use A+ and A- buttons or Ctrl++ and Ctrl+- to increase/decrease font size
 - **High Contrast Support**: Automatically adapts to system theme settings
 - **Clear Visual Feedback**: Button states and status messages provide clear feedback
-- **Tooltips**: Hover tooltips explain what each control does
+- **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
 
 ### Keyboard Accessibility
 - **Full Keyboard Navigation**: Tab through all controls
