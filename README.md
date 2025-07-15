@@ -10,7 +10,7 @@ TeaTime Accessibility is a tool designed to help users manage screen time with a
 
 # Accessible Tea Timer
 
-An simpler version of the Tea Timer application with enhanced accessibility features.
+A simpler version of the Tea Timer application with enhanced accessibility features.
 
 ![Demo](./screenshots_demo_clones/demo-2025-07-15.gif)
 
@@ -19,6 +19,9 @@ Screenshot of the main GUI (graphical user interface) from version 1.3.3 of the 
 
 Screenshot of the Statistics engine that is built into the app. It automatically records the number of sessions by date. Including, breakdown for the Total number of breaks, Total Time for Sessions, Average Duration considering duration of all the Sessions
 ![screenshot for stats](./screenshots_demo_clones/2025-07-15-screenshot-for-README-STATS.png)
+
+[Shorter demo video](https://youtu.be/gsrPCAagAtw)
+
 
 ## Accessibility Features
 
