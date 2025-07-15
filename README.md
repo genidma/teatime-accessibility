@@ -8,12 +8,6 @@ TeaTime Accessibility is a tool designed to help users manage screen time with a
 - **Accessibility Integration:** Works seamlessly with screen readers and other assistive technologies.
 - **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json`.
 
-### Stats Data
-
-The application reads and writes stats data from/to the following file:
-
-`~/.local/share/teatime_stats.json`
-
 # Accessible Tea Timer
 
 An simpler version of the Tea Timer application with enhanced accessibility features.
