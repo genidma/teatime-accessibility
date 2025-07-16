@@ -1,6 +1,6 @@
 # TeaTime Accessibility
 
-TeaTime Accessibility is a tool designed to help users manage screen time with a focus on accessibility. It provides features such as timers, reminders, and usage statistics.
+Accessibility focused timer appliction for the Ubuntu environment (with Desktop environment). This app has timers with presets, reminders (audible vs to the contrary) and usage simple usage statistics. It also has a fun rainbow-glow feature (see below)
 
 ## Features
 
