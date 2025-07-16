@@ -21,7 +21,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 ![screenshot for stats](./screenshots_demo_clones/2025-07-15-screenshot-for-README-STATS.png)
 
 ## Demos on Youtube
-* [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw)
+* [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw?t=137)
 * [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
 
 
