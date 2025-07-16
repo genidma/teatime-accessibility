@@ -22,7 +22,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 
 ## Demos on Youtube
 * [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw)
-* [Shorter demo " " ](https://youtu.be/cgc0qMRA638)
+* [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
 
 
 ## Accessibility Features
