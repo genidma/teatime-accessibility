@@ -44,9 +44,8 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 
 ### Screen Reader Support
 - **Proper Labels**: All controls have descriptive labels
-- **Status Updates**: Status changes are announced to screen readers
-- **Role Definitions**: UI elements have proper ARIA roles
-- **Live Regions**: Timer updates are announced appropriately
+- **Status Updates**: Status changes are announced to screen readers (I have to test this)
+- **Live Regions**: Timer updates are announced visually and through the audio prompt (bell)
 
 ### Audio Accessibility
 - **Sound Notifications**: Audio feedback (bell 🔔 )at the completion of each session 
