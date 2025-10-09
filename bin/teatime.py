@@ -664,6 +664,7 @@ class StatisticsWindow(Gtk.Window):
         self.set_default_size(400, 300)
         self.set_transient_for(parent)
         self.set_modal(False)
+        self.set_maximizable(True)
         
         # Handle window close properly
         self.connect("delete-event", self._on_delete_event)
