@@ -48,6 +48,7 @@ class TeaTimerApp(Gtk.Application):
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
+        self._stats_window = None
         self.rainbow_hue = 0
         self._stats_window = None
         self.focus_hue = 0 # Hue for the focus glow, 0-359
@@ -243,8 +244,9 @@ class TeaTimerApp(Gtk.Application):
         # if the window doesn't exist yet, create it.
         if self._stats_window is None:
             self._stats_window = StatisticsWindow(application=self, parent=self.window)
-
-        # Present the window, which shows it and brings it to the front.
+        
+        # Make sure the window is visible and bring it to front
+        self._stats_window.show_all()
         self._stats_window.present()
 
     def _play_notification_sound(self):
