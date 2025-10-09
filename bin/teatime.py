@@ -231,7 +231,7 @@ class TeaTimerApp(Gtk.Application):
             "Adeel Khan (GitHub: genidma)",
             "Initial script by Claude AI",
             "Refinements by Gemini",
-            "Sound by Daniel Simion, https://soundbible.com/2218-Service-Bell-Help.html"
+            "Sound by Daniel Simion - https://soundbible.com/2218-Service-Bell-Help.html"
         ])
         about_dialog.set_logo_icon_name("accessories-clock")
         about_dialog.run()
