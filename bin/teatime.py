@@ -240,21 +240,14 @@ class TeaTimerApp(Gtk.Application):
 
     def on_stats_activated(self, widget):
         """Shows the Statistics window."""
-        print("Statistics menu item clicked")
         # Create a new StatisticsWindow instance
         # if the window doesn't exist yet, create it.
         if self._stats_window is None:
-            print("Creating new Statistics window")
             self._stats_window = StatisticsWindow(application=self, parent=self.window)
-            print("Statistics window created")
-        else:
-            print("Using existing Statistics window")
         
         # Make sure the window is visible and bring it to front
-        print("Showing Statistics window")
         self._stats_window.show_all()
         self._stats_window.present()
-        print("Statistics window should now be visible")
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
@@ -669,13 +662,11 @@ class TeaTimerApp(Gtk.Application):
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
-        print("Initializing Statistics window")
         super().__init__(title="Timer Statistics", application=application)
         self.set_default_size(400, 300)
         self.set_transient_for(parent)
         self.set_modal(False)
-        self.set_resizable(True)  # Changed from set_maximizable to set_resizable
-        print("Statistics window initialized")
+        self.set_resizable(True)
         
         # Handle window close properly
         self.connect("delete-event", self._on_delete_event)
