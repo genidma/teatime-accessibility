@@ -254,11 +254,7 @@ class TeaTimerApp(Gtk.Application):
         def play_sound_task():
             """Defines and tries different strategies to play a sound."""
             sound_files = [
-                "/usr/share/sounds/freedesktop/stereo/complete.oga",
-                "/usr/share/sounds/freedesktop/stereo/bell.oga",
-                "/usr/share/sounds/ubuntu/stereo/notification.ogg",
-                "/usr/share/sounds/alsa/Front_Right.wav",
-                "/usr/share/sounds/alsa/Front_Left.wav",
+                "service-bell_daniel_simion.wav",
             ]
 
             def strategy_paplay():
