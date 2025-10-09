@@ -48,14 +48,15 @@ else
 fi
 
 # --- Create Python Virtual Environment and Install Dependencies ---
-# We check for an existing 'venv' directory to avoid re-creating it on subsequent runs.
-if [ ! -d "teatime-venv" ]; then
-    echo "Creating Python virtual environment in 'teatime-venv/'..."
-    # The --system-site-packages flag is crucial. It allows the virtual environment
-    # to access system-level libraries like PyGObject (for GTK), which are
-    # best managed by the system's package manager (apt, dnf, etc.).
-    python3 -m venv --system-site-packages teatime-venv
-fi
+# Forcefully remove the existing virtual environment to ensure a clean setup.
+echo "Removing existing virtual environment if it exists..."
+rm -rf teatime-venv
+
+echo "Creating Python virtual environment in 'teatime-venv/'..."
+# The --system-site-packages flag is crucial. It allows the virtual environment
+# to access system-level libraries like PyGObject (for GTK), which are
+# best managed by the system's package manager (apt, dnf, etc.).
+python3 -m venv --system-site-packages teatime-venv
 
 echo "Activating virtual environment..."
 # We must activate the environment to ensure 'pip' installs packages into it.
