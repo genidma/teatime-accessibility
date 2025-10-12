@@ -153,11 +153,13 @@ class TeaTimerApp(Gtk.Application):
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
 
-            preset_45_button = Gtk.Button(label="45 Minutes")
+            preset_45_button = Gtk.Button(label="_45 Minutes")
+            preset_45_button.set_use_underline(True)
             preset_45_button.connect("clicked", self.on_preset_clicked, 45)
             presets_box.pack_start(preset_45_button, False, False, 0)
 
-            preset_1_hour_button = Gtk.Button(label="1 Hour")
+            preset_1_hour_button = Gtk.Button(label="_1 Hour")
+            preset_1_hour_button.set_use_underline(True)
             preset_1_hour_button.connect("clicked", self.on_preset_clicked, 60)
             presets_box.pack_start(preset_1_hour_button, False, False, 0)
 
@@ -375,6 +377,18 @@ class TeaTimerApp(Gtk.Application):
         self.add_action(decrease_action)
         self.set_accels_for_action("app.decrease-font", ["<Control>minus"])
 
+        # Statistics action
+        stats_action = Gio.SimpleAction.new("stats", None)
+        stats_action.connect("activate", self.on_stats_activated)
+        self.add_action(stats_action)
+        self.set_accels_for_action("app.stats", ["<Control>i"])
+
+        # Sound toggle action
+        sound_action = Gio.SimpleAction.new("toggle-sound", None)
+        sound_action.connect("activate", self.on_toggle_sound_activated)
+        self.add_action(sound_action)
+        self.set_accels_for_action("app.toggle-sound", ["<Control>m"])
+
         # Quit action
         quit_action = Gio.SimpleAction.new("quit", None)
         quit_action.connect("activate", lambda a, p: self.quit())
@@ -501,6 +515,11 @@ class TeaTimerApp(Gtk.Application):
             self._save_config()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
+
+    def on_toggle_sound_activated(self, *args):
+        """Handles the activation of the toggle-sound action, and toggles the sound_toggle button."""
+        if self.sound_toggle:
+            self.sound_toggle.set_active(not self.sound_toggle.get_active())
 
     def on_sound_toggled(self, button):
         """Toggle sound notifications on/off."""
@@ -700,17 +719,20 @@ class StatisticsWindow(Gtk.Window):
         main_box.pack_start(button_box, False, False, 0)
 
         # Refresh button
-        refresh_button = Gtk.Button(label="Refresh Statistics")
+        refresh_button = Gtk.Button(label="_Refresh Statistics")
+        refresh_button.set_use_underline(True)
         refresh_button.connect("clicked", self._on_refresh_clicked)
         button_box.pack_start(refresh_button, False, False, 0)
 
         # Export to CSV button
-        export_button = Gtk.Button(label="Export to CSV")
+        export_button = Gtk.Button(label="_Export to CSV")
+        export_button.set_use_underline(True)
         export_button.connect("clicked", self._on_export_clicked)
         button_box.pack_start(export_button, False, False, 0)
 
         # Clear History button
-        clear_button = Gtk.Button(label="Clear History")
+        clear_button = Gtk.Button(label="_Clear History")
+        clear_button.set_use_underline(True)
         clear_button.get_style_context().add_class("destructive-action") # Makes it red in many themes
         clear_button.connect("clicked", self._on_clear_history_clicked)
         button_box.pack_start(clear_button, False, False, 0)
