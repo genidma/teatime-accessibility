@@ -38,8 +38,12 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 - **Keyboard Shortcuts**:
   - `Ctrl+S`: Start timer
   - `Ctrl+T`: Stop timer
+  - `Ctrl+I`: Show Statistics window
+  - `Ctrl+M`: Toggle sound on/off
   - `Ctrl++`: Increase font size
   - `Ctrl+-`: Decrease font size
+  - `Ctrl+Q`: Quit the application
+- **Mnemonics**: Buttons can be activated with `Alt` + the underlined letter (e.g., `Alt+R` to Refresh Statistics).
 - **Focus Management**: Proper focus order and visual focus indicators
 
 ### Screen Reader Support
