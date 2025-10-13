@@ -631,6 +631,9 @@ class TeaTimerApp(Gtk.Application):
 
             # Play notification sound
             self._play_notification_sound()
+
+            # Show fullscreen notification
+            self._show_fullscreen_notification()
             
             # Log the completed timer
             self._log_timer_completion()
@@ -683,6 +686,45 @@ class TeaTimerApp(Gtk.Application):
         print(f"Preset selected: {minutes} minutes. Starting timer automatically.")
         # Automatically start the timer
         self.on_start_clicked()
+
+    def _show_fullscreen_notification(self):
+        """Displays a temporary, fullscreen notification."""
+        notification_window = Gtk.Window(type=Gtk.WindowType.POPUP)
+        notification_window.set_decorated(False)
+        notification_window.set_keep_above(True)
+        notification_window.fullscreen()
+
+        # A box to center the label
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        box.set_valign(Gtk.Align.CENTER)
+        notification_window.add(box)
+
+        # The message label
+        label = Gtk.Label()
+        label.set_markup("<span font_desc='Sans Bold 60px' foreground='white'>Session Complete</span>")
+        box.pack_start(label, True, True, 0)
+
+        # Set a dark, semi-transparent background for the window
+        css_provider = Gtk.CssProvider()
+        css = b"""
+        window {
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        """
+        css_provider.load_from_data(css)
+        context = notification_window.get_style_context()
+        context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+        notification_window.show_all()
+
+        # Automatically close the window after 10 seconds
+        GLib.timeout_add_seconds(10, self._close_fullscreen_notification, notification_window)
+
+    def _close_fullscreen_notification(self, notification_window):
+        """Callback to close the notification window."""
+        if notification_window:
+            notification_window.destroy()
+        return GLib.SOURCE_REMOVE
 
 
 class StatisticsWindow(Gtk.Window):
