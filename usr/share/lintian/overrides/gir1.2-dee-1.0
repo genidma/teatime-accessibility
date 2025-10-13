@@ -1,2 +1,0 @@
-# opportunistic python bindings, we should not pull in python for this
-gir1.2-dee-1.0: python-package-missing-depends-on-python
