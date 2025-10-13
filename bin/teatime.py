@@ -14,7 +14,7 @@ import threading
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk, Pango  # MOVE THIS LINE HERE
+from gi.repository import Gtk, GLib, Gio, Gdk, Pango
 
 import argparse
 
@@ -76,13 +76,22 @@ class TeaTimerApp(Gtk.Application):
 
             # Create a menu for the "About" option
             about_menu = Gtk.Menu()
-            stats_item = Gtk.MenuItem(label="Statistics")
+            stats_item = Gtk.MenuItem(label="_Statistics")
+            stats_item.set_use_underline(True)
             stats_item.connect("activate", self.on_stats_activated)
-            about_item = Gtk.MenuItem(label="About")
-            about_item.connect("activate", self.on_about_activated)
             about_menu.append(stats_item)
+
+            about_item = Gtk.MenuItem(label="_About")
+            about_item.set_use_underline(True)
+            about_item.connect("activate", self.on_about_activated)
             about_menu.append(about_item)
             about_menu.show_all()
+
+            # Add an accelerator for the statistics menu item.
+            accel_group = Gtk.AccelGroup()
+            self.window.add_accel_group(accel_group)
+            stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+
 
             # Create a menu button and add it to the header bar
             menu_button = Gtk.MenuButton(popup=about_menu)
@@ -128,8 +137,10 @@ class TeaTimerApp(Gtk.Application):
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
             # Row 1: Control buttons
-            self.start_button = Gtk.Button(label="Start")
-            self.stop_button = Gtk.Button(label="Stop")
+            self.start_button = Gtk.Button(label="_Start")
+            self.start_button.set_use_underline(True)
+            self.stop_button = Gtk.Button(label="_Stop")
+            self.stop_button.set_use_underline(True)
             grid.attach(self.start_button, 0, 1, 1, 1)
             grid.attach(self.stop_button, 1, 1, 1, 1)
 
@@ -140,7 +151,8 @@ class TeaTimerApp(Gtk.Application):
             grid.attach(self.increase_font_button, 1, 2, 1, 1)
 
             # Row 3: Sound toggle (spans both columns)
-            self.sound_toggle = Gtk.CheckButton(label="Enable Sound")
+            self.sound_toggle = Gtk.CheckButton(label="_Enable Sound")
+            self.sound_toggle.set_use_underline(True)
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
 
@@ -240,7 +252,7 @@ class TeaTimerApp(Gtk.Application):
         about_dialog.run()
         about_dialog.destroy()
 
-    def on_stats_activated(self, widget):
+    def on_stats_activated(self, *args):
         """Shows the Statistics window."""
         # Create a new StatisticsWindow instance
         # if the window doesn't exist yet, create it.
@@ -289,7 +301,7 @@ class TeaTimerApp(Gtk.Application):
             def strategy_system_beep():
                 # A simple, reliable fallback
                 try:
-                    print("\a", end="", flush=True)
+                    print("", end="", flush=True)
                     return True
                 except:
                     return False
@@ -376,12 +388,6 @@ class TeaTimerApp(Gtk.Application):
         decrease_action.connect("activate", self.on_decrease_font_clicked)
         self.add_action(decrease_action)
         self.set_accels_for_action("app.decrease-font", ["<Control>minus"])
-
-        # Statistics action
-        stats_action = Gio.SimpleAction.new("stats", None)
-        stats_action.connect("activate", self.on_stats_activated)
-        self.add_action(stats_action)
-        self.set_accels_for_action("app.stats", ["<Control>i"])
 
         # Sound toggle action
         sound_action = Gio.SimpleAction.new("toggle-sound", None)
@@ -570,7 +576,7 @@ class TeaTimerApp(Gtk.Application):
             print(f"Warning: Could not update accessibility description: {e}")
 
     def on_stop_clicked(self, *args):
-        # Stop any rainbow effect
+        # Stop any previous rainbow effect
         self._stop_rainbow_timer()
         self.time_label.get_style_context().remove_class("rainbow-text")
         self._apply_font_size() # Reset color
