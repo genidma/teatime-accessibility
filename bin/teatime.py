@@ -717,8 +717,16 @@ class TeaTimerApp(Gtk.Application):
 
         notification_window.show_all()
 
-        # Automatically close the window after 10 seconds
-        GLib.timeout_add_seconds(10, self._close_fullscreen_notification, notification_window)
+        # Connect click event to close the window
+        notification_window.connect("button-press-event", self._on_notification_clicked)
+
+        # Automatically close the window after 5 seconds
+        GLib.timeout_add_seconds(5, self._close_fullscreen_notification, notification_window)
+
+    def _on_notification_clicked(self, widget, event):
+        """Close the notification window on click."""
+        print("Notification clicked, closing.")
+        self._close_fullscreen_notification(widget)
 
     def _close_fullscreen_notification(self, notification_window):
         """Callback to close the notification window."""
