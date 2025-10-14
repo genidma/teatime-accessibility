@@ -755,10 +755,10 @@ class StatisticsWindow(Gtk.Window):
 
         # Summary Labels
         self.summary_grid = Gtk.Grid(column_spacing=10, row_spacing=5, margin=10)
-        self.total_breaks_label = Gtk.Label(label="Total Breaks: 0")
+        self.total_sessions_label = Gtk.Label(label="Total Sessions: 0")
         self.total_time_label = Gtk.Label(label="Total Time: 0 minutes")
         self.avg_duration_label = Gtk.Label(label="Average Duration: 0 minutes")
-        self.summary_grid.attach(self.total_breaks_label, 0, 0, 1, 1)
+        self.summary_grid.attach(self.total_sessions_label, 0, 0, 1, 1)
         self.summary_grid.attach(self.total_time_label, 1, 0, 1, 1)
         self.summary_grid.attach(self.avg_duration_label, 0, 1, 2, 1)
         main_box.pack_start(self.summary_grid, False, False, 0)
@@ -953,7 +953,7 @@ class StatisticsWindow(Gtk.Window):
 
     def _reset_summary_labels(self):
         """Resets the summary labels to their default state."""
-        self.total_breaks_label.set_text("Total Breaks: 0")
+        self.total_sessions_label.set_text("Total Sessions: 0")
         self.total_time_label.set_text("Total Time: 0 minutes")
         self.avg_duration_label.set_text("Average Duration: 0 minutes")
 
@@ -1003,7 +1003,7 @@ class StatisticsWindow(Gtk.Window):
             total_duration += duration
 
         # Update summary
-        self.total_breaks_label.set_text(f"Total Breaks: {len(sorted_logs)}")
+        self.total_sessions_label.set_text(f"Total Sessions: {len(sorted_logs)}")
         self.total_time_label.set_text(f"Total Time: {total_duration} minutes")
         if sorted_logs:
             avg_duration = total_duration / len(sorted_logs)
