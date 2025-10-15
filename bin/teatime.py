@@ -835,6 +835,7 @@ class TeaTimerApp(Gtk.Application):
 
     def _create_sprite_window(self):
         """Create a window to display the sprite animation."""
+        print("Creating sprite window...")
         if self.sprite_window is None:
             self.sprite_window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
             self.sprite_window.set_decorated(False)
@@ -843,18 +844,21 @@ class TeaTimerApp(Gtk.Application):
             
             # Center the window
             self.sprite_window.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+            print("Sprite window created and positioned")
             
             # Create drawing area for sprite
             self.sprite_drawing_area = Gtk.DrawingArea()
             self.sprite_drawing_area.connect("draw", self._on_sprite_draw)
             
             self.sprite_window.add(self.sprite_drawing_area)
+            print("Drawing area added to sprite window")
             
             # Make window background transparent
             screen = self.sprite_window.get_screen()
             visual = screen.get_rgba_visual()
             if visual and screen.is_composited():
                 self.sprite_window.set_visual(visual)
+                print("Set RGBA visual for transparency")
             
             css_provider = Gtk.CssProvider()
             css = b"""
@@ -865,53 +869,72 @@ class TeaTimerApp(Gtk.Application):
             css_provider.load_from_data(css)
             context = self.sprite_window.get_style_context()
             context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            print("Applied CSS for transparent background")
 
     def _on_sprite_draw(self, widget, cr):
         """Draw the current sprite frame."""
+        print(f"Drawing sprite frame {self.current_sprite_frame}")
         if self.sprite_frames and 0 <= self.current_sprite_frame < len(self.sprite_frames):
-            alloc = widget.get_allocation()
-            pixbuf = self.sprite_frames[self.current_sprite_frame]
-            
-            # Scale pixbuf to fit allocation while maintaining aspect ratio
-            pixbuf_width = pixbuf.get_width()
-            pixbuf_height = pixbuf.get_height()
-            
-            scale_x = alloc.width / pixbuf_width
-            scale_y = alloc.height / pixbuf_height
-            scale = min(scale_x, scale_y, 1.0)  # Don't upscale
-            
-            scaled_width = int(pixbuf_width * scale)
-            scaled_height = int(pixbuf_height * scale)
-            
-            # Center the image
-            x = (alloc.width - scaled_width) // 2
-            y = (alloc.height - scaled_height) // 2
-            
-            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-            Gdk.cairo_set_source_pixbuf(cr, scaled_pixbuf, x, y)
-            cr.paint()
+            try:
+                alloc = widget.get_allocation()
+                pixbuf = self.sprite_frames[self.current_sprite_frame]
+                
+                # Scale pixbuf to fit allocation while maintaining aspect ratio
+                pixbuf_width = pixbuf.get_width()
+                pixbuf_height = pixbuf.get_height()
+                
+                scale_x = alloc.width / pixbuf_width
+                scale_y = alloc.height / pixbuf_height
+                scale = min(scale_x, scale_y, 1.0)  # Don't upscale
+                
+                scaled_width = int(pixbuf_width * scale)
+                scaled_height = int(pixbuf_height * scale)
+                
+                # Center the image
+                x = (alloc.width - scaled_width) // 2
+                y = (alloc.height - scaled_height) // 2
+                
+                scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+                # Use a different approach to draw the pixbuf
+                Gdk.cairo_set_source_pixbuf(cr, scaled_pixbuf, x, y)
+                cr.paint()
+                print(f"Sprite frame {self.current_sprite_frame} drawn successfully")
+            except Exception as e:
+                print(f"Error drawing sprite frame: {e}")
+                # Draw a simple rectangle as fallback
+                cr.set_source_rgb(1, 0, 0)  # Red color
+                cr.rectangle(10, 10, alloc.width - 20, alloc.height - 20)
+                cr.fill()
+        else:
+            print(f"Skipping draw - no valid sprite frame (current: {self.current_sprite_frame}, total: {len(self.sprite_frames) if self.sprite_frames else 0})")
         
         return False
 
     def _start_sprite_animation(self):
         """Start the sprite animation loop."""
+        print(f"Starting sprite animation with {len(self.sprite_frames)} frames")
         if self.sprite_frames:
             self.current_sprite_frame = 0
+            print("Showing sprite window...")
             self.sprite_window.show_all()
+            print("Sprite window shown")
             
             # Start animation timer (adjust speed as needed)
             if self.sprite_timer_id:
                 GLib.source_remove(self.sprite_timer_id)
             
             self.sprite_timer_id = GLib.timeout_add(100, self._update_sprite_frame)  # 10 FPS
+            print("Sprite animation timer started")
             
             # Auto-close after 5 seconds
             GLib.timeout_add_seconds(5, self._close_sprite_animation)
+            print("Sprite auto-close timer set")
 
     def _update_sprite_frame(self):
         """Update to the next sprite frame."""
         if self.sprite_frames:
             self.current_sprite_frame = (self.current_sprite_frame + 1) % len(self.sprite_frames)
+            print(f"Updated to sprite frame {self.current_sprite_frame}")
             if hasattr(self, 'sprite_drawing_area'):
                 self.sprite_drawing_area.queue_draw()
             return GLib.SOURCE_CONTINUE
@@ -919,13 +942,16 @@ class TeaTimerApp(Gtk.Application):
 
     def _close_sprite_animation(self):
         """Close the sprite animation window."""
+        print("Closing sprite animation")
         if self.sprite_timer_id:
             GLib.source_remove(self.sprite_timer_id)
             self.sprite_timer_id = None
+            print("Sprite timer removed")
             
         if self.sprite_window:
             self.sprite_window.destroy()
             self.sprite_window = None
+            print("Sprite window destroyed")
             
         return GLib.SOURCE_REMOVE
 
