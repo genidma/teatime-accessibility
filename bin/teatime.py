@@ -754,8 +754,14 @@ class TeaTimerApp(Gtk.Application):
         print(f"Found {len(frame_files)} frame files: {frame_files}")
         
         if frame_files:
-            # Sort frames by number
-            frame_files.sort(key=lambda x: int(''.join(filter(str.isdigit, x.name))))
+            # Sort frames by number, handling cases where there might not be digits
+            def extract_number(filename):
+                # Extract all digits from the filename
+                digits = ''.join(filter(str.isdigit, filename.name))
+                # Return 0 if no digits found, otherwise convert to int
+                return int(digits) if digits else 0
+                
+            frame_files.sort(key=extract_number)
             for frame_file in frame_files:
                 try:
                     print(f"Loading sprite frame: {frame_file}")
@@ -833,7 +839,7 @@ class TeaTimerApp(Gtk.Application):
             self.sprite_window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
             self.sprite_window.set_decorated(False)
             self.sprite_window.set_keep_above(True)
-            self.sprite_window.set_default_size(250, 250)
+            self.sprite_window.set_default_size(300, 300)
             
             # Center the window
             self.sprite_window.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
@@ -897,7 +903,7 @@ class TeaTimerApp(Gtk.Application):
             if self.sprite_timer_id:
                 GLib.source_remove(self.sprite_timer_id)
             
-            self.sprite_timer_id = GLib.timeout_add(200, self._update_sprite_frame)  # 5 FPS
+            self.sprite_timer_id = GLib.timeout_add(100, self._update_sprite_frame)  # 10 FPS
             
             # Auto-close after 5 seconds
             GLib.timeout_add_seconds(5, self._close_sprite_animation)
