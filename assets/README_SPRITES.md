@@ -31,6 +31,10 @@ Create individual PNG images and name them:
 
 The application will display them in alphabetical/numerical order.
 
+## Test Sprites
+
+This directory includes a set of test sprites (`sprite_frame_00.png` through `sprite_frame_11.png`) that demonstrate a simple animated circle moving in a circular pattern with changing colors. These were automatically generated and can be used to test the sprite functionality.
+
 ## Requirements
 
 - Frames should be PNG format for best compatibility

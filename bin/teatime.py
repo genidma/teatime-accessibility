@@ -747,13 +747,18 @@ class TeaTimerApp(Gtk.Application):
         sprite_frames = []
         assets_dir = Path(__file__).parent.parent / "assets"
         
+        print(f"Looking for sprites in: {assets_dir}")
+        
         # Look for individual frame files
         frame_files = list(assets_dir.glob("sprite_frame_*.png"))
+        print(f"Found {len(frame_files)} frame files: {frame_files}")
+        
         if frame_files:
             # Sort frames by number
             frame_files.sort(key=lambda x: int(''.join(filter(str.isdigit, x.name))))
             for frame_file in frame_files:
                 try:
+                    print(f"Loading sprite frame: {frame_file}")
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(frame_file))
                     sprite_frames.append(pixbuf)
                 except Exception as e:
@@ -761,17 +766,38 @@ class TeaTimerApp(Gtk.Application):
         else:
             # Try to find a GIF file and split it into frames
             gif_files = list(assets_dir.glob("*.gif"))
+            print(f"Found {len(gif_files)} GIF files: {gif_files}")
+            
             if gif_files:
-                # For simplicity, we'll just note that we found a GIF
-                # In a full implementation, we would use external tools or libraries to split it
-                print(f"Found GIF file(s): {gif_files}")
-                print("To use sprite animations, please convert GIF to PNG frames named sprite_frame_00.png, sprite_frame_01.png, etc.")
+                # Try to load frames from the first GIF file found
+                try:
+                    gif_path = str(gif_files[0])
+                    print(f"Loading sprite from GIF: {gif_path}")
+                    # Load the GIF as an animation
+                    animation = GdkPixbuf.PixbufAnimation.new_from_file(gif_path)
+                    # For simplicity, we'll just use the first frame for now
+                    # A full implementation would extract all frames
+                    iter = animation.get_iter(None)
+                    pixbuf = iter.get_pixbuf()
+                    if pixbuf:
+                        sprite_frames.append(pixbuf)
+                        print(f"Loaded sprite from GIF: {gif_files[0].name}")
+                except Exception as e:
+                    print(f"Could not load GIF file {gif_files[0]}: {e}")
+                    print("To use sprite animations, please convert GIF to PNG frames named sprite_frame_00.png, sprite_frame_01.png, etc.")
         
         # Also check for the sample image in assets
         image_files = list(assets_dir.glob("*.png")) + list(assets_dir.glob("*.jpg"))
+        # Filter out the sprite frames we already processed
+        image_files = [f for f in image_files if not f.name.startswith("sprite_frame_")]
+        print(f"Found {len(image_files)} other image files: {image_files}")
+        
         if image_files and not sprite_frames:
             # If we have an image but no sprite frames, use the image as a static sprite
             try:
+                # Sort to get a consistent result
+                image_files.sort()
+                print(f"Using {image_files[0]} as static sprite")
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                     str(image_files[0]), 200, 200, True)
                 sprite_frames.append(pixbuf)
@@ -779,18 +805,27 @@ class TeaTimerApp(Gtk.Application):
             except Exception as e:
                 print(f"Could not load image {image_files[0]}: {e}")
         
+        if sprite_frames:
+            print(f"Loaded {len(sprite_frames)} sprite frames")
+        else:
+            print("No sprite frames loaded")
+        
         return sprite_frames
 
     def _show_sprite_animation(self):
         """Display sprite animation when timer completes."""
+        print("Attempting to show sprite animation")
         # Load sprite frames if not already loaded
         if not self.sprite_frames:
             self.sprite_frames = self._load_sprite_frames()
         
+        print(f"Sprite frames available: {len(self.sprite_frames)}")
         # Only show animation if we have frames
         if self.sprite_frames:
             self._create_sprite_window()
             self._start_sprite_animation()
+        else:
+            print("No sprite frames to display")
 
     def _create_sprite_window(self):
         """Create a window to display the sprite animation."""
