@@ -14,7 +14,7 @@ import threading
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk, Pango
+from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 
 import argparse
 
@@ -52,6 +52,10 @@ class TeaTimerApp(Gtk.Application):
         self.rainbow_hue = 0
         self._stats_window = None
         self.focus_hue = 0 # Hue for the focus glow, 0-359
+        self.sprite_window = None  # Reference to sprite animation window
+        self.sprite_frames = []    # Storage for sprite frames
+        self.current_sprite_frame = 0
+        self.sprite_timer_id = None
         self._load_config()  # Load settings from file
         # Set up keyboard shortcuts
         self._setup_actions()
@@ -644,6 +648,9 @@ class TeaTimerApp(Gtk.Application):
             # Show fullscreen notification
             self._show_fullscreen_notification()
             
+            # Show sprite animation if available
+            self._show_sprite_animation()
+            
             # Log the completed timer
             self._log_timer_completion()
             
@@ -732,10 +739,160 @@ class TeaTimerApp(Gtk.Application):
         # Automatically close the window after 5 seconds
         GLib.timeout_add_seconds(5, self._close_fullscreen_notification, notification_window)
 
+    def _load_sprite_frames(self):
+        """
+        Load sprite frames from the assets directory.
+        Looks for files with pattern 'sprite_frame_*.png' or converts GIF to frames.
+        """
+        sprite_frames = []
+        assets_dir = Path(__file__).parent.parent / "assets"
+        
+        # Look for individual frame files
+        frame_files = list(assets_dir.glob("sprite_frame_*.png"))
+        if frame_files:
+            # Sort frames by number
+            frame_files.sort(key=lambda x: int(''.join(filter(str.isdigit, x.name))))
+            for frame_file in frame_files:
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(frame_file))
+                    sprite_frames.append(pixbuf)
+                except Exception as e:
+                    print(f"Could not load sprite frame {frame_file}: {e}")
+        else:
+            # Try to find a GIF file and split it into frames
+            gif_files = list(assets_dir.glob("*.gif"))
+            if gif_files:
+                # For simplicity, we'll just note that we found a GIF
+                # In a full implementation, we would use external tools or libraries to split it
+                print(f"Found GIF file(s): {gif_files}")
+                print("To use sprite animations, please convert GIF to PNG frames named sprite_frame_00.png, sprite_frame_01.png, etc.")
+        
+        # Also check for the sample image in assets
+        image_files = list(assets_dir.glob("*.png")) + list(assets_dir.glob("*.jpg"))
+        if image_files and not sprite_frames:
+            # If we have an image but no sprite frames, use the image as a static sprite
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    str(image_files[0]), 200, 200, True)
+                sprite_frames.append(pixbuf)
+                print(f"Using {image_files[0].name} as static sprite")
+            except Exception as e:
+                print(f"Could not load image {image_files[0]}: {e}")
+        
+        return sprite_frames
+
+    def _show_sprite_animation(self):
+        """Display sprite animation when timer completes."""
+        # Load sprite frames if not already loaded
+        if not self.sprite_frames:
+            self.sprite_frames = self._load_sprite_frames()
+        
+        # Only show animation if we have frames
+        if self.sprite_frames:
+            self._create_sprite_window()
+            self._start_sprite_animation()
+
+    def _create_sprite_window(self):
+        """Create a window to display the sprite animation."""
+        if self.sprite_window is None:
+            self.sprite_window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
+            self.sprite_window.set_decorated(False)
+            self.sprite_window.set_keep_above(True)
+            self.sprite_window.set_default_size(250, 250)
+            
+            # Center the window
+            self.sprite_window.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+            
+            # Create drawing area for sprite
+            self.sprite_drawing_area = Gtk.DrawingArea()
+            self.sprite_drawing_area.connect("draw", self._on_sprite_draw)
+            
+            self.sprite_window.add(self.sprite_drawing_area)
+            
+            # Make window background transparent
+            screen = self.sprite_window.get_screen()
+            visual = screen.get_rgba_visual()
+            if visual and screen.is_composited():
+                self.sprite_window.set_visual(visual)
+            
+            css_provider = Gtk.CssProvider()
+            css = b"""
+            window {
+                background-color: rgba(0, 0, 0, 0);
+            }
+            """
+            css_provider.load_from_data(css)
+            context = self.sprite_window.get_style_context()
+            context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def _on_sprite_draw(self, widget, cr):
+        """Draw the current sprite frame."""
+        if self.sprite_frames and 0 <= self.current_sprite_frame < len(self.sprite_frames):
+            alloc = widget.get_allocation()
+            pixbuf = self.sprite_frames[self.current_sprite_frame]
+            
+            # Scale pixbuf to fit allocation while maintaining aspect ratio
+            pixbuf_width = pixbuf.get_width()
+            pixbuf_height = pixbuf.get_height()
+            
+            scale_x = alloc.width / pixbuf_width
+            scale_y = alloc.height / pixbuf_height
+            scale = min(scale_x, scale_y, 1.0)  # Don't upscale
+            
+            scaled_width = int(pixbuf_width * scale)
+            scaled_height = int(pixbuf_height * scale)
+            
+            # Center the image
+            x = (alloc.width - scaled_width) // 2
+            y = (alloc.height - scaled_height) // 2
+            
+            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+            Gdk.cairo_set_source_pixbuf(cr, scaled_pixbuf, x, y)
+            cr.paint()
+        
+        return False
+
+    def _start_sprite_animation(self):
+        """Start the sprite animation loop."""
+        if self.sprite_frames:
+            self.current_sprite_frame = 0
+            self.sprite_window.show_all()
+            
+            # Start animation timer (adjust speed as needed)
+            if self.sprite_timer_id:
+                GLib.source_remove(self.sprite_timer_id)
+            
+            self.sprite_timer_id = GLib.timeout_add(200, self._update_sprite_frame)  # 5 FPS
+            
+            # Auto-close after 5 seconds
+            GLib.timeout_add_seconds(5, self._close_sprite_animation)
+
+    def _update_sprite_frame(self):
+        """Update to the next sprite frame."""
+        if self.sprite_frames:
+            self.current_sprite_frame = (self.current_sprite_frame + 1) % len(self.sprite_frames)
+            if hasattr(self, 'sprite_drawing_area'):
+                self.sprite_drawing_area.queue_draw()
+            return GLib.SOURCE_CONTINUE
+        return GLib.SOURCE_REMOVE
+
+    def _close_sprite_animation(self):
+        """Close the sprite animation window."""
+        if self.sprite_timer_id:
+            GLib.source_remove(self.sprite_timer_id)
+            self.sprite_timer_id = None
+            
+        if self.sprite_window:
+            self.sprite_window.destroy()
+            self.sprite_window = None
+            
+        return GLib.SOURCE_REMOVE
+
     def _on_notification_clicked(self, widget, event):
         """Close the notification window on click."""
         print("Notification clicked, closing.")
         self._close_fullscreen_notification(widget)
+        self._close_sprite_animation()
 
     def _close_fullscreen_notification(self, notification_window):
         """Callback to close the notification window."""
