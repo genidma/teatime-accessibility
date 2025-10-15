@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+from pathlib import Path
+
+# Add the bin directory to the path so we can import the TeaTimerApp
+sys.path.insert(0, str(Path(__file__).parent / "bin"))
+
+from teatime import TeaTimerApp
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GLib
+
+class TestSpriteApp:
+    def __init__(self):
+        self.app = TeaTimerApp()
+        
+    def run_test(self):
+        # Activate the application
+        self.app.do_activate()
+        
+        # Set a 5-second timer for testing
+        self.app.duration_spin.set_value(5/60)  # 5 seconds in minutes
+        self.app.on_start_clicked()
+        
+        # Start the GTK main loop
+        Gtk.main()
+
+if __name__ == "__main__":
+    test_app = TestSpriteApp()
+    test_app.run_test()
