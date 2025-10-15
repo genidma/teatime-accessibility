@@ -124,5 +124,3 @@ The application consists of:
 
 ## License
 Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is significantly different with a different licensing policy.
-
-This is a test commit to verify GPG signing.
