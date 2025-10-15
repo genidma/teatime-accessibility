@@ -748,12 +748,12 @@ class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
         super().__init__(title="Timer Statistics", application=application)
         self.set_default_size(400, 300)
-        self.set_transient_for(parent)
         self.set_modal(False)
         self.set_resizable(True)
         # Ensure window decorations including maximize button are displayed
         self.set_type_hint(Gdk.WindowTypeHint.NORMAL)
-        
+        self.set_decorated(True)
+        self.set_role("statistics-window")
         # Handle window close properly
         self.connect("delete-event", self._on_delete_event)
 
