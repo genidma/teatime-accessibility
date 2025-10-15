@@ -131,8 +131,17 @@ class TeaTimerApp(Gtk.Application):
             self.duration_spin.set_value(self.last_duration)
             # Manually set a large, fixed font size for the spin button's input
             # This is independent of the CSS scaling for user preference.
-            font_desc = Pango.FontDescription("Sans Bold 24")
-            self.duration_spin.override_font(font_desc)
+            # Using CSS provider instead of deprecated override_font method
+            css_provider = Gtk.CssProvider()
+            css_provider.load_from_data(b"""
+                spinbutton entry {
+                    font-family: Sans;
+                    font-weight: bold;
+                    font-size: 24px;
+                }
+            """)
+            context = self.duration_spin.get_style_context()
+            context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
             grid.attach(duration_label, 0, 0, 1, 1)
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
@@ -742,6 +751,8 @@ class StatisticsWindow(Gtk.Window):
         self.set_transient_for(parent)
         self.set_modal(False)
         self.set_resizable(True)
+        # Ensure window decorations including maximize button are displayed
+        self.set_type_hint(Gdk.WindowTypeHint.NORMAL)
         
         # Handle window close properly
         self.connect("delete-event", self._on_delete_event)
@@ -948,7 +959,6 @@ class StatisticsWindow(Gtk.Window):
 
     def _on_refresh_clicked(self, button):
         """Handle refresh button click."""
-        print("Refreshing statistics...")
         self._load_stats()
 
     def _reset_summary_labels(self):
