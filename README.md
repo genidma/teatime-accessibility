@@ -117,7 +117,7 @@ If you prefer to install manually:
    cp teatime-accessibility.desktop ~/.local/share/applications/
    ```
 
-After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu.
+After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. If you choose to create a desktop shortcut during the setup process, you can also launch the app directly from your desktop in future instances.
 
 ## Usage
 
