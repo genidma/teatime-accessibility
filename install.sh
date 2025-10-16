@@ -174,6 +174,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Create desktop shortcut by copying the desktop entry
     cp "$DESKTOP_DIR/teatime-accessibility.desktop" "$DESKTOP_SHORTCUT_DIR/"
     echo "Desktop shortcut created at $DESKTOP_SHORTCUT_DIR/teatime-accessibility.desktop"
+    echo ""
+    echo "NOTE: To launch the application from the desktop shortcut:"
+    echo "  1. Navigate to your desktop"
+    echo "  2. Right-click on the 'TeaTime Accessibility' icon"
+    echo "  3. Select 'Allow Launching' from the context menu"
+    echo "  4. Double-click the icon to launch the application"
 fi
 
 # Make the launcher script executable

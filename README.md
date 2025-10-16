@@ -118,8 +118,13 @@ If you prefer to install manually:
    mkdir -p ~/.local/share/applications
    cp teatime-accessibility.desktop ~/.local/share/applications/
    ```
+   
+   You can also create a desktop shortcut for direct access:
+   ```bash
+   cp teatime-accessibility.desktop ~/Desktop/
+   ```
 
-After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. If you choose to create a desktop shortcut during the installation process, you can also launch the app directly from your desktop in future instances.
+After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. The desktop entry will be created at `~/.local/share/applications/teatime-accessibility.desktop`. If you choose to create a desktop shortcut during the installation process, you can also launch the app directly from your desktop in future instances.
 
 ## Installation Locations
 
@@ -181,7 +186,7 @@ If you chose to create a desktop shortcut during installation:
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
-Note: The virtual environment has been created in the project directory and does not need to be recreated unless you run the uninstall script. Also, to launch the application from the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu.
+Note: The virtual environment is created in the project directory and persists between sessions. It only needs to be recreated if you manually delete it or run the uninstall script. For the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu before you can use it to start the application.
 
 ### Command Line Options - broken at the moment. tracked in issue.
 ```bash
