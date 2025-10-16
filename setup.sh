@@ -66,13 +66,50 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 fi
 
-# Install required packages
+# Try to install required packages
 if [ -f "requirements.txt" ]; then
     echo "Installing required packages from requirements.txt..."
-    pip install -r requirements.txt
+    if ! pip install -r requirements.txt; then
+        echo "Failed to install packages from requirements.txt"
+        echo "Trying alternative installation method..."
+        
+        # Try installing system-wide PyGObject and then creating a virtual environment that can access it
+        echo "Installing PyGObject system-wide..."
+        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
+        
+        echo "Creating virtual environment with system site packages..."
+        # Deactivate current venv
+        deactivate 2>/dev/null || true
+        
+        # Remove existing venv
+        rm -rf "$VENV_DIR"
+        
+        # Create new venv with access to system packages
+        python3 -m venv "$VENV_DIR" --system-site-packages
+        source "$VENV_DIR/bin/activate"
+        
+        echo "Virtual environment with system packages created"
+    fi
 else
     echo "No requirements.txt found, installing PyGObject directly..."
-    pip install PyGObject
+    if ! pip install PyGObject; then
+        echo "Failed to install PyGObject"
+        echo "Installing system-wide PyGObject..."
+        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
+        
+        echo "Creating virtual environment with system site packages..."
+        # Deactivate current venv
+        deactivate 2>/dev/null || true
+        
+        # Remove existing venv
+        rm -rf "$VENV_DIR"
+        
+        # Create new venv with access to system packages
+        python3 -m venv "$VENV_DIR" --system-site-packages
+        source "$VENV_DIR/bin/activate"
+        
+        echo "Virtual environment with system packages created"
+    fi
 fi
 
 # Check if required packages are installed
@@ -82,7 +119,7 @@ if python3 -c "import gi; print('PyGObject is installed')" &> /dev/null; then
 else
     echo "Warning: PyGObject verification failed"
     echo "You might need to install system dependencies:"
-    echo "  sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0"
+    echo "  sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0"
 fi
 
 # Create/update desktop entry

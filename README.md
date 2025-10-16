@@ -75,6 +75,12 @@ Before running the setup script, install the required system dependencies:
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 ```
 
+For better compatibility, we also recommend installing the system-wide PyGObject packages:
+
+```bash
+sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
+```
+
 ### Automatic Setup (Recommended)
 Run the setup script:
 
@@ -83,7 +89,7 @@ Run the setup script:
 ```
 
 This script will:
-1. Create a virtual environment (if one doesn't already exist)
+1. Create a virtual environment with access to system packages (if one doesn't already exist)
 2. Install all required dependencies
 3. Create a desktop entry for easy access
 4. Make the launcher script executable
@@ -93,13 +99,13 @@ The setup script will also prompt you to install system dependencies if needed.
 ### Manual Setup
 If you prefer to install manually:
 
-1. Create a virtual environment:
+1. Create a virtual environment with access to system packages:
    ```bash
-   python3 -m venv teatime-venv
+   python3 -m venv teatime-venv --system-site-packages
    source teatime-venv/bin/activate
    ```
 
-2. Install dependencies:
+2. Install dependencies (if needed):
    ```bash
    pip install -r requirements.txt
    ```

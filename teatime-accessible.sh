@@ -9,6 +9,13 @@ is_venv_active() {
     [[ -n "$VIRTUAL_ENV" ]]
 }
 
+# Create a virtual environment with system packages if it doesn't exist
+if [ ! -f "teatime-venv/bin/activate" ]; then
+    echo "Creating virtual environment with system packages..."
+    python3 -m venv --system-site-packages teatime-venv
+    echo "Virtual environment created"
+fi
+
 # Activate the virtual environment if it exists and is not already active
 if [ -f "teatime-venv/bin/activate" ] && ! is_venv_active; then
     echo "Activating virtual environment..."
