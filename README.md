@@ -163,11 +163,12 @@ This approach keeps everything contained within your project directory while pro
 After installation, you can run the application in one of the following ways:
 
 ### Option 1: Main 'Activities Menu'
-1. Click on the 'Activities Menu' in Ubuntu Desktop
+1. Click on the 'Activities Menu' in Ubuntu Desktop. Highlighted with a Green Rectangle (with circular edges in the screenshot below)
 
    ![Activities Menu](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu.png)
    
-2. Look for "TeaTime Accessibility" under the "Utilities" category
+2. Depending on how many apps you have installed on your computer, you might have to scroll to the following views. For me the icon appears on the second page and when I scroll. See the screenshot below for visual representation. Where 1. represents the mechanism via which you can scroll through the views. 2. Represents the icon for this application.
+   ![Activities Menu Scroll](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu-scroll.png)
 3. Click on the application icon to launch it
 
 ### Option 2: Desktop Shortcut
