@@ -666,11 +666,8 @@ class TeaTimerApp(Gtk.Application):
             # Play notification sound
             self._play_notification_sound()
 
-            # Show fullscreen notification
+            # Show fullscreen notification with embedded sprite animation
             self._show_fullscreen_notification()
-            
-            # Show sprite animation if available
-            self._show_sprite_animation()
             
             # Log the completed timer
             self._log_timer_completion()
@@ -725,21 +722,39 @@ class TeaTimerApp(Gtk.Application):
         self.on_start_clicked()
 
     def _show_fullscreen_notification(self):
-        """Displays a temporary, fullscreen notification."""
+        """Displays a temporary, fullscreen notification with sprite animation."""
         notification_window = Gtk.Window(type=Gtk.WindowType.POPUP)
         notification_window.set_decorated(False)
         notification_window.set_keep_above(True)
         notification_window.fullscreen()
 
-        # A box to center the label
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        box.set_valign(Gtk.Align.CENTER)
-        notification_window.add(box)
+        # A box to center the content vertically
+        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        main_box.set_valign(Gtk.Align.CENTER)
+        notification_window.add(main_box)
 
         # The message label
         label = Gtk.Label()
         label.set_markup("<span font_desc='Sans Bold 60px' foreground='white'>Session Complete</span>")
-        box.pack_start(label, True, True, 0)
+        main_box.pack_start(label, False, False, 0)
+        
+        # Load sprite frames if not already loaded
+        if not self.sprite_frames:
+            self.sprite_frames = self._load_sprite_frames()
+        
+        # Add sprite animation if frames are available
+        if self.sprite_frames:
+            self.current_sprite_frame = 0  # Reset to first frame
+            self.sprite_drawing_area = Gtk.DrawingArea()
+            self.sprite_drawing_area.set_size_request(300, 300)  # Set a fixed size
+            self.sprite_drawing_area.connect("draw", self._on_sprite_draw)
+            main_box.pack_start(self.sprite_drawing_area, False, False, 0)
+            
+            # Start animation timer (adjust speed as needed)
+            if self.sprite_timer_id:
+                GLib.source_remove(self.sprite_timer_id)
+            
+            self.sprite_timer_id = GLib.timeout_add(100, self._update_sprite_frame_notification)  # 10 FPS
 
         # Set a dark, semi-transparent background for the window
         css_provider = Gtk.CssProvider()
@@ -759,6 +774,14 @@ class TeaTimerApp(Gtk.Application):
 
         # Automatically close the window after 5 seconds
         GLib.timeout_add_seconds(5, self._close_fullscreen_notification, notification_window)
+        
+    def _update_sprite_frame_notification(self):
+        """Update sprite frame for the notification window."""
+        if self.sprite_frames and self.sprite_drawing_area:
+            self.current_sprite_frame = (self.current_sprite_frame + 1) % len(self.sprite_frames)
+            self.sprite_drawing_area.queue_draw()
+            return GLib.SOURCE_CONTINUE
+        return GLib.SOURCE_REMOVE
 
     def _load_sprite_frames(self):
         """
@@ -841,45 +864,13 @@ class TeaTimerApp(Gtk.Application):
 
     def _show_sprite_animation(self):
         """Display sprite animation when timer completes."""
-        print("Attempting to show sprite animation")
-        # Load sprite frames if not already loaded
-        if not self.sprite_frames:
-            self.sprite_frames = self._load_sprite_frames()
-        
-        print(f"Sprite frames available: {len(self.sprite_frames)}")
-        # Only show animation if we have frames
-        if self.sprite_frames:
-            self._create_sprite_window()
-            self._start_sprite_animation()
-        else:
-            print("No sprite frames to display")
+        # Sprite animation is now embedded in the fullscreen notification
+        pass
 
     def _create_sprite_window(self):
         """Create a window to display the sprite animation."""
-        print("Creating sprite window...")
-        if self.sprite_window is None:
-            self.sprite_window = Gtk.Window()
-            self.sprite_window.set_title("Animation")
-            self.sprite_window.set_default_size(300, 300)
-            self.sprite_window.set_keep_above(True)
-            
-            # Create a drawing area for the sprite animation
-            self.sprite_drawing_area = Gtk.DrawingArea()
-            self.sprite_drawing_area.connect("draw", self._on_sprite_draw)
-            self.sprite_window.add(self.sprite_drawing_area)
-            
-            print("Sprite window with sprite drawing area created")
-
-    def _on_simple_draw(self, widget, cr):
-        """Simple draw function for testing."""
-        print("Simple draw function called")
-        alloc = widget.get_allocation()
-        # Draw a simple colored rectangle
-        cr.set_source_rgb(1, 0, 0)  # Red
-        cr.rectangle(0, 0, alloc.width, alloc.height)
-        cr.fill()
-        print("Red rectangle drawn")
-        return False
+        # Sprite animation is now embedded in the fullscreen notification
+        pass
 
     def _on_sprite_draw(self, widget, cr):
         """Draw the current sprite frame."""
@@ -914,23 +905,8 @@ class TeaTimerApp(Gtk.Application):
 
     def _start_sprite_animation(self):
         """Start the sprite animation loop."""
-        print(f"Starting sprite animation with {len(self.sprite_frames)} frames")
-        if self.sprite_frames:
-            self.current_sprite_frame = 0
-            print("Showing sprite window...")
-            self.sprite_window.show_all()
-            print("Sprite window shown")
-            
-            # Start animation timer (adjust speed as needed)
-            if self.sprite_timer_id:
-                GLib.source_remove(self.sprite_timer_id)
-            
-            self.sprite_timer_id = GLib.timeout_add(100, self._update_sprite_frame)  # 10 FPS
-            print("Sprite animation timer started")
-            
-            # Auto-close after 5 seconds
-            GLib.timeout_add_seconds(5, self._close_sprite_animation)
-            print("Sprite auto-close timer set")
+        # Sprite animation is now embedded in the fullscreen notification
+        pass
 
     def _update_sprite_frame(self):
         """Update to the next sprite frame."""
@@ -944,27 +920,25 @@ class TeaTimerApp(Gtk.Application):
 
     def _close_sprite_animation(self):
         """Close the sprite animation window."""
-        print("Closing sprite animation")
-        if self.sprite_timer_id:
-            GLib.source_remove(self.sprite_timer_id)
-            self.sprite_timer_id = None
-            print("Sprite timer removed")
-            
-        if self.sprite_window:
-            self.sprite_window.destroy()
-            self.sprite_window = None
-            print("Sprite window destroyed")
-            
+        # Sprite animation is now embedded in the fullscreen notification
         return GLib.SOURCE_REMOVE
 
     def _on_notification_clicked(self, widget, event):
         """Close the notification window on click."""
         print("Notification clicked, closing.")
         self._close_fullscreen_notification(widget)
-        self._close_sprite_animation()
+        # Clean up sprite timer if it exists
+        if self.sprite_timer_id:
+            GLib.source_remove(self.sprite_timer_id)
+            self.sprite_timer_id = None
 
     def _close_fullscreen_notification(self, notification_window):
         """Callback to close the notification window."""
+        # Clean up sprite timer if it exists
+        if self.sprite_timer_id:
+            GLib.source_remove(self.sprite_timer_id)
+            self.sprite_timer_id = None
+            
         if notification_window:
             notification_window.destroy()
         return GLib.SOURCE_REMOVE
