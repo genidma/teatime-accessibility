@@ -191,6 +191,7 @@ On Ubuntu Desktop, the icon will look like this (below):
 
    <img src="./screenshots_demo_clones/2025-10-16-icon-for-Readme.png" alt="Application Icon">
 
+Note: The icon will look like the same size as any other icon on your Ubuntu Desktop. It looks a bit bigger via the screenshot here. Fyi only.
 
 5. Double-click the icon to launch the application
 
