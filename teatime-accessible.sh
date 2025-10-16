@@ -22,4 +22,6 @@ fi
 
 # Execute the Python script. "$@" passes along any command-line arguments
 # from the launcher to the Python application.
+# The script is now installed in the bin directory, and resources are
+# installed in the appropriate system directories.
 python3 bin/teatime.py "$@"

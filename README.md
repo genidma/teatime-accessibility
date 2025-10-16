@@ -69,7 +69,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 ## Installation
 
 ### Prerequisites
-Before running the setup script, install the required system dependencies:
+Before running the install script, install the required system dependencies:
 
 ```bash
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
@@ -81,11 +81,11 @@ For better compatibility, we also recommend installing the system-wide PyGObject
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 ```
 
-### Automatic Setup (Recommended)
-Run the setup script:
+### Automatic Installation (Recommended)
+Run the install script:
 
 ```bash
-./setup.sh
+./install.sh
 ```
 
 This script will:
@@ -95,9 +95,9 @@ This script will:
 4. Optionally create a desktop shortcut/icon for quick access
 5. Make the launcher script executable
 
-The setup script will also prompt you to install system dependencies if needed.
+The install script will also prompt you to install system dependencies if needed.
 
-### Manual Setup
+### Manual Installation
 If you prefer to install manually:
 
 1. Create a virtual environment with access to system packages:
@@ -117,7 +117,38 @@ If you prefer to install manually:
    cp teatime-accessibility.desktop ~/.local/share/applications/
    ```
 
-After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. If you choose to create a desktop shortcut during the setup process, you can also launch the app directly from your desktop in future instances.
+After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. If you choose to create a desktop shortcut during the installation process, you can also launch the app directly from your desktop in future instances.
+
+## Installation Locations
+
+When you run the install.sh script, here's exactly where each component is installed:
+
+1. **Virtual Environment**: 
+   - Location: Inside the project directory as `teatime-venv/`
+   - This is a local virtual environment that stays within your project folder
+
+2. **Desktop Entry**:
+   - Location: `~/.local/share/applications/teatime-accessibility.desktop`
+   - This allows the app to appear in your system's application menu under "Utilities"
+
+3. **Desktop Shortcut** (if you choose to create one):
+   - Location: On your desktop (e.g., `~/Desktop/teatime-accessibility.desktop`)
+   - This provides a direct shortcut icon on your desktop
+
+4. **Application Files**:
+   - All application files remain in your project directory
+   - This includes the main Python script, assets, and configuration files
+
+5. **User Data**:
+   - Configuration: `~/.config/teatime_config.json`
+   - Statistics: `~/.local/share/teatime_stats.json`
+
+The important thing to note is that the application itself is not moved or copied elsewhere - it runs directly from your project directory. The [install.sh](file:///vms_and_github/Github/teatime-accessibility/install.sh) script simply:
+1. Sets up the virtual environment for isolated dependencies
+2. Creates convenient access points (desktop entry and/or desktop shortcut)
+3. Ensures all necessary components are properly configured
+
+This approach keeps everything contained within your project directory while providing convenient access methods through the standard desktop environment interfaces.
 
 ## Usage
 
@@ -135,7 +166,7 @@ From the project's root directory, run either of the following options:
 3. Click on the application icon to launch it
 
 **Option 3: Desktop Shortcut**
-If you chose to create a desktop shortcut during setup:
+If you chose to create a desktop shortcut during installation:
 1. Navigate to your desktop
 2. Right-click on the "TeaTime Accessibility" icon
 3. Select "Allow Launching" from the context menu
@@ -200,8 +231,7 @@ To manually uninstall:
 
 ## Development
 The application consists of:
-- `teatime-accessible.sh`: The main launcher script for the TeaTime Accessibility application
-- `bin/teatime.py`: The core Python application script, which programmatically builds the GTK3 user interface.
+- `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
 ## License
 Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is significantly different with a different licensing policy.
