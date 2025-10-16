@@ -68,6 +68,13 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 
 ## Installation
 
+### Prerequisites
+Before running the setup script, install the required system dependencies:
+
+```bash
+sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
+```
+
 ### Automatic Setup (Recommended)
 Run the setup script:
 
@@ -80,6 +87,8 @@ This script will:
 2. Install all required dependencies
 3. Create a desktop entry for easy access
 4. Make the launcher script executable
+
+The setup script will also prompt you to install system dependencies if needed.
 
 ### Manual Setup
 If you prefer to install manually:
