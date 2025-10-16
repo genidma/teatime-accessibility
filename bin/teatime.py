@@ -1467,7 +1467,17 @@ if __name__ == "__main__":
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Accessible Tea Timer')
     parser.add_argument('--duration', type=int, default=5, help='Timer duration in minutes (1-999)')
-    args = parser.parse_args()
+    
+    # Parse known args to avoid conflicts with GTK arguments
+    args, unknown = parser.parse_known_args()
+    
+    # Store duration for use in the app
+    import os
+    os.environ['TEATIME_DURATION'] = str(args.duration)
+    
+    # Reconstruct sys.argv without our custom arguments for GTK
+    new_argv = [sys.argv[0]] + unknown
+    sys.argv = new_argv
     
     # Create a new Gio.Application
     app = TeaTimerApp(duration=args.duration)
