@@ -135,7 +135,11 @@ From the project's root directory, run either of the following options:
 3. Click on the application icon to launch it
 
 **Option 3: Desktop Shortcut**
-If you chose to create a desktop shortcut during setup, you can simply double-click the icon on your desktop.
+If you chose to create a desktop shortcut during setup:
+1. Navigate to your desktop
+2. Right-click on the "TeaTime Accessibility" icon
+3. Select "Allow Launching" from the context menu
+4. Double-click the icon to launch the application
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
