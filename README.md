@@ -91,7 +91,7 @@ Run the setup script:
 This script will:
 1. Create a virtual environment with access to system packages (if one doesn't already exist)
 2. Install all required dependencies
-3. Create a desktop entry for easy access
+3. Create a desktop entry for easy access in the Utilities section of your application menu
 4. Make the launcher script executable
 
 The setup script will also prompt you to install system dependencies if needed.
@@ -129,7 +129,7 @@ From the project's root directory, run either of the following options:
 
 **Option 2: GUI Startup Menu**
 1. Open your desktop environment's application menu
-2. Look for "TeaTime Accessibility" under the "Utilities" or "Accessories" category
+2. Look for "TeaTime Accessibility" under the "Utilities" category
 3. Click on the application icon to launch it
 
 The application will appear in your system tray (notification area) and can be controlled from there.
