@@ -154,30 +154,14 @@ This approach keeps everything contained within your project directory while pro
 
 ## Usage
 
-### Running the Application
-From the project's root directory (where you cloned the repository), run either of the following options:
+After installation, you can run the application in one of the following ways:
 
-**Option 1: Command line**
-```bash
-./teatime-accessible.sh
-```
-
-**Option 2: GUI Startup Menu**
-1. Open your desktop environment's application menu
+### Option 1: Applications Menu
+1. Open your applications menu
 2. Look for "TeaTime Accessibility" under the "Utilities" category
 3. Click on the application icon to launch it
 
-**Option 3: Desktop Shortcut**
-If you chose to create a desktop shortcut during installation:
-1. Navigate to your desktop
-2. Right-click on the "TeaTime Accessibility" icon
-3. Select "Allow Launching" from the context menu
-4. Double-click the icon to launch the application
-
-The application will appear in your system tray (notification area) and can be controlled from there.
-
-If you want to run the application from the command line again in the future, you don't need to recreate the virtual environment. Instead:
-
+### Option 2: Command Line
 1. Navigate to the project directory (wherever you originally cloned the repository)
 2. Activate the existing virtual environment:
    ```bash
@@ -187,6 +171,17 @@ If you want to run the application from the command line again in the future, yo
    ```bash
    ./teatime-accessible.sh
    ```
+
+### Option 3: Desktop Shortcut
+If you chose to create a desktop shortcut during installation:
+1. Navigate to your desktop
+2. Right-click on the "TeaTime Accessibility" icon
+3. Select "Allow Launching" from the context menu
+4. Double-click the icon to launch the application
+
+The application will appear in your system tray (notification area) and can be controlled from there.
+
+Note: The virtual environment has been created in the project directory and does not need to be recreated unless you run the uninstall script.
 
 ### Command Line Options - broken at the moment. tracked in issue.
 ```bash
