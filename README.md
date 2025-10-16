@@ -163,11 +163,11 @@ After installation, you can run the application in one of the following ways:
 
 ### Option 2: Command Line
 1. Navigate to the project directory (wherever you originally cloned the repository)
-2. Activate the existing virtual environment:
+2. Activating the existing python virtual environment. Important and if you are new to python, you only have to activate the python virtual environment once on a machine (unless you delete it for some reason, or uninstall python e.t.c):
    ```bash
    source teatime-venv/bin/activate
    ```
-3. Run the application:
+3. Once your python environment has been created. The first time and then subsequent times, you can simply Run the application like any standard *nix script: The shell script is designed to invoke the python (.py script) that programmatically will build the app in the GTK environment
    ```bash
    ./teatime-accessible.sh
    ```
