@@ -123,7 +123,7 @@ After running these commands, you'll find "TeaTime Accessibility" in the Utiliti
 
 ## Installation Locations
 
-When you run the [install.sh](file:///vms_and_github/Github/teatime-accessibility/install.sh) script, here's exactly where each component is installed:
+When you run the install script, here's exactly where each component is installed:
 
 1. **Virtual Environment**: 
    - Location: Inside the project directory as `teatime-venv/`
@@ -145,7 +145,7 @@ When you run the [install.sh](file:///vms_and_github/Github/teatime-accessibilit
    - Configuration: `~/.config/teatime_config.json`
    - Statistics: `~/.local/share/teatime_stats.json`
 
-The important thing to note is that the application itself is not moved or copied elsewhere - it runs directly from your project directory. The [install.sh](file:///vms_and_github/Github/teatime-accessibility/install.sh) script simply:
+The important thing to note is that the application itself is not moved or copied elsewhere - it runs directly from your project directory. The install script simply:
 1. Sets up the virtual environment for isolated dependencies
 2. Creates convenient access points (desktop entry and/or desktop shortcut)
 3. Ensures all necessary components are properly configured
