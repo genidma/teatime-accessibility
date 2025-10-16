@@ -200,24 +200,23 @@ The application will appear in your system tray (notification area) and can be c
 Note: The virtual environment is created in the project directory and persists between sessions. It only needs to be recreated if you manually delete it or run the uninstall script. For the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu before you can use it to start the application.
 
 ### Command Line Options
-Feature: Command line arguments for setting the default timer for preferred duration.
+The application supports command line arguments for setting the default timer duration. This is especially useful for creating custom launchers or aliases with your preferred default timing.
 
 To use the command line option:
 
 1. Open a terminal and navigate to the project directory
-2. Change to the `bin` directory: `cd bin/`
-3. Run the application with the duration parameter:
+2. Run the application with the duration parameter:
 
 ```bash
 # Set default duration (1-999 minutes)
-python3 teatime.py --duration 5
+./teatime-accessible.sh --duration 5
 ```
 
 When you launch the application with the `--duration` parameter, the specified value will be pre-filled in the minutes input field. You can still change this value in the application before starting the timer.
 
 For example, if you frequently use a 10-minute timer for tea brewing, you can create a desktop shortcut or script that launches:
 ```bash
-python3 teatime.py --duration 10
+./teatime-accessible.sh --duration 10
 ```
 
 This eliminates the need to manually adjust the timer duration each time you start the application.

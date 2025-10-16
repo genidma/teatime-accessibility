@@ -951,6 +951,37 @@ class TeaTimerApp(Gtk.Application):
             notification_window.destroy()
         return GLib.SOURCE_REMOVE
 
+    def do_command_line(self, command_line):
+        """Handle command line arguments before activating the application."""
+        options = command_line.get_options_dict()
+        
+        # Get the duration from command line if provided
+        duration_variant = options.lookup_value("duration", None)
+        if duration_variant is not None:
+            self.last_duration = duration_variant.get_int32()
+        
+        # Activate the application
+        self.activate()
+        return 0
+
+    def do_startup(self):
+        """Set up command line options during application startup."""
+        Gtk.Application.do_startup(self)
+        
+        # Add command line option for duration
+        action = Gio.SimpleAction.new("duration", GLib.VariantType.new("i"))
+        action.connect("activate", lambda a, p: None)  # No action needed, handled in do_command_line
+        self.add_action(action)
+        
+        # Add the option to the application
+        self.add_main_option(
+            "duration",
+            ord("d"),
+            GLib.OptionFlags.NONE,
+            GLib.OptionArg.INT,
+            "Timer duration in minutes (1-999)",
+            "DURATION"
+        )
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
@@ -1094,7 +1125,9 @@ class StatisticsWindow(Gtk.Window):
 
             except Exception as e:
                 error_dialog = Gtk.MessageDialog(
-                    transient_for=self, modal=True, message_type=Gtk.MessageType.ERROR,
+                    transient_for=self,
+                    modal=True,
+                    message_type=Gtk.MessageType.ERROR,
                     buttons=Gtk.ButtonsType.OK, text="Export Failed",
                 )
                 error_dialog.format_secondary_text(f"Could not save the file.\nError: {e}")
@@ -1229,6 +1262,196 @@ class StatisticsWindow(Gtk.Window):
         else:
             self._reset_summary_labels()
 
+    def do_command_line(self, command_line):
+        """Handle command line arguments."""
+        # Get the command line arguments
+        args = command_line.get_arguments()
+        
+        # Simple argument parsing - look for --duration
+        duration = self.default_duration
+        i = 1
+        while i < len(args):
+            if args[i] == "--duration" and i + 1 < len(args):
+                try:
+                    duration = int(args[i + 1])
+                    if duration < 1:
+                        duration = 1
+                    elif duration > 999:
+                        duration = 999
+                    i += 2
+                except ValueError:
+                    i += 2
+            else:
+                # Skip unknown arguments
+                i += 1
+        
+        # Store the duration and activate the application
+        self.last_duration = duration
+        self.activate()
+        return 0
+
+    def do_activate(self):
+        """
+        This method is called when the application is activated.
+        """
+        if not self.window:
+            # Create window programmatically since UI file might not exist
+            self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
+            self.window.set_default_size(300, 200)
+            self.window.connect("destroy", self._on_window_destroy)
+            # Use "set-focus-child" signal, which is more reliable for this purpose
+            self.window.connect("set-focus-child", self._on_focus_changed)
+
+            # --- HeaderBar for a modern look ---
+            header_bar = Gtk.HeaderBar()
+            header_bar.set_show_close_button(True)
+            header_bar.props.title = APP_NAME
+            self.window.set_titlebar(header_bar)
+
+            # Create a menu for the "About" option
+            about_menu = Gtk.Menu()
+            stats_item = Gtk.MenuItem(label="_Statistics")
+            stats_item.set_use_underline(True)
+            stats_item.connect("activate", self.on_stats_activated)
+            about_menu.append(stats_item)
+
+            about_item = Gtk.MenuItem(label="_About")
+            about_item.set_use_underline(True)
+            about_item.connect("activate", self.on_about_activated)
+            about_menu.append(about_item)
+            about_menu.show_all()
+
+            # Add an accelerator for the statistics menu item.
+            accel_group = Gtk.AccelGroup()
+            self.window.add_accel_group(accel_group)
+            stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+
+
+            # Create a menu button and add it to the header bar
+            menu_button = Gtk.MenuButton(popup=about_menu)
+            icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
+            menu_button.add(icon)
+            header_bar.pack_end(menu_button)
+
+            # Create main container
+            main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+            main_box.set_margin_top(20)
+            main_box.set_margin_bottom(20)
+            main_box.set_margin_start(20) # Use modern property for left margin
+            main_box.set_margin_end(20)   # Use modern property for right margin
+
+            # --- Create a horizontal box to hold main controls and presets ---
+            content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
+            main_box.pack_start(content_box, True, True, 0)
+
+            # Time display
+            self.time_label = Gtk.Label(label="00:00")
+            self.time_label.set_markup("<span>00:00</span>")
+            main_box.pack_start(self.time_label, False, False, 0)
+
+            # --- Use a Grid for a clean, aligned layout ---
+            grid = Gtk.Grid()
+            grid.set_column_spacing(10)
+            grid.set_row_spacing(10)
+            grid.set_halign(Gtk.Align.CENTER) # Center the grid horizontally
+            content_box.pack_start(grid, True, True, 0)
+
+            # Row 0: Duration selection
+            duration_label = Gtk.Label(label="Minutes:")
+            duration_label.get_style_context().add_class("input-label") # Add this line
+            self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
+            self.duration_spin.get_style_context().add_class("duration-spinbutton") # Add this line
+            self.duration_spin.set_width_chars(3) # Ensure it's wide enough for 3 digits
+            self.duration_spin.set_value(self.last_duration)
+            # Manually set a large, fixed font size for the spin button's input
+            # This is independent of the CSS scaling for user preference.
+            # Using CSS provider instead of deprecated override_font method
+            css_provider = Gtk.CssProvider()
+            css_provider.load_from_data(b"""
+                spinbutton entry {
+                    font-family: Sans;
+                    font-weight: bold;
+                    font-size: 24px;
+                }
+            """)
+            context = self.duration_spin.get_style_context()
+            context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            grid.attach(duration_label, 0, 0, 1, 1)
+            grid.attach(self.duration_spin, 1, 0, 1, 1)
+
+            # Row 1: Control buttons
+            self.start_button = Gtk.Button(label="_Start")
+            self.start_button.set_use_underline(True)
+            self.stop_button = Gtk.Button(label="_Stop")
+            self.stop_button.set_use_underline(True)
+            grid.attach(self.start_button, 0, 1, 1, 1)
+            grid.attach(self.stop_button, 1, 1, 1, 1)
+
+            # Row 2: Font size controls
+            self.decrease_font_button = Gtk.Button(label="A-")
+            self.increase_font_button = Gtk.Button(label="A+")
+            grid.attach(self.decrease_font_button, 0, 2, 1, 1)
+            grid.attach(self.increase_font_button, 1, 2, 1, 1)
+
+            # Row 3: Sound toggle (spans both columns)
+            self.sound_toggle = Gtk.CheckButton(label="_Enable Sound")
+            self.sound_toggle.set_use_underline(True)
+            self.sound_toggle.set_active(self.sound_enabled)
+            grid.attach(self.sound_toggle, 0, 3, 2, 1)
+
+            # --- Presets Box (RIGHT SIDE) ---
+            presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+            presets_box.set_valign(Gtk.Align.CENTER)
+            content_box.pack_start(presets_box, False, False, 0)
+
+            presets_label = Gtk.Label(label="<span size='large'><b>Session Presets</b></span>")
+            presets_label.set_use_markup(True)
+            presets_box.pack_start(presets_label, False, False, 0)
+
+            preset_45_button = Gtk.Button(label="_45 Minutes")
+            preset_45_button.set_use_underline(True)
+            preset_45_button.connect("clicked", self.on_preset_clicked, 45)
+            presets_box.pack_start(preset_45_button, False, False, 0)
+
+            preset_1_hour_button = Gtk.Button(label="_1 Hour")
+            preset_1_hour_button.set_use_underline(True)
+            preset_1_hour_button.connect("clicked", self.on_preset_clicked, 60)
+            presets_box.pack_start(preset_1_hour_button, False, False, 0)
+
+            self.window.add(main_box)
+
+            # Connect signals
+            self.start_button.connect("clicked", self.on_start_clicked)
+            self.stop_button.connect("clicked", self.on_stop_clicked)
+            self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
+            self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
+            self.sound_toggle.connect("toggled", self.on_sound_toggled)
+
+            # Add the single CSS provider to the screen. We will update this provider
+            # later instead of adding new ones.
+            screen = Gdk.Screen.get_default()
+            if screen:
+                Gtk.StyleContext.add_provider_for_screen(
+                    screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+            else:
+                print("Warning: No default screen found to apply CSS.")
+
+            # Initial state for buttons
+            self.stop_button.set_sensitive(False)
+
+            # Apply initial font size
+            self._apply_font_size()
+
+            # Add a style class to the time label for specific targeting
+            self.time_label.get_style_context().add_class("time-display")
+
+            # Set GTK 3 accessibility properties (after all widgets are created)
+            self._set_accessibility_properties()
+
+        self.window.show_all()
+
+
 if __name__ == "__main__":
     import sys
     
@@ -1238,8 +1461,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # Create a new Gio.Application
-    app = TeaTimerApp()
-    app.last_duration = args.duration  # Set it here instead
+    app = TeaTimerApp(duration=args.duration)
     
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
