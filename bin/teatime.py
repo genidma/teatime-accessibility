@@ -18,11 +18,6 @@ from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 
 import argparse
 
-# Add after imports, before the class:
-parser = argparse.ArgumentParser(description='Accessible Tea Timer')
-parser.add_argument('--duration', type=int, default=5, help='Timer duration in minutes (1-999)')
-args = parser.parse_args()
-
 # Application metadata
 APP_NAME = "Accessible Tea Timer"
 APP_VERSION = "1.3.3"
@@ -36,7 +31,7 @@ MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
 class TeaTimerApp(Gtk.Application):
-    def __init__(self):
+    def __init__(self, duration=5):
         super().__init__(application_id="org.example.TeaTimer",
                          flags=Gio.ApplicationFlags.NON_UNIQUE)
         self.window = None
@@ -44,7 +39,7 @@ class TeaTimerApp(Gtk.Application):
         self.time_left = 0
         self.current_timer_duration = 0
         self.font_scale_factor = DEFAULT_FONT_SCALE
-        self.last_duration = args.duration  # Default duration from config
+        self.last_duration = duration  # Default duration from config or CLI
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
@@ -1236,6 +1231,15 @@ class StatisticsWindow(Gtk.Window):
 
 if __name__ == "__main__":
     import sys
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Accessible Tea Timer')
+    parser.add_argument('--duration', type=int, default=5, help='Timer duration in minutes (1-999)')
+    args = parser.parse_args()
+    
+    # Create a new Gio.Application
     app = TeaTimerApp()
+    app.last_duration = args.duration  # Set it here instead
+    
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
