@@ -122,6 +122,43 @@ else
     echo "  sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0"
 fi
 
+# Create icons directory if it doesn't exist
+ICONS_DIR="$HOME/.local/share/icons/hicolor/48x48/apps"
+mkdir -p "$ICONS_DIR"
+
+# Copy the custom icon to the appropriate location
+ICON_FILE="assets/teatime-icon.svg"
+if [ -f "$ICON_FILE" ]; then
+    echo "Installing custom application icon..."
+    # Replace with puppy icon
+    cp "assets/puppy-icon.svg" "$ICONS_DIR/teatime-accessibility.svg"
+    # Update icon cache
+    if command -v gtk-update-icon-cache &>/dev/null; then
+        gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+    fi
+else
+    echo "Warning: Custom SVG icon file not found. Using system default."
+fi
+
+# Also install PNG version for better compatibility
+ICON_PNG_FILE="assets/teatime-icon.png"
+if [ -f "$ICON_PNG_FILE" ]; then
+    # Replace with puppy icon
+    ICON_SIZES=("16x16" "22x22" "24x24" "32x32" "48x48" "64x64" "128x128" "256x256")
+    for size in "${ICON_SIZES[@]}"; do
+        ICON_SIZE_DIR="$HOME/.local/share/icons/hicolor/$size/apps"
+        mkdir -p "$ICON_SIZE_DIR"
+        cp "assets/puppy-icon.png" "$ICON_SIZE_DIR/teatime-accessibility.png"
+    done
+    
+    # Update icon cache
+    if command -v gtk-update-icon-cache &>/dev/null; then
+        gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+    fi
+else
+    echo "Warning: Custom PNG icon file not found."
+fi
+
 # Create/update desktop entry
 echo "Creating desktop entry..."
 DESKTOP_DIR="$HOME/.local/share/applications"
@@ -133,7 +170,7 @@ cat > "$DESKTOP_DIR/teatime-accessibility.desktop" << EOF
 Name=TeaTime Accessibility
 Comment=Accessible tea timer with rainbow glow feature
 Exec=$PWD/teatime-accessible.sh
-Icon=accessories-clock
+Icon=teatime-accessibility
 Terminal=false
 Type=Application
 Categories=Utility;Accessibility;

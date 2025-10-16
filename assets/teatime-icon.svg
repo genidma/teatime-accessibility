@@ -13,7 +13,7 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
-   sodipodi:docname="teatime-icon.svg">
+   sodipodi:docname="puppy-icon.svg">
   <sodipodi:namedview
      id="namedview1"
      pagecolor="#ffffff"
@@ -39,46 +39,13 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <circle
-       style="fill:#f9f9f9;stroke:#4d4d4d;stroke-width:2;stroke-dasharray:none;stroke-opacity:1"
-       id="path1"
-       cx="24"
-       cy="24"
-       r="20" />
-    <rect
-       style="fill:#ff9955;stroke:#000000;stroke-width:1.5;stroke-dasharray:none"
-       id="rect1"
-       width="30"
-       height="20"
-       x="9"
-       y="14"
-       ry="3" />
-    <rect
-       style="fill:#ffccaa;stroke:#000000;stroke-width:1.5;stroke-dasharray:none"
-       id="rect1-9"
-       width="20"
-       height="12"
-       x="14"
-       y="10"
-       ry="2" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-dasharray:none"
-       d="m 19,28 2,-5 m 4,5 2,-5 m 4,5 2,-5"
-       id="path2"
-       sodipodi:nodetypes="cccccc" />
-    <circle
-       style="fill:#ff0000;stroke:#000000;stroke-width:1;stroke-dasharray:none"
-       id="path3"
-       cx="32"
-       cy="18"
-       r="2" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="M 12,38 V 34"
-       id="path4" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="M 36,38 V 34"
-       id="path4-7" />
+    <!-- Golden Retriever Puppy -->
+    <circle cx="24" cy="24" r="20" fill="#FFD700" stroke="#DAA520" stroke-width="2"/>
+    <circle cx="18" cy="20" r="3" fill="#000000"/>
+    <circle cx="30" cy="20" r="3" fill="#000000"/>
+    <path d="M 15 28 Q 24 35 33 28" stroke="#000000" stroke-width="2" fill="none"/>
+    <path d="M 12 15 Q 8 10 15 8 Q 20 12 18 15" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <path d="M 36 15 Q 40 10 33 8 Q 28 12 30 15" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <circle cx="24" cy="26" r="4" fill="#DAA520"/>
   </g>
 </svg>
