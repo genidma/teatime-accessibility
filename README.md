@@ -200,7 +200,7 @@ The application will appear in your system tray (notification area) and can be c
 Note: The virtual environment is created in the project directory and persists between sessions. It only needs to be recreated if you manually delete it or run the uninstall script. For the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu before you can use it to start the application.
 
 ### Command Line Options
-The application supports command line arguments for setting the default timer duration. This is especially useful for creating custom launchers or aliases with your preferred default timing.
+Feature: Command line arguments for setting the default timer for preferred duration.
 
 To use the command line option:
 
