@@ -115,6 +115,7 @@ If you prefer to install manually:
    mkdir -p ~/.local/share/applications
    cp teatime-accessibility.desktop ~/.local/share/applications/
    ```
+   This command copies the desktop entry file to the standard location for user-specific applications.
 
 ## Usage
 
@@ -171,6 +172,7 @@ To manually uninstall:
    ```bash
    rm ~/.local/share/applications/teatime-accessibility.desktop
    ```
+   This command removes the desktop entry file from the standard location where it was copied during installation.
 
 2. Optionally remove the virtual environment:
    ```bash

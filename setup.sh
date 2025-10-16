@@ -33,7 +33,7 @@ else
     
     # Create virtual environment
     if python3 -m venv --help &> /dev/null; then
-        python3 -m venv "$VENV_DIR"
+        python3 -m venv "$VENV_DIR" --system-site-packages
         echo "Virtual environment created successfully"
     else
         echo "Error: venv module is not available"
@@ -127,19 +127,13 @@ echo "Creating desktop entry..."
 DESKTOP_DIR="$HOME/.local/share/applications"
 mkdir -p "$DESKTOP_DIR"
 
-cat > "$DESKTOP_DIR/teatime-accessibility.desktop" << EOF
-[Desktop Entry]
-Name=TeaTime Accessibility
-Comment=Accessible tea timer with rainbow glow feature
-Exec=$PWD/teatime-accessible.sh
-Icon=accessories-clock
-Terminal=false
-Type=Application
-Categories=Utility;Accessibility;
-Keywords=timer;accessibility;tea;
-EOF
-
-echo "Desktop entry created at $DESKTOP_DIR/teatime-accessibility.desktop"
+# Use the project's desktop entry file
+if [ -f "teatime-accessibility.desktop" ]; then
+    cp "teatime-accessibility.desktop" "$DESKTOP_DIR/"
+    echo "Desktop entry created at $DESKTOP_DIR/teatime-accessibility.desktop"
+else
+    echo "Warning: Desktop entry file not found in project directory"
+fi
 
 # Make the launcher script executable
 chmod +x teatime-accessible.sh

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=TeaTime Accessibility
+Comment=Accessible tea timer with rainbow glow feature
+Exec=teatime-accessible.sh
+Icon=accessories-clock
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Keywords=timer;accessibility;tea;
