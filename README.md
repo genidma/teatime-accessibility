@@ -67,11 +67,40 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 - **Fallback Sounds**: System bell if audio files aren't available
 
 ## Installation
+
+### Automatic Setup (Recommended)
 Run the setup script:
 
 ```bash
 ./setup.sh
 ```
+
+This script will:
+1. Create a virtual environment (if one doesn't already exist)
+2. Install all required dependencies
+3. Create a desktop entry for easy access
+4. Make the launcher script executable
+
+### Manual Setup
+If you prefer to install manually:
+
+1. Create a virtual environment:
+   ```bash
+   python3 -m venv teatime-venv
+   source teatime-venv/bin/activate
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Create desktop entry (optional):
+   ```bash
+   mkdir -p ~/.local/share/applications
+   cp teatime-accessibility.desktop ~/.local/share/applications/
+   ```
+
 ## Usage
 
 ### Running the Application
@@ -106,17 +135,38 @@ Settings are automatically saved to `~/.config/teatime/settings.json` including:
 - PyGObject
 - PulseAudio (for sound notifications)
 
-## Uninstalling the Application (If you'd like to)
+## Uninstalling the Application
 
-First make the script executable
-```bash
-chmod +x uninstall.sh
-```
-Then, run the uninstall script to remove the application
+### Automatic Uninstall (Recommended)
+Run the uninstall script:
 
 ```bash
 ./uninstall.sh
 ```
+
+This script will:
+1. Remove the desktop entry
+2. Ask if you want to remove the virtual environment
+3. Preserve your configuration and statistics
+
+### Manual Uninstall
+To manually uninstall:
+
+1. Remove the desktop entry:
+   ```bash
+   rm ~/.local/share/applications/teatime-accessibility.desktop
+   ```
+
+2. Optionally remove the virtual environment:
+   ```bash
+   rm -rf teatime-venv
+   ```
+
+3. Optionally remove configuration and statistics:
+   ```bash
+   rm ~/.config/teatime_config.json
+   rm ~/.local/share/teatime_stats.json
+   ```
 
 ## Development
 The application consists of:
