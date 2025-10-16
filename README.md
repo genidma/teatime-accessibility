@@ -172,13 +172,13 @@ After installation, you can run the application in one of the following ways:
 In the illustration below: The icon for the app appears on the second page (or view). You either scroll to this location or you can click on the dots that you see at the bottom of the screen.
 
 Screenshot below for visual representation:
-Where
+Where (the same Green Rectangle with circular edges as in the previous screenshot) represents:
 
-    1.  (within the screenshot directly) represents the mechanism via which you can scroll through the views. 
+    1.  (within the screenshot directly) the mechanism via which you can scroll through the views. 
 
     And
 
-    2. Represents the icon for this application.
+    2.icon for the app itself
    ![Activities Menu Scroll](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu-scroll.png)
 3. Click on the application icon to launch it
 
