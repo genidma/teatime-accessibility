@@ -863,12 +863,12 @@ class TeaTimerApp(Gtk.Application):
             self.sprite_window.set_default_size(300, 300)
             self.sprite_window.set_keep_above(True)
             
-            # Create a simple colored box for testing
-            drawing_area = Gtk.DrawingArea()
-            drawing_area.connect("draw", self._on_simple_draw)
-            self.sprite_window.add(drawing_area)
+            # Create a drawing area for the sprite animation
+            self.sprite_drawing_area = Gtk.DrawingArea()
+            self.sprite_drawing_area.connect("draw", self._on_sprite_draw)
+            self.sprite_window.add(self.sprite_drawing_area)
             
-            print("Sprite window with simple drawing area created")
+            print("Sprite window with sprite drawing area created")
 
     def _on_simple_draw(self, widget, cr):
         """Simple draw function for testing."""
@@ -886,30 +886,27 @@ class TeaTimerApp(Gtk.Application):
         print(f"Drawing sprite frame {self.current_sprite_frame}")
         if self.sprite_frames and 0 <= self.current_sprite_frame < len(self.sprite_frames):
             alloc = widget.get_allocation()
-            # Draw a different colored rectangle for each frame to verify animation
-            # Using a simple color rotation
-            colors = [
-                (1, 0, 0),  # Red
-                (0, 1, 0),  # Green
-                (0, 0, 1),  # Blue
-                (1, 1, 0),  # Yellow
-                (1, 0, 1),  # Magenta
-                (0, 1, 1),  # Cyan
-                (1, 0.5, 0),  # Orange
-                (0.5, 0, 0.5),  # Purple
-                (1, 0.5, 0.5),  # Pink
-                (0.5, 1, 0.5),  # Light Green
-                (0.5, 0.5, 1),  # Light Blue
-                (1, 1, 1),  # White
-            ]
+            # Draw the actual sprite frame
+            pixbuf = self.sprite_frames[self.current_sprite_frame]
+            # Scale the pixbuf to fit the drawing area while maintaining aspect ratio
+            pixbuf_width = pixbuf.get_width()
+            pixbuf_height = pixbuf.get_height()
             
-            color_index = self.current_sprite_frame % len(colors)
-            r, g, b = colors[color_index]
+            scale_x = alloc.width / pixbuf_width
+            scale_y = alloc.height / pixbuf_height
+            scale = min(scale_x, scale_y, 1.0)  # Don't upscale
             
-            cr.set_source_rgb(r, g, b)
-            cr.rectangle(0, 0, alloc.width, alloc.height)
-            cr.fill()
-            print(f"Sprite frame {self.current_sprite_frame} drawn with color {colors[color_index]}")
+            scaled_width = int(pixbuf_width * scale)
+            scaled_height = int(pixbuf_height * scale)
+            
+            # Center the image
+            x = (alloc.width - scaled_width) // 2
+            y = (alloc.height - scaled_height) // 2
+            
+            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+            Gdk.cairo_set_source_pixbuf(cr, scaled_pixbuf, x, y)
+            cr.paint()
+            print(f"Sprite frame {self.current_sprite_frame} drawn")
         else:
             print(f"Skipping draw - no valid sprite frame (current: {self.current_sprite_frame}, total: {len(self.sprite_frames) if self.sprite_frames else 0})")
         
