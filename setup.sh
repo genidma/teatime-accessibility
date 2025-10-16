@@ -15,6 +15,9 @@ if [ ! -f "teatime-accessible.sh" ]; then
     exit 1
 fi
 
+# Get the absolute path to the project directory
+PROJECT_DIR=$(pwd)
+
 # Define virtual environment directory
 VENV_DIR="teatime-venv"
 
@@ -127,13 +130,20 @@ echo "Creating desktop entry..."
 DESKTOP_DIR="$HOME/.local/share/applications"
 mkdir -p "$DESKTOP_DIR"
 
-# Use the project's desktop entry file
-if [ -f "teatime-accessibility.desktop" ]; then
-    cp "teatime-accessibility.desktop" "$DESKTOP_DIR/"
-    echo "Desktop entry created at $DESKTOP_DIR/teatime-accessibility.desktop"
-else
-    echo "Warning: Desktop entry file not found in project directory"
-fi
+# Create a custom desktop entry with the correct path
+cat > "$DESKTOP_DIR/teatime-accessibility.desktop" << EOF
+[Desktop Entry]
+Name=TeaTime Accessibility
+Comment=Accessible tea timer with rainbow glow feature
+Exec=$PROJECT_DIR/teatime-accessible.sh
+Icon=accessories-clock
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Keywords=timer;accessibility;tea;
+EOF
+
+echo "Desktop entry created at $DESKTOP_DIR/teatime-accessibility.desktop"
 
 # Make the launcher script executable
 chmod +x teatime-accessible.sh

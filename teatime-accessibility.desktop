@@ -1,9 +1,14 @@
+# Desktop Entry file for TeaTime Accessibility
+# This file integrates the application into the Linux desktop environment
+# When installed in ~/.local/share/applications/, it allows the app to appear
+# in the system application menu with proper icon and metadata
+
 [Desktop Entry]
 Name=TeaTime Accessibility
 Comment=Accessible tea timer with rainbow glow feature
-Exec=teatime-accessible.sh
+Exec=/vms_and_github/Github/teatime-accessibility/teatime-accessible.sh
 Icon=accessories-clock
 Terminal=false
 Type=Application
-Categories=Utility;Accessibility;
+Categories=Utilities;Accessibility;
 Keywords=timer;accessibility;tea;
