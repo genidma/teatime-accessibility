@@ -169,9 +169,13 @@ After installation, you can run the application in one of the following ways:
    
 2. Depending on how many apps you have installed on your computer, you might have to scroll to the following views. 
 
-In the illustration below, the icon for the app appears on the second page (or view). You either scroll to this location or you can click on the dots that you see at the bottom of the screen.
+In the illustration below: The icon for the app appears on the second page (or view). You either scroll to this location or you can click on the dots that you see at the bottom of the screen.
 
-Please see the screenshot below for visual representation. Where 1. represents the mechanism via which you can scroll through the views. 2. Represents the icon for this application.
+Screenshot below for visual representation:
+Where
+    1.  (within the screenshot directly) represents the mechanism via which you can scroll through the views. 
+    And
+    2. Represents the icon for this application.
    ![Activities Menu Scroll](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu-scroll.png)
 3. Click on the application icon to launch it
 
