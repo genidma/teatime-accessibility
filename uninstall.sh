@@ -23,6 +23,17 @@ else
     echo "No desktop entry found"
 fi
 
+# Remove desktop shortcut if it exists
+DESKTOP_SHORTCUT_DIRS=("$HOME/Desktop" "$HOME/desktop" "$HOME/Área de Trabalho" "$HOME/سطح المكتب" "$HOME/デスクトップ" "$HOME/Рабочий стол")
+for DIR in "${DESKTOP_SHORTCUT_DIRS[@]}"; do
+    if [ -f "$DIR/teatime-accessibility.desktop" ]; then
+        echo "Removing desktop shortcut..."
+        rm "$DIR/teatime-accessibility.desktop"
+        echo "Desktop shortcut removed"
+        break
+    fi
+done
+
 # Ask user if they want to remove the virtual environment
 echo ""
 echo "Do you want to remove the virtual environment? This will remove all installed packages."

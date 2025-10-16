@@ -6,9 +6,9 @@
 [Desktop Entry]
 Name=TeaTime Accessibility
 Comment=Accessible tea timer with rainbow glow feature
-Exec=/vms_and_github/Github/teatime-accessibility/teatime-accessible.sh
+Exec=/bin/bash /vms_and_github/Github/teatime-accessibility/teatime-accessible.sh
 Icon=accessories-clock
 Terminal=false
 Type=Application
-Categories=Utilities;Accessibility;
+Categories=Utility;Accessibility;
 Keywords=timer;accessibility;tea;

@@ -92,7 +92,8 @@ This script will:
 1. Create a virtual environment with access to system packages (if one doesn't already exist)
 2. Install all required dependencies
 3. Create a desktop entry for easy access in the Utilities section of your application menu
-4. Make the launcher script executable
+4. Optionally create a desktop shortcut/icon for quick access
+5. Make the launcher script executable
 
 The setup script will also prompt you to install system dependencies if needed.
 
@@ -115,7 +116,8 @@ If you prefer to install manually:
    mkdir -p ~/.local/share/applications
    cp teatime-accessibility.desktop ~/.local/share/applications/
    ```
-   This command copies the desktop entry file to the standard location for user-specific applications.
+
+After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu.
 
 ## Usage
 
@@ -131,6 +133,9 @@ From the project's root directory, run either of the following options:
 1. Open your desktop environment's application menu
 2. Look for "TeaTime Accessibility" under the "Utilities" category
 3. Click on the application icon to launch it
+
+**Option 3: Desktop Shortcut**
+If you chose to create a desktop shortcut during setup, you can simply double-click the icon on your desktop.
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
@@ -172,14 +177,18 @@ To manually uninstall:
    ```bash
    rm ~/.local/share/applications/teatime-accessibility.desktop
    ```
-   This command removes the desktop entry file from the standard location where it was copied during installation.
 
-2. Optionally remove the virtual environment:
+2. Optionally remove the desktop shortcut:
+   ```bash
+   rm ~/Desktop/teatime-accessibility.desktop
+   ```
+
+3. Optionally remove the virtual environment:
    ```bash
    rm -rf teatime-venv
    ```
 
-3. Optionally remove configuration and statistics:
+4. Optionally remove configuration and statistics:
    ```bash
    rm ~/.config/teatime_config.json
    rm ~/.local/share/teatime_stats.json

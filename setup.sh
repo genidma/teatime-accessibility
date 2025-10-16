@@ -135,7 +135,7 @@ cat > "$DESKTOP_DIR/teatime-accessibility.desktop" << EOF
 [Desktop Entry]
 Name=TeaTime Accessibility
 Comment=Accessible tea timer with rainbow glow feature
-Exec=$PROJECT_DIR/teatime-accessible.sh
+Exec=/bin/bash $PROJECT_DIR/teatime-accessible.sh
 Icon=accessories-clock
 Terminal=false
 Type=Application
@@ -144,6 +144,40 @@ Keywords=timer;accessibility;tea;
 EOF
 
 echo "Desktop entry created at $DESKTOP_DIR/teatime-accessibility.desktop"
+
+# Ask user if they want to create a desktop shortcut
+echo ""
+read -p "Do you want to create a desktop shortcut? (y/N): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Creating desktop shortcut..."
+    DESKTOP_SHORTCUT_DIR="$HOME/Desktop"
+    # Check if Desktop directory exists, if not try other common locations
+    if [ ! -d "$DESKTOP_SHORTCUT_DIR" ]; then
+        DESKTOP_SHORTCUT_DIR="$HOME/desktop"
+        if [ ! -d "$DESKTOP_SHORTCUT_DIR" ]; then
+            DESKTOP_SHORTCUT_DIR="$HOME/Área de Trabalho"  # Portuguese
+            if [ ! -d "$DESKTOP_SHORTCUT_DIR" ]; then
+                DESKTOP_SHORTCUT_DIR="$HOME/سطح المكتب"  # Arabic
+                if [ ! -d "$DESKTOP_SHORTCUT_DIR" ]; then
+                    DESKTOP_SHORTCUT_DIR="$HOME/デスクトップ"  # Japanese
+                    if [ ! -d "$DESKTOP_SHORTCUT_DIR" ]; then
+                        DESKTOP_SHORTCUT_DIR="$HOME/Рабочий стол"  # Russian
+                        if [ ! -d "$DESKTOP_SHORTCUT_DIR" ]; then
+                            # If no desktop directory found, create one
+                            DESKTOP_SHORTCUT_DIR="$HOME/Desktop"
+                            mkdir -p "$DESKTOP_SHORTCUT_DIR"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+    fi
+    
+    # Create desktop shortcut by copying the desktop entry
+    cp "$DESKTOP_DIR/teatime-accessibility.desktop" "$DESKTOP_SHORTCUT_DIR/"
+    echo "Desktop shortcut created at $DESKTOP_SHORTCUT_DIR/teatime-accessibility.desktop"
+fi
 
 # Make the launcher script executable
 chmod +x teatime-accessible.sh
