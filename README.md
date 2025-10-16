@@ -187,9 +187,9 @@ If you chose to create a desktop shortcut during installation:
 
    <img src="./assets/icon.png" width="48" height="52" alt="Application Icon">
 
-On Ubuntu Desktop, the icon will look exactly like this (below)
-   <img src="./screenshots_demo_clones/2025-10-16-icon-for-Readme.png" alt="Application Icon">
+On Ubuntu Desktop, the icon will look like this (below):
 
+   <img src="./screenshots_demo_clones/2025-10-16-icon-for-Readme.png" alt="Application Icon">
 
 
 5. Double-click the icon to launch the application
