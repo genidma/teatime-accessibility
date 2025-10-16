@@ -82,9 +82,11 @@ sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 ```
 
 ### Automatic Installation (Recommended)
-Run the install script:
+First, clone the repository to a location of your choice, then run the install script:
 
 ```bash
+git clone <repository-url>
+cd teatime-accessibility
 ./install.sh
 ```
 
@@ -121,7 +123,7 @@ After running these commands, you'll find "TeaTime Accessibility" in the Utiliti
 
 ## Installation Locations
 
-When you run the install.sh script, here's exactly where each component is installed:
+When you run the [install.sh](file:///vms_and_github/Github/teatime-accessibility/install.sh) script, here's exactly where each component is installed:
 
 1. **Virtual Environment**: 
    - Location: Inside the project directory as `teatime-venv/`
@@ -136,7 +138,7 @@ When you run the install.sh script, here's exactly where each component is insta
    - This provides a direct shortcut icon on your desktop
 
 4. **Application Files**:
-   - All application files remain in your project directory
+   - All application files remain in your project directory (wherever you cloned the repository)
    - This includes the main Python script, assets, and configuration files
 
 5. **User Data**:
@@ -153,7 +155,7 @@ This approach keeps everything contained within your project directory while pro
 ## Usage
 
 ### Running the Application
-From the project's root directory, run either of the following options:
+From the project's root directory (where you cloned the repository), run either of the following options:
 
 **Option 1: Command line**
 ```bash
@@ -173,6 +175,18 @@ If you chose to create a desktop shortcut during installation:
 4. Double-click the icon to launch the application
 
 The application will appear in your system tray (notification area) and can be controlled from there.
+
+If you want to run the application from the command line again in the future, you don't need to recreate the virtual environment. Instead:
+
+1. Navigate to the project directory (wherever you originally cloned the repository)
+2. Activate the existing virtual environment:
+   ```bash
+   source teatime-venv/bin/activate
+   ```
+3. Run the application:
+   ```bash
+   ./teatime-accessible.sh
+   ```
 
 ### Command Line Options - broken at the moment. tracked in issue.
 ```bash
@@ -194,7 +208,7 @@ Settings are automatically saved to `~/.config/teatime/settings.json` including:
 ## Uninstalling the Application
 
 ### Automatic Uninstall (Recommended)
-Run the uninstall script:
+Run the uninstall script from the project directory:
 
 ```bash
 ./uninstall.sh
