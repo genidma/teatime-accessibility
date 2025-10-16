@@ -214,7 +214,7 @@ Note: The virtual environment is created in the project directory and persists b
    ```
 
 ### Command Line Options for Duration
-A custom duration can be specified via the GUI and also via the command line. 
+A custom duration can be specified via the GUI and also via the command line. As a note on the aside, durations are always in minutes.
 
 To do this on the command line:
 
@@ -234,7 +234,7 @@ As another example, if you frequently use a 30-minute timer. You could simply ch
 ./teatime-accessible.sh --duration 30
 ```
 
-This eliminates the need to manually adjust the timer duration each time you start the application.
+This eliminates the need to manually adjust the timer duration, each time you start the application.
 
 ### Configuration
 Settings are automatically saved to `~/.config/teatime/settings.json` including:

@@ -32,7 +32,7 @@ MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
 class TeaTimerApp(Gtk.Application):
-    def __init__(self, duration=5):
+    def __init__(self, duration=5, auto_start=False):
         super().__init__(application_id="org.example.TeaTimer",
                          flags=Gio.ApplicationFlags.NON_UNIQUE)
         self.window = None
@@ -58,6 +58,7 @@ class TeaTimerApp(Gtk.Application):
         self.sprite_frames = []    # Storage for sprite frames
         self.current_sprite_frame = 0
         self.sprite_timer_id = None
+        self.auto_start = auto_start  # Flag to indicate if timer should start automatically
         self._load_config()  # Load settings from file
         # Set up keyboard shortcuts
         self._setup_actions()
@@ -222,6 +223,17 @@ class TeaTimerApp(Gtk.Application):
             self._set_accessibility_properties()
 
         self.window.show_all()
+        
+        # Automatically start the timer if auto_start flag is set
+        if self.auto_start:
+            # Use idle_add to ensure the UI is fully initialized before starting
+            GLib.idle_add(self._auto_start_timer)
+
+    def _auto_start_timer(self):
+        """Helper method to automatically start the timer after UI is shown."""
+        # Set the duration and start the timer
+        self.on_start_clicked()
+        return False  # Don't repeat this callback
 
     def _on_window_destroy(self, widget):
         """Handle window destruction properly."""
