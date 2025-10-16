@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Setup script for TeaTime Accessibility
+# Install script for TeaTime Accessibility
 # This script creates a virtual environment and installs required dependencies
 
 set -e  # Exit on any error
 
-echo "TeaTime Accessibility Setup Script"
-echo "=================================="
+echo "TeaTime Accessibility Install Script"
+echo "==================================="
 
 # Check if we're in the project directory
 if [ ! -f "teatime-accessible.sh" ]; then
@@ -127,7 +127,7 @@ echo "Creating desktop entry..."
 DESKTOP_DIR="$HOME/.local/share/applications"
 mkdir -p "$DESKTOP_DIR"
 
-# Create a custom desktop entry with the correct path
+# Create a custom desktop entry with a relative path
 cat > "$DESKTOP_DIR/teatime-accessibility.desktop" << EOF
 [Desktop Entry]
 Name=TeaTime Accessibility
@@ -190,7 +190,7 @@ echo "Install completed successfully!"
 echo "=================================="
 echo "There are multiple options to run this app. From the terminal or from a desktop icon, etc."
 echo "If you choose to run the app again from the terminal, then you don't have to create a Python"
-echo "environment again. Simply run the following command in your terminal:"
+echo "environment again. Simply run the following command in your terminal from the project directory:"
 echo "  source teatime-venv/bin/activate"
 echo ""
 echo "After activating the virtual environment, you can run the application with:"
