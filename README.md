@@ -188,7 +188,7 @@ If you chose to create a desktop shortcut during installation:
 2. Right-click on the "TeaTime Accessibility" icon
 3. Select "Allow Launching" from the context menu
 5. Double-click the icon to launch the application
-4. On and after 2025-10-16, your icon will look like this. 
+4. As of 2025-10-16, the icon looks like this. 
 
    <img src="./assets/icon.png" width="48" height="52" alt="Application Icon">
 
@@ -203,7 +203,7 @@ The application will appear in your system tray (notification area) and can be c
 Note: The virtual environment is created in the project directory and persists between sessions. It only needs to be recreated if you manually delete it or run the uninstall script. For the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu before you can use it to start the application.
 
 ### Option 3: Command Line
-1. Navigate to the project directory (wherever you originally cloned the repository)
+1. Navigate to the project directory (the location on your computer, where you originally cloned the repository)
 2. Activate the existing virtual environment:
    ```bash
    source teatime-venv/bin/activate
@@ -218,7 +218,7 @@ The application supports command line arguments for setting the default timer du
 
 To use the command line option:
 
-1. Open a terminal and navigate to the project directory
+1. Open a [terminal](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) and navigate to the project directory
 2. Next, you can specify different parameters for the duration:
 
 ```bash
