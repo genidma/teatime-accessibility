@@ -165,6 +165,8 @@ After installation, you can run the application in one of the following ways:
 ### Option 1: Main 'Activities Menu'
 1. Click on the 'Activities Menu' in Ubuntu Desktop
 
+   ![Activities Menu](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu.png)
+   
 2. Look for "TeaTime Accessibility" under the "Utilities" category
 3. Click on the application icon to launch it
 
