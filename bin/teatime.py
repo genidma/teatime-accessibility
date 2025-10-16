@@ -722,11 +722,25 @@ class TeaTimerApp(Gtk.Application):
         self.on_start_clicked()
 
     def _show_fullscreen_notification(self):
-        """Displays a temporary, fullscreen notification with sprite animation."""
+        """Displays a temporary, fullscreen notification on the same monitor as the main window."""
         notification_window = Gtk.Window(type=Gtk.WindowType.POPUP)
         notification_window.set_decorated(False)
         notification_window.set_keep_above(True)
-        notification_window.fullscreen()
+        
+        # Get the monitor where the main window is located
+        if self.window and self.window.get_window():
+            display = self.window.get_window().get_display()
+            monitor = display.get_monitor_at_window(self.window.get_window())
+            
+            # Get the geometry of the monitor
+            geometry = monitor.get_geometry()
+            
+            # Set the window to cover the entire monitor
+            notification_window.move(geometry.x, geometry.y)
+            notification_window.set_size_request(geometry.width, geometry.height)
+        else:
+            # Fallback to fullscreen if we can't determine the monitor
+            notification_window.fullscreen()
 
         # A box to center the content vertically
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
@@ -735,7 +749,7 @@ class TeaTimerApp(Gtk.Application):
 
         # The message label
         label = Gtk.Label()
-        label.set_markup("<span font_desc='Sans Bold 60px' foreground='white'>Let's take a break?</span>")
+        label.set_markup("<span font_desc='Sans Bold 60px' foreground='white'>Session Complete</span>")
         main_box.pack_start(label, False, False, 0)
         
         # Load sprite frames if not already loaded
