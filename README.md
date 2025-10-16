@@ -187,7 +187,8 @@ If you chose to create a desktop shortcut during installation:
 1. Navigate to your desktop
 2. Right-click on the "TeaTime Accessibility" icon
 3. Select "Allow Launching" from the context menu
-4. Once you have selected "Allow Launching" and as of 2025-10-16, your icon will look like this. 
+5. Double-click the icon to launch the application
+4. On and after 2025-10-16, your icon will look like this. 
 
    <img src="./assets/icon.png" width="48" height="52" alt="Application Icon">
 
@@ -195,9 +196,7 @@ On Ubuntu Desktop, the icon will look like this (below):
 
    <img src="./screenshots_demo_clones/2025-10-16-icon-for-Readme.png" alt="Application Icon">
 
-Note: The icon will look like the same size as any other icon on your Ubuntu Desktop. It looks a bit bigger via the screenshot here. Fyi only.
-
-5. Double-click the icon to launch the application
+Fyi only: The icon looks larger in the illustrations here. The icons on your computer will be the same size as any other icon on your Ubuntu Desktop. 
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
