@@ -735,7 +735,7 @@ class TeaTimerApp(Gtk.Application):
 
         # The message label
         label = Gtk.Label()
-        label.set_markup("<span font_desc='Sans Bold 60px' foreground='white'>Session Complete</span>")
+        label.set_markup("<span font_desc='Sans Bold 60px' foreground='white'>Let's take a break?</span>")
         main_box.pack_start(label, False, False, 0)
         
         # Load sprite frames if not already loaded
