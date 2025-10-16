@@ -1487,12 +1487,15 @@ if __name__ == "__main__":
     import os
     os.environ['TEATIME_DURATION'] = str(args.duration)
     
+    # Determine if we should auto-start the timer (when duration is explicitly provided)
+    auto_start = '--duration' in sys.argv
+    
     # Reconstruct sys.argv without our custom arguments for GTK
     new_argv = [sys.argv[0]] + unknown
     sys.argv = new_argv
     
     # Create a new Gio.Application
-    app = TeaTimerApp(duration=args.duration)
+    app = TeaTimerApp(duration=args.duration, auto_start=auto_start)
     
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
