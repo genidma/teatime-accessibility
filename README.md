@@ -173,8 +173,11 @@ In the illustration below: The icon for the app appears on the second page (or v
 
 Screenshot below for visual representation:
 Where
+
     1.  (within the screenshot directly) represents the mechanism via which you can scroll through the views. 
+
     And
+
     2. Represents the icon for this application.
    ![Activities Menu Scroll](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu-scroll.png)
 3. Click on the application icon to launch it
