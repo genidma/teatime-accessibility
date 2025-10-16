@@ -127,7 +127,7 @@ ICONS_DIR="$HOME/.local/share/icons/hicolor/48x48/apps"
 mkdir -p "$ICONS_DIR"
 
 # Copy the custom icon to the appropriate location
-ICON_FILE="assets/teatime-icon.png"
+ICON_FILE="assets/icon.png"
 if [ -f "$ICON_FILE" ]; then
     echo "Installing custom application icon..."
     cp "$ICON_FILE" "$ICONS_DIR/teatime-accessibility.png"
@@ -140,7 +140,7 @@ else
 fi
 
 # Also install PNG version for better compatibility
-ICON_PNG_FILE="assets/teatime-icon.png"
+ICON_PNG_FILE="assets/icon.png"
 if [ -f "$ICON_PNG_FILE" ]; then
     ICON_SIZES=("16x16" "22x22" "24x24" "32x32" "48x48" "64x64" "128x128" "256x256")
     for size in "${ICON_SIZES[@]}"; do
