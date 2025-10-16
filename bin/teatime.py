@@ -837,74 +837,58 @@ class TeaTimerApp(Gtk.Application):
         """Create a window to display the sprite animation."""
         print("Creating sprite window...")
         if self.sprite_window is None:
-            self.sprite_window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-            self.sprite_window.set_decorated(False)
-            self.sprite_window.set_keep_above(True)
+            self.sprite_window = Gtk.Window()
+            self.sprite_window.set_title("Animation")
             self.sprite_window.set_default_size(300, 300)
+            self.sprite_window.set_keep_above(True)
             
-            # Center the window
-            self.sprite_window.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
-            print("Sprite window created and positioned")
+            # Create a simple colored box for testing
+            drawing_area = Gtk.DrawingArea()
+            drawing_area.connect("draw", self._on_simple_draw)
+            self.sprite_window.add(drawing_area)
             
-            # Create drawing area for sprite
-            self.sprite_drawing_area = Gtk.DrawingArea()
-            self.sprite_drawing_area.connect("draw", self._on_sprite_draw)
-            
-            self.sprite_window.add(self.sprite_drawing_area)
-            print("Drawing area added to sprite window")
-            
-            # Make window background transparent
-            screen = self.sprite_window.get_screen()
-            visual = screen.get_rgba_visual()
-            if visual and screen.is_composited():
-                self.sprite_window.set_visual(visual)
-                print("Set RGBA visual for transparency")
-            
-            css_provider = Gtk.CssProvider()
-            css = b"""
-            window {
-                background-color: rgba(0, 0, 0, 0);
-            }
-            """
-            css_provider.load_from_data(css)
-            context = self.sprite_window.get_style_context()
-            context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-            print("Applied CSS for transparent background")
+            print("Sprite window with simple drawing area created")
+
+    def _on_simple_draw(self, widget, cr):
+        """Simple draw function for testing."""
+        print("Simple draw function called")
+        alloc = widget.get_allocation()
+        # Draw a simple colored rectangle
+        cr.set_source_rgb(1, 0, 0)  # Red
+        cr.rectangle(0, 0, alloc.width, alloc.height)
+        cr.fill()
+        print("Red rectangle drawn")
+        return False
 
     def _on_sprite_draw(self, widget, cr):
         """Draw the current sprite frame."""
         print(f"Drawing sprite frame {self.current_sprite_frame}")
         if self.sprite_frames and 0 <= self.current_sprite_frame < len(self.sprite_frames):
-            try:
-                alloc = widget.get_allocation()
-                pixbuf = self.sprite_frames[self.current_sprite_frame]
-                
-                # Scale pixbuf to fit allocation while maintaining aspect ratio
-                pixbuf_width = pixbuf.get_width()
-                pixbuf_height = pixbuf.get_height()
-                
-                scale_x = alloc.width / pixbuf_width
-                scale_y = alloc.height / pixbuf_height
-                scale = min(scale_x, scale_y, 1.0)  # Don't upscale
-                
-                scaled_width = int(pixbuf_width * scale)
-                scaled_height = int(pixbuf_height * scale)
-                
-                # Center the image
-                x = (alloc.width - scaled_width) // 2
-                y = (alloc.height - scaled_height) // 2
-                
-                scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-                # Use a different approach to draw the pixbuf
-                Gdk.cairo_set_source_pixbuf(cr, scaled_pixbuf, x, y)
-                cr.paint()
-                print(f"Sprite frame {self.current_sprite_frame} drawn successfully")
-            except Exception as e:
-                print(f"Error drawing sprite frame: {e}")
-                # Draw a simple rectangle as fallback
-                cr.set_source_rgb(1, 0, 0)  # Red color
-                cr.rectangle(10, 10, alloc.width - 20, alloc.height - 20)
-                cr.fill()
+            alloc = widget.get_allocation()
+            # Draw a different colored rectangle for each frame to verify animation
+            # Using a simple color rotation
+            colors = [
+                (1, 0, 0),  # Red
+                (0, 1, 0),  # Green
+                (0, 0, 1),  # Blue
+                (1, 1, 0),  # Yellow
+                (1, 0, 1),  # Magenta
+                (0, 1, 1),  # Cyan
+                (1, 0.5, 0),  # Orange
+                (0.5, 0, 0.5),  # Purple
+                (1, 0.5, 0.5),  # Pink
+                (0.5, 1, 0.5),  # Light Green
+                (0.5, 0.5, 1),  # Light Blue
+                (1, 1, 1),  # White
+            ]
+            
+            color_index = self.current_sprite_frame % len(colors)
+            r, g, b = colors[color_index]
+            
+            cr.set_source_rgb(r, g, b)
+            cr.rectangle(0, 0, alloc.width, alloc.height)
+            cr.fill()
+            print(f"Sprite frame {self.current_sprite_frame} drawn with color {colors[color_index]}")
         else:
             print(f"Skipping draw - no valid sprite frame (current: {self.current_sprite_frame}, total: {len(self.sprite_frames) if self.sprite_frames else 0})")
         
