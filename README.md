@@ -163,11 +163,11 @@ After installation, you can run the application in one of the following ways:
 
 ### Option 2: Command Line
 1. Navigate to the project directory (wherever you originally cloned the repository)
-2. Activating the existing python virtual environment. Important and if you are new to python, you only have to activate the python virtual environment once on a machine (unless you delete it for some reason, or uninstall python e.t.c):
+2. Activate the existing virtual environment:
    ```bash
    source teatime-venv/bin/activate
    ```
-3. Once your python environment has been created. The first time and then subsequent times, you can simply Run the application like any standard *nix script: The shell script is designed to invoke the python (.py script) that programmatically will build the app in the GTK environment
+3. Run the application:
    ```bash
    ./teatime-accessible.sh
    ```
@@ -181,7 +181,7 @@ If you chose to create a desktop shortcut during installation:
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
-Note: The virtual environment has been created in the project directory and does not need to be recreated unless you run the uninstall script.
+Note: The virtual environment has been created in the project directory and does not need to be recreated unless you run the uninstall script. Also, to launch the application from the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu.
 
 ### Command Line Options - broken at the moment. tracked in issue.
 ```bash
