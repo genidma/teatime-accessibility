@@ -261,7 +261,12 @@ class TeaTimerApp(Gtk.Application):
             "Refinements by Gemini",
             "Sound by Daniel Simion - https://soundbible.com/2218-Service-Bell-Help.html"
         ])
-        about_dialog.set_logo_icon_name("accessories-clock")
+        # Try to use our custom icon, fallback to system icon if not available
+        icon_theme = Gtk.IconTheme.get_default()
+        if icon_theme.has_icon("teatime-accessibility"):
+            about_dialog.set_logo_icon_name("teatime-accessibility")
+        else:
+            about_dialog.set_logo_icon_name("accessories-clock")
         about_dialog.run()
         about_dialog.destroy()
 

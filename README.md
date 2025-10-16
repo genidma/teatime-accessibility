@@ -7,6 +7,7 @@ TeaTime Accessibility is an accessibility focused timer application (app) for th
 - **Timer:** Set custom break intervals for better productivity.
 - **Accessibility Integration:** Works seamlessly with screen readers and other assistive technologies.
 - **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json`.
+- **Custom Application Icon:** Features a distinctive teapot-themed icon for better recognition in your applications menu.
 
 # Accessible Tea Timer
 
