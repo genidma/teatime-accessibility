@@ -162,8 +162,9 @@ This approach keeps everything contained within your project directory while pro
 
 After installation, you can run the application in one of the following ways:
 
-### Option 1: Applications Menu
-1. Open your applications menu
+### Option 1: Main 'Activities Menu'
+1. Click on the 'Activities Menu' in Ubuntu Desktop
+
 2. Look for "TeaTime Accessibility" under the "Utilities" category
 3. Click on the application icon to launch it
 
