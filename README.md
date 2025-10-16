@@ -183,7 +183,8 @@ If you chose to create a desktop shortcut during installation:
 1. Navigate to your desktop
 2. Right-click on the "TeaTime Accessibility" icon
 3. Select "Allow Launching" from the context menu
-4. Double-click the icon to launch the application
+4. Once you have selected "Allow Launching" and as of 2025-10-16, your icon will look like this. 
+6. Double-click the icon to launch the application
 
 The application will appear in your system tray (notification area) and can be controlled from there.
 
