@@ -15,9 +15,6 @@ if [ ! -f "teatime-accessible.sh" ]; then
     exit 1
 fi
 
-# Get the absolute path to the project directory
-PROJECT_DIR=$(pwd)
-
 # Define virtual environment directory
 VENV_DIR="teatime-venv"
 
@@ -135,7 +132,7 @@ cat > "$DESKTOP_DIR/teatime-accessibility.desktop" << EOF
 [Desktop Entry]
 Name=TeaTime Accessibility
 Comment=Accessible tea timer with rainbow glow feature
-Exec=/bin/bash $PROJECT_DIR/teatime-accessible.sh
+Exec=$PWD/teatime-accessible.sh
 Icon=accessories-clock
 Terminal=false
 Type=Application
