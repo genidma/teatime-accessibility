@@ -10,6 +10,7 @@ from datetime import datetime
 import colorsys
 import csv
 import threading
+import sys
 
 import gi
 # Use GTK 3 for better compatibility
@@ -39,7 +40,13 @@ class TeaTimerApp(Gtk.Application):
         self.time_left = 0
         self.current_timer_duration = 0
         self.font_scale_factor = DEFAULT_FONT_SCALE
-        self.last_duration = duration  # Default duration from config or CLI
+        # Check if duration was set via environment variable
+        import os
+        env_duration = os.environ.get('TEATIME_DURATION')
+        if env_duration is not None:
+            self.last_duration = int(env_duration)
+        else:
+            self.last_duration = duration  # Default duration from config or CLI
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
@@ -951,37 +958,6 @@ class TeaTimerApp(Gtk.Application):
             notification_window.destroy()
         return GLib.SOURCE_REMOVE
 
-    def do_command_line(self, command_line):
-        """Handle command line arguments before activating the application."""
-        options = command_line.get_options_dict()
-        
-        # Get the duration from command line if provided
-        duration_variant = options.lookup_value("duration", None)
-        if duration_variant is not None:
-            self.last_duration = duration_variant.get_int32()
-        
-        # Activate the application
-        self.activate()
-        return 0
-
-    def do_startup(self):
-        """Set up command line options during application startup."""
-        Gtk.Application.do_startup(self)
-        
-        # Add command line option for duration
-        action = Gio.SimpleAction.new("duration", GLib.VariantType.new("i"))
-        action.connect("activate", lambda a, p: None)  # No action needed, handled in do_command_line
-        self.add_action(action)
-        
-        # Add the option to the application
-        self.add_main_option(
-            "duration",
-            ord("d"),
-            GLib.OptionFlags.NONE,
-            GLib.OptionArg.INT,
-            "Timer duration in minutes (1-999)",
-            "DURATION"
-        )
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
@@ -1454,11 +1430,22 @@ class StatisticsWindow(Gtk.Window):
 
 if __name__ == "__main__":
     import sys
+    import argparse
     
-    # Parse command line arguments
+    # Parse command line arguments before GTK processes them
     parser = argparse.ArgumentParser(description='Accessible Tea Timer')
     parser.add_argument('--duration', type=int, default=5, help='Timer duration in minutes (1-999)')
-    args = parser.parse_args()
+    
+    # Parse known args to avoid conflicts with GTK arguments
+    args, unknown = parser.parse_known_args()
+    
+    # Store duration for use in the app
+    import os
+    os.environ['TEATIME_DURATION'] = str(args.duration)
+    
+    # Reconstruct sys.argv without our custom arguments for GTK
+    new_argv = [sys.argv[0]] + unknown
+    sys.argv = new_argv
     
     # Create a new Gio.Application
     app = TeaTimerApp(duration=args.duration)
