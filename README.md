@@ -213,22 +213,23 @@ Note: The virtual environment is created in the project directory and persists b
    ./teatime-accessible.sh
    ```
 
-### Command Line Options
-The application supports command line arguments for setting the default timer duration. Including custom durations (Different from Session Presets in the GUI - Graphical User Iterface)
+### Command Line Options for Duration
+A custom duration can be specified via the GUI and also via the command line. 
 
-To use the command line option:
+To do this on the command line:
 
 1. Open a [terminal](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) and navigate to the project directory
-2. Next, you can specify different parameters for the duration:
+2. In the example directly below, a 5 minute range has been specified for the duration. You still have to click on Start manually: 
 
 ```bash
-# Set default duration (1-999 minutes)
+# Range for duration (1-999 minutes)
+# Example below
 ./teatime-accessible.sh --duration 5
 ```
 
-When you launch the application with the `--duration` parameter, the specified value will be pre-filled in the minutes input field within the GUI.
+When you launch the application with the `--duration` parameter, the specified value will be pre-filled in the minutes input field within the GUI. And you can choose any value specified in the 'range' above
 
-For example, if you frequently use a 30-minute timer. Because you want to check in with your loved one or check up on your puppy. Here, you could simply:
+As another example, if you frequently use a 30-minute timer. You could simply change/specify the duration like this:
 ```bash
 ./teatime-accessible.sh --duration 30
 ```
@@ -268,17 +269,17 @@ To manually uninstall:
    rm ~/.local/share/applications/teatime-accessibility.desktop
    ```
 
-2. Optionally remove the desktop shortcut:
+2. To remove the desktop shortcut:
    ```bash
    rm ~/Desktop/teatime-accessibility.desktop
    ```
 
-3. Optionally remove the virtual environment:
+3. To remove the virtual environment:
    ```bash
    rm -rf teatime-venv
    ```
 
-4. Optionally remove configuration and statistics:
+4. To remove configuration and statistics:
    ```bash
    rm ~/.config/teatime_config.json
    rm ~/.local/share/teatime_stats.json
@@ -289,4 +290,4 @@ The application consists of:
 - `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
 ## License
-Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is significantly different with a different licensing policy.
+Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keep evolving. The release(s) are also with with a different licensing policy.
