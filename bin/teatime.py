@@ -597,14 +597,17 @@ class TeaTimerApp(Gtk.Application):
         self.time_label.get_style_context().remove_class("rainbow-text")
         self._apply_font_size() # Reset color
 
+        # Get the current value from the spin button
+        current_duration = self.duration_spin.get_value()
+        
         # 2025-10-17 Chatgpt recommended change so that the 'test_short_timer.py' script can pass second based variables for durtion to this main teatime.py script
         if getattr(self, 'use_seconds', False):
-            self.time_left = self.last_duration  # already in seconds
+            self.time_left = current_duration  # already in seconds
         else:
-            self.time_left = self.last_duration * 60  # minutes → seconds
+            self.time_left = current_duration * 60  # minutes → seconds
         # DEBUG: show the exact countdown in seconds
         print(f"DEBUG: time_left = {self.time_left} seconds")    
-        self.current_timer_duration = self.duration_spin.get_value()
+        self.current_timer_duration = current_duration
         self.start_timer()
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
@@ -617,7 +620,7 @@ class TeaTimerApp(Gtk.Application):
         try:
             accessible = self.time_label.get_accessible()
             if accessible:
-                accessible.set_description(f"Tea timer started for {self.duration_spin.get_value()} minutes.")
+                accessible.set_description(f"Tea timer started for {current_duration} minutes.")
         except Exception as e:
             print(f"Warning: Could not update accessibility description: {e}")
 
