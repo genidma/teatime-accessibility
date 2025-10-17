@@ -9,8 +9,13 @@ It automatically:
 3. Starts the timer automatically
 4. Displays any sprite animations associated with the timer
 
-Author: Lingma
-Date: 2025
+Difference from test_short_timer.py: This specifically tests the sprite 
+animation features of the application, while test_short_timer.py is a 
+general functionality test with automatic closing.
+
+Author: Lingma from Alibaba Cloud
+Co-author: genidma on Github
+Date of creation: October 2025
 """
 
 import sys
@@ -30,15 +35,17 @@ class TestSpriteApp:
         self.app = TeaTimerApp()
         
     def run_test(self):
-        # Activate the application
-        self.app.do_activate()
+        # Connect to the activate signal to set up our test
+        def on_activate(application):
+            # UI elements are now created, set a 5-second timer for testing
+            self.app.duration_spin.set_value(5/60)  # 5 seconds in minutes
+            self.app.on_start_clicked()
+            
+            # Start the GTK main loop
+            Gtk.main()
         
-        # Set a 5-second timer for testing
-        self.app.duration_spin.set_value(5/60)  # 5 seconds in minutes
-        self.app.on_start_clicked()
-        
-        # Start the GTK main loop
-        Gtk.main()
+        self.app.connect('activate', on_activate)
+        self.app.run(sys.argv)
 
 if __name__ == "__main__":
     test_app = TestSpriteApp()
