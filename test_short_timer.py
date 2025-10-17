@@ -42,6 +42,11 @@ parser = argparse.ArgumentParser(description='Test Tea Timer with custom duratio
 parser.add_argument('--duration', type=int, default=6, help='Timer duration in seconds (default: 6)')
 parser.add_argument('--exit-delay', type=int, default=5, help='Delay in seconds before exiting after timer finishes (default: 5)')
 
+#2025-10-17 introduction of this argument by Chatgpt to test second based values
+parser.add_argument('--use-seconds', action='store_true',
+    help='Interpret duration as seconds instead of minutes')
+
+
 # Parse known args to avoid conflicts with GTK arguments
 args, unknown = parser.parse_known_args()
 
@@ -60,16 +65,16 @@ from gi.repository import Gtk, GLib
 from teatime import TeaTimerApp
 
 def main():
-    # Create the application
-    app = TeaTimerApp()
+    # Convert seconds to minutes for the application
+    duration_in_minutes = max(1/60, args.duration/60)  # Minimum 1 second = 1/60 minute
+    
+    # Create the application with the duration
+    app = TeaTimerApp(duration=duration_in_minutes, auto_start=True)
     
     # Connect to the activate signal to set up our test
     def on_activate(application):
-        # For testing purposes, we convert seconds to minutes (even fractions)
-        duration_in_minutes = max(1/60, args.duration/60)  # Minimum 1 second = 1/60 minute
-        app.duration_spin.set_value(duration_in_minutes)
-        # Start the timer
-        app.on_start_clicked()
+        # Schedule the timer start using GLib.idle_add
+        GLib.idle_add(application.on_start_clicked)
         
         # Close the app after timer duration plus exit delay
         GLib.timeout_add_seconds(args.duration + args.exit_delay, Gtk.main_quit)
