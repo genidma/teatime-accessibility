@@ -2,31 +2,43 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-public class ExportSprites : MonoBehaviour
+public class ExportAllSlices : MonoBehaviour
 {
-    [MenuItem("Tools/Export Sliced Sprites")]
+    [MenuItem("Tools/Export All Slices From Sheet")]
     static void Export()
     {
         string folderPath = "Assets/ExportedSprites";
         if (!Directory.Exists(folderPath))
             Directory.CreateDirectory(folderPath);
 
-        Object[] sprites = Selection.GetFiltered(typeof(Sprite), SelectionMode.Assets);
-        foreach (Sprite sprite in sprites)
+        // Select the master sprite sheet
+        Texture2D texture = Selection.activeObject as Texture2D;
+        if (texture == null)
         {
-            Texture2D tex = sprite.texture;
-            Rect rect = sprite.rect;
+            Debug.LogError("Select a sprite sheet texture first!");
+            return;
+        }
 
-            Texture2D newTex = new Texture2D((int)rect.width, (int)rect.height);
-            Color[] pixels = tex.GetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
-            newTex.SetPixels(pixels);
-            newTex.Apply();
+        string path = AssetDatabase.GetAssetPath(texture);
+        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(path);
 
-            byte[] bytes = newTex.EncodeToPNG();
-            File.WriteAllBytes(Path.Combine(folderPath, sprite.name + ".png"), bytes);
+        foreach (Object asset in assets)
+        {
+            if (asset is Sprite sprite)
+            {
+                Rect rect = sprite.rect;
+                Texture2D newTex = new Texture2D((int)rect.width, (int)rect.height);
+                Color[] pixels = texture.GetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
+                newTex.SetPixels(pixels);
+                newTex.Apply();
+
+                byte[] bytes = newTex.EncodeToPNG();
+                string savePath = Path.Combine(folderPath, sprite.name + ".png");
+                File.WriteAllBytes(savePath, bytes);
+            }
         }
 
         AssetDatabase.Refresh();
-        Debug.Log("Export complete!");
+        Debug.Log("All slices exported to " + folderPath);
     }
 }
