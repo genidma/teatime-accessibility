@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+"""
+Test script for the Tea Timer application with a short timer duration.
+
+This script is designed for quick testing of the Tea Timer functionality
+without waiting for a full-length timer. It automatically:
+1. Launches the Tea Timer application
+2. Sets a 10-second timer (displayed as 0.17 minutes)
+3. Starts the timer automatically
+4. Closes the application after 15 seconds total
+
+Author: Lingma
+Date: 2025
+"""
 
 import sys
 import os

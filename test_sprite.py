@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+"""
+Test script for the Tea Timer application's sprite functionality.
+
+This script is designed to test the sprite animation features of the Tea Timer.
+It automatically:
+1. Launches the Tea Timer application
+2. Sets a 5-second timer (displayed as 0.083 minutes)
+3. Starts the timer automatically
+4. Displays any sprite animations associated with the timer
+
+Author: Lingma
+Date: 2025
+"""
 
 import sys
 import os
