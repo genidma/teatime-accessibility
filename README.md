@@ -28,6 +28,11 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 
 ## Accessibility Features
 
+### Photosensitive Epilepsy Safe Version
+* A photosensitive version of the app was created by @shanaya-gupta
+* This version does not have rainbow glow effects, sudden screen changes or flashing animations
+* " " can be [downloaded via v1.3.3 here](https://github.com/genidma/teatime-accessibility/releases/tag/v1.3.3-photosensitive)
+
 ### Visual Accessibility
 - **Adjustable Font Size**: Use A+ and A- buttons or Ctrl++ and Ctrl+- to increase/decrease font size
 - **High Contrast Support**: Automatically adapts to system theme settings
