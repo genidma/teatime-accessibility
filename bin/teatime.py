@@ -43,10 +43,16 @@ class TeaTimerApp(Gtk.Application):
         # Check if duration was set via environment variable
         import os
         env_duration = os.environ.get('TEATIME_DURATION')
-        if env_duration is not None:
-            self.last_duration = int(env_duration)
+        # If seconds mode is active (developer/test), use duration as-is
+        if getattr(self, 'use_seconds', False):
+            self.last_duration = duration  # already in seconds
         else:
-            self.last_duration = duration  # Default duration from config or CLI
+            # Normal behavior: use environment variable if set, else duration (in minutes)
+            env_duration = os.environ.get('TEATIME_DURATION')
+            if env_duration is not None:
+                self.last_duration = int(env_duration)
+            else:
+                self.last_duration = duration
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
@@ -591,7 +597,13 @@ class TeaTimerApp(Gtk.Application):
         self.time_label.get_style_context().remove_class("rainbow-text")
         self._apply_font_size() # Reset color
 
-        self.time_left = int(self.duration_spin.get_value()) * 60
+        # 2025-10-17 Chatgpt recommended change so that the 'test_short_timer.py' script can pass second based variables for durtion to this main teatime.py script
+        if getattr(self, 'use_seconds', False):
+            self.time_left = self.last_duration  # already in seconds
+        else:
+            self.time_left = self.last_duration * 60  # minutes → seconds
+        # DEBUG: show the exact countdown in seconds
+        print(f"DEBUG: time_left = {self.time_left} seconds")    
         self.current_timer_duration = self.duration_spin.get_value()
         self.start_timer()
         self.start_button.set_sensitive(False)

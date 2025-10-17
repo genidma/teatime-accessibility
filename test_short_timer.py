@@ -29,6 +29,7 @@ tests the sprite animation features.
 
 Author: Lingma from Alibaba Cloud
 Co-author: genidma on Github
+Fixer and tester: Chatgpt (Some heavy duty fixing to get the second based variables working)
 Date of creation: October 2025
 """
 
@@ -65,12 +66,13 @@ from gi.repository import Gtk, GLib
 from teatime import TeaTimerApp
 
 def main():
-      # Create the application with the duration
-      app = TeaTimerApp(duration=args.duration, auto_start=True)
-
-      # Set seconds mode if the flag was passed
-      app.use_seconds = args.use_seconds
-
+    # Create a custom TeaTimerApp class that properly handles use_seconds parameter
+    class TestTeaTimerApp(TeaTimerApp):
+        def __init__(self, duration=5, auto_start=False, use_seconds=False):
+            self.use_seconds = use_seconds
+            super().__init__(duration=duration, auto_start=auto_start)
+    
+    app = TestTeaTimerApp(duration=args.duration, auto_start=False, use_seconds=args.use_seconds)
     
     # Connect to the activate signal to set up our test
     def on_activate(application):
@@ -78,14 +80,14 @@ def main():
         GLib.idle_add(application.on_start_clicked)
         
         # Close the app after timer duration plus exit delay
-        GLib.timeout_add_seconds(args.duration + args.exit_delay, Gtk.main_quit)
+        # Use the correct time unit based on use_seconds flag
+        exit_time = app.time_left + args.exit_delay if args.use_seconds else app.time_left + args.exit_delay
+        GLib.timeout_add_seconds(exit_time, Gtk.main_quit)
     
     app.connect('activate', on_activate)
     
     # Run the application
-    app.run(sys.argv)
-    
-    return 0
+    return app.run(sys.argv)
 
 if __name__ == "__main__":
     main()
