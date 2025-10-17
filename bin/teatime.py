@@ -598,7 +598,7 @@ class TeaTimerApp(Gtk.Application):
         self._apply_font_size() # Reset color
 
         # Get the current value from the spin button
-        current_duration = self.duration_spin.get_value()
+        current_duration = int(self.duration_spin.get_value())
         
         # 2025-10-17 Chatgpt recommended change so that the 'test_short_timer.py' script can pass second based variables for durtion to this main teatime.py script
         if getattr(self, 'use_seconds', False):
@@ -657,8 +657,8 @@ class TeaTimerApp(Gtk.Application):
 
     def update_timer(self):
         self.time_left -= 1
-        minutes = self.time_left // 60
-        seconds = self.time_left % 60
+        minutes = int(self.time_left // 60)
+        seconds = int(self.time_left % 60)
         self.time_label.set_markup(f"<span>{minutes:02d}:{seconds:02d}</span>")
         
         # Update accessibility description at key moments
