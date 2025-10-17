@@ -1,18 +1,19 @@
 # TeaTime Accessibility
 
-TeaTime Accessibility is an accessibility focused timer application (app) for the Ubuntu (Desktop) environment. This app has timers with presets, reminders (audible vs to the contrary) and basic statistics for your sessions. It also has a fun rainbow-glow feature (see below)
+TeaTime Accessibility is an accessibility focused timer application (app) for the Ubuntu (Desktop) environment. This app has timers with presets, reminders (audible vs to the contrary) and basic statistics for your sessions. 
 
 ## Features
 
 - **Timer:** Set custom break intervals for better productivity.
 - **Accessibility Integration:** Works seamlessly with screen readers and other assistive technologies.
 - **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json`.
-- **Custom Application Icon:** Features a distinctive teapot-themed icon for better recognition in your applications menu.
+- **Custom Application Icon:** A fun icon for better recognition on your computer. Something that brightens your day, just a little bit.
 
 # Accessible Tea Timer
 
 A simpler version of the Tea Timer application with enhanced accessibility features.
 
+## Note: This demo is from the original version and the photosensitive version of the app looks quite different (See note below)
 ![Demo - gif format](./screenshots_demo_clones/demo-2025-07-15.gif)
 
 Screenshot of the main GUI (graphical user interface) from version 1.3.3 of the app
@@ -22,17 +23,19 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 ![screenshot for stats](./screenshots_demo_clones/2025-10-14-screenshot-for-README-STATS.png)
 
 ## Demos on Youtube
+### Note: These demos are for the original version of the application and the photosensitive version of the app here is very different and without all the animations e.t.c
 * [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw?t=137)
 * [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
 
 
 ## Accessibility Features
 
-### Visual Accessibility
-- **Adjustable Font Size**: Use A+ and A- buttons or Ctrl++ and Ctrl+- to increase/decrease font size
-- **High Contrast Support**: Automatically adapts to system theme settings
-- **Clear Visual Feedback**: Button states and status messages provide clear feedback
-- **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
+### Visual Accessibility for Users with Epilepsy
+- **Adjustable Font Size**: Easily increase or decrease text size using **A+ / A- buttons** or **Ctrl + / Ctrl -** to suit your comfort.  
+- **High Contrast Support**: Automatically adapts to your system's light or dark theme to reduce eye strain.  
+- **Visual Feedback that will not startle you**: All button states, notifications, and status messages are designed to avoid rapid animations that could trigger seizures.  
+- **Clear and Consistent Layouts**: Information is presented in a stable, predictable manner to make navigation easier and stable.
+
 
 ### Keyboard Accessibility
 - **Full Keyboard Navigation**: Tab through all controls
@@ -55,22 +58,23 @@ Screenshot of the Statistics engine that is built into the app. It automatically
     - `Alt+R`: **R**efresh Statistics
     - `Alt+E`: **E**xport to CSV
     - `Alt+C`: **C**lear History
-- **Focus Management**: Proper focus order and visual focus indicators
+
+### Visual & Focus Accessibility
+- **Focus Management**: Proper focus order with **clear and steady visual indicators** to show where the focus is, reducing sudden visual changes.
 
 ### Screen Reader Support
-- **Proper Labels**: All controls have descriptive labels
-- **Status Updates**: Status changes are announced to screen readers (I have to test this)
-- **Live Regions**: Timer updates are announced visually and through the audio prompt (bell)
+- **Proper Labels**: All controls have descriptive labels for clear understanding.  
+- **Status Updates**: Status changes are announced to screen readers (needs testing).  
+- **Live Regions**: Timer updates are presented **in a stable and consistent way** and through audio prompts (see below)
 
 ### Audio Accessibility
-- **Sound Notifications**: Audio feedback (bell 🔔 )at the completion of each session 
-- **Desktop Notifications**: System notifications for timer completion
-- **Fallback Sounds**: System bell if audio files aren't available
+- **Sound Notifications**: Audio feedback (bell 🔔) at the completion of each session. If you choose to enable audio prompts.
+- **Desktop Notifications**: System notifications for timer completion.  
 
 ## Installation
 
 ### Prerequisites
-Before running the install script, install the required system dependencies:
+Before running the install script, please install the required system dependencies:
 
 ```bash
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
@@ -94,11 +98,10 @@ cd teatime-accessibility
 This script will:
 1. Create a virtual environment with access to system packages (if one doesn't already exist)
 2. Install all required dependencies
-3. Create a desktop entry for easy access in the Utilities section of your application menu
-4. Optionally create a desktop shortcut/icon for quick access
-5. Make the launcher script executable
+3. Will provide you with an option and if you would like for an icon on the desktop to be created for this application
 
-The install script will also prompt you to install system dependencies if needed.
+Note 01: You might have to make the install.sh script itself executable with: chmod u+x install.sh (on your terminal)
+Note 02: The install script will also prompt you to install system dependencies if needed.
 
 ### Manual Installation
 If you prefer to install manually:
@@ -124,9 +127,6 @@ If you prefer to install manually:
    ```bash
    cp teatime-accessibility.desktop ~/Desktop/
    ```
-
-After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. The desktop entry will be created at `~/.local/share/applications/teatime-accessibility.desktop`. If you choose to create a desktop shortcut during the installation process, you can also launch the app directly from your desktop in future instances.
-
 ## Installation Locations
 
 When you run the install script, here's exactly where each component is installed:
@@ -150,13 +150,13 @@ When you run the install script, here's exactly where each component is installe
 5. **User Data**:
    - Configuration: `~/.config/teatime_config.json`
    - Statistics: `~/.local/share/teatime_stats.json`
+Note: If you wish to uninstall the app (so that you can reinstall a newer version. Then you might want to save these files first, to another location. So that you can reimport the files back for the newer version of the app)   
 
-The important thing to note is that the application itself is not moved or copied elsewhere - it runs directly from your project directory. The install script simply:
+For the application itself. It runs directly from your project directory and install script:
 1. Sets up the virtual environment for isolated dependencies
 2. Creates convenient access points (desktop entry and/or desktop shortcut)
 3. Ensures all necessary components are properly configured
-
-This approach keeps everything contained within your project directory while providing convenient access methods through the standard desktop environment interfaces.
+Note: To state the obvious, you only run the 'install script once! on each machine you want the timer to exist.'
 
 ## Usage
 
@@ -186,7 +186,7 @@ Where (the same Green Rectangle with circular edges as in the previous screensho
 If you chose to create a desktop shortcut during installation:
 1. Navigate to your desktop
 2. Right-click on the "TeaTime Accessibility" icon
-3. Select "Allow Launching" from the context menu
+3. Important: Select "Allow Launching" from the context menu. This is a default requirement for all new Ubuntu Desktop based installations.
 5. Double-click the icon to launch the application
 4. As of 2025-10-16, the icon looks like this. 
 
@@ -289,5 +289,10 @@ To manually uninstall:
 The application consists of:
 - `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
-## License
-Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keep evolving. The release(s) are also with with a different licensing policy.
+## Credits
+* Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keep evolving. 
+* Version v1.3.3-photosensitive (this version) code provided by @shanaya-Gupta on Github via #31 
+* Original author: @genidma on Github
+
+## Licensing Policy
+* To be determined by @shanaya-Gupta
