@@ -65,11 +65,12 @@ from gi.repository import Gtk, GLib
 from teatime import TeaTimerApp
 
 def main():
-    # Convert seconds to minutes for the application
-    duration_in_minutes = max(1/60, args.duration/60)  # Minimum 1 second = 1/60 minute
-    
-    # Create the application with the duration
-    app = TeaTimerApp(duration=duration_in_minutes, auto_start=True)
+      # Create the application with the duration
+      app = TeaTimerApp(duration=args.duration, auto_start=True)
+
+      # Set seconds mode if the flag was passed
+      app.use_seconds = args.use_seconds
+
     
     # Connect to the activate signal to set up our test
     def on_activate(application):
