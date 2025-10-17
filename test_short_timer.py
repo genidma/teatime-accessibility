@@ -69,9 +69,19 @@ def main():
     # Create a custom TeaTimerApp class that properly handles use_seconds parameter
     class TestTeaTimerApp(TeaTimerApp):
         def __init__(self, duration=5, auto_start=False, use_seconds=False):
+            # Set use_seconds before calling parent constructor so it's available during initialization
             self.use_seconds = use_seconds
             super().__init__(duration=duration, auto_start=auto_start)
-    
+            
+        def do_activate(self):
+            # Override do_activate to set the correct time_left after initialization
+            super().do_activate()  # Create the window first
+            # Now set the correct time_left based on use_seconds flag
+            if self.use_seconds:
+                self.time_left = self.last_duration  # already in seconds
+            else:
+                self.time_left = self.last_duration * 60  # minutes → seconds
+
     app = TestTeaTimerApp(duration=args.duration, auto_start=False, use_seconds=args.use_seconds)
     
     # Connect to the activate signal to set up our test
@@ -81,8 +91,8 @@ def main():
         
         # Close the app after timer duration plus exit delay
         # Use the correct time unit based on use_seconds flag
-        exit_time = app.time_left + args.exit_delay if args.use_seconds else app.time_left + args.exit_delay
-        GLib.timeout_add_seconds(exit_time, Gtk.main_quit)
+        exit_time = args.duration + args.exit_delay
+        GLib.timeout_add_seconds(exit_time, lambda: Gtk.main_quit() or True)
     
     app.connect('activate', on_activate)
     
