@@ -1,8 +1,9 @@
 /*
  * Unity Sprite Sheet Exporter
  * Author: ChatGPT (OpenAI)
- * 
- * This script exports individual sprites from a sprite sheet in Unity.
+ * Comments inside of the script adding by Lingma by AliBaba Cloud
+ * Facilitator: genidma on Github
+  * This script exports individual sprites from a sprite sheet in Unity.
  * It allows you to select a sprite sheet texture and automatically
  * export all slices as separate PNG files.
  * 
@@ -11,6 +12,7 @@
  * 2. Select the sprite sheet in the Project window
  * 3. Go to Tools > Export All Slices From Sheet
  * 4. Find exported sprites in the Assets/ExportedSprites folder
+* Note: You don't need to know what is in this script or to run it, in order to run the teatimer app. This script is used to create sprites which are then used to create gifs.
  */
 
 using UnityEngine;
