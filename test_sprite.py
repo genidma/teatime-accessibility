@@ -9,9 +9,20 @@ It automatically:
 3. Starts the timer automatically
 4. Displays any sprite animations associated with the timer
 
+HOW TO RUN THIS SCRIPT FOR TESTING:
+-------------------------------
+1. Open a terminal in the project root directory
+2. Run the script with default settings:
+   python3 test_sprite.py
+
+Note: This script does not accept command line arguments. It always runs
+with a 5-second timer duration.
+
+SCRIPT DIFFERENCE:
+----------------
 Difference from test_short_timer.py: This specifically tests the sprite 
 animation features of the application, while test_short_timer.py is a 
-general functionality test with automatic closing.
+general functionality test with automatic closing and configurable duration.
 
 Author: Lingma from Alibaba Cloud
 Co-author: genidma on Github
@@ -38,8 +49,8 @@ class TestSpriteApp:
         # Connect to the activate signal to set up our test
         def on_activate(application):
             # UI elements are now created, set a 5-second timer for testing
-            self.app.duration_spin.set_value(5/60)  # 5 seconds in minutes
-            self.app.on_start_clicked()
+            application.duration_spin.set_value(5/60)  # 5 seconds in minutes
+            application.on_start_clicked()
             
             # Start the GTK main loop
             Gtk.main()

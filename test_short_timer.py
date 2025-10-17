@@ -5,10 +5,24 @@ Test script for the Tea Timer application with a short timer duration.
 This script is designed for quick testing of the Tea Timer functionality
 without waiting for a full-length timer. It automatically:
 1. Launches the Tea Timer application
-2. Sets a configurable timer duration (default 10 seconds)
+2. Sets a configurable timer duration in seconds (default 6 seconds)
 3. Starts the timer automatically
 4. Closes the application after the timer duration plus 5 seconds
 
+HOW TO RUN THIS SCRIPT FOR TESTING:
+-------------------------------
+1. Open a terminal in the project root directory
+2. Run the script with default settings:
+   python3 test_short_timer.py
+   
+3. Run the script with a custom duration (e.g., 10 seconds):
+   python3 test_short_timer.py --duration 10
+   
+4. Run with custom duration and exit delay:
+   python3 test_short_timer.py --duration 10 --exit-delay 3
+
+SCRIPT DIFFERENCE:
+----------------
 Difference from test_sprite.py: This is a basic functionality test that 
 runs a short timer and automatically closes, while test_sprite.py specifically 
 tests the sprite animation features.
@@ -25,7 +39,7 @@ from pathlib import Path
 
 # Parse command line arguments before GTK processes them
 parser = argparse.ArgumentParser(description='Test Tea Timer with custom duration')
-parser.add_argument('--duration', type=int, default=10, help='Timer duration in seconds (default: 10)')
+parser.add_argument('--duration', type=int, default=6, help='Timer duration in seconds (default: 6)')
 parser.add_argument('--exit-delay', type=int, default=5, help='Delay in seconds before exiting after timer finishes (default: 5)')
 
 # Parse known args to avoid conflicts with GTK arguments
@@ -51,8 +65,9 @@ def main():
     
     # Connect to the activate signal to set up our test
     def on_activate(application):
-        # UI elements are now created, set the timer duration (convert seconds to minutes)
-        app.duration_spin.set_value(args.duration/60)
+        # For testing purposes, we convert seconds to minutes (even fractions)
+        duration_in_minutes = max(1/60, args.duration/60)  # Minimum 1 second = 1/60 minute
+        app.duration_spin.set_value(duration_in_minutes)
         # Start the timer
         app.on_start_clicked()
         
