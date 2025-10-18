@@ -133,7 +133,12 @@ timestamp,duration_minutes
 - [ ] Cleanup and Review begins at xx:xx UTC
     - [ ] Stop SV recording at 20:23 UTC
     - [ ] Save and upload recording. Two files via vokoscreen
-    - 
+        - [ ] Location and name of files: /home/videos   
+            - [ ] File name: 2025-10-18_SV_Part01.mkv
+            - [ ] File name: 2025-10-18_SV_Part02.mkv
+            - [ ] Run AV. Commencing 
+            - [ ] Upload to YT
+            - [ ] Backup screen-recording source files (.mkv) to file server (Will have to make a new folder) 
 - [ ] Recursive check from above  
 
 
