@@ -590,7 +590,9 @@ class TeaTimerApp(Gtk.Application):
                 try:
                     with open(STATS_LOG_FILE, 'r') as csvfile:
                         reader = csv.DictReader(csvfile)
-                        for row in reader:
+                        rows = list(reader)
+                        # Display in reverse order (most recent first)
+                        for row in reversed(rows):
                             list_store.append([row['timestamp'], int(row['duration_minutes'])])
                 except (IOError, KeyError, ValueError) as e:
                     print(f"Error loading stats file: {e}")
@@ -658,7 +660,9 @@ class TeaTimerApp(Gtk.Application):
             try:
                 with open(STATS_LOG_FILE, 'r') as csvfile:
                     reader = csv.DictReader(csvfile)
-                    for row in reader:
+                    rows = list(reader)
+                    # Display in reverse order (most recent first)
+                    for row in reversed(rows):
                         self.stats_list_store.append([row['timestamp'], int(row['duration_minutes'])])
             except (IOError, KeyError, ValueError) as e:
                 print(f"Error loading stats file: {e}")
