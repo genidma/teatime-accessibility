@@ -1,65 +1,56 @@
 #!/usr/bin/env python3
+"""
+Accessible Tea Timer
 
-import time
-import json
-import locale
-import subprocess
-import os
-from pathlib import Path
-from datetime import datetime
-import colorsys
-import csv
-import threading
-import sys
-
-import gi
-# Use GTK 3 for better compatibility
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
+Description: A timer application with accessibility features for Ubuntu Desktop.
+"""
 
 import argparse
+import csv
+import json
+import locale
+import os
+import sys
+import time
+import colorsys
+from datetime import datetime
+from pathlib import Path
+from gi import require_version
+require_version('Gtk', '3.0')
+require_version('Gdk', '3.0')
+require_version('GLib', '2.0')
+from gi.repository import Gtk, Gdk, GLib, Gio
 
-# Application metadata
-APP_NAME = "Accessible Tea Timer"
-APP_VERSION = "1.3.3"
+APP_NAME = "TeaTime Accessibility - Photosensitive version"
+APP_VERSION = "v1.3.3-photosensitive"
 
-# Configuration file for font size persistence
-CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
-STATS_LOG_FILE = Path.home() / ".local/share/teatime_stats.json"
-DEFAULT_FONT_SCALE = 1.5
+# Default font scale factor
+DEFAULT_FONT_SCALE = 1.0
+
+# Configuration and data file paths
+CONFIG_DIR = Path.home() / ".config" / "teatime"
+CONFIG_FILE = CONFIG_DIR / "settings.json"
+DATA_DIR = Path.home() / ".local" / "share"
+STATS_LOG_FILE = DATA_DIR / "teatime_stats.json"
+
+# Ensure directories exist
+CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+# Font scaling constants
 FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
-# Feature flag for photosensitive mode
-PHOTOSENSITIVE_MODE_DEFAULT = False # default value for photosensitive mode
-PHOTOSENSITIVE_MODE_ENV_VAR = "TEATIME_PHOTOSENSITIVE_MODE"
-# How often to update the time display visually in photosensitive mode (in seconds)
-PHOTOSENSITIVE_DISPLAY_UPDATE_INTERVAL_SECONDS = 5
-
-
 class TeaTimerApp(Gtk.Application):
     def __init__(self, duration=5, auto_start=False):
         super().__init__(application_id="org.example.TeaTimer",
-                         flags=Gio.ApplicationFlags.NON_UNIQUE)
+                         flags=Gio.ApplicationFlags.FLAGS_NONE)
         self.window = None
         self.timer_id = None
-        self.time_left = 0
-        self.current_timer_duration = 0
-        self.font_scale_factor = DEFAULT_FONT_SCALE
-        # Check if duration was set via environment variable
-        import os
-        env_duration = os.environ.get('TEATIME_DURATION')
-        # If seconds mode is active (developer/test), use duration as-is
-        if getattr(self, 'use_seconds', False):
-            self.last_duration = duration  # already in seconds
-        else:
-            # Normal behavior: use environment variable if set, else duration (in minutes)
-            env_duration = os.environ.get('TEATIME_DURATION')
-            if env_duration is not None:
-                self.last_duration = int(env_duration)
-            else:
-                self.last_duration = duration
+        self.duration = duration * 60  # Convert minutes to seconds
+        self.remaining = self.duration
+        self.last_duration = duration
         self.sound_enabled = True
         self.rainbow_timer_id = None
         self.css_provider = Gtk.CssProvider()
@@ -73,141 +64,15 @@ class TeaTimerApp(Gtk.Application):
         self.current_sprite_frame = 0
         self.sprite_timer_id = None
         self.auto_start = auto_start  # Flag to indicate if timer should start automatically
+        self.initial_duration = duration * 60  # Store initial duration in seconds
+        self.font_scale_factor = DEFAULT_FONT_SCALE  # Initialize font scale factor
         self._load_config()  # Load settings from file
-
-        # Initialize photosensitive mode
-        self.photosensitive_mode = self._load_photosensitive_mode()
-        self._last_photosensitive_display_update_time = None # For incremental timer updates
 
         # Set up keyboard shortcuts
         self._setup_actions()
-
-    def _load_photosensitive_mode(self):
-        """
-        Loads the photosensitive mode flag from the environment variable.
-        Returns True if the environment variable is set to 'true' (case-insensitive),
-        False otherwise, defaulting to PHOTOSENSITIVE_MODE_DEFAULT.
-        """
-        env_value = os.environ.get(PHOTOSENSITIVE_MODE_ENV_VAR)
-        if env_value is not None:
-            return env_value.lower() == 'true'
-        return PHOTOSENSITIVE_MODE_DEFAULT # Return default value if not set
-
-    def set_main_window_background_color(self, hex_color=None):
-        """
-        Applies a background color to the main window using CSS.
-        If hex_color is None, clears the custom background.
-        """
-        css_data = b""
-        if hex_color:
-            css_data = f"window {{ background-color: {hex_color}; }}".encode('utf-8')
-        self.css_provider.load_from_data(css_data)
-
-    def _start_rainbow_glow(self):
-        """Starts the rainbow glow effect on the window background."""
-        if self.photosensitive_mode:
-            self._stop_rainbow_glow() # Ensure it's off and static color is set
-            return
-
-        if self.rainbow_timer_id:
-            GLib.source_remove(self.rainbow_timer_id)
-        # Immediately set a color so it's not blank before the first update
-        r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.7, 0.9)
-        hex_color = f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
-        self.set_main_window_background_color(hex_color)
-        self.rainbow_timer_id = GLib.timeout_add(50, self._update_rainbow_glow_color)
-
-    def _update_rainbow_glow_color(self):
-        """Updates the rainbow glow color."""
-        if self.photosensitive_mode: # This should not be called if properly guarded
-            return False # Stop the callback
-
-        self.rainbow_hue = (self.rainbow_hue + 1) % 360
-        # Adjust saturation and value for a softer, less intense glow
-        r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.7, 0.9)
-        hex_color = f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
-        self.set_main_window_background_color(hex_color)
-        return True
-
-    def _stop_rainbow_glow(self):
-        """Stops the rainbow glow effect."""
-        if self.rainbow_timer_id:
-            GLib.source_remove(self.rainbow_timer_id)
-            self.rainbow_timer_id = None
-        # When stopping, revert to a default/static background color based on mode
-        if self.photosensitive_mode:
-            self.set_main_window_background_color("#616161") # Static grey in photosensitive mode
-        else:
-            self.set_main_window_background_color(None) # Clear custom background CSS
-
-    def _start_focus_glow(self):
-        """Starts a subtle color glow effect on the focused widget."""
-        if self.photosensitive_mode:
-            self._stop_focus_glow() # Ensure it's off
-            return
-
-        if self.focus_timer_id:
-            GLib.source_remove(self.focus_timer_id)
-        self.focus_timer_id = GLib.timeout_add(100, self._update_focus_glow)
-
-    def _update_focus_glow(self):
-        """Updates the focus glow color."""
-        if self.photosensitive_mode: # Should not happen if properly guarded
-            return False
-
-        focused_widget = self.window.get_focus()
-        if focused_widget:
-            self.focus_hue = (self.focus_hue + 5) % 360  # Cycle hue more slowly than rainbow
-            r, g, b = colorsys.hsv_to_rgb(self.focus_hue / 360.0, 0.8, 0.8)
-            hex_color = f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
-            css = f"*{ border: 2px solid {hex_color}; box-shadow: 0 0 5px {hex_color}; }"
-            self.css_provider.load_from_data(css.encode('utf-8'))
-        return True
-
-    def _stop_focus_glow(self):
-        """Stops the focus glow effect."""
-        if self.focus_timer_id:
-            GLib.source_remove(self.focus_timer_id)
-            self.focus_timer_id = None
-        # Clear any applied focus glow CSS
-        self.css_provider.load_from_data(b"") # Load empty CSS to clear previous rules
-
-    # Placeholder for sprite animation methods, to be disabled in photosensitive mode
-    def _load_sprite_frames(self):
-        # In a real app, this would load images. For now, it's a no-op.
-        pass
-
-    def _start_sprite_animation(self):
-        """Starts the sprite animation."""
-        if self.photosensitive_mode:
-            self._stop_sprite_animation()
-            return
-
-        # Placeholder: In a real app, this would create/show a sprite window
-        # For this exercise, we just manage the timer.
-        if self.sprite_timer_id:
-            GLib.source_remove(self.sprite_timer_id)
-        # self.sprite_timer_id = GLib.timeout_add(100, self._update_sprite_frame)
-        print("Sprite animation started (placeholder)")
-
-    def _update_sprite_frame(self):
-        """Updates the current sprite frame."""
-        if self.photosensitive_mode:
-            return False # Stop callback
-
-        # Placeholder: In a real app, this would update the sprite image
-        self.current_sprite_frame = (self.current_sprite_frame + 1) % len(self.sprite_frames)
-        print(f"Updating sprite frame {self.current_sprite_frame} (placeholder)")
-        return True
-
-    def _stop_sprite_animation(self):
-        """Stops the sprite animation."""
-        if self.sprite_timer_id:
-            GLib.source_remove(self.sprite_timer_id)
-            self.sprite_timer_id = None
-        if self.sprite_window:
-            self.sprite_window.hide()
-        print("Sprite animation stopped (placeholder)")
+        
+        # Apply initial font scaling
+        self._apply_font_size()
 
     def do_activate(self):
         """
@@ -318,13 +183,6 @@ class TeaTimerApp(Gtk.Application):
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
 
-            # Row 4: Photosensitive Mode Toggle - NEW UI ELEMENT
-            self.photosensitive_toggle = Gtk.CheckButton(label="_Photosensitive Mode")
-            self.photosensitive_toggle.set_use_underline(True)
-            self.photosensitive_toggle.set_active(self.photosensitive_mode)
-            grid.attach(self.photosensitive_toggle, 0, 4, 2, 1)
-
-
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             presets_box.set_valign(Gtk.Align.CENTER)
@@ -352,7 +210,6 @@ class TeaTimerApp(Gtk.Application):
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
-            self.photosensitive_toggle.connect("toggled", self.on_photosensitive_toggled) # NEW: Connect toggle
 
             # Add the single CSS provider to the screen. We will update this provider
             # later instead of adding new ones.
@@ -364,11 +221,7 @@ class TeaTimerApp(Gtk.Application):
             else:
                 print("Warning: No default screen found, CSS styling may not apply correctly.")
 
-            # Apply initial photosensitive mode settings
-            if self.photosensitive_mode:
-                self.set_main_window_background_color("#616161") # Static grey
-                self._stop_focus_glow() # Ensure focus glow is off initially
-                self._stop_sprite_animation() # Ensure sprite animation is off initially
+            
 
             self.window.show_all()
 
@@ -381,54 +234,48 @@ class TeaTimerApp(Gtk.Application):
             self.sprite_window.destroy()
         Gtk.main_quit()
 
-    def _on_focus_changed(self, widget, focused_child):
-        """Called when the focus changes within the window."""
-        if self.photosensitive_mode: # NEW: Disable focus glow in photosensitive mode
-            self._stop_focus_glow()
-            return
-
-        if focused_child:
-            self._start_focus_glow()
-        else:
-            self._stop_focus_glow()
+    def _on_focus_changed(self, window, widget):
+        """Callback for when the focus changes in the window."""
+        # Disabled visual effects - do not start/stop focus glow
+        pass
 
     def _update_timer_display(self):
         """
-        Updates the timer display label. In photosensitive mode,
-        updates the visual label less frequently.
+        Updates the timer display label.
         """
-        if self.timer_id is None: # Timer is not running, stop this callback
+        # If timer is not running, just update the display with current remaining time
+        if self.timer_id is None:
+            minutes = self.remaining // 60
+            seconds = self.remaining % 60
+            formatted_time = f"{minutes:02}:{seconds:02}"
+            
+            # Apply font scaling
+            font_size_px = 36 * self.font_scale_factor # Base font size is 36px
+            self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{formatted_time}</span>")
             return False
 
-        if self.time_left <= 0:
+        if self.remaining <= 0:
+            # Ensure we display 00:00 when timer finishes
+            self.time_label.set_markup(f"<span font_desc='Sans Bold {int(36 * self.font_scale_factor)}'>00:00</span>")
+            
             GLib.source_remove(self.timer_id)
             self.timer_id = None
             self._timer_finished()
             return False
 
-        minutes = self.time_left // 60
-        seconds = self.time_left % 60
+        minutes = self.remaining // 60
+        seconds = self.remaining % 60
         formatted_time = f"{minutes:02}:{seconds:02}"
 
         # Apply font scaling
         font_size_px = 36 * self.font_scale_factor # Base font size is 36px
 
-        # Conditional visual update for photosensitive mode
-        update_label_now = True
-        if self.photosensitive_mode:
-            current_monotonic_time = time.monotonic()
-            if self._last_photosensitive_display_update_time is None:
-                self._last_photosensitive_display_update_time = current_monotonic_time
-            elif (current_monotonic_time - self._last_photosensitive_display_update_time) < PHOTOSENSITIVE_DISPLAY_UPDATE_INTERVAL_SECONDS:
-                update_label_now = False # Don't update the label visually yet
+        self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{formatted_time}</span>")
 
-        if update_label_now:
-            self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{formatted_time}</span>")
-            if self.photosensitive_mode: # Only update _last_photosensitive_display_update_time when actually updating
-                self._last_photosensitive_display_update_time = current_monotonic_time
-
-
-        self.time_left -= 1
+        # Decrement by 5 seconds since we update every 5 seconds
+        self.remaining -= 5
+        
+        # Continue calling this function
         return True
 
     def _start_timer(self):
@@ -436,38 +283,36 @@ class TeaTimerApp(Gtk.Application):
         if self.timer_id:
             GLib.source_remove(self.timer_id)
 
-        self.time_left = self.duration_spin.get_value_as_int() * 60
-        self.current_timer_duration = self.time_left # Store for logging
-        self._last_duration = self.time_left // 60 # Save last duration for config
+        # Set both duration and remaining based on the spin button value
+        self.duration = self.duration_spin.get_value_as_int() * 60
+        self.remaining = self.duration
+        self.last_duration = self.duration // 60 # Save last duration for config
 
-        if self.time_left <= 0:
+        if self.remaining <= 0:
             print("Please set a duration greater than 0.")
             return
 
-        self._update_timer_display() # Update immediately to show initial time
-        self.timer_id = GLib.timeout_add(1000, self._update_timer_display) # Update every 1 second
+        # Immediately update the display with the new time
+        self._update_timer_display()
+        self.timer_id = GLib.timeout_add(5000, self._update_timer_display) # Update every 5 seconds
 
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
         self._set_preset_buttons_sensitive(False) # Disable presets when timer is active
 
-        # Conditionally start visual effects
-        if not self.photosensitive_mode:
-            self._start_rainbow_glow()
-            self._start_sprite_animation() # Placeholder
+        # Start visual effects - DISABLED
+        # self._start_rainbow_glow()  # Removed for accessibility
+        # self._start_sprite_animation()  # Removed for accessibility
 
     def _stop_timer(self):
         """Stops the countdown timer."""
         if self.timer_id:
             GLib.source_remove(self.timer_id)
             self.timer_id = None
-        
-        # Always stop visual effects when the timer stops
-        self._stop_rainbow_glow()
-        self._stop_sprite_animation()
-        self._stop_focus_glow() # Stop focus glow when timer stops
 
-        self.time_left = 0 # Reset time
+        # Disabled visual effects - do not stop any visual effects
+
+        self.remaining = 0 # Reset time
         self._update_timer_display() # Update display to 00:00
         self.start_button.set_sensitive(True)
         self.stop_button.set_sensitive(False)
@@ -475,46 +320,55 @@ class TeaTimerApp(Gtk.Application):
 
     def _timer_finished(self):
         """Called when the timer reaches zero."""
-        # Stop any active glows/animations
-        self._stop_rainbow_glow()
-        self._stop_sprite_animation()
-        self._stop_focus_glow() # In case focus was still active
-
-        # Log the session
+        # Record stats
         self._log_session()
 
-        # Update display to show 00:00 and enable start button
-        self.time_left = 0
-        self._update_timer_display() # Ensure it shows 00:00 immediately
-        self.start_button.set_sensitive(True)
-        self.stop_button.set_sensitive(False)
-
-        # NEW: Conditionally play sound and show dialog based on photosensitive mode
-        if not self.photosensitive_mode:
-            if self.sound_enabled:
-                # Play a sound notification
+        # Play sound if enabled
+        if self.sound_enabled:
+            sound_played = False
+            
+            # Get the path to the sound file
+            sound_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sounds", "service-bell_daniel_simion.wav")
+            
+            # Try different methods to play sound, prioritizing our custom bell
+            sound_commands = [
+                ["aplay", sound_file_path],
+                ["paplay", sound_file_path],
+                ["canberra-gtk-play", "-f", sound_file_path],
+                ["canberra-gtk-play", "-i", "complete"],
+                ["canberra-gtk-play", "-i", "dialog-information"],
+                ["canberra-gtk-play", "-i", "bell"],
+                ["paplay", "/usr/share/sounds/Yaru/stereo/bell.oga"],
+                ["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"],
+                ["aplay", "/usr/share/sounds/Yaru/stereo/bell.oga"],
+                ["aplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"]
+            ]
+            
+            for cmd in sound_commands:
                 try:
-                    subprocess.run(["canberra-gtk-play", "--id=dialog-information", "--description='Tea Timer finished'"], check=False)
-                except FileNotFoundError:
-                    print("Warning: canberra-gtk-play not found. Please install libcanberra-gtk-module.")
+                    import subprocess
+                    subprocess.run(cmd, check=True, timeout=5)
+                    sound_played = True
+                    break  # If successful, break out of the loop
+                except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+                    continue  # Try the next method
+            
+            if not sound_played:
+                print("Warning: Could not play sound. Please check your sound system configuration.")
 
-            # Display a dialog
-            dialog = Gtk.MessageDialog(
-                parent=self.window,
-                flags=Gtk.DialogFlags.MODAL,
-                type=Gtk.MessageType.INFO,
-                buttons=Gtk.ButtonsType.OK,
-                message_format="Session Completed!"
-            )
-            dialog.run()
-            dialog.destroy()
-        else:
-            print("Session Completed (sound and dialog suppressed due to Photosensitive Mode).")
-
+        # Display a dialog
+        dialog = Gtk.MessageDialog(
+            transient_for=self.window,
+            modal=True,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text="Session Completed!"
+        )
+        dialog.run()
+        dialog.destroy()
 
         # Re-enable the preset buttons
         self._set_preset_buttons_sensitive(True)
-
 
     def _set_preset_buttons_sensitive(self, sensitive):
         """Helper to enable/disable preset buttons."""
@@ -525,9 +379,37 @@ class TeaTimerApp(Gtk.Application):
                 child.set_sensitive(sensitive)
 
     def _apply_font_size(self):
-        """Applies the current font scale factor to the time label."""
-        font_size_px = 36 * self.font_scale_factor
-        self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{self.time_label.get_text()}</span>")
+        """Applies the current font scale factor to all UI elements."""
+        # Apply to the main time label if it exists
+        if hasattr(self, 'time_label') and self.time_label:
+            font_size_px = 36 * self.font_scale_factor
+            self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{self.time_label.get_text()}</span>")
+        
+        # Apply font scaling to all UI elements via CSS
+        css = f"""
+            window, dialog {{
+                font-size: {int(12 * self.font_scale_factor)}px;
+            }}
+            button, label, checkbutton {{
+                font-size: {int(12 * self.font_scale_factor)}px;
+            }}
+            spinbutton entry {{
+                font-family: Sans;
+                font-weight: bold;
+                font-size: {int(24 * self.font_scale_factor)}px;
+            }}
+            .input-label {{
+                font-size: {int(12 * self.font_scale_factor)}px;
+            }}
+        """
+        
+        # Apply the CSS
+        self.css_provider.load_from_data(css.encode())
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            self.css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
     def _load_config(self):
         """Loads font scale factor and last duration from config file."""
@@ -565,18 +447,31 @@ class TeaTimerApp(Gtk.Application):
     def _log_session(self):
         """Logs completed session duration and timestamp to a CSV file."""
         STATS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Check if this is a new file
         is_new_file = not STATS_LOG_FILE.exists()
-        with open(STATS_LOG_FILE, 'a', newline='') as csvfile:
-            fieldnames = ['timestamp', 'duration_minutes']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        try:
+            # Append to the CSV file
+            with open(STATS_LOG_FILE, 'a', newline='') as csvfile:
+                fieldnames = ['timestamp', 'duration_minutes']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-            if is_new_file:
-                writer.writeheader() # Write header only if file is new
+                # Write header if this is a new file
+                if is_new_file:
+                    writer.writeheader()
 
-            writer.writerow({
-                'timestamp': datetime.now().isoformat(),
-                'duration_minutes': self.current_timer_duration // 60
-            })
+                # Calculate the actual duration of the session
+                # When timer completes, remaining should be 0, so duration is the full session time
+                actual_duration_minutes = self.duration // 60
+                
+                # Write the session data with simplified timestamp (no microseconds)
+                writer.writerow({
+                    'timestamp': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                    'duration_minutes': actual_duration_minutes
+                })
+        except Exception as e:
+            print(f"Error logging session: {e}")
 
     def _setup_actions(self):
         """Sets up Gtk.Application actions for keyboard shortcuts."""
@@ -605,37 +500,9 @@ class TeaTimerApp(Gtk.Application):
             self._apply_font_size()
 
     def on_sound_toggled(self, widget):
+        """Handles toggling the sound setting."""
         self.sound_enabled = widget.get_active()
-        self._save_config() # Save the new sound setting
-
-    def on_photosensitive_toggled(self, widget):
-        """
-        Handles toggling photosensitive mode.
-        Disables/enables visual and auditory effects accordingly.
-        """
-        self.photosensitive_mode = widget.get_active()
-        print(f"Photosensitive mode toggled: {self.photosensitive_mode}")
-
-        if self.photosensitive_mode:
-            # Disable visual effects immediately
-            self._stop_rainbow_glow() # This will set a static grey background
-            self._stop_focus_glow()
-            self._stop_sprite_animation()
-            # Reset the display update time to force an immediate update if needed
-            self._last_photosensitive_display_update_time = None
-            # Ensure static background is applied consistently
-            self.set_main_window_background_color("#616161")
-        else:
-            # Clear custom background (revert to default GTK theme)
-            self.set_main_window_background_color(None)
-            # If a timer is running, restart dynamic effects
-            if self.timer_id:
-                self._start_rainbow_glow()
-                self._start_sprite_animation()
-            # Reset the last update time so the label updates immediately upon disabling photosensitive mode
-            self._last_photosensitive_display_update_time = None
-
-        self._update_timer_display() # Force an update to reflect potential new update interval
+        self._save_config()
 
     def on_preset_clicked(self, widget, minutes):
         """Sets the duration spin button value and starts the timer."""
@@ -647,11 +514,11 @@ class TeaTimerApp(Gtk.Application):
         about_dialog = Gtk.AboutDialog()
         about_dialog.set_program_name(APP_NAME)
         about_dialog.set_version(APP_VERSION)
-        about_dialog.set_copyright("© 2023 Your Name/Organization")
-        about_dialog.set_comments("An accessible tea timer with customizable font sizes and visual/audio cues.")
-        about_dialog.set_website("https://example.com/teatime") # Replace with actual website
+        about_dialog.set_copyright("© 2025 ")
+        about_dialog.set_comments("An accessible timer with customizable font sizes and visual/audio cues.")
+        about_dialog.set_website("https://github.com/genidma/teatime-accessibility/releases/tag/v1.3.3-photosensitive")
         about_dialog.set_license_type(Gtk.License.MIT_X11)
-        about_dialog.set_logo_icon_name("timer") # Use a suitable icon
+        about_dialog.set_logo_icon_name("timer") 
         about_dialog.set_transient_for(self.window)
         about_dialog.set_modal(True)
         about_dialog.run()
@@ -666,11 +533,15 @@ class TeaTimerApp(Gtk.Application):
             self._stats_window.set_modal(False) # Non-modal for stats
             self._stats_window.connect("destroy", self.on_stats_window_destroy)
 
+            # Create a vertical box container
+            vbox = Gtk.VBox()
+            
             scroll_window = Gtk.ScrolledWindow()
             scroll_window.set_vexpand(True)
             scroll_window.set_hexpand(True)
 
             list_store = Gtk.ListStore(str, int) # (timestamp, duration_minutes)
+            self.stats_list_store = list_store  # Store reference for refresh functionality
 
             # Load stats from file
             if STATS_LOG_FILE.exists():
@@ -695,7 +566,37 @@ class TeaTimerApp(Gtk.Application):
             tree_view.append_column(column_duration)
 
             scroll_window.add(tree_view)
-            self._stats_window.add(scroll_window)
+            vbox.pack_start(scroll_window, True, True, 0)
+            
+            # Create button box
+            button_box = Gtk.HBox()
+            button_box.set_spacing(10)
+            button_box.set_margin_top(10)
+            button_box.set_margin_bottom(10)
+            button_box.set_margin_start(10)
+            button_box.set_margin_end(10)
+            
+            # Refresh button
+            refresh_button = Gtk.Button(label="_Refresh Statistics")
+            refresh_button.set_use_underline(True)
+            refresh_button.connect("clicked", self._on_refresh_clicked)
+            button_box.pack_start(refresh_button, False, False, 0)
+
+            # Export to CSV button
+            export_button = Gtk.Button(label="_Export to CSV")
+            export_button.set_use_underline(True)
+            export_button.connect("clicked", self._on_export_clicked)
+            button_box.pack_start(export_button, False, False, 0)
+            
+            # Clear History button
+            clear_button = Gtk.Button(label="_Clear History")
+            clear_button.set_use_underline(True)
+            clear_button.get_style_context().add_class("destructive-action") # Makes it red in many themes
+            clear_button.connect("clicked", self._on_clear_history_clicked)
+            button_box.pack_start(clear_button, False, False, 0)
+            
+            vbox.pack_start(button_box, False, False, 0)
+            self._stats_window.add(vbox)
             self._stats_window.show_all()
         else:
             self._stats_window.present() # Bring existing window to front
@@ -703,6 +604,141 @@ class TeaTimerApp(Gtk.Application):
     def on_stats_window_destroy(self, widget):
         """Callback for when the statistics window is destroyed."""
         self._stats_window = None # Clear the reference
+        self.stats_list_store = None # Clear the reference
+
+    def _on_refresh_clicked(self, widget):
+        """Refresh the statistics display."""
+        if self.stats_list_store and STATS_LOG_FILE.exists():
+            # Clear the existing data
+            self.stats_list_store.clear()
+            
+            # Reload stats from file
+            try:
+                with open(STATS_LOG_FILE, 'r') as csvfile:
+                    reader = csv.DictReader(csvfile)
+                    for row in reader:
+                        self.stats_list_store.append([row['timestamp'], int(row['duration_minutes'])])
+            except (IOError, KeyError, ValueError) as e:
+                print(f"Error loading stats file: {e}")
+
+    def _on_export_clicked(self, widget):
+        """Export statistics to a user-selected CSV file."""
+        if not STATS_LOG_FILE.exists():
+            dialog = Gtk.MessageDialog(
+                transient_for=self._stats_window,
+                modal=True,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text="No statistics data to export."
+            )
+            dialog.run()
+            dialog.destroy()
+            return
+            
+        # Create a file chooser dialog
+        dialog = Gtk.FileChooserDialog(
+            title="Export Statistics to CSV",
+            parent=self._stats_window,
+            action=Gtk.FileChooserAction.SAVE
+        )
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT
+        )
+        dialog.set_current_name("teatime_statistics.csv")
+        
+        response = dialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = dialog.get_filename()
+            try:
+                # Copy the stats file to the selected location
+                import shutil
+                shutil.copy(STATS_LOG_FILE, filename)
+                
+                # Show success message
+                success_dialog = Gtk.MessageDialog(
+                    transient_for=self._stats_window,
+                    modal=True,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=f"Statistics successfully exported to {filename}"
+                )
+                success_dialog.run()
+                success_dialog.destroy()
+            except Exception as e:
+                # Show error message
+                error_dialog = Gtk.MessageDialog(
+                    transient_for=self._stats_window,
+                    modal=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=f"Error exporting statistics: {e}"
+                )
+                error_dialog.run()
+                error_dialog.destroy()
+        
+        dialog.destroy()
+
+    def _on_clear_history_clicked(self, widget):
+        """Clear all statistics history."""
+        # First confirmation dialog
+        dialog = Gtk.MessageDialog(
+            transient_for=self._stats_window,
+            modal=True,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.YES_NO,
+            text="Are you sure you want to clear all statistics history?"
+        )
+        dialog.format_secondary_text("This action cannot be undone.")
+        response = dialog.run()
+        dialog.destroy()
+        
+        # If user confirmed the first time, show a second confirmation
+        if response == Gtk.ResponseType.YES:
+            # Second confirmation dialog
+            dialog = Gtk.MessageDialog(
+                transient_for=self._stats_window,
+                modal=True,
+                message_type=Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.YES_NO,
+                text="Are you absolutely sure? This will permanently delete all statistics."
+            )
+            dialog.format_secondary_text("Click Yes to confirm or No to cancel.")
+            response = dialog.run()
+            dialog.destroy()
+            
+            # If user confirmed the second time, proceed with clearing
+            if response == Gtk.ResponseType.YES:
+                # Clear the stats file
+                try:
+                    if STATS_LOG_FILE.exists():
+                        STATS_LOG_FILE.unlink()
+                    
+                    # Clear the list store if it exists
+                    if self.stats_list_store:
+                        self.stats_list_store.clear()
+                        
+                    # Show success message
+                    success_dialog = Gtk.MessageDialog(
+                        transient_for=self._stats_window,
+                        modal=True,
+                        message_type=Gtk.MessageType.INFO,
+                        buttons=Gtk.ButtonsType.OK,
+                        text="Statistics history cleared successfully."
+                    )
+                    success_dialog.run()
+                    success_dialog.destroy()
+                except Exception as e:
+                    # Show error message
+                    error_dialog = Gtk.MessageDialog(
+                        transient_for=self._stats_window,
+                        modal=True,
+                        message_type=Gtk.MessageType.ERROR,
+                        buttons=Gtk.ButtonsType.OK,
+                        text=f"Error clearing statistics history: {e}"
+                    )
+                    error_dialog.run()
+                    error_dialog.destroy()
 
     def on_quit(self, action, param):
         """Handles the 'quit' action."""
@@ -713,17 +749,9 @@ def main():
     parser = argparse.ArgumentParser(description="Accessible Tea Timer")
     parser.add_argument("-d", "--duration", type=int, default=5,
                         help="Initial timer duration in minutes (default: 5)")
-    parser.add_argument("--photosensitive-mode", action="store_true",
-                        help="Enable photosensitive mode, disabling flashing/dynamic elements.")
     args = parser.parse_args()
 
     app = TeaTimerApp(duration=args.duration)
-
-    # If --photosensitive-mode CLI arg is used, it overrides the environment variable
-    # for the initial launch. The UI toggle will then control runtime behavior.
-    if args.photosensitive_mode:
-        app.photosensitive_mode = True
-
     app.run(None)
 
 if __name__ == "__main__":
