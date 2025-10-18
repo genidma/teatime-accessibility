@@ -69,9 +69,9 @@ This is the photosensitive safe version of the TeaTime Accessibility application
   - `Ctrl+Q`: Quit the application
 - **Mnemonics (Alt Keys)**: Activate buttons and menu items by pressing `Alt` plus the underlined letter.
   - **Main Window:**
-    - `Alt+S`: **S**tart
-    - `Alt+T`: S**t**op
-    - `Alt+E`: **E**nable Sound
+    - `Alt+S`: **S**tart Timer
+    - `Alt+T`: S**t**op Timer
+    - `Alt+N`: E**n**able Sound
     - `Alt+4`: **4**5 Minutes
     - `Alt+1`: **1** Hour
   - **Statistics Window:**
