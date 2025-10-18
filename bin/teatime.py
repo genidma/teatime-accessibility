@@ -513,12 +513,62 @@ class TeaTimerApp(Gtk.Application):
 
     def _setup_actions(self):
         """Sets up Gtk.Application actions for keyboard shortcuts."""
+        # Quit action
         action_quit = Gio.SimpleAction.new("quit", None)
         action_quit.connect("activate", self.on_quit)
         self.add_action(action_quit)
-
-        # Example: Add an accelerator for "quit" (Ctrl+Q)
         self.set_accels_for_action("app.quit", ["<Primary>q"])
+        
+        # Start timer action
+        action_start = Gio.SimpleAction.new("start", None)
+        action_start.connect("activate", self._on_start_action)
+        self.add_action(action_start)
+        self.set_accels_for_action("app.start", ["<Primary>s"])
+        
+        # Stop timer action
+        action_stop = Gio.SimpleAction.new("stop", None)
+        action_stop.connect("activate", self._on_stop_action)
+        self.add_action(action_stop)
+        self.set_accels_for_action("app.stop", ["<Primary>t"])
+        
+        # Toggle sound action
+        action_toggle_sound = Gio.SimpleAction.new("toggle_sound", None)
+        action_toggle_sound.connect("activate", self._on_toggle_sound_action)
+        self.add_action(action_toggle_sound)
+        self.set_accels_for_action("app.toggle_sound", ["<Primary>m"])
+        
+        # Increase font size action
+        action_increase_font = Gio.SimpleAction.new("increase_font", None)
+        action_increase_font.connect("activate", self._on_increase_font_action)
+        self.add_action(action_increase_font)
+        self.set_accels_for_action("app.increase_font", ["<Primary>plus", "<Primary>equal"])
+        
+        # Decrease font size action
+        action_decrease_font = Gio.SimpleAction.new("decrease_font", None)
+        action_decrease_font.connect("activate", self._on_decrease_font_action)
+        self.add_action(action_decrease_font)
+        self.set_accels_for_action("app.decrease_font", ["<Primary>minus"])
+
+    # --- Action Handlers ---
+    def _on_start_action(self, action, param):
+        """Handler for start timer action."""
+        self.on_start_clicked(None)
+        
+    def _on_stop_action(self, action, param):
+        """Handler for stop timer action."""
+        self.on_stop_clicked(None)
+        
+    def _on_toggle_sound_action(self, action, param):
+        """Handler for toggle sound action."""
+        self.sound_toggle.set_active(not self.sound_toggle.get_active())
+        
+    def _on_increase_font_action(self, action, param):
+        """Handler for increase font size action."""
+        self.on_increase_font_clicked(None)
+        
+    def _on_decrease_font_action(self, action, param):
+        """Handler for decrease font size action."""
+        self.on_decrease_font_clicked(None)
 
     # --- Signal Handlers ---
     def on_start_clicked(self, widget):
