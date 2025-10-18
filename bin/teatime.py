@@ -22,7 +22,7 @@ require_version('GLib', '2.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
 
 APP_NAME = "TeaTime Accessibility - Photosensitive version"
-APP_VERSION = "v1.3.3-photosensitive"
+APP_VERSION = "v1.3.4-photosensitive"
 
 # Default font scale factor
 DEFAULT_FONT_SCALE = 1.0
@@ -355,6 +355,11 @@ class TeaTimerApp(Gtk.Application):
             
             if not sound_played:
                 print("Warning: Could not play sound. Please check your sound system configuration.")
+
+        # Update button states - enable Start, disable Stop
+        self.start_button.set_sensitive(True)
+        self.stop_button.set_sensitive(False)
+        self._set_preset_buttons_sensitive(True)
 
         # Display a dialog
         dialog = Gtk.MessageDialog(
