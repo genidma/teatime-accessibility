@@ -1,0 +1,142 @@
+### Service verification Tracker
+Date: 2025-10-18
+Times: Indicated in the logs (Search for Begin and Conclude)
+
+#### Main UI Tests
+- [ ] This is a temporary doc that can be moved under #31 along with a links to the screen recording with the SV
+- [x] 17:48 UTC SV officially begins. Setup with xterm, vokoscreen and insiders edition
+- [x] Basic timer functionality tested with 1 minute timer and it works.
+- [ ] Stop button doesn't stop by itself. I think there is a checklist item for this under #31 already
+- [x] Basic timer with 2 minute timer while I test some of the other features on the side
+- [x] A- and A+ buttons for screen resizing working
+- [x] Session Preset with 45 minute timer button is working
+- [x] Session Preset with 1 Hour timer button is working
+- [ ] Switching from Session Preset 45 Minutes to Session Preset 1 Hour not working. Buttons for Preset are greyed out. User has to first, click on 'Stop' and then user can proceed towards starting a timer with a Session Preset
+- [x] Testing the Enable Sound features. Update: Feature works and by default the bell sound by Daniel Simion plays
+- [x] Testing " " by unchecking the box. Update: Feature working. No bell is played when the Enable Sound checkbox is unchecked
+- [x] Manual GTK window resizing by dragging the window from the edges is working
+- [x] Main dialog that brings up Statistics and About is working.
+- [x] Minimizing the window is working, leverarging the built-in GTK features
+- [x] Restoring the window back to the screen using Alt+Tab keyboard shortcuts (and then selecting the app) is working
+- [ ] Maximizing the window using built-in GTK features broke the app. 1. Screen went all wonky. 2. Could not restore using mouse. 3. Had to click on the window and do a Alt+Spacebar in order to invoke the menu from the title bar and then choose 'Restore'. After the Restore, the timer stopped updating. No error messages on the terminal (where the app was launched from in this instances of SV). App completely froze after this and could not close it or Minimize it. Trying to minimize it. I suspect the GTK window has somehow lost it's orientation (So, while perceivably I am clicking on the button for minimizing the window...it actually tries to maximize the window). 18:09 UTC Killing the window from the terminal and restarting the app. 
+
+Error messages noticed on the terminal after ctrl+can
+
+  File "...Github/teatime-accessibility/bin/teatime.py", line 763, in <module>
+    main()
+    ~~~~^^
+  File "...Github/teatime-accessibility/bin/teatime.py", line 755, in main
+    app.run(None)
+    ~~~~~~~^^^^^^
+  File "/usr/lib/python3/dist-packages/gi/overrides/Gio.py", line 40, in run
+    with register_sigint_fallback(self.quit):
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/usr/lib/python3.13/contextlib.py", line 148, in __exit__
+    next(self.gen)
+    ~~~~^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/gi/_ossighelper.py", line 239, in register_sigint_fallback
+    signal.default_int_handler(signal.SIGINT, None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+18:11 UTC Relaunch app from terminal
+18:12 UTC Odd. App is now maximizing properly making use of the built-in menus in the title bar for GTK. Tried multiple times and no errors noticed on the terminal. Will still keep this item open. Maybe there is a slight memory leak? (Fyi only: 4.99 G Memory used out of 22.2 G on the system)
+18:23 UTC Will keep a watch on memory for teatime.py 
+18:36 UTC Setting up a continous watch command on pmap -x on the process id for teatime.py. 
+Note: Process id confirmed with the command. ps -aef | grep 'PID\|tea' |grep -vi 'Title\|pid' (one process is the .sh script and the other (15731) is the process that is being isolated )
+18:38 UTC Back to SV
+
+- [x] Timer incrementing in 5 second increments and as the requirements stated for the photosensitive version
+
+#### Statistics Engine (SE) 
+- [x] Statistics engine is loading entries and as expected. The time inside of these entries is accurate (Eastern time and not UTC). For example, for the testing done for a one minute timer as part of SV, SE generates a value of 2025-10-18T14:00:56 (Down to the seconds). Duration is accurately logged as 1 (in minutes)
+- [ ] Refresh Statistics button now seems redundant and will require further testing
+- [ ] Testing the Export to CSV (But on a separate screen for privacy). 1. Feature exports entries to a file where the the user specifies the filename and location (GTK UI Dialog box) 2. Exported entries in the UI match the number of exported entries in the file that is generated. 
+
+Note: I don't have a .csv editor on this machine (Documented in to do). This is what the export renders
+
+timestamp,duration_minutes
+2025-10-18T01:34:58,1
+2025-10-18T02:00:42,1
+2025-10-18T03:32:35,1
+2025-10-18T13:51:50,1
+2025-10-18T13:55:24,2
+2025-10-18T13:59:40,1
+2025-10-18T14:00:56,1
+
+- [ ] To flip the order in the Stats Engine with most recent entries on top vs bottom 
+
+- [x] Break at 18:55 UTC. Timelog in #31 has structure and has been updated
+- [x] Memory log updated below
+- [x] Reminder you are inside of the Stats Engine heading (For formatting below)
+- [x] Test the Clear History Button. a. Dialog box 1 pops up and as expect. b. Checking for Dialog box 2 by pressing Yes. c. Dialog box 2 pops up " ". d. Choosing No. 
+- [x] " ", this time wiping the history for the Stats Engine Clean here. Logic works and as expected. 
+- [x] Starting a new timer to check the Stats Engine one more time
+
+#### Clear History and About dialog box
+- [x] Continue at Clear History inside of the Stats Engine
+- [x] Testing About dialog box in the meantime
+- [x] Checking links from the About dialog box and verifying the text inside also
+- [ ] There is an icon with a clock inside of the About box that can be changed to make it look consistent with the main icon (astro puppy)
+
+#### Memory usage
+- [ ] Have to test memory usage again with pmap -x <PID> and keep the timer running for a couple of hours (2 hours, 3 hours, 8 hours e.t.c). To see if there are memory leaks over longer time periods
+- [x] Keep app running during break to see how it impact memory usage. In fact, start a timer, even it's a break. 
+
+### Keyboard Shortcut tests 
+- [ ] Begins at 19:54 UTC. Keyboard shortcuts documented on the main Readme for the main Repo [link](https://github.com/genidma/teatime-accessibility/)
+    - [x] Full Keyboard Navigation: Tab through all controls
+    - [ ] Keyboard Shortcuts:
+        - [x] Working:
+            - [x] Ctrl+I: Show Statistics window
+            - [x] Ctrl+Q: Quit the application
+        - [ ] NOT working:
+            - [ ] Ctrl+S: Start timer
+            - [ ] Ctrl+T: Stop timer
+            - [ ] Ctrl+M: Toggle sound on/off
+            - [ ] Ctrl++: Increase font size
+            - [ ] Ctrl+-: Decrease font size
+    - [ ] Mnemonics (Alt Keys): (I'll combine different areas in two buckets here for ease of tab e.t.c)
+        - [x] Working:
+            - [x] Alt+E: Enable Sound
+            - [x] Alt+4: 45 Minutes
+            - [x] Alt+1: 1 Hour
+            - [x] Statistics window: Alt+R: Refresh Statistics (Although redundant I think?)
+            - [x] Statistics window: Alt+E: Export to CSV
+            - [x] Statistics window: Alt+C: Clear History 
+        - [ ] NOT working:
+            - [ ] Alt+S: Start (Flipping between Start and). The Problem is a. That the underlined items with Alt in the UI are not matching what the values are in the Readme. Here, Alt+S is supposed to Start the Timer, which is not working. But once it Starts, Alt+S is also the underlined letter for the Stop button
+            - [ ] Alt+T: Stop - No proper binding (in code). See above
+
+### What worked well and what can be improved
+- [ ] Now thinking about the utility towards having a requirement document from my CBAP (Business Analysis days). Particularly, when it comes to handing off the work effort, scaling and in this situation here SV (Service Verification). The other benefit is picking and choosing features that can be or should not be implemented based on requirements (as in the situation with the photosensitive version here. Where it would have been much easier to build this app, by not choosing to apply certain features and then testing them.)
+
+#### Misc 
+- [ ] I was thinking about this. The photosensitive version maps to release v1.3.4. But how will the users get to the Readme? I need to test that the Readme for the photosensitive version updates properly when inside of the zipped files. Off-topic: There has got to be a better way of managing release files in Github. There has to be, because I cannot be the only person who chooses to have different versions of the app available on the same repo. Unless, the expectation is that a separate repo will be made. It's either, or.
+- [ ] Rewrite app in a language that is more memory efficient 
+
+### Memory check (in kB)
+- 18:51 UTC 1044344
+- 19:36 UTC 1044344
+- 19:47 UTC 1046544
+- 20:14 UTC Note: New PID as part of SV
+- 20:17 UTC 837796
+
+
+### To dos outside of Teatime 
+- [ ] Download .csv editor (light vs Libre Office, which is cool but I don't need). Or test in online tool 
+- [ ] Upload SV video files to YT and link to pertinent entry in #31. Location /home/Videos and filenames like 2025-10-18_SV_Partxx.mkv 
+
+### Wrap up 
+- [x]  20:14 UTC SV officially concludes. This concludes the SV for the photosensitive version
+- [x] Cleanup and Review to commence shortly
+- [ ] Cleanup and Review begins at xx:xx UTC
+    - [ ] Stop SV recording at 20:23 UTC
+    - [ ] Save and upload recording. Two files via vokoscreen
+    - 
+- [ ] Recursive check from above  
+
+
+
+#### Credits
+- Music by SoundCloud: Starting with BeatPlastic 
