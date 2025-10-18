@@ -6,42 +6,56 @@ TeaTime Accessibility is an accessibility focused timer application (app) for th
 
 - **Timer:** Set custom break intervals for better productivity.
 - **Accessibility Integration:** Works seamlessly with screen readers and other assistive technologies.
-- **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json`.
+- **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json` (CSV format despite the .json extension).
 - **Custom Application Icon:** A fun icon for better recognition on your computer. Something that brightens your day, just a little bit.
 
-# Accessible Tea Timer
+# Accessible Tea Timer - Photosensitive Safe Version
 
-A simpler version of the Tea Timer application with enhanced accessibility features.
+This is the photosensitive safe version of the TeaTime Accessibility application. This version has been specifically modified to remove all visual effects that could potentially trigger seizures in people with photosensitive epilepsy.
 
-## Note: This demo is from the original version and the photosensitive version of the app looks quite different (See note below)
-![Demo - gif format](./screenshots_demo_clones/demo-2025-07-15.gif)
+## Key Differences from Original Version
 
-Screenshot of the main GUI (graphical user interface) from version 1.3.3 of the app
-![screenshot](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
+### Visual Effects Removed
+- **Rainbow Glow Effects**: All color-changing background effects have been completely removed
+- **Focus Glow Effects**: Removed the glowing effect that appeared when cycling through buttons with Tab key
+- **Sprite Animations**: All animated elements have been removed
+- **Visual Transitions**: Eliminated all sudden screen changes and flashing animations
 
-Screenshot of the Statistics engine that is built into the app. It automatically records the number of sessions by date. Including, breakdown for the Total number of sessions, Total Time for Sessions, Average Duration considering duration of all the Sessions
-![screenshot for stats](./screenshots_demo_clones/2025-10-14-screenshot-for-README-STATS.png)
+### Enhanced Statistics System
+- **Improved Statistics Window**: Added Refresh, Export to CSV, and Clear History buttons
+- **Two-step Confirmation**: Clear History requires two confirmations to prevent accidental data loss
+- **Data Export**: Statistics can now be exported to user-selected CSV files
+- **Refresh Capability**: Statistics display can be updated without closing and reopening the window
 
-## Demos on Youtube
-### Note: These demos are for the original version of the application and the photosensitive version of the app here is very different and without all the animations e.t.c
-* [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw?t=137)
-* [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
+### Timer Improvements
+- **5-second Update Interval**: Changed from 1-second to 5-second update intervals to reduce system resource usage
+- **Immediate Display Updates**: Timer display now updates immediately when changing timers or stopping
+- **Accurate Duration Recording**: Fixed statistics to correctly record actual timer durations
 
+### Sound System Improvements
+- **Custom Bell Sound**: Integrated Simion's custom bell sound as the primary notification
+- **Multiple Fallbacks**: Robust sound system with multiple fallback options for different system configurations
+- **Priority Custom Sound**: Application attempts to play custom WAV file before falling back to system sounds
+
+## Screenshots
+![Main Application Window](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
+*Main application window - clean interface without visual effects*
+
+![Statistics Window](./screenshots_demo_clones/2025-10-14-screenshot-for-README-STATS.png)
+*Enhanced Statistics window with additional functionality*
 
 ## Accessibility Features
 
-### Photosensitive Epilepsy Safe Version
-* A photosensitive version of the app was created by @shanaya-gupta
-* This version does not have rainbow glow effects, sudden screen changes or flashing animations
-* " " can be [downloaded via v1.3.3 here](https://github.com/genidma/teatime-accessibility/releases/tag/v1.3.3-photosensitive)
+### Photosensitive Epilepsy Safe
+* This version is completely safe for users with photosensitive epilepsy
+* No flashing, color-changing, or animated visual effects
+* Static interface with consistent appearance throughout operation
 
 ### Visual Accessibility
 - **Adjustable Font Size**: Easily increase or decrease text size using **A+ / A- buttons** or **Ctrl + / Ctrl -** to suit your comfort.
 - **High Contrast Support**: Automatically adapts to your system's light or dark theme to reduce eye strain.
-- **Visual Feedback that will not startle you**: All button states, notifications, and status messages are designed to avoid rapid animations that could trigger seizures.
-- **Clear and Consistent Layouts**: Information is presented in a stable, predictable manner to make navigation easier and stable.
-- **Clear Visual Feedback**: Button states and status messages provide clear feedback
-- **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
+- **Stable Visual Design**: All interface elements maintain a consistent appearance without animations or sudden changes.
+- **Clear and Consistent Layouts**: Information is presented in a stable, predictable manner to make navigation easier.
 
 ### Keyboard Accessibility
 - **Full Keyboard Navigation**: Tab through all controls
@@ -65,17 +79,15 @@ Screenshot of the Statistics engine that is built into the app. It automatically
     - `Alt+E`: **E**xport to CSV
     - `Alt+C`: **C**lear History
 
-### Visual & Focus Accessibility
-- **Focus Management**: Proper focus order with **clear and steady visual indicators** to show where the focus is, reducing sudden visual changes.
-
 ### Screen Reader Support
 - **Proper Labels**: All controls have descriptive labels for clear understanding.  
-- **Status Updates**: Status changes are announced to screen readers (needs testing).  
-- **Live Regions**: Timer updates are presented **in a stable and consistent way** and through audio prompts (see below)
+- **Status Updates**: Status changes are announced to screen readers.  
+- **Live Regions**: Timer updates are presented in a stable and consistent way
 
 ### Audio Accessibility
-- **Sound Notifications**: Audio feedback (bell 🔔) at the completion of each session. If you choose to enable audio prompts.
-- **Desktop Notifications**: System notifications for timer completion.  
+- **Custom Sound Notifications**: Audio feedback (Simion's bell 🔔) at the completion of each session.
+- **Multiple Sound Fallbacks**: If the custom sound cannot be played, the application tries multiple alternative methods.
+- **System Notification Compatibility**: Works with various system sound configurations.
 
 ## Installation
 
@@ -133,6 +145,7 @@ If you prefer to install manually:
    ```bash
    cp teatime-accessibility.desktop ~/Desktop/
    ```
+
 ## Installation Locations
 
 When you run the install script, here's exactly where each component is installed:
@@ -154,8 +167,9 @@ When you run the install script, here's exactly where each component is installe
    - This includes the main Python script, assets, and configuration files
 
 5. **User Data**:
-   - Configuration: `~/.config/teatime_config.json`
-   - Statistics: `~/.local/share/teatime_stats.json`
+   - Configuration: `~/.config/teatime/settings.json`
+   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format despite the .json extension)
+
 Note: If you wish to uninstall the app (so that you can reinstall a newer version. Then you might want to save these files first, to another location. So that you can reimport the files back for the newer version of the app)   
 
 For the application itself. It runs directly from your project directory and install script:
@@ -169,44 +183,17 @@ Note: To state the obvious, you only run the 'install script once! on each machi
 After installation, you can run the application in one of the following ways:
 
 ### Option 1: Main 'Activities Menu'
-1. Click on the 'Activities Menu' in Ubuntu Desktop. Highlighted with a Green Rectangle (with circular edges in the screenshot below)
-
-   ![Activities Menu](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu.png)
-   
-2. Depending on how many apps you have installed on your computer, you might have to scroll to the following views. 
-
-In the illustration below: The icon for the app appears on the second page (or view). You either scroll to this location or you can click on the dots that you see at the bottom of the screen.
-
-Screenshot below for visual representation:
-Where (the same Green Rectangle with circular edges as in the previous screenshot) represents:
-
-    1.  (within the screenshot directly) the mechanism via which you can scroll through the views. 
-
-    And
-
-    2.icon for the app itself
-   ![Activities Menu Scroll](screenshots_demo_clones/2025-10-16-Start-or-Activities-menu-scroll.png)
-3. Click on the application icon to launch it
+1. Click on the 'Activities Menu' in Ubuntu Desktop.
+2. Find and click on the "TeaTime Accessibility" icon to launch it
 
 ### Option 2: Desktop Shortcut
 If you chose to create a desktop shortcut during installation:
 1. Navigate to your desktop
 2. Right-click on the "TeaTime Accessibility" icon
-3. Important: Select "Allow Launching" from the context menu. This is a default requirement for all new Ubuntu Desktop based installations.
-5. Double-click the icon to launch the application
-4. As of 2025-10-16, the icon looks like this. 
+3. Important: Select "Allow Launching" from the context menu.
+4. Double-click the icon to launch the application
 
-   <img src="./assets/icon.png" width="48" height="52" alt="Application Icon">
-
-On Ubuntu Desktop, the icon will look like this (below):
-
-   <img src="./screenshots_demo_clones/2025-10-16-icon-for-Readme.png" alt="Application Icon">
-
-Fyi only: The icon looks larger in the illustrations here. The icons on your computer will be the same size as any other icon on your Ubuntu Desktop. 
-
-The application will appear in your system tray (notification area) and can be controlled from there.
-
-Note: The virtual environment is created in the project directory and persists between sessions. It only needs to be recreated if you manually delete it or run the uninstall script. For the desktop shortcut, you must first right-click on the icon and select "Allow Launching" from the context menu before you can use it to start the application.
+<img src="./assets/icon.png" width="48" height="52" alt="Application Icon">
 
 ### Option 3: Command Line
 1. Navigate to the project directory (the location on your computer, where you originally cloned the repository)
@@ -287,7 +274,7 @@ To manually uninstall:
 
 4. To remove configuration and statistics:
    ```bash
-   rm ~/.config/teatime_config.json
+   rm ~/.config/teatime/settings.json
    rm ~/.local/share/teatime_stats.json
    ```
 
@@ -299,6 +286,7 @@ The application consists of:
 * Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keep evolving. 
 * Version v1.3.3-photosensitive (this version) code provided by @shanaya-Gupta on Github via #31 
 * Original author: @genidma on Github
+* Custom bell sound: service-bell_daniel_simion.wav
 
 ## Licensing Policy
 * To be determined by @shanaya-Gupta
