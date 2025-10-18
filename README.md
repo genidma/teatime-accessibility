@@ -30,12 +30,18 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 
 ## Accessibility Features
 
-### Visual Accessibility for Users with Epilepsy
-- **Adjustable Font Size**: Easily increase or decrease text size using **A+ / A- buttons** or **Ctrl + / Ctrl -** to suit your comfort.  
-- **High Contrast Support**: Automatically adapts to your system's light or dark theme to reduce eye strain.  
-- **Visual Feedback that will not startle you**: All button states, notifications, and status messages are designed to avoid rapid animations that could trigger seizures.  
-- **Clear and Consistent Layouts**: Information is presented in a stable, predictable manner to make navigation easier and stable.
+### Photosensitive Epilepsy Safe Version
+* A photosensitive version of the app was created by @shanaya-gupta
+* This version does not have rainbow glow effects, sudden screen changes or flashing animations
+* " " can be [downloaded via v1.3.3 here](https://github.com/genidma/teatime-accessibility/releases/tag/v1.3.3-photosensitive)
 
+### Visual Accessibility
+- **Adjustable Font Size**: Easily increase or decrease text size using **A+ / A- buttons** or **Ctrl + / Ctrl -** to suit your comfort.
+- **High Contrast Support**: Automatically adapts to your system's light or dark theme to reduce eye strain.
+- **Visual Feedback that will not startle you**: All button states, notifications, and status messages are designed to avoid rapid animations that could trigger seizures.
+- **Clear and Consistent Layouts**: Information is presented in a stable, predictable manner to make navigation easier and stable.
+- **Clear Visual Feedback**: Button states and status messages provide clear feedback
+- **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
 
 ### Keyboard Accessibility
 - **Full Keyboard Navigation**: Tab through all controls
