@@ -182,7 +182,7 @@ class TeaTimerApp(Gtk.Application):
             grid.attach(self.increase_font_button, 1, 2, 1, 1)
 
             # Row 3: Sound toggle (spans both columns)
-            self.sound_toggle = Gtk.CheckButton(label="_Enable Sound")
+            self.sound_toggle = Gtk.CheckButton(label="E_nable Sound")
             self.sound_toggle.set_use_underline(True)
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
