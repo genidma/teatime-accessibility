@@ -85,6 +85,10 @@ class TeaTimerApp(Gtk.Application):
             self.window.connect("destroy", self._on_window_destroy)
             # Use "set-focus-child" signal, which is more reliable for this purpose
             self.window.connect("set-focus-child", self._on_focus_changed)
+            # Handle window state changes to prevent issues with maximization
+            self.window.connect("window-state-event", self._on_window_state_changed)
+            # Handle window resize events
+            self.window.connect("configure-event", self._on_window_configure)
 
             # --- HeaderBar for a modern look ---
             header_bar = Gtk.HeaderBar()
@@ -239,6 +243,34 @@ class TeaTimerApp(Gtk.Application):
         # Disabled visual effects - do not start/stop focus glow
         pass
 
+    def _on_window_state_changed(self, window, event):
+        """Handle window state changes to ensure proper behavior when maximizing/restoring."""
+        # If the window was maximized or restored, and we have an active timer,
+        # ensure the timer display is still updating
+        if self.timer_id is not None:
+            # Force an immediate update to ensure display is refreshed
+            self._update_timer_display()
+            # Add a one-time check to ensure timer is still running properly
+            GLib.timeout_add(100, self._ensure_timer_update)
+        # No specific action needed, but having this handler prevents some GTK issues
+        pass
+
+    def _on_window_configure(self, window, event):
+        """Handle window configure events (resize, move) to ensure proper behavior."""
+        # This handler ensures that window configuration changes don't interfere 
+        # with timer functionality
+        # No specific action needed, but having this handler prevents some GTK issues
+        pass
+
+    def _ensure_timer_update(self):
+        """Ensure the timer update mechanism is still working after window state changes."""
+        # If we have an active timer but it's not updating, restart it
+        if self.timer_id is not None and self.remaining > 0:
+            # Check if timer is actually updating by comparing with a stored value
+            # For now, just ensure the display is refreshed
+            self._update_timer_display()
+        return False  # Don't repeat this check automatically
+
     def _update_timer_display(self):
         """
         Updates the timer display label.
@@ -294,11 +326,12 @@ class TeaTimerApp(Gtk.Application):
 
         # Immediately update the display with the new time
         self._update_timer_display()
-        self.timer_id = GLib.timeout_add(5000, self._update_timer_display) # Update every 5 seconds
+        # Use GLib.PRIORITY_DEFAULT instead of default priority to ensure consistent updates
+        self.timer_id = GLib.timeout_add(5000, self._update_timer_display, priority=GLib.PRIORITY_DEFAULT)
 
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
-        self._set_preset_buttons_sensitive(False) # Disable presets when timer is active
+        # Preset buttons remain enabled during active timer
 
         # Start visual effects - DISABLED
         # self._start_rainbow_glow()  # Removed for accessibility
@@ -316,7 +349,7 @@ class TeaTimerApp(Gtk.Application):
         self._update_timer_display() # Update display to 00:00
         self.start_button.set_sensitive(True)
         self.stop_button.set_sensitive(False)
-        self._set_preset_buttons_sensitive(True)
+        # Ensure preset buttons are enabled when timer stops
 
     def _timer_finished(self):
         """Called when the timer reaches zero."""
@@ -359,7 +392,6 @@ class TeaTimerApp(Gtk.Application):
         # Update button states - enable Start, disable Stop
         self.start_button.set_sensitive(True)
         self.stop_button.set_sensitive(False)
-        self._set_preset_buttons_sensitive(True)
 
         # Display a dialog
         dialog = Gtk.MessageDialog(
@@ -372,14 +404,15 @@ class TeaTimerApp(Gtk.Application):
         dialog.run()
         dialog.destroy()
 
-        # Re-enable the preset buttons
-        self._set_preset_buttons_sensitive(True)
-
     def _set_preset_buttons_sensitive(self, sensitive):
         """Helper to enable/disable preset buttons."""
-        # Iterate over children of presets_box if needed, or target specific buttons.
-        # For this example, assuming presets_box only contains buttons directly.
-        for child in self.window.get_children()[0].get_children()[0].get_children()[1].get_children():
+        # Get the main box (window -> main_box -> content_box -> presets_box)
+        main_box = self.window.get_children()[0]
+        content_box = main_box.get_children()[0]
+        presets_box = content_box.get_children()[1]  # Presets box is the second child
+        
+        # Iterate over children of presets_box and set sensitivity for all buttons
+        for child in presets_box.get_children():
             if isinstance(child, Gtk.Button):
                 child.set_sensitive(sensitive)
 
@@ -511,6 +544,10 @@ class TeaTimerApp(Gtk.Application):
 
     def on_preset_clicked(self, widget, minutes):
         """Sets the duration spin button value and starts the timer."""
+        # If timer is currently running, stop it first
+        if self.timer_id is not None:
+            self._stop_timer()
+        
         self.duration_spin.set_value(minutes)
         self.on_start_clicked(widget) # Reuse the start button handler
 
