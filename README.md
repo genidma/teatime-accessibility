@@ -33,22 +33,21 @@ This is the photosensitive safe version of the TeaTime Accessibility application
 - **Custom Bell Sound**: Plays Simion’s bell as the main notification bell
 
 ## Screenshots
-![Main Application Window](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
+![Main Application Window](./screenshots_demo_clones/photosensitive-version/photosensitive-main-2025-10-18.png)
 *Main application window - clean interface without visual effects*
 
-![Statistics Window](./screenshots_demo_clones/2025-10-14-screenshot-for-README-STATS.png)
-*Enhanced Statistics window with additional functionality*
+![Statistics Window](./screenshots_demo_clones/photosensitive-version/photosensitive-stats-2025-10-18.png)
+*Statistics Engine*
 
 ## Accessibility Features
 
 ### Photosensitive Epilepsy Safe
-* This version is completely safe for users with photosensitive epilepsy
-* No flashing, color-changing, or animated visual effects
+* Unlike the main version of the app, this version is safe for users with photosensitive epilepsy
+* As shared above, there are no abrupt changes or transitions. No color-changing, or animated visual effects
 * Static interface with consistent appearance throughout operation
 
 ### Visual Accessibility
 - **Adjustable Font Size**: Easily increase or decrease text size using **A+ / A- buttons** or **Ctrl + / Ctrl -** to suit your comfort.
-- **High Contrast Support**: Automatically adapts to your system's light or dark theme to reduce eye strain.
 - **Stable Visual Design**: All interface elements maintain a consistent appearance without animations or sudden changes.
 - **Clear and Consistent Layouts**: Information is presented in a stable, predictable manner to make navigation easier.
 
@@ -74,15 +73,9 @@ This is the photosensitive safe version of the TeaTime Accessibility application
     - `Alt+E`: **E**xport to CSV
     - `Alt+C`: **C**lear History
 
-### Screen Reader Support
-- **Proper Labels**: All controls have descriptive labels for clear understanding.  
-- **Status Updates**: Status changes are announced to screen readers.  
-- **Live Regions**: Timer updates are presented in a stable and consistent way
-
 ### Audio Accessibility
 - **Custom Sound Notifications**: Audio feedback (Simion's bell 🔔) at the completion of each session.
 - **Multiple Sound Fallbacks**: If the custom sound cannot be played, the application tries multiple alternative methods.
-- **System Notification Compatibility**: Works with various system sound configurations.
 
 ## Installation
 
@@ -93,7 +86,7 @@ Before running the install script, please install the required system dependenci
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 ```
 
-For better compatibility, we also recommend installing the system-wide PyGObject packages:
+For better compatibility, it is recommended to install the system-wide PyGObject packages:
 
 ```bash
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
