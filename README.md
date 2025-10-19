@@ -6,7 +6,7 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 
 - **Timer:** Set custom break intervals for better productivity.
 - **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json`.
-- **Custom Application Icon:** Features a distinctive teapot-themed icon for better recognition in your applications menu.
+
 
 # Accessible Tea Timer
 
