@@ -4,13 +4,9 @@ A simple, accessible Ubuntu timer with no animations, designed for photosensitiv
 
 ## Features
 
-- **Timer:** Timer: Set custom break intervals to improve focus and productivity.
+- **Timer:** Set custom break intervals to improve focus and productivity.
 - **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json` (uses CSV format internally despite the .json extension). This data is pulled into the built-in simple Statistics Engine (accessible from the dialog menu).
 - **Custom Application Icon:** A cheerful icon to make the app easy to recognize.
-
-# Accessible Tea Timer - Photosensitive Safe Version
-
-This is the photosensitive safe version of the TeaTime Accessibility application. This version has been specifically modified to remove all visual effects that could potentially trigger seizures in people with photosensitive epilepsy.
 
 ## Key Differences from Original Version
 
@@ -42,7 +38,7 @@ This is the photosensitive safe version of the TeaTime Accessibility application
 ## Accessibility Features
 
 ### Photosensitive Epilepsy Safe
-* Unlike the main version of the app, this version is safe for users with photosensitive epilepsy
+* Unlike the main version of the app where I have tons of visual effects e.t.c, this version is safe for users with photosensitive epilepsy
 * As shared above, there are no abrupt changes or transitions. No color-changing, or animated visual effects
 * Static interface with consistent appearance throughout operation
 
@@ -192,7 +188,7 @@ If you chose to create a desktop shortcut during installation:
    ```
 
 ### Command Line Options for Duration
-A custom duration can be specified via the GUI and also via the command line. As a note on the aside, durations are always in minutes.
+A custom duration can be specified via the GUI and also via the command line. Durations are always in minutes.
 
 To do this on the command line:
 
