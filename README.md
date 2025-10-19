@@ -1,13 +1,12 @@
-# TeaTime Accessibility
+# Simple Timer - Photosensitive Safe Version
 
-TeaTime Accessibility is an accessibility focused timer application (app) for the Ubuntu (Desktop) environment. This app has timers with presets, reminders (audible vs to the contrary) and basic statistics for your sessions. 
+A simple, accessible Ubuntu timer with no animations, designed for photosensitive epilepsy.
 
 ## Features
 
-- **Timer:** Set custom break intervals for better productivity.
-- **Accessibility Integration:** Works seamlessly with screen readers and other assistive technologies.
-- **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json` (CSV format despite the .json extension).
-- **Custom Application Icon:** A fun icon for better recognition on your computer. Something that brightens your day, just a little bit.
+- **Timer:** Timer: Set custom break intervals to improve focus and productivity.
+- **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json` (uses CSV format internally despite the .json extension). This data is pulled into the built-in simple Statistics Engine (accessible from the dialog menu).
+- **Custom Application Icon:** A cheerful icon to make the app easy to recognize.
 
 # Accessible Tea Timer - Photosensitive Safe Version
 
@@ -16,26 +15,22 @@ This is the photosensitive safe version of the TeaTime Accessibility application
 ## Key Differences from Original Version
 
 ### Visual Effects Removed
-- **Rainbow Glow Effects**: All color-changing background effects have been completely removed
-- **Focus Glow Effects**: Removed the glowing effect that appeared when cycling through buttons with Tab key
-- **Sprite Animations**: All animated elements have been removed
-- **Visual Transitions**: Eliminated all sudden screen changes and flashing animations
+- **Rainbow Glow Effects**: All color-changing backgrounds and animations removed
+- **Focus Glow Effects**: None for this version
+- **Sprite Animations**: Same as above
+- **Visual Transitions**: No sudden changes in visuals
 
 ### Enhanced Statistics System
-- **Improved Statistics Window**: Added Refresh, Export to CSV, and Clear History buttons
-- **Two-step Confirmation**: Clear History requires two confirmations to prevent accidental data loss
-- **Data Export**: Statistics can now be exported to user-selected CSV files
-- **Refresh Capability**: Statistics display can be updated without closing and reopening the window
+- **Improved Statistics Window**: Refresh, Export to CSV, and Clear History buttons
+- **Two-step Confirmation**: Prevents accidental clearing of history
+- **Data Export**: Export statistics to chosen CSV files
+- **Refresh Capability**: Update statistics without reopening the window
 
 ### Timer Improvements
-- **5-second Update Interval**: Changed from 1-second to 5-second update intervals to reduce system resource usage
-- **Immediate Display Updates**: Timer display now updates immediately when changing timers or stopping
-- **Accurate Duration Recording**: Fixed statistics to correctly record actual timer durations
+- **5-second Update Interval**: Changed from 1-second to 5-second update intervals. Flows better.
 
 ### Sound System Improvements
-- **Custom Bell Sound**: Integrated Simion's custom bell sound as the primary notification
-- **Multiple Fallbacks**: Robust sound system with multiple fallback options for different system configurations
-- **Priority Custom Sound**: Application attempts to play custom WAV file before falling back to system sounds
+- **Custom Bell Sound**: Plays Simion’s bell as the main notification bell
 
 ## Screenshots
 ![Main Application Window](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
@@ -168,7 +163,7 @@ When you run the install script, here's exactly where each component is installe
 
 5. **User Data**:
    - Configuration: `~/.config/teatime/settings.json`
-   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format despite the .json extension)
+   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format internally despite the .json extension)
 
 Note: If you wish to uninstall the app (so that you can reinstall a newer version. Then you might want to save these files first, to another location. So that you can reimport the files back for the newer version of the app)   
 
