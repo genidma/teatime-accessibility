@@ -102,11 +102,12 @@ cd teatime-accessibility
 ```
 
 This script will:
-1. Create a virtual environment with access to system packages (if one doesn't already exist)
+1. Create a virtual environment with access to system packages
 2. Install all required dependencies
-3. Will provide you with an option and if you would like for an icon on the desktop to be created for this application
+3. Offer the option to create a desktop icon for the application
 
-Note 01: You might have to make the install.sh script itself executable with: chmod u+x install.sh (on your terminal)
+Note 01: You may need to make the script executable first: chmod u+x install.sh
+
 Note 02: The install script will also prompt you to install system dependencies if needed.
 
 ### Manual Installation
@@ -144,7 +145,6 @@ When you run the install script, here's exactly where each component is installe
 
 2. **Desktop Entry**:
    - Location: `~/.local/share/applications/teatime-accessibility.desktop`
-   - This allows the app to appear in your system's application menu under "Utilities"
 
 3. **Desktop Shortcut** (if you choose to create one):
    - Location: On your desktop (e.g., `~/Desktop/teatime-accessibility.desktop`)
