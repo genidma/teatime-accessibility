@@ -8,7 +8,7 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 - **Usage Statistics:** Logs your session times and provides insights into your computer usage habits. All data remains local to your machine.
 
 
-# Accessible Tea Timer
+# Demo
 
 A simpler version of the Tea Timer application with enhanced accessibility features.
 
