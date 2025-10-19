@@ -124,7 +124,27 @@ If you prefer to install manually:
    pip install -r requirements.txt
    ```
 
-3. Create desktop entry (optional):
+## Application Components and Locations
+
+Whether you use automatic or manual installation, the application consists of the following components:
+
+1. **Virtual Environment**: 
+   - Location: Inside the project directory as `teatime-venv/`
+   - This is a local virtual environment that stays within your project folder
+
+2. **Application Files**:
+   - All application files remain in your project directory (wherever you cloned the repository)
+   - This includes the main Python script, assets, and configuration files
+
+3. **User Data**:
+   - Configuration: `~/.config/teatime/settings.json`
+   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format internally despite the .json extension)
+
+4. **Desktop Integration** (optional):
+   - Desktop Entry: `~/.local/share/applications/teatime-accessibility.desktop`
+   - Desktop Shortcut: `~/Desktop/teatime-accessibility.desktop` (if created)
+   
+   You can create these manually with:
    ```bash
    mkdir -p ~/.local/share/applications
    cp teatime-accessibility.desktop ~/.local/share/applications/
@@ -134,29 +154,6 @@ If you prefer to install manually:
    ```bash
    cp teatime-accessibility.desktop ~/Desktop/
    ```
-
-## Installation Locations
-
-When you run the install script, here's exactly where each component is installed:
-
-1. **Virtual Environment**: 
-   - Location: Inside the project directory as `teatime-venv/`
-   - This is a local virtual environment that stays within your project folder
-
-2. **Desktop Entry**:
-   - Location: `~/.local/share/applications/teatime-accessibility.desktop`
-
-3. **Desktop Shortcut** (if you choose to create one):
-   - Location: On your desktop (e.g., `~/Desktop/teatime-accessibility.desktop`)
-   - This provides a direct shortcut icon on your desktop
-
-4. **Application Files**:
-   - All application files remain in your project directory (wherever you cloned the repository)
-   - This includes the main Python script, assets, and configuration files
-
-5. **User Data**:
-   - Configuration: `~/.config/teatime/settings.json`
-   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format internally despite the .json extension)
 
 Note: If you wish to uninstall the app (so that you can reinstall a newer version. Then you might want to save these files first, to another location. So that you can reimport the files back for the newer version of the app)   
 
