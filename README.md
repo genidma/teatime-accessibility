@@ -269,9 +269,11 @@ The application consists of:
 
 ## Credits
 * Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keep evolving. 
-* Version v1.3.3-photosensitive (this version) code provided by @shanaya-Gupta on Github via #31 
+* The original code for the photosensitive version (this version) was provided by @shanaya-Gupta on Github via #31 This Pull Request then became version v1.3.3-photosensitive. Later, @genidma reconnected the feature set with heavy lifting from Lingma by AliBaba Cloud (no affiliation) and Chatgpt (no affiliation either)
+ code provided by @shanaya-Gupta on Github via #31 
 * Original author: @genidma on Github
 * Custom bell sound: service-bell_daniel_simion.wav
+* Photosensitive version original submission: @shanaya-Gupta
 
 ## Licensing Policy
 * To be determined by @shanaya-Gupta
