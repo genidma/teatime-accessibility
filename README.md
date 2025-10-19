@@ -86,14 +86,14 @@ Before running the install script, please install the required system dependenci
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 ```
 
-For better compatibility, it is recommended to install the system-wide PyGObject packages:
+For better compatibility, it is recommended to install the system-wide PyGObject packages. See below. Also, as of right now and with the existing implementation, there is not a way around installing system wide dependencies. See #44 for more information.
 
 ```bash
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 ```
 
 ### Automatic Installation (Recommended)
-First, clone the repository to a location of your choice, then run the install script:
+First, [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the repository to a location of your choice, then run the install script:
 
 ```bash
 git clone <repository-url>
