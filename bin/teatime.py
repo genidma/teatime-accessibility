@@ -452,10 +452,17 @@ class TeaTimerApp(Gtk.Application):
                     env_duration = os.environ.get('TEATIME_DURATION')
                     if env_duration is None:
                         self.last_duration = config.get("last_duration", 5)
+                    # Load preferred animation
+                    self.preferred_animation = config.get("preferred_animation", "test_animation")
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 print(f"Error decoding config file: {CONFIG_FILE}. Using defaults. Error: {e}")
+                self.preferred_animation = "test_animation"
             except Exception as e:
                 print(f"An unexpected error occurred while loading config: {e}. Using defaults.")
+                self.preferred_animation = "test_animation"
+        else:
+            # Default animation if no config file exists
+            self.preferred_animation = "test_animation"
 
     def _save_config(self):
         """Saves the current configuration to the config file."""
@@ -464,7 +471,8 @@ class TeaTimerApp(Gtk.Application):
         try:
             config_data = {
                 "font_scale_factor": self.font_scale_factor,
-                "last_duration": self.duration_spin.get_value_as_int()
+                "last_duration": self.duration_spin.get_value_as_int(),
+                "preferred_animation": getattr(self, 'preferred_animation', 'test_animation')
             }
             CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(CONFIG_FILE, 'w') as f:
@@ -819,12 +827,21 @@ class TeaTimerApp(Gtk.Application):
         """
         sprite_frames = []
         assets_dir = Path(__file__).parent.parent / "assets"
-        sprites_dir = assets_dir / "sprites" / "test_animation"
+        
+        # Check if there's a preferred animation in the config
+        preferred_animation = getattr(self, 'preferred_animation', 'test_animation')
+        
+        # Try to load from the preferred animation directory first
+        sprites_dir = assets_dir / "sprites" / preferred_animation
+        
+        # If preferred animation doesn't exist, try test_animation as fallback
+        if not sprites_dir.exists():
+            sprites_dir = assets_dir / "sprites" / "test_animation"
         
         print(f"Looking for sprites in: {sprites_dir}")
         
-        # Look for individual frame files
-        frame_files = list(sprites_dir.glob("sprite_frame_*.png"))
+        # Look for individual frame files with "sprite_frame" pattern
+        frame_files = list(sprites_dir.glob("*sprite_frame_*.png"))
         print(f"Found {len(frame_files)} frame files: {frame_files}")
         
         if frame_files:
@@ -869,7 +886,7 @@ class TeaTimerApp(Gtk.Application):
         # Also check for the sample image in assets
         image_files = list(assets_dir.glob("*.png")) + list(assets_dir.glob("*.jpg"))
         # Filter out the sprite frames we already processed
-        image_files = [f for f in image_files if not f.name.startswith("sprite_frame_")]
+        image_files = [f for f in image_files if not "sprite_frame" in f.name]
         print(f"Found {len(image_files)} other image files: {image_files}")
         
         if image_files and not sprite_frames:
