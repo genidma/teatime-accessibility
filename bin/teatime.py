@@ -236,6 +236,9 @@ class TeaTimerApp(Gtk.Application):
 
         self.window.show_all()
         
+        # Apply the selected skin
+        self._apply_skin()
+        
         # Start the rainbow timer for background glow effect
         self._start_rainbow_timer()
         
@@ -309,7 +312,7 @@ class TeaTimerApp(Gtk.Application):
             )
         )
         
-        dialog.set_default_size(400, 200)
+        dialog.set_default_size(400, 250)
         dialog.set_border_width(10)
         
         # Get content area
@@ -348,6 +351,29 @@ class TeaTimerApp(Gtk.Application):
         
         grid.attach(self.animation_combo, 1, 0, 1, 1)
         
+        # Add skin selection
+        skin_label = Gtk.Label(label="Skin:")
+        skin_label.set_halign(Gtk.Align.START)
+        grid.attach(skin_label, 0, 1, 1, 1)
+        
+        # Define available skins
+        skins = [
+            ("default", "Default"),
+            ("glow", "Glowing Background"),
+            ("lava", "Lava Lamp")
+        ]
+        
+        # Create combobox for skin selection
+        self.skin_combo = Gtk.ComboBoxText()
+        for skin_id, skin_name in skins:
+            self.skin_combo.append(skin_id, skin_name)
+        
+        # Set the current selection
+        current_skin = getattr(self, 'preferred_skin', 'default')
+        self.skin_combo.set_active_id(current_skin)
+        
+        grid.attach(self.skin_combo, 1, 1, 1, 1)
+        
         # Show the dialog
         dialog.show_all()
         
@@ -359,8 +385,19 @@ class TeaTimerApp(Gtk.Application):
             selected_animation = self.animation_combo.get_active_id()
             if selected_animation:
                 self.preferred_animation = selected_animation
-                self._save_config()
                 print(f"Animation preference updated to: {selected_animation}")
+                
+            # Save the selected skin
+            selected_skin = self.skin_combo.get_active_id()
+            if selected_skin:
+                self.preferred_skin = selected_skin
+                print(f"Skin preference updated to: {selected_skin}")
+                
+            # Save configuration
+            self._save_config()
+            
+            # Apply the new skin
+            self._apply_skin()
         
         dialog.destroy()
 
@@ -535,15 +572,20 @@ class TeaTimerApp(Gtk.Application):
                         self.last_duration = config.get("last_duration", 5)
                     # Load preferred animation
                     self.preferred_animation = config.get("preferred_animation", "puppy_animation")
+                    # Load preferred skin
+                    self.preferred_skin = config.get("preferred_skin", "default")
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 print(f"Error decoding config file: {CONFIG_FILE}. Using defaults. Error: {e}")
                 self.preferred_animation = "puppy_animation"
+                self.preferred_skin = "default"
             except Exception as e:
                 print(f"An unexpected error occurred while loading config: {e}. Using defaults.")
                 self.preferred_animation = "puppy_animation"
+                self.preferred_skin = "default"
         else:
             # Default animation if no config file exists
             self.preferred_animation = "puppy_animation"
+            self.preferred_skin = "default"
 
     def _save_config(self):
         """Saves the current configuration to the config file."""
@@ -553,7 +595,8 @@ class TeaTimerApp(Gtk.Application):
             config_data = {
                 "font_scale_factor": self.font_scale_factor,
                 "last_duration": self.duration_spin.get_value_as_int(),
-                "preferred_animation": getattr(self, 'preferred_animation', 'test_animation')
+                "preferred_animation": getattr(self, 'preferred_animation', 'test_animation'),
+                "preferred_skin": getattr(self, 'preferred_skin', 'default')
             }
             CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(CONFIG_FILE, 'w') as f:
@@ -580,7 +623,120 @@ class TeaTimerApp(Gtk.Application):
             br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.3, 0.1)
             background_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.3)"
 
+            # Base CSS that applies to all skins
             css = f"""
+            /* Base styles that apply to all skins */
+            .time-display {{
+                font-size: {timer_font_percentage}%;
+                font-weight: bold;
+            }}
+
+            /* Apply a larger font to general controls for better readability */
+            .input-label, button label, checkbutton label {{
+                font-size: {control_font_percentage}%;
+            }}
+
+            /* Add a smooth transition to the focus glow */
+            button,
+            checkbutton,
+            spinbutton {{
+                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            }}
+
+            /* Add a glow effect to focused widgets for better keyboard navigation visibility */
+            button:focus,
+            checkbutton:focus,
+            spinbutton:focus {{
+                outline: none; /* Remove the default dotted outline */
+                box-shadow: 0 0 8px 3px {glow_rgba}; /* A nice rainbow glow */
+                border-color: {border_rgb}; /* A matching border color for consistency */
+            }}
+            
+            /* Add background glow effect to main window */
+            window {{
+                background-color: {background_rgba};
+                transition: background-color 0.5s ease-in-out;
+            }}
+            """
+            
+            # Add rainbow effect (always calculated, but only applied if class is present)
+            r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
+            color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
+            css += f"""
+                .rainbow-text {{
+                    color: {color};
+                }}
+                """
+            
+            # Add skin-specific styles
+            skin = getattr(self, 'preferred_skin', 'default')
+            
+            if skin == 'default':
+                # Default skin - just use the base styles
+                pass
+                
+            elif skin == 'glow':
+                # Glowing background effect
+                br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.8, 0.5)
+                background_glow_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.7)"
+                css += f"""
+                window {{
+                    box-shadow: inset 0 0 50px 10px {background_glow_rgba};
+                }}
+                """
+                
+            elif skin == 'lava':
+                # Lava lamp effect using gradients
+                # We'll create a dynamic gradient that changes with the rainbow hue
+                h1 = self.rainbow_hue
+                h2 = (self.rainbow_hue + 120) % 360
+                h3 = (self.rainbow_hue + 240) % 360
+                
+                r1, g1, b1 = colorsys.hsv_to_rgb(h1 / 360.0, 0.8, 0.7)
+                r2, g2, b2 = colorsys.hsv_to_rgb(h2 / 360.0, 0.8, 0.7)
+                r3, g3, b3 = colorsys.hsv_to_rgb(h3 / 360.0, 0.8, 0.7)
+                
+                color1 = f"rgb({int(r1*255)}, {int(g1*255)}, {int(b1*255)})"
+                color2 = f"rgb({int(r2*255)}, {int(g2*255)}, {int(b2*255)})"
+                color3 = f"rgb({int(r3*255)}, {int(g3*255)}, {int(b3*255)})"
+                
+                css += f"""
+                window {{
+                    background-size: 300% 300%;
+                    animation: lavaFlow 10s ease infinite;
+                }}
+                
+                @keyframes lavaFlow {{
+                    0% {{ background-position: 0% 50%; }}
+                    50% {{ background-position: 100% 50%; }}
+                    100% {{ background-position: 0% 50%; }}
+                }}
+                
+                window {{
+                    background: linear-gradient(45deg, {color1}, {color2}, {color3});
+                }}
+                """
+            
+            # Add the skin-specific styles to the CSS
+            self.css_provider.load_from_data(css.encode())
+        except Exception as e:
+            print(f"Error applying font size: {e}")
+```
+
+/vms_and_github/Github/teatime-accessibility/bin/teatime.py
+```python
+<<<<<<< SEARCH
+    def _update_rainbow(self):
+        """Update the rainbow color effect."""
+        self.rainbow_hue = (self.rainbow_hue + 5) % 360
+        self._apply_font_size()
+        return GLib.SOURCE_CONTINUE
+    def _update_rainbow(self):
+        """Update the rainbow color effect."""
+        self.rainbow_hue = (self.rainbow_hue + 5) % 360
+        self._apply_font_size()
+        self._apply_skin()  # Also update the skin if it uses rainbow colors
+        return GLib.SOURCE_CONTINUE
             /* Target the main timer display to make it large and scalable */
             .time-display {{
                 font-size: {timer_font_percentage}%;
