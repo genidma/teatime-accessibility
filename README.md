@@ -12,7 +12,7 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 
 A simpler version of the Tea Timer application with enhanced accessibility features.
 
-![Demo - gif format](./screenshots_demo_clones/demo-2025-07-15.gif)
+![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-final.gif)
 
 Screenshot of the main GUI (graphical user interface) from version 1.3.3 of the app
 ![screenshot](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
