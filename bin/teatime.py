@@ -359,7 +359,6 @@ class TeaTimerApp(Gtk.Application):
         # Define available skins
         skins = [
             ("default", "Default"),
-            ("glow", "Glowing Background"),
             ("lava", "Lava Lamp")
         ]
         
@@ -677,16 +676,6 @@ class TeaTimerApp(Gtk.Application):
                 background-color: #f0f0f0;
                 background-image: none;
             }
-            """
-        elif skin == 'glow':
-            # Apply glowing background effect
-            br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.8, 0.5)
-            background_glow_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.7)"
-            css = f"""
-            window {{
-                background-color: #f0f0f0;
-                box-shadow: inset 0 0 50px 10px {background_glow_rgba};
-            }}
             """
         elif skin == 'lava':
             # Apply lava lamp effect using gradients
