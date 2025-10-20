@@ -1,17 +1,19 @@
 # Puppy Animation Sprites
 
-This directory contains sprite frames for a puppy-themed animation that can be displayed when a timer completes in the TeaTime Accessibility application.
+This directory contains sprite frames for a cute puppy-themed animation that can be displayed when a timer completes in the TeaTime Accessibility application.
 
 ## Animation Description
 
 The animation shows a cute cartoon puppy with:
-- Moving ears that bounce with the animation
+- Floppy ears that move gently
+- Bright, expressive eyes with shine effects
+- Rosy cheeks for added cuteness
 - A wagging tail
-- A smiling face
+- A smiling face with a tongue that appears during the animation
 
 ## Files
 
-- `puppy_sprite_frame_00.png` through `puppy_sprite_frame_11.png`: Individual frames of the puppy animation
+- `puppy_sprite_frame_00.png` through `puppy_sprite_frame_11.png`: Individual frames of the cute puppy animation
 - `puppy_animation.gif`: Animated GIF preview of the complete animation
 
 ## Creating Your Own Animation

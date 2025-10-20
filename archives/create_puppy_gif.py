@@ -12,6 +12,10 @@ def create_puppy_gif():
     puppy_dir = "../assets/sprites/puppy_animation"
     os.chdir(puppy_dir)
     
+    # Remove old GIF if it exists
+    if os.path.exists("puppy_animation.gif"):
+        os.remove("puppy_animation.gif")
+    
     # Get all puppy sprite frames
     frame_files = sorted(glob.glob("puppy_sprite_frame_*.png"))
     
