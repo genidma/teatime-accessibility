@@ -287,8 +287,31 @@ To manually uninstall:
    ```
 
 ## Development
-The application consists of:
+The application consists of several scripts, each with a specific purpose:
+
 - `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
+
+- `teatime-accessible.sh`: The launcher script that activates the virtual environment (if available) and starts the application. This is the recommended way to run the application as it ensures proper environment setup.
+
+- `install.sh`: The installation script that:
+  - Creates a Python virtual environment with system site packages access
+  - Installs all required dependencies from requirements.txt
+  - Sets up desktop integration by creating a .desktop file
+  - Makes the launcher script executable
+  - Optionally creates a desktop shortcut
+
+- `uninstall.sh`: The removal script that:
+  - Removes the desktop entry from the applications menu
+  - Optionally removes the virtual environment
+  - Preserves user configuration and statistics by default
+
+- `teatime-accessibility.desktop`: The desktop entry file that integrates the application with the system's application menu and desktop environment.
+
+- `requirements.txt`: Lists all Python package dependencies required for the application to run.
+
+- `test_short_timer.py` and `test_sprite.py`: Test scripts used during development to verify specific functionalities.
+
+The application stores user configuration in `~/.config/teatime_config.json` and session statistics in `~/.local/share/teatime_stats.json`.
 
 ## Feedback
 Here's how you can reach out:
