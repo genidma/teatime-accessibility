@@ -61,7 +61,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 - **Mnemonics (Alt Keys)**: Activate buttons and menu items by pressing `Alt` plus the underlined letter.
   - **Main Window:**
     - `Alt+S`: **S**tart
-    - `Alt+S`: S**t**op
+    - `Alt+T`: S**t**op
     - `Alt+E`: **E**nable Sound
     - `Alt+4`: **4**5 Minutes
     - `Alt+1`: **1** Hour
