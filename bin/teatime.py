@@ -236,6 +236,9 @@ class TeaTimerApp(Gtk.Application):
 
         self.window.show_all()
         
+        # Start the rainbow timer for background glow effect
+        self._start_rainbow_timer()
+        
         # Automatically start the timer if auto_start flag is set
         if self.auto_start:
             # Use idle_add to ensure the UI is fully initialized before starting
@@ -573,6 +576,10 @@ class TeaTimerApp(Gtk.Application):
             glow_rgba = f"rgba({int(fr*255)}, {int(fg*255)}, {int(fb*255)}, 0.8)"
             border_rgb = f"rgb({int(fr*255)}, {int(fg*255)}, {int(fb*255)})"
 
+            # Calculate background glow color from the rainbow hue
+            br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.3, 0.1)
+            background_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.3)"
+
             css = f"""
             /* Target the main timer display to make it large and scalable */
             .time-display {{
@@ -599,6 +606,12 @@ class TeaTimerApp(Gtk.Application):
                 outline: none; /* Remove the default dotted outline */
                 box-shadow: 0 0 8px 3px {glow_rgba}; /* A nice rainbow glow */
                 border-color: {border_rgb}; /* A matching border color for consistency */
+            }}
+            
+            /* Add background glow effect to main window */
+            window {{
+                background-color: {background_rgba};
+                transition: background-color 0.5s ease-in-out;
             }}
             """
             
