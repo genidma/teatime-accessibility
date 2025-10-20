@@ -360,10 +360,10 @@ This project includes two specialized testing scripts designed to help developer
 
 ### test_short_timer.py
 A general functionality test script that:
-- Launches the Tea Timer application with a short, configurable timer
+- Launches the Tea Timer application with a 1 second timer (see Usage below)
 - Automatically starts the timer without manual intervention
 - Closes the application automatically after the timer completes
-- Accepts command-line arguments for customization
+
 
 **Usage:**
 ```bash
