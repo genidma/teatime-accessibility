@@ -373,19 +373,21 @@ python3 test_short_timer.py --duration 1 --use-seconds
 This script is ideal for quickly testing the basic timer functionality without waiting for a full-length timer.
 
 ### test_sprite.py
-A specialized test script focused on verifying sprite animation features:
-- Launches the Tea Timer application
-- Sets a fixed 5-second timer (displayed as 0.083 minutes)
-- Automatically starts the timer
-- Displays sprite animations when the timer completes
+A specialized test script that was intended to focus on verifying sprite animation features, but is currently redundant and not working properly:
+- Was designed to launch the Tea Timer application
+- Was designed to set a fixed 5-second timer
+- Was designed to automatically start the timer and display sprite animations
+- However, this functionality is already covered by test_short_timer.py
+
+Note: This script is currently not working due to issues accessing UI elements and is redundant with test_short_timer.py functionality.
 
 **Usage:**
 ```bash
-# Run with default settings
+# Run with default settings (currently not working properly)
 python3 test_sprite.py
 ```
 
-Use this script when working on or testing the sprite animation system specifically.
+Consider using test_short_timer.py instead, which already tests the complete timer functionality including animations.
 
 ## Feedback
 Here's how you can reach out:
