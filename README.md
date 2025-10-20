@@ -377,7 +377,7 @@ python3 test_short_timer.py --duration 10
 python3 test_short_timer.py --duration 10 --exit-delay 3
 
 # Run with duration in seconds instead of minutes
-python3 test_short_timer.py --duration 30 --use-seconds
+python3 test_short_timer.py --duration 1 --use-seconds
 ```
 
 This script is ideal for quickly testing the basic timer functionality without waiting for a full-length timer.
