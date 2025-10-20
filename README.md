@@ -356,11 +356,10 @@ The application stores user configuration in `~/.config/teatime_config.json` and
 
 ## Testing Tools
 
-This project includes a specialized testing script designed to help developers quickly verify application functionality:
+Script designed to verify application functionality (without having to wait for the timer to go off):
 
 ### test_short_timer.py
-A general functionality test script that:
-- Launches the Tea Timer application with a 1 second timer (see Usage below)
+- Launches the app with a 1 second timer (see Usage below)
 - Automatically starts the timer without manual intervention
 
 **Usage:**
@@ -369,9 +368,6 @@ A general functionality test script that:
 ```
 python3 test_short_timer.py --duration 1 --use-seconds
 ```
-
-This script is ideal for quickly testing the basic timer functionality without waiting for a full-length timer.
-
 
 ## Feedback
 Here's how you can reach out:
