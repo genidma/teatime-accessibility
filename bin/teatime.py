@@ -161,7 +161,7 @@ class TeaTimerApp(Gtk.Application):
             # Row 1: Control buttons
             self.start_button = Gtk.Button(label="_Start")
             self.start_button.set_use_underline(True)
-            self.stop_button = Gtk.Button(label="_stop")
+            self.stop_button = Gtk.Button(label="S_top")
             self.stop_button.set_use_underline(True)
             grid.attach(self.start_button, 0, 1, 1, 1)
             grid.attach(self.stop_button, 1, 1, 1, 1)
