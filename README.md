@@ -290,5 +290,13 @@ To manually uninstall:
 The application consists of:
 - `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
+## Feedback
+We'd love to hear your thoughts, suggestions, and bug reports! 
+
+- [Create an issue](https://github.com/genidma/teatime-accessibility/issues) to report bugs or request features
+- [Start a discussion](https://github.com/genidma/teatime-accessibility/discussions) to share ideas or ask questions
+
+Your feedback helps us improve the application for everyone!
+
 ## License
 Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). By now, the code is entirely different and keeps evolving. The release(s) are also with with a different licensing policy.
