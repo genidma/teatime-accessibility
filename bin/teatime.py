@@ -94,17 +94,23 @@ class TeaTimerApp(Gtk.Application):
             stats_item.connect("activate", self.on_stats_activated)
             about_menu.append(stats_item)
 
+            # Add Settings menu item
+            settings_item = Gtk.MenuItem(label="_Settings")
+            settings_item.set_use_underline(True)
+            settings_item.connect("activate", self.on_settings_activated)
+            about_menu.append(settings_item)
+
             about_item = Gtk.MenuItem(label="_About")
             about_item.set_use_underline(True)
             about_item.connect("activate", self.on_about_activated)
             about_menu.append(about_item)
             about_menu.show_all()
 
-            # Add an accelerator for the statistics menu item.
+            # Add accelerators for menu items
             accel_group = Gtk.AccelGroup()
             self.window.add_accel_group(accel_group)
             stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-
+            settings_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("comma"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
 
             # Create a menu button and add it to the header bar
             menu_button = Gtk.MenuButton(popup=about_menu)
@@ -266,40 +272,17 @@ class TeaTimerApp(Gtk.Application):
         self.focus_hue = (self.focus_hue + 40) % 360 # Cycle through the hue spectrum
         self._apply_font_size() # Re-apply CSS with the new color
 
-    def on_about_activated(self, widget):
-        """Shows the About dialog."""
-        about_dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
-        about_dialog.set_program_name(APP_NAME)
-        about_dialog.set_version(APP_VERSION)
-        about_dialog.set_copyright("Copyright © 2024 Adeel Khan")
-        about_dialog.set_comments("A simple and accessible tea timer.")
-        about_dialog.set_website("https://github.com/genidma/teatime-accessibility")
-        # Giving credit where it's due!
-        about_dialog.set_authors([
-            "Adeel Khan (GitHub: genidma)",
-            "Initial script by Claude AI",
-            "Refinements by Gemini",
-            "Sound by Daniel Simion - https://soundbible.com/2218-Service-Bell-Help.html"
-        ])
-        # Try to use our custom icon, fallback to system icon if not available
-        icon_theme = Gtk.IconTheme.get_default()
-        if icon_theme.has_icon("teatime-accessibility"):
-            about_dialog.set_logo_icon_name("teatime-accessibility")
-        else:
-            about_dialog.set_logo_icon_name("accessories-clock")
-        about_dialog.run()
-        about_dialog.destroy()
-
     def on_stats_activated(self, *args):
-        """Shows the Statistics window."""
-        # Create a new StatisticsWindow instance
-        # if the window doesn't exist yet, create it.
-        if self._stats_window is None:
-            self._stats_window = StatisticsWindow(application=self, parent=self.window)
-        
-        # Make sure the window is visible and bring it to front
-        self._stats_window.show_all()
-        self._stats_window.present()
+        """Handles the activation of the statistics action."""
+        self.show_statistics_window()
+
+    def on_settings_activated(self, *args):
+        """Handles the activation of the settings action."""
+        self.show_settings_dialog()
+
+    def on_about_activated(self, *args):
+        """Handles the activation of the about action."""
+        self.show_about_dialog()
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
@@ -853,6 +836,7 @@ class TeaTimerApp(Gtk.Application):
                 return int(digits) if digits else 0
                 
             frame_files.sort(key=extract_number)
+            print(f"Sorted frame files: {frame_files}")
             for frame_file in frame_files:
                 try:
                     print(f"Loading sprite frame: {frame_file}")

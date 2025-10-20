@@ -4,9 +4,49 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 
 ## Features
 
-- **Timer:** 'Session Preset' based values or pick your own Duration (between 1 minute and 999 minutes)
-- **Usage Statistics:** Logs your session times. All data remains local to your machine.
+- **Simple Timer**: Easy-to-use interface with start/stop controls
+- **Visual Notifications**: Fullscreen alerts when your tea is ready
+- **Sound Notifications**: Audible chime to complement visual notifications
+- **Customizable Animations**: Choose from multiple animated sprites to display when timer completes
+- **Accessibility Features**:
+  - Large, clear display
+  - High contrast mode
+  - Font scaling options
+  - Keyboard shortcuts
+- **Statistics Tracking**: Automatic logging and viewing of tea sessions
+- **Settings Dialog**: Configure animation preferences through a user-friendly interface
 
+## Keyboard Shortcuts
+
+- **Space**: Start/stop timer
+- **Ctrl+I**: Open statistics window
+- **Ctrl+,**: Open settings dialog
+- **Ctrl+Up**: Increase font size
+- **Ctrl+Down**: Decrease font size
+- **Ctrl+H**: Toggle high contrast mode
+- **Ctrl+S**: Toggle sound notifications
+- **Ctrl+Q**: Quit application
+
+## Customizable Animations
+
+The application supports multiple animated sprites that can be displayed when a timer completes. 
+Currently included animations:
+- Test animation (default)
+- Puppy animation
+
+To select which animation to display:
+1. Open the Settings dialog (Ctrl+, or from the menu)
+2. Choose your preferred animation from the dropdown
+3. Click OK to save your preference
+
+New animations can be added by creating a subdirectory in `assets/sprites/` with PNG frames 
+following the naming pattern `*sprite_frame_*.png`.
+
+## Statistics
+
+Tea sessions are automatically logged with:
+- Timestamp of when the timer completed
+- Duration of the tea session
 
 # Demo & Screenshots
 
