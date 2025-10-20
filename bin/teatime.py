@@ -696,7 +696,7 @@ class TeaTimerApp(Gtk.Application):
             window {{
                 background: linear-gradient(45deg, {color1}, {color2}, {color3});
                 background-size: 300% 300%;
-                animation: lavaFlow 10s ease infinite;
+                animation: lavaFlow 60s ease infinite;
             }}
             
             @keyframes lavaFlow {{
@@ -788,7 +788,7 @@ class TeaTimerApp(Gtk.Application):
         """Start the rainbow color cycling timer."""
         if self.rainbow_timer_id:
             GLib.source_remove(self.rainbow_timer_id)
-        self.rainbow_timer_id = GLib.timeout_add(100, self._update_rainbow)
+        self.rainbow_timer_id = GLib.timeout_add(500, self._update_rainbow)
 
     def _stop_rainbow_timer(self):
         """Stop the rainbow color cycling timer."""
@@ -798,7 +798,7 @@ class TeaTimerApp(Gtk.Application):
 
     def _update_rainbow(self):
         """Update the rainbow color effect."""
-        self.rainbow_hue = (self.rainbow_hue + 5) % 360
+        self.rainbow_hue = (self.rainbow_hue + 1) % 360
         self._apply_font_size()
         self._apply_skin()  # Also update the skin if it uses rainbow colors
         return GLib.SOURCE_CONTINUE
