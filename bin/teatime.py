@@ -626,6 +626,12 @@ class TeaTimerApp(Gtk.Application):
                 font-weight: bold;
             }}
 
+            /* Target the main timer display to make it large and scalable */
+            .time-display {{
+                font-size: {timer_font_percentage}%;
+                font-weight: bold;
+            }}
+
             /* Apply a larger font to general controls for better readability */
             .input-label, button label, checkbutton label {{
                 font-size: {control_font_percentage}%;
@@ -660,28 +666,22 @@ class TeaTimerApp(Gtk.Application):
         except Exception as e:
             print(f"Error applying font size: {e}")
 
-                """
-            
-            # Add the skin-specific styles to the CSS
-            self.css_provider.load_from_data(css.encode())
-        except Exception as e:
-            print(f"Error applying font size: {e}")
-```
+    def _apply_skin(self):
+        """Applies the current skin using CSS."""
+        try:
+            # Define multipliers for a clear visual hierarchy
+            timer_font_multiplier = 2.5   # 250% of the base scale
+            control_font_multiplier = 1.2 # 120% for general controls like labels and buttons
 
-/vms_and_github/Github/teatime-accessibility/bin/teatime.py
-```python
-<<<<<<< SEARCH
-    def _update_rainbow(self):
-        """Update the rainbow color effect."""
-        self.rainbow_hue = (self.rainbow_hue + 5) % 360
-        self._apply_font_size()
-        return GLib.SOURCE_CONTINUE
-    def _update_rainbow(self):
-        """Update the rainbow color effect."""
-        self.rainbow_hue = (self.rainbow_hue + 5) % 360
-        self._apply_font_size()
-        self._apply_skin()  # Also update the skin if it uses rainbow colors
-        return GLib.SOURCE_CONTINUE
+            timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
+            control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
+
+            # Calculate focus glow color from the current hue
+            fr, fg, fb = colorsys.hsv_to_rgb(self.focus_hue / 360.0, 0.9, 1.0)
+            glow_rgba = f"rgba({int(fr*255)}, {int(fg*255)}, {int(fb*255)}, 0.8)"
+            border_rgb = f"rgb({int(fr*255)}, {int(fg*255)}, {int(fb*255)})"
+
+            css = f"""
             /* Target the main timer display to make it large and scalable */
             .time-display {{
                 font-size: {timer_font_percentage}%;
