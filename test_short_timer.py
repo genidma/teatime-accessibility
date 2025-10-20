@@ -29,8 +29,8 @@ tests the sprite animation features.
 
 Author: Lingma from Alibaba Cloud
 Co-author: genidma on Github
-Fixer and tester: Chatgpt (Some heavy duty fixing to get the second based variables working)
-Date of creation: October 2025
+With assistance from: Chatgpt (Some heavy duty fixing to get the seconds based variables to get to work)
+Created: October 2025
 """
 
 import sys
