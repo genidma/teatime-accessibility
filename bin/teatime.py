@@ -819,11 +819,12 @@ class TeaTimerApp(Gtk.Application):
         """
         sprite_frames = []
         assets_dir = Path(__file__).parent.parent / "assets"
+        sprites_dir = assets_dir / "sprites" / "test_animation"
         
-        print(f"Looking for sprites in: {assets_dir}")
+        print(f"Looking for sprites in: {sprites_dir}")
         
         # Look for individual frame files
-        frame_files = list(assets_dir.glob("sprite_frame_*.png"))
+        frame_files = list(sprites_dir.glob("sprite_frame_*.png"))
         print(f"Found {len(frame_files)} frame files: {frame_files}")
         
         if frame_files:
