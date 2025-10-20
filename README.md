@@ -366,6 +366,7 @@ A general functionality test script that:
 **Usage:**
 
 # Run with duration in seconds instead of minutes
+```
 python3 test_short_timer.py --duration 1 --use-seconds
 ```
 
