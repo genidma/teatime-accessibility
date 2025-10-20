@@ -291,12 +291,18 @@ The application consists of:
 - `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
 ## Feedback
-We'd love to hear your thoughts, suggestions, and bug reports! 
+Here's how you can reach out:
 
-- [Create an issue](https://github.com/genidma/teatime-accessibility/issues) to report bugs or request features
-- [Start a discussion](https://github.com/genidma/teatime-accessibility/discussions) to share ideas or ask questions
+- **[Create an issue](https://github.com/genidma/teatime-accessibility/issues)** if you:
+  - Found a bug or something isn't working as expected
+  
+- **[Start a discussion](https://github.com/genidma/teatime-accessibility/discussions)** if you:
+  - Have ideas :bulb or suggestions for improvements
+  - Want to propose a new feature
+  - Need help using the application
+  - Want to share your experience or ask general questions
 
-Your feedback helps us improve the application for everyone!
+Issues are best for reporting problems that need to be fixed, while discussions are perfect for ideas, suggestions, and questions. 
 
 ## License
 Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). By now, the code is entirely different and keeps evolving. The release(s) are also with with a different licensing policy.
