@@ -619,11 +619,6 @@ class TeaTimerApp(Gtk.Application):
             glow_rgba = f"rgba({int(fr*255)}, {int(fg*255)}, {int(fb*255)}, 0.8)"
             border_rgb = f"rgb({int(fr*255)}, {int(fg*255)}, {int(fb*255)})"
 
-            # Calculate background glow color from the rainbow hue
-            br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.3, 0.1)
-            background_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.3)"
-
-            # Base CSS that applies to all skins
             css = f"""
             /* Target the main timer display to make it large and scalable */
             .time-display {{
@@ -632,10 +627,7 @@ class TeaTimerApp(Gtk.Application):
             }}
 
             /* Apply a larger font to general controls for better readability */
-            .input-label,
-            button,
-            checkbutton,
-            spinbutton {{
+            .input-label, button label, checkbutton label {{
                 font-size: {control_font_percentage}%;
             }}
 
@@ -664,54 +656,10 @@ class TeaTimerApp(Gtk.Application):
                     color: {color};
                 }}
                 """
-            
-            # Add skin-specific styles
-            skin = getattr(self, 'preferred_skin', 'default')
-            
-            if skin == 'default':
-                # Default skin - just use the base styles
-                pass
-                
-            elif skin == 'glow':
-                # Glowing background effect
-                br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.8, 0.5)
-                background_glow_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.7)"
-                css += f"""
-                window {{
-                    box-shadow: inset 0 0 50px 10px {background_glow_rgba};
-                }}
-                """
-                
-            elif skin == 'lava':
-                # Lava lamp effect using gradients
-                # We'll create a dynamic gradient that changes with the rainbow hue
-                h1 = self.rainbow_hue
-                h2 = (self.rainbow_hue + 120) % 360
-                h3 = (self.rainbow_hue + 240) % 360
-                
-                r1, g1, b1 = colorsys.hsv_to_rgb(h1 / 360.0, 0.8, 0.7)
-                r2, g2, b2 = colorsys.hsv_to_rgb(h2 / 360.0, 0.8, 0.7)
-                r3, g3, b3 = colorsys.hsv_to_rgb(h3 / 360.0, 0.8, 0.7)
-                
-                color1 = f"rgb({int(r1*255)}, {int(g1*255)}, {int(b1*255)})"
-                color2 = f"rgb({int(r2*255)}, {int(g2*255)}, {int(b2*255)})"
-                color3 = f"rgb({int(r3*255)}, {int(g3*255)}, {int(b3*255)})"
-                
-                css += f"""
-                window {{
-                    background-size: 300% 300%;
-                    animation: lavaFlow 10s ease infinite;
-                }}
-                
-                @keyframes lavaFlow {{
-                    0% {{ background-position: 0% 50%; }}
-                    50% {{ background-position: 100% 50%; }}
-                    100% {{ background-position: 0% 50%; }}
-                }}
-                
-                window {{
-                    background: linear-gradient(45deg, {color1}, {color2}, {color3});
-                }}
+            self.css_provider.load_from_data(css.encode())
+        except Exception as e:
+            print(f"Error applying font size: {e}")
+
                 """
             
             # Add the skin-specific styles to the CSS
