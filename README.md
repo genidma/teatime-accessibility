@@ -297,7 +297,7 @@ Here's how you can reach out:
   - Found a bug or something isn't working as expected
   
 - **[Start a discussion](https://github.com/genidma/teatime-accessibility/discussions)** if you:
-  - Have ideas :bulb or suggestions for improvements
+  - Have ideas :bulb: or suggestions for improvements
   - Want to propose a new feature
   - Need help using the application
   - Want to share your experience or ask general questions
