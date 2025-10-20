@@ -5,7 +5,7 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 ## Features
 
 - **Timer:** 'Session Preset' based values or pick your own Duration (between 1 minute and 999 minutes)
-- **Usage Statistics:** Logs your session times and provides insights into your computer usage habits. All data remains local to your machine.
+- **Usage Statistics:** Logs your session times. All data remains local to your machine.
 
 
 # Demo & Screenshots
