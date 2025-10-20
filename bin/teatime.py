@@ -347,6 +347,9 @@ class TeaTimerApp(Gtk.Application):
             display_name = animation.replace("_", " ").title()
             # Remove the redundant "Animation" word from the display name
             display_name = display_name.replace("Animation", "").strip()
+            # Special case: change "Test" to "Bouncing Balls"
+            if display_name == "Test":
+                display_name = "Bouncing Balls"
             self.animation_combo.append(animation, display_name)
         
         # Set the current selection
