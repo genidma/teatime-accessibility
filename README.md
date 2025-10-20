@@ -15,7 +15,7 @@ Main Window
 ![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-main.gif)
 
 
-Animation to appear upon completion of a session
+A fun animation will appear upon completion of a session
 ![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-session-complete-gif.gif)
 
 Keyboard Shortcuts for ease of use
