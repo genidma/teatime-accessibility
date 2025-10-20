@@ -14,7 +14,12 @@ Main Window
 
 ![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-main.gif)
 
+
+Animation to appear upon completion of a session
 ![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-session-complete-gif.gif)
+
+Keyboard Shortcuts for ease of use
+![Demo  - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-keyboard-shortcuts.gif)
 
 Screenshot of the main GUI (graphical user interface) from the latest version of the app
 ![screenshot](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
