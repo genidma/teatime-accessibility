@@ -312,12 +312,12 @@ class TeaTimerApp(Gtk.Application):
             )
         )
         
-        dialog.set_default_size(400, 250)
+        dialog.set_default_size(400, 300)
         dialog.set_border_width(10)
         
         # Get content area
         content_area = dialog.get_content_area()
-        content_area.set_spacing(10)
+        content_area.set_spacing(15)
         
         # Create a grid for layout
         grid = Gtk.Grid()
@@ -325,8 +325,8 @@ class TeaTimerApp(Gtk.Application):
         grid.set_column_spacing(10)
         content_area.add(grid)
         
-        # Add animation selection
-        animation_label = Gtk.Label(label="Animation:")
+        # Add animation selection with more descriptive label
+        animation_label = Gtk.Label(label="Animation (For Session Complete):")
         animation_label.set_halign(Gtk.Align.START)
         grid.attach(animation_label, 0, 0, 1, 1)
         
@@ -355,8 +355,8 @@ class TeaTimerApp(Gtk.Application):
         
         grid.attach(self.animation_combo, 1, 0, 1, 1)
         
-        # Add skin selection
-        skin_label = Gtk.Label(label="Skin:")
+        # Add skin selection with more descriptive label
+        skin_label = Gtk.Label(label="Skins for Main UI (User Interface):")
         skin_label.set_halign(Gtk.Align.START)
         grid.attach(skin_label, 0, 1, 1, 1)
         
