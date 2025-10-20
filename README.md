@@ -38,15 +38,14 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 ## Accessibility Features
 
 ### Photosensitive Epilepsy Safe Version
-* A photosensitive version of the app was created by @shanaya-gupta
-* This version does not have rainbow glow effects, sudden screen changes or flashing animations
-* " " can be [downloaded via v1.3.3 here](https://github.com/genidma/teatime-accessibility/releases/tag/v1.3.3-photosensitive)
+* A photosensitive version of the app was created by @shanaya-gupta with further code modifications led by @genidma
+* The photosensitive version does not have any visual effects, sudden screen changes and the timer updates every 5 seconds vs every second
+* The latest stable photosensitive version of the app  [downloaded via the releases section](https://github.com/genidma/teatime-accessibility/releases)
+* * Note the current Stable release for the photosensitive version is v.1.3.5. But best to check the Releases section directly in the future, as the Readme might be a bit stale
 
-### Visual Accessibility
-- **Adjustable Font Size**: Use A+ and A- buttons or Ctrl++ and Ctrl+- to increase/decrease font size
-- **High Contrast Support**: Automatically adapts to system theme settings
-- **Clear Visual Feedback**: Button states and status messages provide clear feedback
+### Visual and Audio Accessibility
 - **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
+- **Live Regions**: Timer updates are announced visually and through the audio prompt (Simion's bell)
 
 ### Keyboard Accessibility
 - **Full Keyboard Navigation**: Tab through all controls
@@ -69,22 +68,11 @@ Screenshot of the Statistics engine that is built into the app. It automatically
     - `Alt+R`: **R**efresh Statistics
     - `Alt+E`: **E**xport to CSV
     - `Alt+C`: **C**lear History
-- **Focus Management**: Proper focus order and visual focus indicators
-
-### Screen Reader Support
-- **Proper Labels**: All controls have descriptive labels
-- **Status Updates**: Status changes are announced to screen readers (I have to test this)
-- **Live Regions**: Timer updates are announced visually and through the audio prompt (bell)
-
-### Audio Accessibility
-- **Sound Notifications**: Audio feedback (bell 🔔 )at the completion of each session 
-- **Desktop Notifications**: System notifications for timer completion
-- **Fallback Sounds**: System bell if audio files aren't available
 
 ## Installation
 
 ### Prerequisites
-Before running the install script, install the required system dependencies:
+Before running the install script, please install the required system dependencies. Note: See instructions on how to open a terminal and if you are new to Linux:
 
 ```bash
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
@@ -108,9 +96,8 @@ cd teatime-accessibility
 This script will:
 1. Create a virtual environment with access to system packages (if one doesn't already exist)
 2. Install all required dependencies
-3. Create a desktop entry for easy access in the Utilities section of your application menu
-4. Optionally create a desktop shortcut/icon for quick access
-5. Make the launcher script executable
+3. Create a desktop shortcut/icon for quick access (if you choose this option during the install)
+4. Make the launcher script executable
 
 The install script will also prompt you to install system dependencies if needed.
 
@@ -304,4 +291,4 @@ The application consists of:
 - `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
 
 ## License
-Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keep evolving. The release(s) are also with with a different licensing policy.
+Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). By now, the code is entirely different and keeps evolving. The release(s) are also with with a different licensing policy.
