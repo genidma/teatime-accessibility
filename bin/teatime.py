@@ -667,56 +667,78 @@ class TeaTimerApp(Gtk.Application):
             print(f"Error applying font size: {e}")
 
     def _apply_skin(self):
-        """Applies the current skin using CSS."""
-        try:
-            # Define multipliers for a clear visual hierarchy
-            timer_font_multiplier = 2.5   # 250% of the base scale
-            control_font_multiplier = 1.2 # 120% for general controls like labels and buttons
-
-            timer_font_percentage = self.font_scale_factor * timer_font_multiplier * 100
-            control_font_percentage = self.font_scale_factor * control_font_multiplier * 100
-
-            # Calculate focus glow color from the current hue
-            fr, fg, fb = colorsys.hsv_to_rgb(self.focus_hue / 360.0, 0.9, 1.0)
-            glow_rgba = f"rgba({int(fr*255)}, {int(fg*255)}, {int(fb*255)}, 0.8)"
-            border_rgb = f"rgb({int(fr*255)}, {int(fg*255)}, {int(fb*255)})"
-
+        """Applies the selected skin to the main window."""
+        skin = getattr(self, 'preferred_skin', 'default')
+        
+        if skin == 'default':
+            # Remove any custom background styling
+            css = """
+            window {
+                background-color: #f0f0f0;
+                background-image: none;
+            }
+            """
+        elif skin == 'glow':
+            # Apply glowing background effect
+            br, bg, bb = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 0.8, 0.5)
+            background_glow_rgba = f"rgba({int(br*255)}, {int(bg*255)}, {int(bb*255)}, 0.7)"
             css = f"""
-            /* Target the main timer display to make it large and scalable */
-            .time-display {{
-                font-size: {timer_font_percentage}%;
-                font-weight: bold;
-            }}
-
-            /* Apply a larger font to general controls for better readability */
-            .input-label, button label, checkbutton label {{
-                font-size: {control_font_percentage}%;
-            }}
-
-            /* Add a smooth transition to the focus glow */
-            button,
-            checkbutton,
-            spinbutton {{
-                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
-            }}
-
-            /* Add a glow effect to focused widgets for better keyboard navigation visibility */
-            button:focus,
-            checkbutton:focus,
-            spinbutton:focus {{
-                outline: none; /* Remove the default dotted outline */
-                box-shadow: 0 0 8px 3px {glow_rgba}; /* A nice rainbow glow */
-                border-color: {border_rgb}; /* A matching border color for consistency */
-            }}
-            
-            /* Add background glow effect to main window */
             window {{
-                background-color: {background_rgba};
-                transition: background-color 0.5s ease-in-out;
+                background-color: #f0f0f0;
+                box-shadow: inset 0 0 50px 10px {background_glow_rgba};
             }}
             """
+        elif skin == 'lava':
+            # Apply lava lamp effect using gradients
+            # We'll create a dynamic gradient that changes with the rainbow hue
+            h1 = self.rainbow_hue
+            h2 = (self.rainbow_hue + 120) % 360
+            h3 = (self.rainbow_hue + 240) % 360
             
-            # Add rainbow effect (always calculated, but only applied if class is present)
+            r1, g1, b1 = colorsys.hsv_to_rgb(h1 / 360.0, 0.8, 0.7)
+            r2, g2, b2 = colorsys.hsv_to_rgb(h2 / 360.0, 0.8, 0.7)
+            r3, g3, b3 = colorsys.hsv_to_rgb(h3 / 360.0, 0.8, 0.7)
+            
+            color1 = f"rgb({int(r1*255)}, {int(g1*255)}, {int(b1*255)})"
+            color2 = f"rgb({int(r2*255)}, {int(g2*255)}, {int(b2*255)})"
+            color3 = f"rgb({int(r3*255)}, {int(g3*255)}, {int(b3*255)})"
+            
+            css = f"""
+            window {{
+                background: linear-gradient(45deg, {color1}, {color2}, {color3});
+                background-size: 300% 300%;
+                animation: lavaFlow 10s ease infinite;
+            }}
+            
+            @keyframes lavaFlow {{
+                0% {{ background-position: 0% 50%; }}
+                50% {{ background-position: 100% 50%; }}
+                100% {{ background-position: 0% 50%; }}
+            }}
+            """
+        else:
+            # Default fallback
+            css = """
+            window {
+                background-color: #f0f0f0;
+                background-image: none;
+            }
+            """
+        
+        # Apply the skin CSS
+        try:
+            skin_provider = Gtk.CssProvider()
+            skin_provider.load_from_data(css.encode())
+            
+            # Add the skin provider with higher priority than the main one
+            screen = Gdk.Screen.get_default()
+            if screen:
+                Gtk.StyleContext.add_provider_for_screen(
+                    screen, skin_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1
+                )
+        except Exception as e:
+            print(f"Error applying skin: {e}")
+
             r, g, b = colorsys.hsv_to_rgb(self.rainbow_hue / 360.0, 1.0, 1.0)
             color = f"rgb({int(r*255)}, {int(g*255)}, {int(b*255)})"
             css += f"""
