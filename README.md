@@ -354,6 +354,46 @@ The application consists of several scripts, each with a specific purpose:
 
 The application stores user configuration in `~/.config/teatime_config.json` and session statistics in `~/.local/share/teatime_stats.json`.
 
+## Testing Tools
+
+This project includes two specialized testing scripts designed to help developers quickly verify application functionality:
+
+### test_short_timer.py
+A general functionality test script that:
+- Launches the Tea Timer application with a short, configurable timer
+- Automatically starts the timer without manual intervention
+- Closes the application automatically after the timer completes
+- Accepts command-line arguments for customization
+
+**Usage:**
+```bash
+# Run with default 6-second timer
+python3 test_short_timer.py
+
+# Run with custom duration (e.g., 10 seconds)
+python3 test_short_timer.py --duration 10
+
+# Run with custom duration and exit delay
+python3 test_short_timer.py --duration 10 --exit-delay 3
+```
+
+This script is ideal for quickly testing the basic timer functionality without waiting for a full-length timer.
+
+### test_sprite.py
+A specialized test script focused on verifying sprite animation features:
+- Launches the Tea Timer application
+- Sets a fixed 5-second timer (displayed as 0.083 minutes)
+- Automatically starts the timer
+- Displays sprite animations when the timer completes
+
+**Usage:**
+```bash
+# Run with default settings
+python3 test_sprite.py
+```
+
+Use this script when working on or testing the sprite animation system specifically.
+
 ## Feedback
 Here's how you can reach out:
 
