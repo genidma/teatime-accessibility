@@ -343,7 +343,11 @@ class TeaTimerApp(Gtk.Application):
         # Create combobox for animation selection
         self.animation_combo = Gtk.ComboBoxText()
         for animation in animations:
-            self.animation_combo.append(animation, animation.replace("_", " ").title())
+            # Remove underscores and convert to title case
+            display_name = animation.replace("_", " ").title()
+            # Remove the redundant "Animation" word from the display name
+            display_name = display_name.replace("Animation", "").strip()
+            self.animation_combo.append(animation, display_name)
         
         # Set the current selection
         current_animation = getattr(self, 'preferred_animation', 'test_animation')
