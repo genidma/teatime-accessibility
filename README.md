@@ -362,19 +362,8 @@ This project includes two specialized testing scripts designed to help developer
 A general functionality test script that:
 - Launches the Tea Timer application with a 1 second timer (see Usage below)
 - Automatically starts the timer without manual intervention
-- Closes the application automatically after the timer completes
-
 
 **Usage:**
-```bash
-# Run with default 6-second timer
-python3 test_short_timer.py
-
-# Run with custom duration (e.g., 10 seconds)
-python3 test_short_timer.py --duration 10
-
-# Run with custom duration and exit delay
-python3 test_short_timer.py --duration 10 --exit-delay 3
 
 # Run with duration in seconds instead of minutes
 python3 test_short_timer.py --duration 1 --use-seconds
