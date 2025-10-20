@@ -811,6 +811,7 @@ class TeaTimerApp(Gtk.Application):
         """Update the rainbow color effect."""
         self.rainbow_hue = (self.rainbow_hue + 5) % 360
         self._apply_font_size()
+        self._apply_skin()  # Also update the skin if it uses rainbow colors
         return GLib.SOURCE_CONTINUE
 
     def on_start_clicked(self, *args):
