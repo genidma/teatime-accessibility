@@ -625,14 +625,17 @@ class TeaTimerApp(Gtk.Application):
 
             # Base CSS that applies to all skins
             css = f"""
-            /* Base styles that apply to all skins */
+            /* Target the main timer display to make it large and scalable */
             .time-display {{
                 font-size: {timer_font_percentage}%;
                 font-weight: bold;
             }}
 
             /* Apply a larger font to general controls for better readability */
-            .input-label, button label, checkbutton label {{
+            .input-label,
+            button,
+            checkbutton,
+            spinbutton {{
                 font-size: {control_font_percentage}%;
             }}
 
@@ -650,12 +653,6 @@ class TeaTimerApp(Gtk.Application):
                 outline: none; /* Remove the default dotted outline */
                 box-shadow: 0 0 8px 3px {glow_rgba}; /* A nice rainbow glow */
                 border-color: {border_rgb}; /* A matching border color for consistency */
-            }}
-            
-            /* Add background glow effect to main window */
-            window {{
-                background-color: {background_rgba};
-                transition: background-color 0.5s ease-in-out;
             }}
             """
             
