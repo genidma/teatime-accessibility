@@ -104,12 +104,13 @@ def create_puppy_sprite_frame(filename, frame_num, total_frames):
     ctx.arc(125, 105, 8, 0, 2 * math.pi)
     ctx.fill()
     
-    # Draw tail (wagging)
+    # Draw tail (wagging, shorter than before)
     ctx.set_source_rgb(0.9, 0.7, 0.4)  # Same color as ears
     ctx.set_line_width(6)
     ctx.move_to(150, 100)
-    tail_end_x = 170 + 10 * math.cos(2 * math.pi * progress)
-    tail_end_y = 90 + 10 * math.sin(2 * math.pi * progress)
+    # Shorter tail with wagging motion
+    tail_end_x = 160 + 5 * math.cos(2 * math.pi * progress)
+    tail_end_y = 95 + 5 * math.sin(2 * math.pi * progress)
     ctx.line_to(tail_end_x, tail_end_y)
     ctx.stroke()
     

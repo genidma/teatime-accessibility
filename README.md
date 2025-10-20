@@ -94,6 +94,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
   - `Ctrl+T`: Stop timer
   - `Ctrl+I`: Show Statistics window
   - `Ctrl+M`: Toggle sound on/off
+  - `Ctrl+,`: Open settings dialog
   - `Ctrl++`: Increase font size
   - `Ctrl+-`: Decrease font size
   - `Ctrl+Q`: Quit the application
