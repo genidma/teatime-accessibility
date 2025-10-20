@@ -284,6 +284,101 @@ class TeaTimerApp(Gtk.Application):
         """Handles the activation of the about action."""
         self.show_about_dialog()
 
+    def show_statistics_window(self):
+        """Show the statistics window."""
+        # Create statistics window if it doesn't exist
+        if not hasattr(self, 'stats_window') or self.stats_window is None:
+            self.stats_window = StatisticsWindow(self, self.window)
+        else:
+            # If it exists, just present it
+            self.stats_window.present()
+
+    def show_settings_dialog(self):
+        """Displays the settings dialog."""
+        # Create the settings dialog
+        dialog = Gtk.Dialog(
+            title="Settings",
+            parent=self.window,
+            flags=0,
+            buttons=(
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OK, Gtk.ResponseType.OK
+            )
+        )
+        
+        dialog.set_default_size(400, 200)
+        dialog.set_border_width(10)
+        
+        # Get content area
+        content_area = dialog.get_content_area()
+        content_area.set_spacing(10)
+        
+        # Create a grid for layout
+        grid = Gtk.Grid()
+        grid.set_row_spacing(10)
+        grid.set_column_spacing(10)
+        content_area.add(grid)
+        
+        # Add animation selection
+        animation_label = Gtk.Label(label="Animation:")
+        animation_label.set_halign(Gtk.Align.START)
+        grid.attach(animation_label, 0, 0, 1, 1)
+        
+        # Get available animations
+        assets_dir = Path(__file__).parent.parent / "assets"
+        sprites_dir = assets_dir / "sprites"
+        animations = []
+        
+        if sprites_dir.exists():
+            for item in sprites_dir.iterdir():
+                if item.is_dir():
+                    animations.append(item.name)
+        
+        # Create combobox for animation selection
+        self.animation_combo = Gtk.ComboBoxText()
+        for animation in animations:
+            self.animation_combo.append(animation, animation.replace("_", " ").title())
+        
+        # Set the current selection
+        current_animation = getattr(self, 'preferred_animation', 'test_animation')
+        self.animation_combo.set_active_id(current_animation)
+        
+        grid.attach(self.animation_combo, 1, 0, 1, 1)
+        
+        # Show the dialog
+        dialog.show_all()
+        
+        # Run the dialog and handle response
+        response = dialog.run()
+        
+        if response == Gtk.ResponseType.OK:
+            # Save the selected animation
+            selected_animation = self.animation_combo.get_active_id()
+            if selected_animation:
+                self.preferred_animation = selected_animation
+                self._save_config()
+                print(f"Animation preference updated to: {selected_animation}")
+        
+        dialog.destroy()
+
+    def show_about_dialog(self):
+        """Displays the about dialog."""
+        # Create about dialog
+        dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
+        dialog.set_program_name(APP_NAME)
+        dialog.set_version(APP_VERSION)
+        dialog.set_comments("An accessible tea timer application with customizable animations.")
+        dialog.set_website("https://github.com/harmonoid/teatime-accessibility")
+        dialog.set_website_label("GitHub Repository")
+        dialog.set_authors(["Lingma from Alibaba Cloud", "genidma on Github"])
+        dialog.set_copyright("Copyright 2025 TeaTime Accessibility Team")
+        dialog.set_license_type(Gtk.License.MIT_X11)
+        dialog.set_logo_icon_name("timer")
+        
+        # Show the dialog
+        dialog.run()
+        dialog.destroy()
+
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
         if not self.sound_enabled:
