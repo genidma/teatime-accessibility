@@ -453,16 +453,16 @@ class TeaTimerApp(Gtk.Application):
                     if env_duration is None:
                         self.last_duration = config.get("last_duration", 5)
                     # Load preferred animation
-                    self.preferred_animation = config.get("preferred_animation", "test_animation")
+                    self.preferred_animation = config.get("preferred_animation", "puppy_animation")
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 print(f"Error decoding config file: {CONFIG_FILE}. Using defaults. Error: {e}")
-                self.preferred_animation = "test_animation"
+                self.preferred_animation = "puppy_animation"
             except Exception as e:
                 print(f"An unexpected error occurred while loading config: {e}. Using defaults.")
-                self.preferred_animation = "test_animation"
+                self.preferred_animation = "puppy_animation"
         else:
             # Default animation if no config file exists
-            self.preferred_animation = "test_animation"
+            self.preferred_animation = "puppy_animation"
 
     def _save_config(self):
         """Saves the current configuration to the config file."""
