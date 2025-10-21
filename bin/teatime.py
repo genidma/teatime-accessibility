@@ -65,7 +65,9 @@ class TeaTimerApp(Gtk.Application):
         self.current_sprite_frame = 0
         self.sprite_timer_id = None
         self.auto_start = auto_start  # Flag to indicate if timer should start automatically
+        self.mini_mode = False  # Mini-mode flag
         self._load_config()  # Load settings from file
+
         # Set up keyboard shortcuts
         self._setup_actions()
 
@@ -236,6 +238,9 @@ class TeaTimerApp(Gtk.Application):
 
         self.window.show_all()
         
+        # Apply mini-mode settings
+        self._apply_mini_mode()
+        
         # Apply the selected skin
         self._apply_skin()
         
@@ -255,18 +260,48 @@ class TeaTimerApp(Gtk.Application):
 
     def _on_window_destroy(self, widget):
         """Handle window destruction properly."""
-        self._save_config() # Save settings on exit
+        self._save_config()
 
-        # Clean up timers
-        if self.timer_id:
-            GLib.source_remove(self.timer_id)
-            self.timer_id = None
-        if self.rainbow_timer_id:
-            GLib.source_remove(self.rainbow_timer_id)
-            self.rainbow_timer_id = None
-        
-        # Close stats window if open
-        if self._stats_window:
+    def toggle_mini_mode(self):
+        """Toggle mini-mode and apply UI changes."""
+        self.mini_mode = not self.mini_mode
+        self._apply_mini_mode()
+        self._save_config()
+
+    def _apply_mini_mode(self):
+        """Apply mini-mode UI changes."""
+        if not self.window:
+            return
+            
+        if self.mini_mode:
+            # Apply mini-mode - compact window size
+            self.window.set_default_size(200, 100)
+            self.window.resize(200, 100)
+            
+            # Hide non-essential elements
+            self.content_box.set_visible(False)
+            self.presets_box.set_visible(False)
+            self.presets_label.set_visible(False)
+            
+            # Center the time label
+            self.main_box.set_margin_top(35)
+            self.main_box.set_margin_bottom(35)
+            self.time_label.set_halign(Gtk.Align.CENTER)
+        else:
+            # Apply normal mode
+            self.window.set_default_size(300, 200)
+            self.window.resize(300, 200)
+            
+            # Show all elements
+            self.content_box.set_visible(True)
+            self.presets_box.set_visible(True)
+            self.presets_label.set_visible(True)
+            
+            # Reset margins
+            self.main_box.set_margin_top(20)
+            self.main_box.set_margin_bottom(20)
+            self.time_label.set_halign(Gtk.Align.FILL)
+
             self._stats_window.destroy()
         
         # Quit the application
@@ -289,6 +324,18 @@ class TeaTimerApp(Gtk.Application):
     def on_about_activated(self, *args):
         """Handles the activation of the about action."""
         self.show_about_dialog()
+
+    def on_toggle_sound_activated(self, action, parameter):
+        """Callback for sound toggle action."""
+        self.toggle_sound()
+
+    def on_toggle_mini_mode_activated(self, action, parameter):
+        """Callback for mini-mode toggle action."""
+        self.toggle_mini_mode()
+
+    def _on_window_destroy(self, widget):
+        """Handles window destruction."""
+        self.quit()
 
     def show_statistics_window(self):
         """Show the statistics window."""
@@ -380,6 +427,15 @@ class TeaTimerApp(Gtk.Application):
         
         grid.attach(self.skin_combo, 1, 1, 1, 1)
         
+        # Add mini-mode toggle
+        mini_mode_label = Gtk.Label(label="Mini Mode:")
+        mini_mode_label.set_halign(Gtk.Align.START)
+        grid.attach(mini_mode_label, 0, 2, 1, 1)
+        
+        self.mini_mode_toggle = Gtk.CheckButton()
+        self.mini_mode_toggle.set_active(getattr(self, 'mini_mode', False))
+        grid.attach(self.mini_mode_toggle, 1, 2, 1, 1)
+        
         # Show the dialog
         dialog.show_all()
         
@@ -398,6 +454,10 @@ class TeaTimerApp(Gtk.Application):
             if selected_skin:
                 self.preferred_skin = selected_skin
                 print(f"Skin preference updated to: {selected_skin}")
+                
+            # Save mini-mode preference
+            self.mini_mode = self.mini_mode_toggle.get_active()
+            print(f"Mini mode preference updated to: {self.mini_mode}")
                 
             # Save configuration
             self._save_config()
@@ -557,6 +617,12 @@ class TeaTimerApp(Gtk.Application):
         self.add_action(sound_action)
         self.set_accels_for_action("app.toggle-sound", ["<Control>m"])
 
+        # Mini-mode toggle action
+        mini_mode_action = Gio.SimpleAction.new("toggle-mini-mode", None)
+        mini_mode_action.connect("activate", self.on_toggle_mini_mode_activated)
+        self.add_action(mini_mode_action)
+        self.set_accels_for_action("app.toggle-mini-mode", ["<Control>d"])  # 'd' for compact display
+
         # Quit action
         quit_action = Gio.SimpleAction.new("quit", None)
         quit_action.connect("activate", lambda a, p: self.quit())
@@ -580,18 +646,23 @@ class TeaTimerApp(Gtk.Application):
                     self.preferred_animation = config.get("preferred_animation", "puppy_animation")
                     # Load preferred skin
                     self.preferred_skin = config.get("preferred_skin", "default")
+                    # Load mini-mode preference
+                    self.mini_mode = config.get("mini_mode", False)
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 print(f"Error decoding config file: {CONFIG_FILE}. Using defaults. Error: {e}")
                 self.preferred_animation = "puppy_animation"
                 self.preferred_skin = "default"
+                self.mini_mode = False
             except Exception as e:
                 print(f"An unexpected error occurred while loading config: {e}. Using defaults.")
                 self.preferred_animation = "puppy_animation"
                 self.preferred_skin = "default"
+                self.mini_mode = False
         else:
             # Default animation if no config file exists
             self.preferred_animation = "puppy_animation"
             self.preferred_skin = "default"
+            self.mini_mode = False
 
     def _save_config(self):
         """Saves the current configuration to the config file."""
@@ -602,7 +673,8 @@ class TeaTimerApp(Gtk.Application):
                 "font_scale_factor": self.font_scale_factor,
                 "last_duration": self.duration_spin.get_value_as_int(),
                 "preferred_animation": getattr(self, 'preferred_animation', 'test_animation'),
-                "preferred_skin": getattr(self, 'preferred_skin', 'default')
+                "preferred_skin": getattr(self, 'preferred_skin', 'default'),
+                "mini_mode": getattr(self, 'mini_mode', False)
             }
             CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(CONFIG_FILE, 'w') as f:
@@ -1590,10 +1662,12 @@ class StatisticsWindow(Gtk.Window):
             main_box.set_margin_bottom(20)
             main_box.set_margin_start(20) # Use modern property for left margin
             main_box.set_margin_end(20)   # Use modern property for right margin
+            self.main_box = main_box  # Store reference for mini-mode
 
             # --- Create a horizontal box to hold main controls and presets ---
             content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
             main_box.pack_start(content_box, True, True, 0)
+            self.content_box = content_box  # Store reference for mini-mode
 
             # Time display
             self.time_label = Gtk.Label(label="00:00")
@@ -1606,6 +1680,7 @@ class StatisticsWindow(Gtk.Window):
             grid.set_row_spacing(10)
             grid.set_halign(Gtk.Align.CENTER) # Center the grid horizontally
             content_box.pack_start(grid, True, True, 0)
+            self.control_grid = grid  # Store reference for mini-mode
 
             # Row 0: Duration selection
             duration_label = Gtk.Label(label="Minutes:")
@@ -1633,7 +1708,7 @@ class StatisticsWindow(Gtk.Window):
             # Row 1: Control buttons
             self.start_button = Gtk.Button(label="_Start")
             self.start_button.set_use_underline(True)
-            self.stop_button = Gtk.Button(label="_Stop")
+            self.stop_button = Gtk.Button(label="S_top")
             self.stop_button.set_use_underline(True)
             grid.attach(self.start_button, 0, 1, 1, 1)
             grid.attach(self.stop_button, 1, 1, 1, 1)
@@ -1654,10 +1729,12 @@ class StatisticsWindow(Gtk.Window):
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             presets_box.set_valign(Gtk.Align.CENTER)
             content_box.pack_start(presets_box, False, False, 0)
+            self.presets_box = presets_box  # Store reference for mini-mode
 
             presets_label = Gtk.Label(label="<span size='large'><b>Session Presets</b></span>")
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
+            self.presets_label = presets_label  # Store reference for mini-mode
 
             preset_45_button = Gtk.Button(label="_45 Minutes")
             preset_45_button.set_use_underline(True)
