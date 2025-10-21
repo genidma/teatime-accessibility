@@ -867,7 +867,7 @@ class TeaTimerApp(Gtk.Application):
     def start_timer(self):
         if self.timer_id:
             GLib.source_remove(self.timer_id)
-        self.timer_id = GLib.timeout_add_seconds(1, self.update_timer)
+        self.timer_id = GLib.timeout_add_seconds(5, self.update_timer)
 
     def stop_timer(self):
         if self.timer_id:
@@ -875,7 +875,7 @@ class TeaTimerApp(Gtk.Application):
             self.timer_id = None
 
     def update_timer(self):
-        self.time_left -= 1
+        self.time_left -= 5
         minutes = int(self.time_left // 60)
         seconds = int(self.time_left % 60)
         self.time_label.set_markup(f"<span>{minutes:02d}:{seconds:02d}</span>")
