@@ -70,6 +70,9 @@ class TeaTimerApp(Gtk.Application):
 
         # Set up keyboard shortcuts
         self._setup_actions()
+        
+        # Apply initial font scaling
+        self._apply_font_size()
 
     def do_activate(self):
         """
@@ -273,39 +276,36 @@ class TeaTimerApp(Gtk.Application):
         if not self.window:
             return
             
-        if self.mini_mode:
-            # Apply mini-mode - compact window size
-            self.window.set_default_size(200, 100)
-            self.window.resize(200, 100)
-            
-            # Hide non-essential elements
-            self.content_box.set_visible(False)
-            self.presets_box.set_visible(False)
-            self.presets_label.set_visible(False)
-            
-            # Center the time label
-            self.main_box.set_margin_top(35)
-            self.main_box.set_margin_bottom(35)
-            self.time_label.set_halign(Gtk.Align.CENTER)
-        else:
-            # Apply normal mode
-            self.window.set_default_size(300, 200)
-            self.window.resize(300, 200)
-            
-            # Show all elements
-            self.content_box.set_visible(True)
-            self.presets_box.set_visible(True)
-            self.presets_label.set_visible(True)
-            
-            # Reset margins
-            self.main_box.set_margin_top(20)
-            self.main_box.set_margin_bottom(20)
-            self.time_label.set_halign(Gtk.Align.FILL)
-
-            self._stats_window.destroy()
-        
-        # Quit the application
-        self.quit()
+        # Check if UI elements exist
+        if hasattr(self, 'content_box') and hasattr(self, 'presets_box') and hasattr(self, 'presets_label'):
+            if self.mini_mode:
+                # Apply mini-mode - compact window size
+                self.window.set_default_size(200, 100)
+                self.window.resize(200, 100)
+                
+                # Hide non-essential elements
+                self.content_box.set_visible(False)
+                self.presets_box.set_visible(False)
+                self.presets_label.set_visible(False)
+                
+                # Center the time label
+                self.main_box.set_margin_top(35)
+                self.main_box.set_margin_bottom(35)
+                self.time_label.set_halign(Gtk.Align.CENTER)
+            else:
+                # Apply normal mode
+                self.window.set_default_size(300, 200)
+                self.window.resize(300, 200)
+                
+                # Show all elements
+                self.content_box.set_visible(True)
+                self.presets_box.set_visible(True)
+                self.presets_label.set_visible(True)
+                
+                # Reset margins
+                self.main_box.set_margin_top(20)
+                self.main_box.set_margin_bottom(20)
+                self.time_label.set_halign(Gtk.Align.FILL)
 
     def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
@@ -352,11 +352,11 @@ class TeaTimerApp(Gtk.Application):
         dialog = Gtk.Dialog(
             title="Settings",
             parent=self.window,
-            flags=0,
-            buttons=(
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OK, Gtk.ResponseType.OK
-            )
+            flags=0
+        )
+        dialog.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OK, Gtk.ResponseType.OK
         )
         
         dialog.set_default_size(400, 300)
@@ -459,12 +459,8 @@ class TeaTimerApp(Gtk.Application):
             self.mini_mode = self.mini_mode_toggle.get_active()
             print(f"Mini mode preference updated to: {self.mini_mode}")
                 
-            # Save configuration
             self._save_config()
             
-            # Apply the new skin
-            self._apply_skin()
-        
         dialog.destroy()
 
     def show_about_dialog(self):
