@@ -192,6 +192,13 @@ class TeaTimerApp(Gtk.Application):
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
 
+            # Row 4: Mini-mode toggle (spans both columns)
+            self.mini_mode_toggle = Gtk.CheckButton(label="_Mini Mode")
+            self.mini_mode_toggle.set_use_underline(True)
+            self.mini_mode_toggle.set_active(getattr(self, 'mini_mode', False))
+            self.mini_mode_toggle.connect("toggled", self.on_mini_mode_toggled)
+            grid.attach(self.mini_mode_toggle, 0, 4, 2, 1)
+
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             presets_box.set_valign(Gtk.Align.CENTER)
@@ -273,6 +280,8 @@ class TeaTimerApp(Gtk.Application):
     def toggle_mini_mode(self):
         """Toggle mini-mode and apply UI changes."""
         self.mini_mode = not self.mini_mode
+        if hasattr(self, 'mini_mode_toggle'):
+            self.mini_mode_toggle.set_active(self.mini_mode)
         self._apply_mini_mode()
         self._save_config()
 
@@ -405,6 +414,12 @@ class TeaTimerApp(Gtk.Application):
         """Callback for sound toggle action."""
         self.toggle_sound()
 
+    def on_mini_mode_toggled(self, widget):
+        """Callback for mini-mode toggle."""
+        self.mini_mode = self.mini_mode_toggle.get_active()
+        self._apply_mini_mode()
+        self._save_config()
+
     def on_toggle_mini_mode_activated(self, action, parameter):
         """Callback for mini-mode toggle action."""
         self.toggle_mini_mode()
@@ -503,15 +518,6 @@ class TeaTimerApp(Gtk.Application):
         
         grid.attach(self.skin_combo, 1, 1, 1, 1)
         
-        # Add mini-mode toggle
-        mini_mode_label = Gtk.Label(label="Mini Mode:")
-        mini_mode_label.set_halign(Gtk.Align.START)
-        grid.attach(mini_mode_label, 0, 2, 1, 1)
-        
-        self.mini_mode_toggle = Gtk.CheckButton()
-        self.mini_mode_toggle.set_active(getattr(self, 'mini_mode', False))
-        grid.attach(self.mini_mode_toggle, 1, 2, 1, 1)
-        
         # Show the dialog
         dialog.show_all()
         
@@ -530,10 +536,6 @@ class TeaTimerApp(Gtk.Application):
             if selected_skin:
                 self.preferred_skin = selected_skin
                 print(f"Skin preference updated to: {selected_skin}")
-                
-            # Save mini-mode preference
-            self.mini_mode = self.mini_mode_toggle.get_active()
-            print(f"Mini mode preference updated to: {self.mini_mode}")
                 
             self._save_config()
             
