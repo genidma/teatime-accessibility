@@ -129,10 +129,12 @@ class TeaTimerApp(Gtk.Application):
             main_box.set_margin_bottom(20)
             main_box.set_margin_start(20) # Use modern property for left margin
             main_box.set_margin_end(20)   # Use modern property for right margin
+            self.main_box = main_box  # Store reference for mini-mode
 
             # --- Create a horizontal box to hold main controls and presets ---
             content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
             main_box.pack_start(content_box, True, True, 0)
+            self.content_box = content_box  # Store reference for mini-mode
 
             # Time display
             self.time_label = Gtk.Label(label="00:00")
@@ -145,6 +147,7 @@ class TeaTimerApp(Gtk.Application):
             grid.set_row_spacing(10)
             grid.set_halign(Gtk.Align.CENTER) # Center the grid horizontally
             content_box.pack_start(grid, True, True, 0)
+            self.control_grid = grid  # Store reference for mini-mode
 
             # Row 0: Duration selection
             duration_label = Gtk.Label(label="Minutes:")
@@ -193,10 +196,12 @@ class TeaTimerApp(Gtk.Application):
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             presets_box.set_valign(Gtk.Align.CENTER)
             content_box.pack_start(presets_box, False, False, 0)
+            self.presets_box = presets_box  # Store reference for mini-mode
 
             presets_label = Gtk.Label(label="<span size='large'><b>Session Presets</b></span>")
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
+            self.presets_label = presets_label  # Store reference for mini-mode
 
             preset_45_button = Gtk.Button(label="_45 Minutes")
             preset_45_button.set_use_underline(True)
@@ -275,10 +280,11 @@ class TeaTimerApp(Gtk.Application):
         """Apply mini-mode UI changes."""
         if not self.window:
             return
-            
+
         # Check if UI elements exist
-        if hasattr(self, 'content_box') and hasattr(self, 'presets_box') and hasattr(self, 'presets_label'):
+        if hasattr(self, 'content_box') and hasattr(self, 'presets_box') and hasattr(self, 'presets_label') and hasattr(self, 'main_box') and hasattr(self, 'time_label'):
             if self.mini_mode:
+                print("Enabling mini-mode")
                 # Apply mini-mode - compact window size
                 self.window.set_default_size(200, 100)
                 self.window.resize(200, 100)
@@ -293,6 +299,7 @@ class TeaTimerApp(Gtk.Application):
                 self.main_box.set_margin_bottom(35)
                 self.time_label.set_halign(Gtk.Align.CENTER)
             else:
+                print("Disabling mini-mode")
                 # Apply normal mode
                 self.window.set_default_size(300, 200)
                 self.window.resize(300, 200)
@@ -306,6 +313,8 @@ class TeaTimerApp(Gtk.Application):
                 self.main_box.set_margin_top(20)
                 self.main_box.set_margin_bottom(20)
                 self.time_label.set_halign(Gtk.Align.FILL)
+        else:
+            print("Some UI elements are missing, skipping mini-mode application")
 
     def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
