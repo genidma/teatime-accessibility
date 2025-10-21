@@ -20,14 +20,29 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 ## Keyboard Shortcuts
 
 - **Space**: Start/stop timer
+- **Ctrl+S**: Start timer
+- **Ctrl+T**: Stop timer
 - **Ctrl+I**: Open statistics window
+- **Ctrl+M**: Toggle sound on/off
 - **Ctrl+,**: Open settings dialog
-- **Ctrl+Up**: Increase font size
-- **Ctrl+Down**: Decrease font size
-- **Ctrl+H**: Toggle high contrast mode
-- **Ctrl+S**: Toggle sound notifications
+- **Ctrl++**: Increase font size
+- **Ctrl+-**: Decrease font size
 - **Ctrl+D**: Toggle mini-mode
 - **Ctrl+Q**: Quit application
+
+## Mnemonics (Alt Keys): Activate buttons and menu items by pressing Alt plus the underlined letter.
+
+    Main Window:
+        Alt+S: Start
+        Alt+T: Stop
+        Alt+E: Enable Sound
+        Alt+M: Mini Mode
+        Alt+4: 45 Minutes
+        Alt+1: 1 Hour
+    Statistics Window:
+        Alt+R: Refresh Statistics
+        Alt+E: Export to CSV
+        Alt+C: Clear History
 
 ## Mini-Mode
 
