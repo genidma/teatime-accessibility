@@ -542,13 +542,13 @@ class TeaTimerApp(Gtk.Application):
         
         # Increase font size action
         action_increase_font = Gio.SimpleAction.new("increase_font", None)
-        action_increase_font.connect("activate", self._on_increase_font_action)
+        action_increase_font.connect("activate", self.on_increase_font_clicked)
         self.add_action(action_increase_font)
         self.set_accels_for_action("app.increase_font", ["<Primary>plus", "<Primary>equal"])
         
         # Decrease font size action
         action_decrease_font = Gio.SimpleAction.new("decrease_font", None)
-        action_decrease_font.connect("activate", self._on_decrease_font_action)
+        action_decrease_font.connect("activate", self.on_decrease_font_clicked)
         self.add_action(action_decrease_font)
         self.set_accels_for_action("app.decrease_font", ["<Primary>minus"])
         
