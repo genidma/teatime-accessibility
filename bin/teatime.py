@@ -280,7 +280,7 @@ class TeaTimerApp(Gtk.Application):
         """Apply mini-mode UI changes."""
         if not self.window:
             return
-        
+            
         # Check if UI elements exist
         if hasattr(self, 'content_box') and hasattr(self, 'presets_box') and hasattr(self, 'presets_label') and hasattr(self, 'main_box') and hasattr(self, 'time_label') and hasattr(self, 'control_grid'):
             if self.mini_mode:
@@ -321,6 +321,17 @@ class TeaTimerApp(Gtk.Application):
                         screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2
                     )
                 
+                # Make the time label 300% bigger in mini-mode
+                time_css_provider = Gtk.CssProvider()
+                time_css_provider.load_from_data(b"""
+                    label.time-display {
+                        font-size: 300%;
+                    }
+                """)
+                self.time_label.get_style_context().add_provider(
+                    time_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
+                )
+                
                 # Adjust main box margins
                 self.main_box.set_margin_top(10)
                 self.main_box.set_margin_bottom(10)
@@ -353,6 +364,13 @@ class TeaTimerApp(Gtk.Application):
                     Gtk.StyleContext.add_provider_for_screen(
                         screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2
                     )
+                
+                # Remove the time label CSS provider
+                time_css_provider = Gtk.CssProvider()
+                time_css_provider.load_from_data(b"")
+                self.time_label.get_style_context().add_provider(
+                    time_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
+                )
                 
                 # Reset main box margins
                 self.main_box.set_margin_top(20)
