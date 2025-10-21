@@ -280,38 +280,87 @@ class TeaTimerApp(Gtk.Application):
         """Apply mini-mode UI changes."""
         if not self.window:
             return
-
+        
         # Check if UI elements exist
-        if hasattr(self, 'content_box') and hasattr(self, 'presets_box') and hasattr(self, 'presets_label') and hasattr(self, 'main_box') and hasattr(self, 'time_label'):
+        if hasattr(self, 'content_box') and hasattr(self, 'presets_box') and hasattr(self, 'presets_label') and hasattr(self, 'main_box') and hasattr(self, 'time_label') and hasattr(self, 'control_grid'):
             if self.mini_mode:
-                print("Enabling mini-mode")
                 # Apply mini-mode - compact window size
                 self.window.set_default_size(200, 100)
                 self.window.resize(200, 100)
                 
-                # Hide non-essential elements
-                self.content_box.set_visible(False)
+                # Hide the presets section in mini-mode
                 self.presets_box.set_visible(False)
                 self.presets_label.set_visible(False)
                 
+                # Make the control grid more compact
+                self.control_grid.set_column_spacing(5)
+                self.control_grid.set_row_spacing(5)
+                
+                # Make the duration spin button smaller
+                self.duration_spin.set_width_chars(2)
+                
+                # Make buttons smaller by changing their style
+                css_provider = Gtk.CssProvider()
+                css_provider.load_from_data(b"""
+                    button, checkbutton {
+                        padding: 2px 4px;
+                        font-size: 10px;
+                    }
+                    spinbutton entry {
+                        font-size: 14px;
+                        padding: 2px;
+                    }
+                    label {
+                        font-size: 10px;
+                    }
+                """)
+                # Apply to the main window
+                screen = Gdk.Screen.get_default()
+                if screen:
+                    Gtk.StyleContext.add_provider_for_screen(
+                        screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2
+                    )
+                
+                # Adjust main box margins
+                self.main_box.set_margin_top(10)
+                self.main_box.set_margin_bottom(10)
+                self.main_box.set_margin_start(10)
+                self.main_box.set_margin_end(10)
+                
                 # Center the time label
-                self.main_box.set_margin_top(35)
-                self.main_box.set_margin_bottom(35)
                 self.time_label.set_halign(Gtk.Align.CENTER)
             else:
-                print("Disabling mini-mode")
                 # Apply normal mode
                 self.window.set_default_size(300, 200)
                 self.window.resize(300, 200)
                 
                 # Show all elements
-                self.content_box.set_visible(True)
                 self.presets_box.set_visible(True)
                 self.presets_label.set_visible(True)
                 
-                # Reset margins
+                # Reset the control grid spacing
+                self.control_grid.set_column_spacing(10)
+                self.control_grid.set_row_spacing(10)
+                
+                # Reset the duration spin button
+                self.duration_spin.set_width_chars(3)
+                
+                # Remove the mini-mode CSS provider by creating a new one with empty CSS
+                css_provider = Gtk.CssProvider()
+                css_provider.load_from_data(b"")
+                screen = Gdk.Screen.get_default()
+                if screen:
+                    Gtk.StyleContext.add_provider_for_screen(
+                        screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2
+                    )
+                
+                # Reset main box margins
                 self.main_box.set_margin_top(20)
                 self.main_box.set_margin_bottom(20)
+                self.main_box.set_margin_start(20)
+                self.main_box.set_margin_end(20)
+                
+                # Reset time label alignment
                 self.time_label.set_halign(Gtk.Align.FILL)
         else:
             print("Some UI elements are missing, skipping mini-mode application")
