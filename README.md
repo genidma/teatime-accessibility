@@ -50,9 +50,9 @@ TeaTime Accessibility includes a compact display mode called "Mini-Mode" which r
 
 To toggle Mini-Mode:
 - Use the "Mini Mode" checkbox in the main interface
-- Or use the keyboard shortcut Ctrl+D
+- Or use the keyboard shortcut **Ctrl+D**
 
-Note: Some keyboard shortcuts may not work properly when in Mini-Mode due to the reduced interface size and focus handling.
+Note: Some keyboard shortcuts may not work properly when in Mini-Mode due to the reduced interface size and focus handling. The Ctrl+D shortcut will always work to toggle Mini-Mode on and off.
 
 ## Customizable Animations
 
