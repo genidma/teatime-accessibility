@@ -15,6 +15,7 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
   - Keyboard shortcuts
 - **Statistics Tracking**: Automatic logging and viewing of tea sessions
 - **Settings Dialog**: Configure animation preferences through a user-friendly interface
+- **Mini-Mode**: Compact display mode for a smaller window footprint
 
 ## Keyboard Shortcuts
 
@@ -25,7 +26,18 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 - **Ctrl+Down**: Decrease font size
 - **Ctrl+H**: Toggle high contrast mode
 - **Ctrl+S**: Toggle sound notifications
+- **Ctrl+D**: Toggle mini-mode
 - **Ctrl+Q**: Quit application
+
+## Mini-Mode
+
+TeaTime Accessibility includes a compact display mode called "Mini-Mode" which reduces the window size and makes the interface elements more compact. This is especially useful when you want to keep the timer visible but don't need the full interface.
+
+To toggle Mini-Mode:
+- Use the "Mini Mode" checkbox in the main interface
+- Or use the keyboard shortcut Ctrl+D
+
+Note: Some keyboard shortcuts may not work properly when in Mini-Mode due to the reduced interface size and focus handling.
 
 ## Customizable Animations
 
