@@ -71,6 +71,9 @@ class TeaTimerApp(Gtk.Application):
         # Set up keyboard shortcuts
         self._setup_actions()
         
+        # Initialize mini-mode (photosensitive version - no visual effects)
+        self.mini_mode = False
+        
         # Apply initial font scaling
         self._apply_font_size()
 
@@ -548,6 +551,12 @@ class TeaTimerApp(Gtk.Application):
         action_decrease_font.connect("activate", self._on_decrease_font_action)
         self.add_action(action_decrease_font)
         self.set_accels_for_action("app.decrease_font", ["<Primary>minus"])
+        
+        # Toggle mini-mode action (photosensitive version - no visual effects)
+        action_toggle_mini_mode = Gio.SimpleAction.new("toggle_mini_mode", None)
+        action_toggle_mini_mode.connect("activate", self._on_toggle_mini_mode_action)
+        self.add_action(action_toggle_mini_mode)
+        self.set_accels_for_action("app.toggle_mini_mode", ["<Primary>d"])
 
     # --- Action Handlers ---
     def _on_start_action(self, action, param):
@@ -562,13 +571,10 @@ class TeaTimerApp(Gtk.Application):
         """Handler for toggle sound action."""
         self.sound_toggle.set_active(not self.sound_toggle.get_active())
         
-    def _on_increase_font_action(self, action, param):
-        """Handler for increase font size action."""
-        self.on_increase_font_clicked(None)
-        
-    def _on_decrease_font_action(self, action, param):
-        """Handler for decrease font size action."""
-        self.on_decrease_font_clicked(None)
+    def _on_toggle_mini_mode_action(self, action, param):
+        """Handler for toggle mini-mode action."""
+        self.mini_mode = not self.mini_mode
+        self._apply_mini_mode()
 
     # --- Signal Handlers ---
     def on_start_clicked(self, widget):
@@ -836,12 +842,27 @@ class TeaTimerApp(Gtk.Application):
                     error_dialog.run()
                     error_dialog.destroy()
 
+    def _apply_mini_mode(self):
+        """Apply mini-mode UI changes (photosensitive version - no visual effects)."""
+        if not self.window:
+            return
+            
+        if self.mini_mode:
+            # Apply mini-mode - compact window size
+            self.window.set_default_size(200, 100)
+            self.window.resize(200, 100)
+        else:
+            # Apply normal mode
+            self.window.set_default_size(300, 200)
+            self.window.resize(300, 200)
+
     def on_quit(self, action, param):
         """Handles the 'quit' action."""
         self.window.destroy()
 
 
 def main():
+    """Main entry point for the application."""
     parser = argparse.ArgumentParser(description="Accessible Tea Timer")
     parser.add_argument("-d", "--duration", type=int, default=5,
                         help="Initial timer duration in minutes (default: 5)")
