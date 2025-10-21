@@ -362,7 +362,7 @@ Script designed to verify application functionality (without having to wait for 
 - Launches the app with a 1 second timer (see Usage below)
 - Automatically starts the timer without manual intervention
 
-**Usage:**
+**Usage:** 
 
 ####  Run with duration in seconds instead of minutes
 ```
