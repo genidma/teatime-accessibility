@@ -190,6 +190,13 @@ class TeaTimerApp(Gtk.Application):
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
 
+            # Row 4: Mini-mode toggle (spans both columns)
+            self.mini_mode_toggle = Gtk.CheckButton(label="_Mini Mode")
+            self.mini_mode_toggle.set_use_underline(True)
+            self.mini_mode_toggle.set_active(self.mini_mode)
+            self.mini_mode_toggle.connect("toggled", self._on_mini_mode_toggled)
+            grid.attach(self.mini_mode_toggle, 0, 4, 2, 1)
+
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             presets_box.set_valign(Gtk.Align.CENTER)
@@ -198,6 +205,16 @@ class TeaTimerApp(Gtk.Application):
             presets_label = Gtk.Label(label="<span size='large'><b>Session Presets</b></span>")
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
+
+            preset_5_button = Gtk.Button(label="_5 Minutes")
+            preset_5_button.set_use_underline(True)
+            preset_5_button.connect("clicked", self.on_preset_clicked, 5)
+            presets_box.pack_start(preset_5_button, False, False, 0)
+
+            preset_10_button = Gtk.Button(label="_10 Minutes")
+            preset_10_button.set_use_underline(True)
+            preset_10_button.connect("clicked", self.on_preset_clicked, 10)
+            presets_box.pack_start(preset_10_button, False, False, 0)
 
             preset_45_button = Gtk.Button(label="_45 Minutes")
             preset_45_button.set_use_underline(True)
@@ -210,27 +227,11 @@ class TeaTimerApp(Gtk.Application):
             presets_box.pack_start(preset_1_hour_button, False, False, 0)
 
             self.window.add(main_box)
-
-            # Connect signals
-            self.start_button.connect("clicked", self.on_start_clicked)
-            self.stop_button.connect("clicked", self.on_stop_clicked)
-            self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
-            self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
-            self.sound_toggle.connect("toggled", self.on_sound_toggled)
-
-            # Add the single CSS provider to the screen. We will update this provider
-            # later instead of adding new ones.
-            screen = Gdk.Screen.get_default()
-            if screen:
-                Gtk.StyleContext.add_provider_for_screen(
-                    screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-            else:
-                print("Warning: No default screen found, CSS styling may not apply correctly.")
-
             
+            # Set GTK 3 accessibility properties (after all widgets are created)
+            self._set_accessibility_properties()
 
-            self.window.show_all()
+        self.window.show_all()
 
     def _on_window_destroy(self, widget):
         """Called when the main window is closed."""
@@ -842,6 +843,11 @@ class TeaTimerApp(Gtk.Application):
                     error_dialog.run()
                     error_dialog.destroy()
 
+    def _on_mini_mode_toggled(self, widget):
+        """Handler for mini-mode toggle button."""
+        self.mini_mode = self.mini_mode_toggle.get_active()
+        self._apply_mini_mode()
+        
     def _apply_mini_mode(self):
         """Apply mini-mode UI changes (photosensitive version - no visual effects)."""
         if not self.window:
@@ -855,6 +861,13 @@ class TeaTimerApp(Gtk.Application):
             # Apply normal mode
             self.window.set_default_size(300, 200)
             self.window.resize(300, 200)
+
+    def _set_accessibility_properties(self):
+        """
+        Sets GTK 3 accessibility properties for better screen reader support.
+        """
+        # Removed set_role calls as they don't exist on these widgets
+        pass
 
     def on_quit(self, action, param):
         """Handles the 'quit' action."""
