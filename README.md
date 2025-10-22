@@ -30,19 +30,22 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 - **Ctrl+D**: Toggle mini-mode
 - **Ctrl+Q**: Quit application
 
-## Mnemonics (Alt Keys): Activate buttons and menu items by pressing Alt plus the underlined letter.
+## Mnemonics (Alt Keys)
 
-    Main Window:
-        Alt+S: Start
-        Alt+T: Stop
-        Alt+E: Enable Sound
-        Alt+M: Mini Mode
-        Alt+4: 45 Minutes
-        Alt+1: 1 Hour
-    Statistics Window:
-        Alt+R: Refresh Statistics
-        Alt+E: Export to CSV
-        Alt+C: Clear History
+Activate buttons and menu items by pressing Alt plus the underlined letter.
+
+**Main Window:**
+- **Alt+S**: Start
+- **Alt+T**: Stop
+- **Alt+E**: Enable Sound
+- **Alt+M**: Mini Mode
+- **Alt+4**: 45 Minutes
+- **Alt+1**: 1 Hour
+
+**Statistics Window:**
+- **Alt+R**: Refresh Statistics
+- **Alt+E**: Export to CSV
+- **Alt+C**: Clear History
 
 ## Mini-Mode
 
