@@ -657,9 +657,13 @@ class TeaTimerApp(Gtk.Application):
                         rows = list(reader)
                         # Display in reverse order (most recent first)
                         for row in reversed(rows):
-                            list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                            # Check if required fields exist
+                            if 'timestamp' in row and 'duration_minutes' in row:
+                                list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                            else:
+                                pass  # Skip invalid rows silently
                 except (IOError, KeyError, ValueError) as e:
-                    print(f"Error loading stats file: {e}")
+                    pass  # Silently handle errors for cleaner UI
 
             tree_view = Gtk.TreeView(model=list_store)
 
@@ -727,7 +731,11 @@ class TeaTimerApp(Gtk.Application):
                     rows = list(reader)
                     # Display in reverse order (most recent first)
                     for row in reversed(rows):
-                        self.stats_list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                        # Check if required fields exist
+                        if 'timestamp' in row and 'duration_minutes' in row:
+                            self.stats_list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                        else:
+                            print(f"Skipping invalid row during refresh: {row}")
             except (IOError, KeyError, ValueError) as e:
                 print(f"Error loading stats file: {e}")
 
