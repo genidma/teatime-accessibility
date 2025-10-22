@@ -308,8 +308,8 @@ class TeaTimerApp(Gtk.Application):
 
         self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{formatted_time}</span>")
 
-        # Decrement by 5 seconds since we update every 5 seconds
-        self.remaining -= 5
+        # Decrement by 1 second since we update every second
+        self.remaining -= 1
         
         # Continue calling this function
         return True
@@ -331,7 +331,8 @@ class TeaTimerApp(Gtk.Application):
         # Immediately update the display with the new time
         self._update_timer_display()
         # Use GLib.PRIORITY_DEFAULT instead of default priority to ensure consistent updates
-        self.timer_id = GLib.timeout_add(5000, self._update_timer_display, priority=GLib.PRIORITY_DEFAULT)
+        # Update every second (1000ms) instead of every 5 seconds
+        self.timer_id = GLib.timeout_add(1000, self._update_timer_display, priority=GLib.PRIORITY_DEFAULT)
 
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
@@ -575,6 +576,8 @@ class TeaTimerApp(Gtk.Application):
     def _on_toggle_mini_mode_action(self, action, param):
         """Handler for toggle mini-mode action."""
         self.mini_mode = not self.mini_mode
+        # Update the UI toggle button to match the new state
+        self.mini_mode_toggle.set_active(self.mini_mode)
         self._apply_mini_mode()
 
     # --- Signal Handlers ---
