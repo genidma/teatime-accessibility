@@ -24,9 +24,9 @@ Difference from test_short_timer.py: This specifically tests the sprite
 animation features of the application, while test_short_timer.py is a 
 general functionality test with automatic closing and configurable duration.
 
-Author: Lingma from Alibaba Cloud
-Co-author: genidma on Github
-Date of creation: October 2025
+Author: @shanaya-gupta via Github (main submission for photosensitive version). 
+Co-author: With updates by Lingma from Alibaba Cloud, Gemini by Google Cloud and @genidma via Github.
+Created: October 2025
 """
 
 import sys
