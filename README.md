@@ -59,7 +59,6 @@ This is the photosensitive safe version of the TeaTime Accessibility application
 - **Keyboard Shortcuts**:
   - `Ctrl+S`: Start timer
   - `Ctrl+T`: Stop timer
-  - `Ctrl+I`: Show Statistics window
   - `Ctrl+M`: Toggle sound on/off
   - `Ctrl++`: Increase font size
   - `Ctrl+-`: Decrease font size
