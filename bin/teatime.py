@@ -123,15 +123,6 @@ class TeaTimerApp(Gtk.Application):
             # Create main container
             main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             
-            # Create a menu button and add it to the header bar
-            menu_button = Gtk.MenuButton(popup=about_menu)
-            icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
-            menu_button.add(icon)
-            header_bar.pack_end(menu_button)
-
-            # Create main container
-            main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-            
             # Accelerators are handled via application actions; no need to bind directly to buttons
             main_box.set_margin_top(20)
             main_box.set_margin_bottom(20)
@@ -580,17 +571,7 @@ class TeaTimerApp(Gtk.Application):
     # --- Action Handlers ---
     def _on_settings_activated(self, action, param):
         """Handler for settings action."""
-        print("Settings action activated - no settings dialog implemented")
-        # Show a message dialog to inform the user
-        dialog = Gtk.MessageDialog(
-            transient_for=self.window,
-            modal=True,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text="Settings dialog not implemented yet."
-        )
-        dialog.run()
-        dialog.destroy()
+        self.show_settings_dialog()
 
     def show_settings_dialog(self):
         """Displays the Settings dialog."""
