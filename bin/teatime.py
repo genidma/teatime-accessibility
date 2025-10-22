@@ -117,21 +117,16 @@ class TeaTimerApp(Gtk.Application):
             self.window.add_accel_group(accel_group)
             stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
             
-            # Add accelerators for font size and settings
-            # Increase font size: Ctrl++
+            # Add accelerators for font size
+            # Increase font size: Ctrl++ and Ctrl+=
             self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("plus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-            # Alternative for Ctrl+=
             self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("equal"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
             
             # Decrease font size: Ctrl+-
             self.decrease_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("minus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
             
-            # Settings dialog: Ctrl+,
-            # Since we don't have a settings dialog, we'll just print a message
-            # We need to create a dummy widget to attach the accelerator to
-            dummy_settings_widget = Gtk.Button()
-            dummy_settings_widget.connect("clicked", self._on_settings_activated)
-            dummy_settings_widget.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("comma"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            # Add accelerator for settings: Ctrl+,
+            accel_group.connect(Gdk.keyval_from_name("comma"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE, self._on_settings_activated)
 
             # Create a menu button and add it to the header bar
             menu_button = Gtk.MenuButton(popup=about_menu)
@@ -202,6 +197,15 @@ class TeaTimerApp(Gtk.Application):
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             grid.attach(self.decrease_font_button, 0, 2, 1, 1)
             grid.attach(self.increase_font_button, 1, 2, 1, 1)
+
+            # Add accelerators for font size
+            # Increase font size: Ctrl++
+            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("plus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            # Alternative for Ctrl+=
+            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("equal"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            
+            # Decrease font size: Ctrl+-
+            self.decrease_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("minus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
 
             # Row 3: Sound toggle (spans both columns)
             self.sound_toggle = Gtk.CheckButton(label="E_nable Sound")
@@ -586,7 +590,7 @@ class TeaTimerApp(Gtk.Application):
         self.set_accels_for_action("app.settings", ["<Ctrl>comma"])
 
     # --- Action Handlers ---
-    def _on_settings_activated(self, widget):
+    def _on_settings_activated(self, accel_group, window, keyval, modifier):
         """Handler for settings action."""
         print("Settings action activated - no settings dialog implemented")
         # Show a message dialog to inform the user
@@ -599,6 +603,76 @@ class TeaTimerApp(Gtk.Application):
         )
         dialog.run()
         dialog.destroy()
+
+    def show_settings_dialog(self):
+        """Displays the Settings dialog."""
+        if hasattr(self, '_settings_window') and self._settings_window:
+            self._settings_window.present()
+            return
+
+        self._settings_window = Gtk.Window(title="Settings")
+        self._settings_window.set_default_size(400, 300)
+        self._settings_window.set_transient_for(self.window)
+        self._settings_window.set_modal(False)
+        self._settings_window.connect("destroy", self.on_settings_window_destroy)
+
+        # Create a vertical box container
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        vbox.set_margin_top(10)
+        vbox.set_margin_bottom(10)
+        vbox.set_margin_start(10)
+        vbox.set_margin_end(10)
+
+        # Font Size Section
+        font_label = Gtk.Label(label="Font Size")
+        font_label.set_xalign(0)
+        vbox.pack_start(font_label, False, False, 0)
+
+        font_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, MIN_FONT_SCALE, MAX_FONT_SCALE, FONT_SCALE_INCREMENT)
+        font_scale.set_value(self.font_scale_factor)
+        font_scale.set_digits(1)
+        font_scale.connect("value-changed", self.on_font_scale_changed)
+        vbox.pack_start(font_scale, False, False, 0)
+
+        # Sound Toggle
+        self.sound_toggle = Gtk.CheckButton(label="Enable Sound")
+        self.sound_toggle.set_active(self.sound_enabled)
+        self.sound_toggle.connect("toggled", self.on_sound_toggled)
+        vbox.pack_start(self.sound_toggle, False, False, 0)
+
+        # Clear Statistics Button
+        clear_stats_button = Gtk.Button(label="Clear Statistics History")
+        clear_stats_button.get_style_context().add_class("destructive-action")
+        clear_stats_button.connect("clicked", self._on_clear_history_clicked)
+        vbox.pack_start(clear_stats_button, False, False, 0)
+
+        # About Section
+        about_label = Gtk.Label(label="About")
+        about_label.set_xalign(0)
+        vbox.pack_start(about_label, False, False, 0)
+
+        app_info_label = Gtk.Label(label=f"{APP_NAME}\nVersion: {APP_VERSION}")
+        app_info_label.set_line_wrap(True)
+        app_info_label.set_xalign(0)
+        vbox.pack_start(app_info_label, False, False, 0)
+
+        # Close Button
+        close_button = Gtk.Button(label="Close")
+        close_button.connect("clicked", lambda btn: self._settings_window.destroy())
+        vbox.pack_start(close_button, False, False, 0)
+
+        self._settings_window.add(vbox)
+        self._settings_window.show_all()
+
+    def on_settings_window_destroy(self, widget):
+        """Callback for when the settings window is destroyed."""
+        self._settings_window = None
+
+    def on_font_scale_changed(self, range):
+        """Handles font scale changes in settings."""
+        self.font_scale_factor = range.get_value()
+        self._apply_font_size()
+        self._save_config()
 
     def _on_start_action(self, action, param):
         """Handler for start timer action."""
