@@ -182,7 +182,9 @@ class TeaTimerApp(Gtk.Application):
 
             # Row 2: Font size controls
             self.decrease_font_button = Gtk.Button(label="A-")
+            self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.increase_font_button = Gtk.Button(label="A+")
+            self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             grid.attach(self.decrease_font_button, 0, 2, 1, 1)
             grid.attach(self.increase_font_button, 1, 2, 1, 1)
 
