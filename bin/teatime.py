@@ -71,6 +71,9 @@ class TeaTimerApp(Gtk.Application):
         # Set up keyboard shortcuts
         self._setup_actions()
         
+        # Initialize mini-mode (photosensitive version - no visual effects)
+        self.mini_mode = False
+        
         # Apply initial font scaling
         self._apply_font_size()
 
@@ -109,11 +112,7 @@ class TeaTimerApp(Gtk.Application):
             about_menu.append(about_item)
             about_menu.show_all()
 
-            # Add an accelerator for the statistics menu item.
-            accel_group = Gtk.AccelGroup()
-            self.window.add_accel_group(accel_group)
-            stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-
+            
 
             # Create a menu button and add it to the header bar
             menu_button = Gtk.MenuButton(popup=about_menu)
@@ -123,6 +122,8 @@ class TeaTimerApp(Gtk.Application):
 
             # Create main container
             main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+            
+            # Accelerators are handled via application actions; no need to bind directly to buttons
             main_box.set_margin_top(20)
             main_box.set_margin_bottom(20)
             main_box.set_margin_start(20) # Use modern property for left margin
@@ -170,14 +171,18 @@ class TeaTimerApp(Gtk.Application):
             # Row 1: Control buttons
             self.start_button = Gtk.Button(label="_Start Timer")
             self.start_button.set_use_underline(True)
+            self.start_button.connect("clicked", self.on_start_clicked)
             self.stop_button = Gtk.Button(label="_Stop Timer")
             self.stop_button.set_use_underline(True)
+            self.stop_button.connect("clicked", self.on_stop_clicked)
             grid.attach(self.start_button, 0, 1, 1, 1)
             grid.attach(self.stop_button, 1, 1, 1, 1)
 
             # Row 2: Font size controls
             self.decrease_font_button = Gtk.Button(label="A-")
+            self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.increase_font_button = Gtk.Button(label="A+")
+            self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             grid.attach(self.decrease_font_button, 0, 2, 1, 1)
             grid.attach(self.increase_font_button, 1, 2, 1, 1)
 
@@ -187,6 +192,13 @@ class TeaTimerApp(Gtk.Application):
             self.sound_toggle.set_active(self.sound_enabled)
             grid.attach(self.sound_toggle, 0, 3, 2, 1)
 
+            # Row 4: Mini-mode toggle (spans both columns)
+            self.mini_mode_toggle = Gtk.CheckButton(label="_Mini Mode")
+            self.mini_mode_toggle.set_use_underline(True)
+            self.mini_mode_toggle.set_active(self.mini_mode)
+            self.mini_mode_toggle.connect("toggled", self._on_mini_mode_toggled)
+            grid.attach(self.mini_mode_toggle, 0, 4, 2, 1)
+
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             presets_box.set_valign(Gtk.Align.CENTER)
@@ -195,6 +207,16 @@ class TeaTimerApp(Gtk.Application):
             presets_label = Gtk.Label(label="<span size='large'><b>Session Presets</b></span>")
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
+
+            preset_5_button = Gtk.Button(label="_5 Minutes")
+            preset_5_button.set_use_underline(True)
+            preset_5_button.connect("clicked", self.on_preset_clicked, 5)
+            presets_box.pack_start(preset_5_button, False, False, 0)
+
+            preset_10_button = Gtk.Button(label="_10 Minutes")
+            preset_10_button.set_use_underline(True)
+            preset_10_button.connect("clicked", self.on_preset_clicked, 10)
+            presets_box.pack_start(preset_10_button, False, False, 0)
 
             preset_45_button = Gtk.Button(label="_45 Minutes")
             preset_45_button.set_use_underline(True)
@@ -207,27 +229,11 @@ class TeaTimerApp(Gtk.Application):
             presets_box.pack_start(preset_1_hour_button, False, False, 0)
 
             self.window.add(main_box)
-
-            # Connect signals
-            self.start_button.connect("clicked", self.on_start_clicked)
-            self.stop_button.connect("clicked", self.on_stop_clicked)
-            self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
-            self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
-            self.sound_toggle.connect("toggled", self.on_sound_toggled)
-
-            # Add the single CSS provider to the screen. We will update this provider
-            # later instead of adding new ones.
-            screen = Gdk.Screen.get_default()
-            if screen:
-                Gtk.StyleContext.add_provider_for_screen(
-                    screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-            else:
-                print("Warning: No default screen found, CSS styling may not apply correctly.")
-
             
+            # Set GTK 3 accessibility properties (after all widgets are created)
+            self._set_accessibility_properties()
 
-            self.window.show_all()
+        self.window.show_all()
 
     def _on_window_destroy(self, widget):
         """Called when the main window is closed."""
@@ -327,6 +333,7 @@ class TeaTimerApp(Gtk.Application):
         # Immediately update the display with the new time
         self._update_timer_display()
         # Use GLib.PRIORITY_DEFAULT instead of default priority to ensure consistent updates
+        # Update every 5 seconds (5000ms) for the photosensitive version
         self.timer_id = GLib.timeout_add(5000, self._update_timer_display, priority=GLib.PRIORITY_DEFAULT)
 
         self.start_button.set_sensitive(False)
@@ -539,17 +546,26 @@ class TeaTimerApp(Gtk.Application):
         
         # Increase font size action
         action_increase_font = Gio.SimpleAction.new("increase_font", None)
-        action_increase_font.connect("activate", self._on_increase_font_action)
+        action_increase_font.connect("activate", self.on_increase_font_clicked)
         self.add_action(action_increase_font)
-        self.set_accels_for_action("app.increase_font", ["<Primary>plus", "<Primary>equal"])
+        self.set_accels_for_action("app.increase_font", ["<Ctrl>plus", "<Ctrl>equal", "<Ctrl>KP_Add"])
         
         # Decrease font size action
         action_decrease_font = Gio.SimpleAction.new("decrease_font", None)
-        action_decrease_font.connect("activate", self._on_decrease_font_action)
+        action_decrease_font.connect("activate", self.on_decrease_font_clicked)
         self.add_action(action_decrease_font)
-        self.set_accels_for_action("app.decrease_font", ["<Primary>minus"])
+        self.set_accels_for_action("app.decrease_font", ["<Ctrl>minus", "<Ctrl>KP_Subtract"])
+        
+        # Toggle mini-mode action (photosensitive version - no visual effects)
+        action_toggle_mini_mode = Gio.SimpleAction.new("toggle_mini_mode", None)
+        action_toggle_mini_mode.connect("activate", self._on_toggle_mini_mode_action)
+        self.add_action(action_toggle_mini_mode)
+        self.set_accels_for_action("app.toggle_mini_mode", ["<Primary>d"])
+
 
     # --- Action Handlers ---
+
+
     def _on_start_action(self, action, param):
         """Handler for start timer action."""
         self.on_start_clicked(None)
@@ -562,13 +578,12 @@ class TeaTimerApp(Gtk.Application):
         """Handler for toggle sound action."""
         self.sound_toggle.set_active(not self.sound_toggle.get_active())
         
-    def _on_increase_font_action(self, action, param):
-        """Handler for increase font size action."""
-        self.on_increase_font_clicked(None)
-        
-    def _on_decrease_font_action(self, action, param):
-        """Handler for decrease font size action."""
-        self.on_decrease_font_clicked(None)
+    def _on_toggle_mini_mode_action(self, action, param):
+        """Handler for toggle mini-mode action."""
+        self.mini_mode = not self.mini_mode
+        # Update the UI toggle button to match the new state
+        self.mini_mode_toggle.set_active(self.mini_mode)
+        self._apply_mini_mode()
 
     # --- Signal Handlers ---
     def on_start_clicked(self, widget):
@@ -577,12 +592,12 @@ class TeaTimerApp(Gtk.Application):
     def on_stop_clicked(self, widget):
         self._stop_timer()
 
-    def on_increase_font_clicked(self, widget):
+    def on_increase_font_clicked(self, *args):
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor += FONT_SCALE_INCREMENT
             self._apply_font_size()
 
-    def on_decrease_font_clicked(self, widget):
+    def on_decrease_font_clicked(self, *args):
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor -= FONT_SCALE_INCREMENT
             self._apply_font_size()
@@ -643,9 +658,13 @@ class TeaTimerApp(Gtk.Application):
                         rows = list(reader)
                         # Display in reverse order (most recent first)
                         for row in reversed(rows):
-                            list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                            # Check if required fields exist
+                            if 'timestamp' in row and 'duration_minutes' in row:
+                                list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                            else:
+                                pass  # Skip invalid rows silently
                 except (IOError, KeyError, ValueError) as e:
-                    print(f"Error loading stats file: {e}")
+                    pass  # Silently handle errors for cleaner UI
 
             tree_view = Gtk.TreeView(model=list_store)
 
@@ -713,7 +732,11 @@ class TeaTimerApp(Gtk.Application):
                     rows = list(reader)
                     # Display in reverse order (most recent first)
                     for row in reversed(rows):
-                        self.stats_list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                        # Check if required fields exist
+                        if 'timestamp' in row and 'duration_minutes' in row:
+                            self.stats_list_store.append([row['timestamp'], int(row['duration_minutes'])])
+                        else:
+                            print(f"Skipping invalid row during refresh: {row}")
             except (IOError, KeyError, ValueError) as e:
                 print(f"Error loading stats file: {e}")
 
@@ -836,12 +859,39 @@ class TeaTimerApp(Gtk.Application):
                     error_dialog.run()
                     error_dialog.destroy()
 
+    def _on_mini_mode_toggled(self, widget):
+        """Handler for mini-mode toggle button."""
+        self.mini_mode = self.mini_mode_toggle.get_active()
+        self._apply_mini_mode()
+        
+    def _apply_mini_mode(self):
+        """Apply mini-mode UI changes (photosensitive version - no visual effects)."""
+        if not self.window:
+            return
+            
+        if self.mini_mode:
+            # Apply mini-mode - compact window size
+            self.window.set_default_size(200, 100)
+            self.window.resize(200, 100)
+        else:
+            # Apply normal mode
+            self.window.set_default_size(300, 200)
+            self.window.resize(300, 200)
+
+    def _set_accessibility_properties(self):
+        """
+        Sets GTK 3 accessibility properties for better screen reader support.
+        """
+        # Removed set_role calls as they don't exist on these widgets
+        pass
+
     def on_quit(self, action, param):
         """Handles the 'quit' action."""
         self.window.destroy()
 
 
 def main():
+    """Main entry point for the application."""
     parser = argparse.ArgumentParser(description="Accessible Tea Timer")
     parser.add_argument("-d", "--duration", type=int, default=5,
                         help="Initial timer duration in minutes (default: 5)")

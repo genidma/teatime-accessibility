@@ -4,9 +4,14 @@ A simple, accessible Ubuntu timer with no animations, designed for photosensitiv
 
 ## Features
 
-- **Timer:** Set custom break intervals to improve focus and productivity.
-- **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json` (uses CSV format internally despite the .json extension). This data is pulled into the built-in simple Statistics Engine (accessible from the dialog menu).
-- **Custom Application Icon:** A cheerful icon to make the app easy to recognize.
+- **Timer:** Set custom break intervals for better productivity.
+- **Accessibility Integration:** Works seamlessly with screen readers and other assistive technologies.
+- **Usage Statistics:** Tracks your session times and provides insights into your computer usage habits. The statistics are stored in `~/.local/share/teatime_stats.json` (CSV format despite the .json extension).
+- **Custom Application Icon:** A fun icon for better recognition on your computer. Something that brightens your day, just a little bit.
+
+# Accessible Tea Timer - Photosensitive Safe Version
+
+This is the photosensitive safe version of the TeaTime Accessibility application. This version has been specifically modified to remove all visual effects that could potentially trigger seizures in people with photosensitive epilepsy.
 
 ## Key Differences from Original Version
 
@@ -23,7 +28,9 @@ A simple, accessible Ubuntu timer with no animations, designed for photosensitiv
 - **Refresh Capability**: Update statistics without reopening the window
 
 ### Timer Improvements
-- **5-second Update Interval**: Changed from 1-second to 5-second update intervals. Flows better.
+- **5-second Update Interval**: Changed from 1-second to 5-second update intervals to reduce system resource usage
+- **Immediate Display Updates**: Timer display now updates immediately when changing timers or stopping
+- **Accurate Duration Recording**: Fixed statistics to correctly record actual timer durations
 
 ### Sound System Improvements
 - **Custom Bell Sound**: Plays Simion’s bell as the main notification bell
@@ -38,8 +45,8 @@ A simple, accessible Ubuntu timer with no animations, designed for photosensitiv
 ## Accessibility Features
 
 ### Photosensitive Epilepsy Safe
-* Unlike the main version of the app where I have tons of visual effects e.t.c, this version is safe for users with photosensitive epilepsy
-* As shared above, there are no abrupt changes or transitions. No color-changing, or animated visual effects
+* This version is completely safe for users with photosensitive epilepsy
+* No flashing, color-changing, or animated visual effects
 * Static interface with consistent appearance throughout operation
 
 ### Visual Accessibility
@@ -52,7 +59,6 @@ A simple, accessible Ubuntu timer with no animations, designed for photosensitiv
 - **Keyboard Shortcuts**:
   - `Ctrl+S`: Start timer
   - `Ctrl+T`: Stop timer
-  - `Ctrl+I`: Show Statistics window
   - `Ctrl+M`: Toggle sound on/off
   - `Ctrl++`: Increase font size
   - `Ctrl+-`: Decrease font size
@@ -72,6 +78,7 @@ A simple, accessible Ubuntu timer with no animations, designed for photosensitiv
 ### Audio Accessibility
 - **Custom Sound Notifications**: Audio feedback (Simion's bell 🔔) at the completion of each session.
 - **Multiple Sound Fallbacks**: If the custom sound cannot be played, the application tries multiple alternative methods.
+- **System Notification Compatibility**: Works with various system sound configurations.
 
 ## Installation
 
@@ -82,14 +89,14 @@ Before running the install script, please install the required system dependenci
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 ```
 
-For better compatibility, it is recommended to install the system-wide PyGObject packages. See below. Also, as of right now and with the existing implementation, there is not a way around installing system wide dependencies. See #44 for more information.
+For better compatibility, we also recommend installing the system-wide PyGObject packages:
 
 ```bash
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 ```
 
 ### Automatic Installation (Recommended)
-First, [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the repository to a location of your choice, then run the install script:
+First, clone the repository to a location of your choice, then run the install script:
 
 ```bash
 git clone <repository-url>
@@ -98,12 +105,11 @@ cd teatime-accessibility
 ```
 
 This script will:
-1. Create a virtual environment with access to system packages
+1. Create a virtual environment with access to system packages (if one doesn't already exist)
 2. Install all required dependencies
-3. Offer the option to create a desktop icon for the application
+3. Will provide you with an option and if you would like for an icon on the desktop to be created for this application
 
-Note 01: You may need to make the script executable first: chmod u+x install.sh
-
+Note 01: You might have to make the install.sh script itself executable with: chmod u+x install.sh (on your terminal)
 Note 02: The install script will also prompt you to install system dependencies if needed.
 
 ### Manual Installation
@@ -120,27 +126,7 @@ If you prefer to install manually:
    pip install -r requirements.txt
    ```
 
-## Application Components and Locations
-
-Whether you use automatic or manual installation, the application consists of the following components:
-
-1. **Virtual Environment**: 
-   - Location: Inside the project directory as `teatime-venv/`
-   - This is a local virtual environment that stays within your project folder
-
-2. **Application Files**:
-   - All application files remain in your project directory (wherever you cloned the repository)
-   - This includes the main Python script, assets, and configuration files
-
-3. **User Data**:
-   - Configuration: `~/.config/teatime/settings.json`
-   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format internally despite the .json extension)
-
-4. **Desktop Integration** (optional):
-   - Desktop Entry: `~/.local/share/applications/teatime-accessibility.desktop`
-   - Desktop Shortcut: `~/Desktop/teatime-accessibility.desktop` (if created)
-   
-   You can create these manually with:
+3. Create desktop entry (optional):
    ```bash
    mkdir -p ~/.local/share/applications
    cp teatime-accessibility.desktop ~/.local/share/applications/
@@ -150,6 +136,30 @@ Whether you use automatic or manual installation, the application consists of th
    ```bash
    cp teatime-accessibility.desktop ~/Desktop/
    ```
+
+## Installation Locations
+
+When you run the install script, here's exactly where each component is installed:
+
+1. **Virtual Environment**: 
+   - Location: Inside the project directory as `teatime-venv/`
+   - This is a local virtual environment that stays within your project folder
+
+2. **Desktop Entry**:
+   - Location: `~/.local/share/applications/teatime-accessibility.desktop`
+   - This allows the app to appear in your system's application menu under "Utilities"
+
+3. **Desktop Shortcut** (if you choose to create one):
+   - Location: On your desktop (e.g., `~/Desktop/teatime-accessibility.desktop`)
+   - This provides a direct shortcut icon on your desktop
+
+4. **Application Files**:
+   - All application files remain in your project directory (wherever you cloned the repository)
+   - This includes the main Python script, assets, and configuration files
+
+5. **User Data**:
+   - Configuration: `~/.config/teatime/settings.json`
+   - Statistics: `~/.local/share/teatime_stats.json` (Note: This file uses CSV format despite the .json extension)
 
 Note: If you wish to uninstall the app (so that you can reinstall a newer version. Then you might want to save these files first, to another location. So that you can reimport the files back for the newer version of the app)   
 
