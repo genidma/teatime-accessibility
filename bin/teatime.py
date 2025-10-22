@@ -173,8 +173,10 @@ class TeaTimerApp(Gtk.Application):
             # Row 1: Control buttons
             self.start_button = Gtk.Button(label="_Start Timer")
             self.start_button.set_use_underline(True)
+            self.start_button.connect("clicked", self.on_start_clicked)
             self.stop_button = Gtk.Button(label="_Stop Timer")
             self.stop_button.set_use_underline(True)
+            self.stop_button.connect("clicked", self.on_stop_clicked)
             grid.attach(self.start_button, 0, 1, 1, 1)
             grid.attach(self.stop_button, 1, 1, 1, 1)
 
@@ -308,8 +310,8 @@ class TeaTimerApp(Gtk.Application):
 
         self.time_label.set_markup(f"<span font_desc='Sans Bold {int(font_size_px)}'>{formatted_time}</span>")
 
-        # Decrement by 1 second since we update every second
-        self.remaining -= 1
+        # Decrement by 5 seconds since we update every 5 seconds
+        self.remaining -= 5
         
         # Continue calling this function
         return True
@@ -331,8 +333,8 @@ class TeaTimerApp(Gtk.Application):
         # Immediately update the display with the new time
         self._update_timer_display()
         # Use GLib.PRIORITY_DEFAULT instead of default priority to ensure consistent updates
-        # Update every second (1000ms) instead of every 5 seconds
-        self.timer_id = GLib.timeout_add(1000, self._update_timer_display, priority=GLib.PRIORITY_DEFAULT)
+        # Update every 5 seconds (5000ms) for the photosensitive version
+        self.timer_id = GLib.timeout_add(5000, self._update_timer_display, priority=GLib.PRIORITY_DEFAULT)
 
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
