@@ -116,7 +116,22 @@ class TeaTimerApp(Gtk.Application):
             accel_group = Gtk.AccelGroup()
             self.window.add_accel_group(accel_group)
             stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-
+            
+            # Add accelerators for font size and settings
+            # Increase font size: Ctrl++
+            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("plus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            # Alternative for Ctrl+=
+            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("equal"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            
+            # Decrease font size: Ctrl+-
+            self.decrease_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("minus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            
+            # Settings dialog: Ctrl+,
+            # Since we don't have a settings dialog, we'll just print a message
+            # We need to create a dummy widget to attach the accelerator to
+            dummy_settings_widget = Gtk.Button()
+            dummy_settings_widget.connect("clicked", self._on_settings_activated)
+            dummy_settings_widget.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("comma"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
 
             # Create a menu button and add it to the header bar
             menu_button = Gtk.MenuButton(popup=about_menu)
@@ -550,13 +565,13 @@ class TeaTimerApp(Gtk.Application):
         action_increase_font = Gio.SimpleAction.new("increase_font", None)
         action_increase_font.connect("activate", self.on_increase_font_clicked)
         self.add_action(action_increase_font)
-        self.set_accels_for_action("app.increase_font", ["<Primary>plus", "<Primary>equal", "plus", "equal"])
+        self.set_accels_for_action("app.increase_font", ["<Ctrl>plus", "<Ctrl>equal", "<Ctrl>KP_Add"])
         
         # Decrease font size action
         action_decrease_font = Gio.SimpleAction.new("decrease_font", None)
         action_decrease_font.connect("activate", self.on_decrease_font_clicked)
         self.add_action(action_decrease_font)
-        self.set_accels_for_action("app.decrease_font", ["<Primary>minus", "minus"])
+        self.set_accels_for_action("app.decrease_font", ["<Ctrl>minus", "<Ctrl>KP_Subtract"])
         
         # Toggle mini-mode action (photosensitive version - no visual effects)
         action_toggle_mini_mode = Gio.SimpleAction.new("toggle_mini_mode", None)
@@ -564,7 +579,27 @@ class TeaTimerApp(Gtk.Application):
         self.add_action(action_toggle_mini_mode)
         self.set_accels_for_action("app.toggle_mini_mode", ["<Primary>d"])
 
+        # Settings dialog action (placeholder)
+        action_settings = Gio.SimpleAction.new("settings", None)
+        action_settings.connect("activate", self._on_settings_activated)
+        self.add_action(action_settings)
+        self.set_accels_for_action("app.settings", ["<Ctrl>comma"])
+
     # --- Action Handlers ---
+    def _on_settings_activated(self, widget):
+        """Handler for settings action."""
+        print("Settings action activated - no settings dialog implemented")
+        # Show a message dialog to inform the user
+        dialog = Gtk.MessageDialog(
+            transient_for=self.window,
+            modal=True,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text="Settings dialog not implemented yet."
+        )
+        dialog.run()
+        dialog.destroy()
+
     def _on_start_action(self, action, param):
         """Handler for start timer action."""
         self.on_start_clicked(None)
