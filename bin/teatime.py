@@ -578,7 +578,7 @@ class TeaTimerApp(Gtk.Application):
         self.set_accels_for_action("app.settings", ["<Ctrl>comma"])
 
     # --- Action Handlers ---
-    def _on_settings_activated(self, accel_group, window, keyval, modifier):
+    def _on_settings_activated(self, action, param):
         """Handler for settings action."""
         print("Settings action activated - no settings dialog implemented")
         # Show a message dialog to inform the user
@@ -688,12 +688,12 @@ class TeaTimerApp(Gtk.Application):
     def on_stop_clicked(self, widget):
         self._stop_timer()
 
-    def on_increase_font_clicked(self, widget):
+    def on_increase_font_clicked(self, *args):
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor += FONT_SCALE_INCREMENT
             self._apply_font_size()
 
-    def on_decrease_font_clicked(self, widget):
+    def on_decrease_font_clicked(self, *args):
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor -= FONT_SCALE_INCREMENT
             self._apply_font_size()
