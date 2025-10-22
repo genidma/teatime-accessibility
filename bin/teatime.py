@@ -112,10 +112,6 @@ class TeaTimerApp(Gtk.Application):
             about_menu.append(about_item)
             about_menu.show_all()
 
-            # Add an accelerator for the statistics menu item.
-            accel_group = Gtk.AccelGroup()
-            self.window.add_accel_group(accel_group)
-            stats_item.add_accelerator("activate", accel_group, Gdk.keyval_from_name("i"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
             
 
             # Create a menu button and add it to the header bar
@@ -127,13 +123,16 @@ class TeaTimerApp(Gtk.Application):
             # Create main container
             main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             
-            # Add accelerators for font size
-            # Increase font size: Ctrl++ and Ctrl+=
-            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("plus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("equal"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            # Create a menu button and add it to the header bar
+            menu_button = Gtk.MenuButton(popup=about_menu)
+            icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
+            menu_button.add(icon)
+            header_bar.pack_end(menu_button)
+
+            # Create main container
+            main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             
-            # Decrease font size: Ctrl+-
-            self.decrease_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("minus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
+            # Accelerators are handled via application actions; no need to bind directly to buttons
             main_box.set_margin_top(20)
             main_box.set_margin_bottom(20)
             main_box.set_margin_start(20) # Use modern property for left margin
