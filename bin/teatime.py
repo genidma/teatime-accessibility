@@ -125,8 +125,6 @@ class TeaTimerApp(Gtk.Application):
             # Decrease font size: Ctrl+-
             self.decrease_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("minus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
             
-            # Add accelerator for settings: Ctrl+,
-            accel_group.connect(Gdk.keyval_from_name("comma"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE, self._on_settings_activated)
 
             # Create a menu button and add it to the header bar
             menu_button = Gtk.MenuButton(popup=about_menu)
@@ -197,15 +195,6 @@ class TeaTimerApp(Gtk.Application):
             self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
             grid.attach(self.decrease_font_button, 0, 2, 1, 1)
             grid.attach(self.increase_font_button, 1, 2, 1, 1)
-
-            # Add accelerators for font size
-            # Increase font size: Ctrl++
-            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("plus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-            # Alternative for Ctrl+=
-            self.increase_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("equal"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
-            
-            # Decrease font size: Ctrl+-
-            self.decrease_font_button.add_accelerator("clicked", accel_group, Gdk.keyval_from_name("minus"), Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE)
 
             # Row 3: Sound toggle (spans both columns)
             self.sound_toggle = Gtk.CheckButton(label="E_nable Sound")
