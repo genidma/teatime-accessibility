@@ -550,13 +550,13 @@ class TeaTimerApp(Gtk.Application):
         action_increase_font = Gio.SimpleAction.new("increase_font", None)
         action_increase_font.connect("activate", self.on_increase_font_clicked)
         self.add_action(action_increase_font)
-        self.set_accels_for_action("app.increase_font", ["<Primary>plus", "<Primary>equal"])
+        self.set_accels_for_action("app.increase_font", ["<Primary>plus", "<Primary>equal", "plus", "equal"])
         
         # Decrease font size action
         action_decrease_font = Gio.SimpleAction.new("decrease_font", None)
         action_decrease_font.connect("activate", self.on_decrease_font_clicked)
         self.add_action(action_decrease_font)
-        self.set_accels_for_action("app.decrease_font", ["<Primary>minus"])
+        self.set_accels_for_action("app.decrease_font", ["<Primary>minus", "minus"])
         
         # Toggle mini-mode action (photosensitive version - no visual effects)
         action_toggle_mini_mode = Gio.SimpleAction.new("toggle_mini_mode", None)
