@@ -503,7 +503,7 @@ class TeaTimerApp(Gtk.Application):
         
         # Define available skins
         skins = [
-            ("default", "Default"),
+            ("default", "Default - No Skin"),
             ("lava", "Lava Lamp")
         ]
         
