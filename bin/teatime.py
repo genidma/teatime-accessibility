@@ -572,8 +572,10 @@ class TeaTimerApp(Gtk.Application):
         """Handler for toggle mini-mode action."""
         self.mini_mode = not self.mini_mode
         # Update the UI toggle button to match the new state
-        self.mini_mode_toggle.set_active(self.mini_mode)
+        if hasattr(self, 'mini_mode_toggle'):
+            self.mini_mode_toggle.set_active(self.mini_mode)
         self._apply_mini_mode()
+        self._save_config()
 
     # --- Signal Handlers ---
     def on_start_clicked(self, widget):
@@ -867,6 +869,9 @@ class TeaTimerApp(Gtk.Application):
             # Apply normal mode
             self.window.set_default_size(300, 200)
             self.window.resize(300, 200)
+            
+        # Show all widgets after applying mini-mode
+        self.window.show_all()
 
     def _set_accessibility_properties(self):
         """
