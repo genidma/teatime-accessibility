@@ -113,12 +113,12 @@ A custom duration can be specified via the GUI and also via the command line. As
 To do this on the command line:
 
 1. Open a [terminal](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) and navigate to the project directory
-2. In the example directly below, a 5 minute range has been specified for the duration. You still have to click on Start manually: 
+2. In the example directly below, a 45 minute duration has been specified for the duration. You still have to click on Start manually: 
 
 ```bash
 # Range for duration (1-999 minutes)
 # Example below
-./teatime-accessible.sh --duration 5
+./teatime-accessible.sh --duration 45
 ```
 
 When you launch the application with the `--duration` parameter, the specified value will be pre-filled in the minutes input field within the GUI. And you can choose any value specified in the 'range' above

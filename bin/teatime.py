@@ -208,16 +208,6 @@ class TeaTimerApp(Gtk.Application):
             presets_label.set_use_markup(True)
             presets_box.pack_start(presets_label, False, False, 0)
 
-            preset_5_button = Gtk.Button(label="_5 Minutes")
-            preset_5_button.set_use_underline(True)
-            preset_5_button.connect("clicked", self.on_preset_clicked, 5)
-            presets_box.pack_start(preset_5_button, False, False, 0)
-
-            preset_10_button = Gtk.Button(label="_10 Minutes")
-            preset_10_button.set_use_underline(True)
-            preset_10_button.connect("clicked", self.on_preset_clicked, 10)
-            presets_box.pack_start(preset_10_button, False, False, 0)
-
             preset_45_button = Gtk.Button(label="_45 Minutes")
             preset_45_button.set_use_underline(True)
             preset_45_button.connect("clicked", self.on_preset_clicked, 45)
@@ -893,8 +883,8 @@ class TeaTimerApp(Gtk.Application):
 def main():
     """Main entry point for the application."""
     parser = argparse.ArgumentParser(description="Accessible Tea Timer")
-    parser.add_argument("-d", "--duration", type=int, default=5,
-                        help="Initial timer duration in minutes (default: 5)")
+    parser.add_argument("-d", "--duration", type=int, default=45,
+                        help="Initial timer duration in minutes (default: 45)")
     args = parser.parse_args()
 
     app = TeaTimerApp(duration=args.duration)
