@@ -910,21 +910,29 @@ class TeaTimerApp(Gtk.Application):
 
     def on_increase_font_clicked(self, *args):
         """Increases the font size."""
+        print(f"Attempting to increase font size. Current: {self.font_scale_factor:.1f}, Max: {MAX_FONT_SCALE:.1f}")
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor = min(MAX_FONT_SCALE, self.font_scale_factor + FONT_SCALE_INCREMENT)
+            print(f"New font scale factor: {self.font_scale_factor:.1f}")
             self._apply_font_size()
             self._save_config()
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
+        else:
+            print("Font size is already at maximum")
 
     def on_decrease_font_clicked(self, *args):
         """Decreases the font size."""
+        print(f"Attempting to decrease font size. Current: {self.font_scale_factor:.1f}, Min: {MIN_FONT_SCALE:.1f}")
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor = max(MIN_FONT_SCALE, self.font_scale_factor - FONT_SCALE_INCREMENT)
+            print(f"New font scale factor: {self.font_scale_factor:.1f}")
             self._apply_font_size()
             self._save_config()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
+        else:
+            print("Font size is already at minimum")
 
     def on_toggle_sound_activated(self, *args):
         """Handles the activation of the toggle-sound action, and toggles the sound_toggle button."""
