@@ -319,7 +319,7 @@ class TeaTimerApp(Gtk.Application):
                         font-size: 14px;
                         padding: 2px;
                     }
-                    label {
+                    label:not(.time-display) {
                         font-size: 10px;
                     }
                 """)
@@ -329,17 +329,6 @@ class TeaTimerApp(Gtk.Application):
                     Gtk.StyleContext.add_provider_for_screen(
                         screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 2
                     )
-                
-                # Make the time label 300% bigger in mini-mode
-                time_css_provider = Gtk.CssProvider()
-                time_css_provider.load_from_data(b"""
-                    label.time-display {
-                        font-size: 300%;
-                    }
-                """)
-                self.time_label.get_style_context().add_provider(
-                    time_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
-                )
                 
                 # Adjust main box margins
                 self.main_box.set_margin_top(10)
