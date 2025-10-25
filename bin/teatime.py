@@ -460,6 +460,9 @@ class TeaTimerApp(Gtk.Application):
         if not self.window or not hasattr(self, 'pre_timer_mode'):
             return
             
+        # Restore the title bar
+        self.window.set_decorated(True)
+            
         # Remove nano mode CSS
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(b"""
