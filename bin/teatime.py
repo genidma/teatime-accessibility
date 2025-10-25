@@ -420,6 +420,20 @@ class TeaTimerApp(Gtk.Application):
                 font-size: {timer_font_percentage}%;
                 margin: 0;
                 padding: 0;
+                color: #ffffff;
+                text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            }}
+            
+            /* Make window background transparent */
+            window {{
+                background-color: rgba(0, 0, 0, 0.01);
+                border: none;
+                box-shadow: none;
+            }}
+            
+            /* Style the main box to be transparent */
+            box {{
+                background-color: transparent;
             }}
         """.encode())
         screen = Gdk.Screen.get_default()
@@ -427,6 +441,12 @@ class TeaTimerApp(Gtk.Application):
             Gtk.StyleContext.add_provider_for_screen(
                 screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
             )
+            
+        # Make the window transparent (requires setting the visual)
+        visual = self.window.get_screen().get_rgba_visual()
+        if visual and self.window.get_screen().is_composited():
+            self.window.set_visual(visual)
+            self.window.set_app_paintable(True)
 
     def _restore_pre_timer_mode(self):
         """Restore the mode that was active before the timer started."""
@@ -441,6 +461,11 @@ class TeaTimerApp(Gtk.Application):
             Gtk.StyleContext.add_provider_for_screen(
                 screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
             )
+            
+        # Restore normal window visuals
+        visual = self.window.get_screen().get_system_visual()
+        self.window.set_visual(visual)
+        self.window.set_app_paintable(False)
             
         # Show all UI elements that were hidden during nano mode
         if hasattr(self, 'content_box'):
