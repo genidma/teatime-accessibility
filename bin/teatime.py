@@ -238,8 +238,6 @@ class TeaTimerApp(Gtk.Application):
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
 
-            self.window.add(main_box)
-
             # Add the single CSS provider to the screen. We will update this provider
             # later instead of adding new ones.
             screen = Gdk.Screen.get_default()
@@ -1949,6 +1947,44 @@ class StatisticsWindow(Gtk.Window):
             preset_1_hour_button.set_use_underline(True)
             preset_1_hour_button.connect("clicked", self.on_preset_clicked, 60)
             presets_box.pack_start(preset_1_hour_button, False, False, 0)
+
+            # Add the single CSS provider to the screen. We will update this provider
+            # later instead of adding new ones.
+            screen = Gdk.Screen.get_default()
+            if screen:
+                Gtk.StyleContext.add_provider_for_screen(
+                    screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+            else:
+                print("Warning: No default screen found to apply CSS.")
+
+            # Initial state for buttons
+            self.stop_button.set_sensitive(False)
+
+            # Apply initial font size
+            self._apply_font_size()
+
+            # Add a style class to the time label for specific targeting
+            self.time_label.get_style_context().add_class("time-display")
+
+            # Set GTK 3 accessibility properties (after all widgets are created)
+            self._set_accessibility_properties()
+
+        self.window.show_all()
+        
+        # Apply mini-mode settings
+        self._apply_mini_mode()
+        
+        # Apply the selected skin
+        self._apply_skin()
+        
+        # Start the rainbow timer for background glow effect
+        self._start_rainbow_timer()
+        
+        # Automatically start the timer if auto_start flag is set
+        if self.auto_start:
+            # Use idle_add to ensure the UI is fully initialized before starting
+            GLib.idle_add(self._auto_start_timer)
 
             self.window.add(main_box)
 
