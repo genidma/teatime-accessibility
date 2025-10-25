@@ -66,6 +66,8 @@ class TeaTimerApp(Gtk.Application):
         self.sprite_timer_id = None
         self.auto_start = auto_start  # Flag to indicate if timer should start automatically
         self.mini_mode = False  # Mini-mode flag
+        self.nano_mode = False  # Nano-mode flag (active only during timer)
+        self.pre_timer_mode = None  # Store the mode before timer starts
         self._load_config()  # Load settings from file
 
         # Set up keyboard shortcuts
@@ -198,6 +200,13 @@ class TeaTimerApp(Gtk.Application):
             self.mini_mode_toggle.set_active(getattr(self, 'mini_mode', False))
             self.mini_mode_toggle.connect("toggled", self.on_mini_mode_toggled)
             grid.attach(self.mini_mode_toggle, 0, 4, 2, 1)
+
+            # Row 5: Nano-mode toggle (spans both columns)
+            self.nano_mode_toggle = Gtk.CheckButton(label="_Nano Mode (auto-activate during timer)")
+            self.nano_mode_toggle.set_use_underline(True)
+            self.nano_mode_toggle.set_active(getattr(self, 'nano_mode', False))
+            self.nano_mode_toggle.connect("toggled", self.on_nano_mode_toggled)
+            grid.attach(self.nano_mode_toggle, 0, 5, 2, 1)
 
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -381,6 +390,64 @@ class TeaTimerApp(Gtk.Application):
         else:
             print("Some UI elements are missing, skipping mini-mode application")
 
+    def _activate_nano_mode(self):
+        """Activate nano mode - hide all controls except timer display."""
+        if not self.window:
+            return
+            
+        # Apply nano-mode - ultra compact window size
+        self.window.set_default_size(150, 80)
+        self.window.resize(150, 80)
+        
+        # Hide all elements except the time label
+        if hasattr(self, 'content_box'):
+            self.content_box.set_visible(False)
+        
+        if hasattr(self, 'control_grid'):
+            self.control_grid.set_visible(False)
+            
+        # Make sure time label is visible and centered
+        self.time_label.set_halign(Gtk.Align.CENTER)
+        self.time_label.set_valign(Gtk.Align.CENTER)
+        
+        # Add CSS to make the timer even more prominent
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(b"""
+            .time-display {
+                font-size: 200%;
+                margin: 0;
+                padding: 0;
+            }
+        """)
+        screen = Gdk.Screen.get_default()
+        if screen:
+            Gtk.StyleContext.add_provider_for_screen(
+                screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
+            )
+
+    def _restore_pre_timer_mode(self):
+        """Restore the mode that was active before the timer started."""
+        if not self.window or not self.pre_timer_mode:
+            return
+            
+        # Remove nano mode CSS
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(b"")
+        screen = Gdk.Screen.get_default()
+        if screen:
+            Gtk.StyleContext.add_provider_for_screen(
+                screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
+            )
+            
+        if self.pre_timer_mode == 'mini':
+            # Restore mini mode
+            self.mini_mode = True
+            self._apply_mini_mode()
+        else:
+            # Restore normal mode
+            self.mini_mode = False
+            self._apply_mini_mode()
+
     def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
         # This signal reliably fires when a new child widget gets focus.
@@ -407,6 +474,11 @@ class TeaTimerApp(Gtk.Application):
         """Callback for mini-mode toggle."""
         self.mini_mode = self.mini_mode_toggle.get_active()
         self._apply_mini_mode()
+        self._save_config()
+
+    def on_nano_mode_toggled(self, widget):
+        """Callback for nano-mode toggle."""
+        self.nano_mode = self.nano_mode_toggle.get_active()
         self._save_config()
 
     def on_toggle_mini_mode_activated(self, action, parameter):
@@ -507,6 +579,7 @@ class TeaTimerApp(Gtk.Application):
         
         grid.attach(self.skin_combo, 1, 1, 1, 1)
         
+        
         # Show the dialog
         dialog.show_all()
         
@@ -525,6 +598,10 @@ class TeaTimerApp(Gtk.Application):
             if selected_skin:
                 self.preferred_skin = selected_skin
                 print(f"Skin preference updated to: {selected_skin}")
+                
+            # Save nano mode preference
+            self.nano_mode = self.nano_mode_toggle.get_active()
+            print(f"Nano mode preference updated to: {self.nano_mode}")
                 
             self._save_config()
             
@@ -711,21 +788,31 @@ class TeaTimerApp(Gtk.Application):
                     self.preferred_skin = config.get("preferred_skin", "default")
                     # Load mini-mode preference
                     self.mini_mode = config.get("mini_mode", False)
+                    # Load nano-mode preference
+                    self.nano_mode = config.get("nano_mode", False)
+                    # Initialize nano mode tracking (not persisted)
+                    self.pre_timer_mode = None
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 print(f"Error decoding config file: {CONFIG_FILE}. Using defaults. Error: {e}")
                 self.preferred_animation = "puppy_animation"
                 self.preferred_skin = "default"
                 self.mini_mode = False
+                self.nano_mode = False
+                self.pre_timer_mode = None
             except Exception as e:
                 print(f"An unexpected error occurred while loading config: {e}. Using defaults.")
                 self.preferred_animation = "puppy_animation"
                 self.preferred_skin = "default"
                 self.mini_mode = False
+                self.nano_mode = False
+                self.pre_timer_mode = None
         else:
             # Default animation if no config file exists
             self.preferred_animation = "puppy_animation"
             self.preferred_skin = "default"
             self.mini_mode = False
+            self.nano_mode = False
+            self.pre_timer_mode = None
 
     def _save_config(self):
         """Saves the current configuration to the config file."""
@@ -737,7 +824,8 @@ class TeaTimerApp(Gtk.Application):
                 "last_duration": self.duration_spin.get_value_as_int(),
                 "preferred_animation": getattr(self, 'preferred_animation', 'test_animation'),
                 "preferred_skin": getattr(self, 'preferred_skin', 'default'),
-                "mini_mode": getattr(self, 'mini_mode', False)
+                "mini_mode": getattr(self, 'mini_mode', False),
+                "nano_mode": getattr(self, 'nano_mode', False)
             }
             CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             with open(CONFIG_FILE, 'w') as f:
@@ -954,6 +1042,13 @@ class TeaTimerApp(Gtk.Application):
         return GLib.SOURCE_CONTINUE
 
     def on_start_clicked(self, *args):
+        # Store the current mode before starting timer if nano mode is enabled
+        if getattr(self, 'nano_mode', False):
+            self.pre_timer_mode = 'mini' if self.mini_mode else 'normal'
+            
+            # Activate nano mode when timer starts
+            self._activate_nano_mode()
+        
         # Stop any previous rainbow effect
         self._stop_rainbow_timer()
         self.time_label.get_style_context().remove_class("rainbow-text")
@@ -995,6 +1090,10 @@ class TeaTimerApp(Gtk.Application):
         self.stop_timer()
         self.time_left = 0
         self.time_label.set_markup("<span>00:00</span>")
+        
+        # Restore the mode that was active before timer started
+        self._restore_pre_timer_mode()
+        
         self.start_button.set_sensitive(True)
         self.stop_button.set_sensitive(False)
         print("Timer stopped")
@@ -1036,6 +1135,9 @@ class TeaTimerApp(Gtk.Application):
             self.stop_timer()
             self.time_label.set_markup("<span>Session Complete</span>")
             
+            # Restore the mode that was active before timer started
+            self._restore_pre_timer_mode()
+            
             # Start the celebratory rainbow effect!
             self.time_label.get_style_context().add_class("rainbow-text")
             self._start_rainbow_timer()
@@ -1058,9 +1160,20 @@ class TeaTimerApp(Gtk.Application):
             
             self.start_button.set_sensitive(True)
             self.stop_button.set_sensitive(False)
+            
+            # Reset the time display after a delay to match the notification duration
+            GLib.timeout_add_seconds(5, self._reset_time_display)
+            
             print("Tea is ready!")
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
+
+    def _reset_time_display(self):
+        """Reset the time display after timer completion."""
+        self.time_label.set_markup("<span>00:00</span>")
+        self.time_label.get_style_context().remove_class("rainbow-text")
+        self._apply_font_size()  # Reset color
+        return GLib.SOURCE_REMOVE
 
     def _log_timer_completion(self):
         """Logs a completed timer session to the stats file."""
