@@ -1105,7 +1105,8 @@ class TeaTimerApp(Gtk.Application):
 
     def on_start_clicked(self, *args):
         # Store the current mode before starting timer if nano mode is enabled
-        if getattr(self, 'nano_mode', False):
+        # Only do this if we're not already in nano mode (i.e., when starting a fresh timer)
+        if getattr(self, 'nano_mode', False) and not hasattr(self, 'pre_timer_mode'):
             self.pre_timer_mode = 'mini' if self.mini_mode else 'normal'
             
             # Activate nano mode when timer starts
