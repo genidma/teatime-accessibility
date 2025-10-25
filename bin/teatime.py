@@ -401,6 +401,9 @@ class TeaTimerApp(Gtk.Application):
         self.window.set_default_size(150, 80)
         self.window.resize(150, 80)
         
+        # Hide the title bar in nano mode
+        self.window.set_decorated(False)
+        
         # Hide all elements except the time label
         if hasattr(self, 'content_box'):
             print(f"DEBUG: Hiding content_box, was visible: {self.content_box.get_visible()}")
@@ -1110,7 +1113,7 @@ class TeaTimerApp(Gtk.Application):
     def on_start_clicked(self, *args):
         # Store the current mode before starting timer if nano mode is enabled
         # Only do this if we're not already in nano mode (i.e., when starting a fresh timer)
-        if getattr(self, 'nano_mode', False) and not hasattr(self, 'pre_timer_mode'):
+        if getattr(self, 'nano_mode', False) and getattr(self, 'pre_timer_mode', None) is None:
             self.pre_timer_mode = 'mini' if self.mini_mode else 'normal'
             
             # Activate nano mode when timer starts
