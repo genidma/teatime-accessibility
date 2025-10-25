@@ -439,6 +439,14 @@ class TeaTimerApp(Gtk.Application):
                 screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 3
             )
             
+        # Show all UI elements that were hidden during nano mode
+        if hasattr(self, 'content_box'):
+            self.content_box.set_visible(True)
+        
+        if hasattr(self, 'control_grid'):
+            self.control_grid.set_visible(True)
+            
+        # Restore window size
         if self.pre_timer_mode == 'mini':
             # Restore mini mode
             self.mini_mode = True
@@ -447,6 +455,7 @@ class TeaTimerApp(Gtk.Application):
             # Restore normal mode
             self.mini_mode = False
             self._apply_mini_mode()
+
 
     def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
