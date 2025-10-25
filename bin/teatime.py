@@ -455,7 +455,14 @@ class TeaTimerApp(Gtk.Application):
             
         # Remove nano mode CSS
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(b"")
+        css_provider.load_from_data(b"""
+            window {
+                background-color: @theme_bg_color;
+            }
+            box {
+                background-color: @theme_bg_color;
+            }
+        """)
         screen = Gdk.Screen.get_default()
         if screen:
             Gtk.StyleContext.add_provider_for_screen(
@@ -483,8 +490,10 @@ class TeaTimerApp(Gtk.Application):
             # Restore normal mode
             self.mini_mode = False
             self._apply_mini_mode()
-
-
+            
+        # Reset the time label styling
+        self._apply_font_size()
+            
     def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
         # This signal reliably fires when a new child widget gets focus.
