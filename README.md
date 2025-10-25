@@ -2,6 +2,10 @@
 
 GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). New features are added regularly.
 
+## Release Notes
+
+For information about the latest features, improvements, and bug fixes, please see [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
 ## Features
 
 - **Simple Timer**: Easy-to-use interface with start/stop controls
