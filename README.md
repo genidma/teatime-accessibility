@@ -448,6 +448,21 @@ Script designed to verify application functionality (without having to wait for 
 python3 test_short_timer.py --duration 1 --use-seconds
 ```
 
+### bin/teatime-tasks-priority-test.py
+Script for project management that:
+- Fetches open issues from the GitHub repository
+- Categorizes them by type (bug, feature, enhancement, documentation)
+- Prioritizes them by priority level (high, medium, low)
+- Classifies them by complexity (simple, medium, complex)
+- Generates recommended task order for development
+
+**Usage:**
+```bash
+python3 bin/teatime-tasks-priority-test.py
+```
+
+Note: For authenticated requests (to avoid rate limiting), you can set a GITHUB_TOKEN environment variable with a GitHub personal access token.
+
 ## Feedback
 Here's how you can reach out:
 

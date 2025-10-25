@@ -99,4 +99,15 @@ Thumbs.db
 /assets/*/Logs/
 /assets/*/UserSettings/
 /assets/*/MemoryCaptures/
+
+/assets/*/MemoryCaptures/
 /assets/*/sysinfo.txt
+
+# ============ #
+# NPM related  #
+# ============ #
+node_modules/
+npm-debug.log*
+.npm/
+package-lock.json
+yarn.lock

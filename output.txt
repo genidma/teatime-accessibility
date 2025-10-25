@@ -1,0 +1,120 @@
+TeaTime Accessibility Issue Categorizer
+======================================
+Found 24 open issues
+
+=== TASK LIST BY CATEGORY ===
+
+1. BY TYPE:
+
+  BUG (1 issues):
+    - [63] Low Priority: UI doesn't revert back to normal mode properly after mini-mode is enabled
+
+  FEATURE (2 issues):
+    - [61] low priority: learn more about the milestones feature on Github issues
+    - [9] Medium Priority: New features to add
+
+  ENHANCEMENT (6 issues):
+    - [64] Medium priority: investigate for flowcharts
+    - [60] medium priority: automated ui (user interface) testing
+    - [29] Low priority: Improve icon quality for future iterations
+    - [21] Exploring 'sprite creation' in order to import it as a gif into the app
+    - [15] Feedback from mother
+    - [7] sqlite refactoring can help build upon the Statistics Engine
+
+  DOCUMENTATION (2 issues):
+    - [58] medium priority: Update the `Credits` section across photosensitive (both)
+    - [49] Low Priority: Record newer Demos
+
+  OTHER (13 issues):
+    - [66] Merge changes for #65 (nano-mode) in photosensitive mode
+    - [56] Priority tbd: System notification center integration
+    - [51] Credits in About Dialog Box
+    - [50] Medium Priority: Readme items on main
+    - [46] This is kind of a crazy thought
+    - [37] Low priority: To test Memory usage
+    - [32] From 21: puppy_gif_test_04_2025-10-17-xxxxUTC.gif  (More realistic gif)
+    - [24] Ideas: Sprite related
+    - [18] from the README.md - screen readers
+    - [14] To follow community standards 
+    - [8] Setup a proper buy me a coffee profile
+    - [3] This came up in my feed
+    - [1] To submit to flatpak or apt | snap store, i think, has a developer fee
+
+
+2. BY PRIORITY:
+
+  MEDIUM (24 issues):
+    - [66] Merge changes for #65 (nano-mode) in photosensitive mode
+    - [64] Medium priority: investigate for flowcharts
+    - [63] Low Priority: UI doesn't revert back to normal mode properly after mini-mode is enabled
+    - [61] low priority: learn more about the milestones feature on Github issues
+    - [60] medium priority: automated ui (user interface) testing
+    - [58] medium priority: Update the `Credits` section across photosensitive (both)
+    - [56] Priority tbd: System notification center integration
+    - [51] Credits in About Dialog Box
+    - [50] Medium Priority: Readme items on main
+    - [49] Low Priority: Record newer Demos
+    - [46] This is kind of a crazy thought
+    - [37] Low priority: To test Memory usage
+    - [32] From 21: puppy_gif_test_04_2025-10-17-xxxxUTC.gif  (More realistic gif)
+    - [29] Low priority: Improve icon quality for future iterations
+    - [24] Ideas: Sprite related
+    - [21] Exploring 'sprite creation' in order to import it as a gif into the app
+    - [18] from the README.md - screen readers
+    - [15] Feedback from mother
+    - [14] To follow community standards 
+    - [9] Medium Priority: New features to add
+    - [8] Setup a proper buy me a coffee profile
+    - [7] sqlite refactoring can help build upon the Statistics Engine
+    - [3] This came up in my feed
+    - [1] To submit to flatpak or apt | snap store, i think, has a developer fee
+
+
+3. BY COMPLEXITY:
+
+  SIMPLE (6 issues):
+    - [66] Merge changes for #65 (nano-mode) in photosensitive mode
+    - [56] Priority tbd: System notification center integration
+    - [49] Low Priority: Record newer Demos
+    - [14] To follow community standards 
+    - [8] Setup a proper buy me a coffee profile
+    - [3] This came up in my feed
+
+  MEDIUM (17 issues):
+    - [64] Medium priority: investigate for flowcharts
+    - [63] Low Priority: UI doesn't revert back to normal mode properly after mini-mode is enabled
+    - [61] low priority: learn more about the milestones feature on Github issues
+    - [60] medium priority: automated ui (user interface) testing
+    - [58] medium priority: Update the `Credits` section across photosensitive (both)
+    - [51] Credits in About Dialog Box
+    - [50] Medium Priority: Readme items on main
+    - [46] This is kind of a crazy thought
+    - [37] Low priority: To test Memory usage
+    - [32] From 21: puppy_gif_test_04_2025-10-17-xxxxUTC.gif  (More realistic gif)
+    - [29] Low priority: Improve icon quality for future iterations
+    - [24] Ideas: Sprite related
+    - [21] Exploring 'sprite creation' in order to import it as a gif into the app
+    - [18] from the README.md - screen readers
+    - [15] Feedback from mother
+    - [9] Medium Priority: New features to add
+    - [1] To submit to flatpak or apt | snap store, i think, has a developer fee
+
+  COMPLEX (1 issues):
+    - [7] sqlite refactoring can help build upon the Statistics Engine
+
+
+=== RECOMMENDED TASK ORDER ===
+
+1. URGENT & SIMPLE TASKS (Do these first):
+   - None found
+
+2. MEDIUM PRIORITY & SIMPLE TASKS:
+   - [66] Merge changes for #65 (nano-mode) in photosensitive mode
+   - [56] Priority tbd: System notification center integration
+   - [49] Low Priority: Record newer Demos
+   - [14] To follow community standards 
+   - [8] Setup a proper buy me a coffee profile
+   - [3] This came up in my feed
+
+3. COMPLEX TASKS (Plan carefully):
+   - [7] sqlite refactoring can help build upon the Statistics Engine
