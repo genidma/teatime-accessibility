@@ -410,15 +410,18 @@ class TeaTimerApp(Gtk.Application):
         self.time_label.set_halign(Gtk.Align.CENTER)
         self.time_label.set_valign(Gtk.Align.CENTER)
         
-        # Add CSS to make the timer even more prominent
+        # Add CSS to make the timer even more prominent (200% larger than current size)
+        # Calculate a larger font size based on current font scale factor
+        timer_font_percentage = self.font_scale_factor * 4.0 * 100  # 4x = 200% larger than 2x
+        
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(b"""
-            .time-display {
-                font-size: 200%;
+        css_provider.load_from_data(f"""
+            .time-display {{
+                font-size: {timer_font_percentage}%;
                 margin: 0;
                 padding: 0;
-            }
-        """)
+            }}
+        """.encode())
         screen = Gdk.Screen.get_default()
         if screen:
             Gtk.StyleContext.add_provider_for_screen(
@@ -1001,6 +1004,9 @@ class TeaTimerApp(Gtk.Application):
             self.font_scale_factor = min(MAX_FONT_SCALE, self.font_scale_factor + FONT_SCALE_INCREMENT)
             print(f"New font scale factor: {self.font_scale_factor:.1f}")
             self._apply_font_size()
+            # If we're in nano mode, also update the nano mode font size
+            if hasattr(self, 'nano_mode') and self.nano_mode and hasattr(self, 'pre_timer_mode') and self.pre_timer_mode:
+                self._activate_nano_mode()
             self._save_config()
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
@@ -1014,6 +1020,9 @@ class TeaTimerApp(Gtk.Application):
             self.font_scale_factor = max(MIN_FONT_SCALE, self.font_scale_factor - FONT_SCALE_INCREMENT)
             print(f"New font scale factor: {self.font_scale_factor:.1f}")
             self._apply_font_size()
+            # If we're in nano mode, also update the nano mode font size
+            if hasattr(self, 'nano_mode') and self.nano_mode and hasattr(self, 'pre_timer_mode') and self.pre_timer_mode:
+                self._activate_nano_mode()
             self._save_config()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
             self._update_font_size_announcement()
