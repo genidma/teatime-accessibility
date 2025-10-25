@@ -395,15 +395,19 @@ class TeaTimerApp(Gtk.Application):
         if not self.window:
             return
             
+        print("DEBUG: Activating nano mode")
+            
         # Apply nano-mode - ultra compact window size
         self.window.set_default_size(150, 80)
         self.window.resize(150, 80)
         
         # Hide all elements except the time label
         if hasattr(self, 'content_box'):
+            print(f"DEBUG: Hiding content_box, was visible: {self.content_box.get_visible()}")
             self.content_box.set_visible(False)
         
         if hasattr(self, 'control_grid'):
+            print(f"DEBUG: Hiding control_grid, was visible: {self.control_grid.get_visible()}")
             self.control_grid.set_visible(False)
             
         # Make sure time label is visible and centered
@@ -1034,6 +1038,7 @@ class TeaTimerApp(Gtk.Application):
     def on_increase_font_clicked(self, *args):
         """Increases the font size."""
         print("DEBUG: on_increase_font_clicked called")
+        print(f"DEBUG: Current nano_mode: {getattr(self, 'nano_mode', False)}")
         print(f"DEBUG: Attempting to increase font size. Current: {self.font_scale_factor:.1f}, Max: {MAX_FONT_SCALE:.1f}")
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor = min(MAX_FONT_SCALE, self.font_scale_factor + FONT_SCALE_INCREMENT)
@@ -1041,6 +1046,7 @@ class TeaTimerApp(Gtk.Application):
             self._apply_font_size()
             # If we're in nano mode, also update the nano mode font size
             if hasattr(self, 'nano_mode') and self.nano_mode and hasattr(self, 'pre_timer_mode') and self.pre_timer_mode:
+                print("DEBUG: Calling _activate_nano_mode from font increase")
                 self._activate_nano_mode()
             self._save_config()
             print(f"Increased font to: {self.font_scale_factor:.1f}x")
@@ -1051,6 +1057,7 @@ class TeaTimerApp(Gtk.Application):
     def on_decrease_font_clicked(self, *args):
         """Decreases the font size."""
         print("DEBUG: on_decrease_font_clicked called")
+        print(f"DEBUG: Current nano_mode: {getattr(self, 'nano_mode', False)}")
         print(f"DEBUG: Attempting to decrease font size. Current: {self.font_scale_factor:.1f}, Min: {MIN_FONT_SCALE:.1f}")
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor = max(MIN_FONT_SCALE, self.font_scale_factor - FONT_SCALE_INCREMENT)
@@ -1058,6 +1065,7 @@ class TeaTimerApp(Gtk.Application):
             self._apply_font_size()
             # If we're in nano mode, also update the nano mode font size
             if hasattr(self, 'nano_mode') and self.nano_mode and hasattr(self, 'pre_timer_mode') and self.pre_timer_mode:
+                print("DEBUG: Calling _activate_nano_mode from font decrease")
                 self._activate_nano_mode()
             self._save_config()
             print(f"Decreased font to: {self.font_scale_factor:.1f}x")
@@ -1984,6 +1992,8 @@ class StatisticsWindow(Gtk.Window):
             preset_1_hour_button.set_use_underline(True)
             preset_1_hour_button.connect("clicked", self.on_preset_clicked, 60)
             presets_box.pack_start(preset_1_hour_button, False, False, 0)
+
+            self.window.add(main_box)
 
             # Add the single CSS provider to the screen. We will update this provider
             # later instead of adding new ones.
