@@ -238,6 +238,8 @@ class TeaTimerApp(Gtk.Application):
             self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
 
+            self.window.add(main_box)
+
             # Add the single CSS provider to the screen. We will update this provider
             # later instead of adding new ones.
             screen = Gdk.Screen.get_default()
