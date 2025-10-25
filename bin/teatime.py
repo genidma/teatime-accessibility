@@ -421,6 +421,34 @@ class TeaTimerApp(Gtk.Application):
         # Calculate a larger font size based on current font scale factor
         timer_font_percentage = self.font_scale_factor * 4.0 * 100  # 4x = 200% larger than 2x
         
+        # Get the current skin to preserve it in nano mode
+        skin = getattr(self, 'preferred_skin', 'default')
+        
+        # Create CSS that maintains skin effects but makes them transparent
+        if skin == 'lava':
+            # For lava skin, preserve the gradient but make it transparent
+            h1 = self.rainbow_hue
+            h2 = (self.rainbow_hue + 120) % 360
+            h3 = (self.rainbow_hue + 240) % 360
+            
+            # Convert to RGBA with transparency
+            r1, g1, b1 = colorsys.hsv_to_rgb(h1 / 360.0, 0.8, 0.7)
+            r2, g2, b2 = colorsys.hsv_to_rgb(h2 / 360.0, 0.8, 0.7)
+            r3, g3, b3 = colorsys.hsv_to_rgb(h3 / 360.0, 0.8, 0.7)
+            
+            color1 = f"rgba({int(r1*255)}, {int(g1*255)}, {int(b1*255)}, 0.3)"
+            color2 = f"rgba({int(r2*255)}, {int(g2*255)}, {int(b2*255)}, 0.3)"
+            color3 = f"rgba({int(r3*255)}, {int(g3*255)}, {int(b3*255)}, 0.3)"
+            
+            background_css = f"""
+                background: linear-gradient(45deg, {color1}, {color2}, {color3});
+                background-size: 300% 300%;
+                animation: lavaFlow 60s ease infinite;
+            """
+        else:
+            # For default skin or others, just make it transparent
+            background_css = "background-color: rgba(240, 240, 240, 0.3);"
+        
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(f"""
             .time-display {{
@@ -431,9 +459,9 @@ class TeaTimerApp(Gtk.Application):
                 text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             }}
             
-            /* Make window background transparent */
+            /* Make window background transparent but preserve skin effects */
             window {{
-                background-color: rgba(0, 0, 0, 0.01);
+                {background_css}
                 border: none;
                 box-shadow: none;
             }}
@@ -441,6 +469,12 @@ class TeaTimerApp(Gtk.Application):
             /* Style the main box to be transparent */
             box {{
                 background-color: transparent;
+            }}
+            
+            @keyframes lavaFlow {{
+                0% {{ background-position: 0% 50%; }}
+                50% {{ background-position: 100% 50%; }}
+                100% {{ background-position: 0% 50%; }}
             }}
         """.encode())
         screen = Gdk.Screen.get_default()
@@ -503,6 +537,9 @@ class TeaTimerApp(Gtk.Application):
             
         # Reset the time label styling
         self._apply_font_size()
+        
+        # Reapply the skin to ensure it's properly displayed
+        self._apply_skin()
         
         # Delete the pre_timer_mode attribute as we're no longer in timer mode
         if hasattr(self, 'pre_timer_mode'):
