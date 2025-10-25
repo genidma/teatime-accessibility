@@ -1,6 +1,6 @@
 # TeaTime Accessibility
 
-GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). New features are being added. 
+GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). New features are added regularly.
 
 ## Features
 
@@ -16,6 +16,9 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 - **Statistics Tracking**: Automatic logging and viewing of tea sessions
 - **Settings Dialog**: Configure animation preferences through a user-friendly interface
 - **Mini-Mode**: Compact display mode for a smaller window footprint
+- **Nano-Mode**: Ultra-compact mode with transparent background that shows only the timer digits
+- **Custom Skins**: Personalize the appearance with different visual themes
+- **Preset Durations**: Quick access to common tea brewing times
 
 ## Keyboard Shortcuts
 
@@ -28,6 +31,7 @@ GUI based timer application (app) for the Ubuntu (Desktop) environment. With pre
 - **Ctrl++**: Increase font size
 - **Ctrl+-**: Decrease font size
 - **Ctrl+D**: Toggle mini-mode
+- **Ctrl+N**: Toggle nano-mode
 - **Ctrl+Q**: Quit application
 
 ## Mnemonics (Alt Keys)
@@ -39,6 +43,7 @@ Activate buttons and menu items by pressing Alt plus the underlined letter.
 - **Alt+T**: Stop
 - **Alt+E**: Enable Sound
 - **Alt+M**: Mini Mode
+- **Alt+N**: Nano Mode
 - **Alt+4**: 45 Minutes
 - **Alt+1**: 1 Hour
 
@@ -56,6 +61,46 @@ To toggle Mini-Mode:
 - Or use the keyboard shortcut **Ctrl+D**
 
 Note: Some keyboard shortcuts may not work properly when in Mini-Mode due to the reduced interface size and focus handling. The Ctrl+D shortcut will always work to toggle Mini-Mode on and off.
+
+## Nano-Mode
+
+Includes an ultra-compact display mode called "Nano-Mode" which displays only the timer digits and colon with a transparent background. This mode is perfect for when you want a minimal, unobtrusive timer that floats on your desktop.
+
+Features of Nano-Mode:
+- Transparent background with no window decorations (title bar, borders)
+- Only the timer digits and colon are visible
+- Can be moved by clicking and dragging anywhere on the display. Press and hold the Meta key (usually the Windows key) on your keyboard and then click and drag anywhere on the window with the left mouse button
+- Font size can still be adjusted using Ctrl++ and Ctrl+- even though the buttons are hidden
+- Keyboard shortcuts still work. So to stop the timer in nano mode, you will do a ctrl+T. See the Keyboard Shortcuts section below for additional keyboard shortcuts.
+
+To toggle Nano-Mode:
+- Use the "Nano Mode" checkbox in the Settings dialog (accessed via Ctrl+,)
+- Or use the keyboard shortcut **Ctrl+N**
+
+When a timer is started with Nano-Mode enabled:
+- The window automatically switches to the ultra-compact display
+- All interface elements except the timer are hidden
+- The window decorations are removed
+- The background becomes transparent while preserving skin effects
+
+When the timer completes or is stopped:
+- The interface returns to its previous state (normal or mini mode)
+- Window decorations are restored
+- All interface elements become visible again
+
+## Custom Skins
+
+TeaTime Accessibility supports customizable visual themes:
+
+- **Default Skin**: Standard grey background
+- **Lava Lamp Skin**: Animated gradient background that flows like a lava lamp with dynamic colors
+
+To select a skin:
+1. Open the Settings dialog (Ctrl+, or from the menu)
+2. Choose your preferred skin from the dropdown
+3. Click OK to save your preference
+
+Skins are preserved even in Nano-Mode, appearing as semi-transparent overlays behind the timer digits.
 
 ## Customizable Animations
 
