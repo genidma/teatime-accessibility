@@ -999,7 +999,8 @@ class TeaTimerApp(Gtk.Application):
 
     def on_increase_font_clicked(self, *args):
         """Increases the font size."""
-        print(f"Attempting to increase font size. Current: {self.font_scale_factor:.1f}, Max: {MAX_FONT_SCALE:.1f}")
+        print("DEBUG: on_increase_font_clicked called")
+        print(f"DEBUG: Attempting to increase font size. Current: {self.font_scale_factor:.1f}, Max: {MAX_FONT_SCALE:.1f}")
         if self.font_scale_factor < MAX_FONT_SCALE:
             self.font_scale_factor = min(MAX_FONT_SCALE, self.font_scale_factor + FONT_SCALE_INCREMENT)
             print(f"New font scale factor: {self.font_scale_factor:.1f}")
@@ -1015,7 +1016,8 @@ class TeaTimerApp(Gtk.Application):
 
     def on_decrease_font_clicked(self, *args):
         """Decreases the font size."""
-        print(f"Attempting to decrease font size. Current: {self.font_scale_factor:.1f}, Min: {MIN_FONT_SCALE:.1f}")
+        print("DEBUG: on_decrease_font_clicked called")
+        print(f"DEBUG: Attempting to decrease font size. Current: {self.font_scale_factor:.1f}, Min: {MIN_FONT_SCALE:.1f}")
         if self.font_scale_factor > MIN_FONT_SCALE:
             self.font_scale_factor = max(MIN_FONT_SCALE, self.font_scale_factor - FONT_SCALE_INCREMENT)
             print(f"New font scale factor: {self.font_scale_factor:.1f}")
@@ -1074,6 +1076,7 @@ class TeaTimerApp(Gtk.Application):
 
         # Get the current value from the spin button
         current_duration = int(self.duration_spin.get_value())
+        print(f"DEBUG: Starting timer with duration: {current_duration}")
         
         # 2025-10-17 Chatgpt recommended change so that the 'test_short_timer.py' script can pass second based variables for durtion to this main teatime.py script
         if getattr(self, 'use_seconds', False):
@@ -1987,35 +1990,6 @@ class StatisticsWindow(Gtk.Window):
             GLib.idle_add(self._auto_start_timer)
 
             self.window.add(main_box)
-
-            # Connect signals
-            self.start_button.connect("clicked", self.on_start_clicked)
-            self.stop_button.connect("clicked", self.on_stop_clicked)
-            self.increase_font_button.connect("clicked", self.on_increase_font_clicked)
-            self.decrease_font_button.connect("clicked", self.on_decrease_font_clicked)
-            self.sound_toggle.connect("toggled", self.on_sound_toggled)
-
-            # Add the single CSS provider to the screen. We will update this provider
-            # later instead of adding new ones.
-            screen = Gdk.Screen.get_default()
-            if screen:
-                Gtk.StyleContext.add_provider_for_screen(
-                    screen, self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-            else:
-                print("Warning: No default screen found to apply CSS.")
-
-            # Initial state for buttons
-            self.stop_button.set_sensitive(False)
-
-            # Apply initial font size
-            self._apply_font_size()
-
-            # Add a style class to the time label for specific targeting
-            self.time_label.get_style_context().add_class("time-display")
-
-            # Set GTK 3 accessibility properties (after all widgets are created)
-            self._set_accessibility_properties()
 
         self.window.show_all()
 
