@@ -454,7 +454,7 @@ class TeaTimerApp(Gtk.Application):
 
     def _restore_pre_timer_mode(self):
         """Restore the mode that was active before the timer started."""
-        if not self.window or not self.pre_timer_mode:
+        if not self.window or not hasattr(self, 'pre_timer_mode'):
             return
             
         # Remove nano mode CSS
@@ -497,6 +497,10 @@ class TeaTimerApp(Gtk.Application):
             
         # Reset the time label styling
         self._apply_font_size()
+        
+        # Delete the pre_timer_mode attribute as we're no longer in timer mode
+        if hasattr(self, 'pre_timer_mode'):
+            delattr(self, 'pre_timer_mode')
             
     def _on_focus_changed(self, container, widget):
         """Cycles the focus glow color when the focused widget changes."""
