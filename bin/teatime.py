@@ -420,8 +420,8 @@ class TeaTimerApp(Gtk.Application):
                 font-size: {timer_font_percentage}%;
                 margin: 0;
                 padding: 0;
-                color: #ffffff;
-                text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                color: #000000;
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             }}
             
             /* Make window background transparent */
