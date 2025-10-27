@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Author: Chatgpt, Lingma & Gemini. With prompts provided by @genidma at Github
+Author: Chatgpt, Lingma & Gemini. With supports for Debugging from Copilot. With prompts provided by @genidma at Github
+
 Script to categorize GitHub issues and create corresponding tasks for TeaTime Accessibility project.
 
 This script is designed to:
@@ -20,47 +21,12 @@ from collections import defaultdict
 from datetime import datetime
 import webbrowser
 import time
-
-
+import shutil
+import sys
 # Register Firefox as the browser to use
 firefox_path = '/usr/bin/firefox'  # Adjust if your Firefox executable is in a different location
 if os.path.exists(firefox_path):
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
-
-
-class IssueCategorizer:
-    """
-    Class to categorize GitHub issues for the TeaTime Accessibility project.
-    """
-    
-    def __init__(self, repo_owner="genidma", repo_name="teatime-accessibility"):
-        self.repo_owner = repo_owner
-        self.repo_name = repo_name
-        self.github_token = os.getenv('GITHUB_TOKEN')  # Optional, for authenticated requests
-        self.issues = []
-        
-    def fetch_open_issues(self):
-        """
-        Fetch all open issues from the GitHub repository.
-        """
-        headers = {
-            'Accept': 'application/vnd.github.v3+json'
-        }
-        
-        # Add authentication if token is available
-        if self.github_token:
-            headers['Authorization'] = f'token {self.github_token}'
-            
-        url = f'https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/issues'
-        params = {
-            'state': 'open',
-            'per_page': 100  # Get up to 100 issues
-        }
-        
-        response = requests.get(url, headers=headers, params=params)
-        
-        if response.status_code == 200:
-            # Filter out pull requests (they have 'pull_request' key)
             self.issues = [issue for issue in response.json() if 'pull_request' not in issue]
             print(f"Found {len(self.issues)} open issues")
             return self.issues
@@ -317,18 +283,125 @@ def main():
             # Ensure file is completely written before opening
             time.sleep(1)
             
-            # Automatically open the Gantt chart in Firefox
-            print("Opening Gantt chart in your web browser...")
+            # Automatically open the Gantt chart in a browser only if explicitly allowed.
+            # This prevents unexpected browser launches that may destabilize the system.
+            print("Gantt chart generated. Deciding whether to open it automatically...")
+
+            # Debug: show which browser controllers are registered
             try:
-                # Try to use Firefox if registered
-                if 'firefox' in webbrowser._browsers:
-                    webbrowser.get('firefox').open_new_tab('file://' + os.path.abspath(gantt_path))
-                else:
-                    # Fallback to default browser if Firefox registration failed
-                    webbrowser.open_new_tab('file://' + os.path.abspath(gantt_path))
+                print("Registered browser controllers:", list(webbrowser._browsers.keys()))
+            except Exception:
+                # webbrowser internals may differ across Python builds; ignore failures here
+                pass
+
+            # Show what the default webbrowser.get() would return (best-effort)
+            try:
+                default_browser = webbrowser.get()
+                print("Default browser controller:", default_browser)
             except Exception as e:
-                print(f"Could not open browser automatically: {e}")
-                print("Please open the file manually in your browser")
+                print(f"Could not determine default browser controller: {e}")
+
+            # Allow the user to explicitly control auto-opening to avoid crashes.
+            # Set OPEN_GANTT=1 or OPEN_GANTT=true in environment to enable auto-open.
+            open_env = os.getenv('OPEN_GANTT', '').lower()
+            browser_override = os.getenv('BROWSER_NAME')  # e.g. 'firefox' or 'chromium'
+
+            if open_env in ('1', 'true', 'yes'):
+                print("Auto-open enabled via OPEN_GANTT.")
+                try:
+                    # Use filesystem path for subprocess invocations to avoid ERR_FILE_NOT_FOUND
+                    file_path = os.path.abspath(gantt_path)
+                    file_url = 'file://' + file_path
+
+                    if not os.path.exists(file_path):
+                        print(f"Gantt file not found at expected path: {file_path}")
+                        print("Aborting auto-open.")
+                        raise FileNotFoundError(file_path)
+
+                    # If user explicitly asked for a browser, try to use it
+                    if browser_override:
+                        print(f"Attempting to open with overridden browser: {browser_override}")
+                        # Special-case Chromium: launch with safer flags via subprocess
+                        if browser_override.lower() in ('chromium', 'chromium-browser', 'chrome', 'google-chrome'):
+                            # Find an executable on PATH
+                            possible_bins = [browser_override]
+                            # include common names to try if user passed a generic name
+                            if browser_override.lower() == 'chrome':
+                                possible_bins = ['google-chrome', 'chrome', 'chromium', 'chromium-browser']
+                            if browser_override.lower() == 'chromium':
+                                possible_bins = ['chromium', 'chromium-browser', 'google-chrome']
+
+                            exe = None
+                            for name in possible_bins:
+                                path = shutil.which(name)
+                                if path:
+                                    exe = path
+                                    break
+
+                            if not exe:
+                                print(f"Could not find Chromium/Chrome executable among: {possible_bins}. Falling back to webbrowser module.")
+                                try:
+                                    webbrowser.get().open_new_tab(file_url)
+                                except Exception as e:
+                                    print(f"Fallback open failed: {e}")
+                            else:
+                                # Construct the safe flags the user requested
+                                allow_no_sandbox = os.getenv('ALLOW_NO_SANDBOX', '').lower() in ('1', 'true', 'yes')
+                                cmd = [
+                                    exe,
+                                    '--disable-gpu',
+                                    '--disable-software-rasterizer',
+                                    # --no-sandbox is potentially problematic; include only if explicitly allowed
+                                ]
+                                if allow_no_sandbox:
+                                    cmd.append('--no-sandbox')
+                                cmd.extend([
+                                    '--user-data-dir=/tmp/tt-gantt',
+                                    file_path,
+                                ])
+
+                                # Prepare a log file to capture Chromium stdout/stderr for debugging
+                                log_path = '/tmp/tt-gantt-chromium.log'
+                                print(f"Launching Chromium with command: {' '.join(cmd)}")
+                                print(f"Chromium stdout/stderr will be redirected to: {log_path}")
+                                try:
+                                    with open(log_path, 'ab') as logf:
+                                        proc = subprocess.Popen(cmd, stdout=logf, stderr=logf)
+                                        print(f"Chromium launched (PID: {proc.pid}).")
+                                        # Wait briefly to detect immediate exit/crash
+                                        try:
+                                            proc.wait(timeout=2)
+                                            print(f"Chromium process exited quickly with return code {proc.returncode}.")
+                                            print(f"See {log_path} for stdout/stderr content.")
+                                        except subprocess.TimeoutExpired:
+                                            print("Chromium is still running (no immediate crash detected).")
+                                            print(f"See {log_path} for ongoing stdout/stderr.")
+                                except Exception as e:
+                                    print(f"Failed to launch Chromium subprocess: {e}")
+                        else:
+                            try:
+                                webbrowser.get(browser_override).open_new_tab(file_url)
+                                print(f"Opened Gantt chart with: {browser_override}")
+                            except Exception as e:
+                                print(f"Failed to open with {browser_override}: {e}")
+                                print("Falling back to system default browser...")
+                                webbrowser.open_new_tab(file_url)
+                    else:
+                        # Prefer 'firefox' if it's registered and exists on disk
+                        if shutil.which('firefox') and 'firefox' in webbrowser._browsers:
+                            print("Using registered 'firefox' to open the file")
+                            webbrowser.get('firefox').open_new_tab(file_url)
+                        else:
+                            print("Using system default browser to open the file")
+                            webbrowser.open_new_tab(file_url)
+                except Exception as e:
+                    print(f"Could not open browser automatically: {e}")
+                    print("Please open the file manually in your browser")
+            else:
+                print("Auto-open disabled (set OPEN_GANTT=1 to enable).")
+                print(f"Gantt chart file is available at: {os.path.abspath(gantt_path)}")
+                print("To open it safely in Chromium with mitigations, try:")
+                print("  chromium --disable-gpu --disable-software-rasterizer --no-sandbox --user-data-dir=/tmp/tt-gantt 'file://" + os.path.abspath(gantt_path) + "'")
         else:
             print("Gantt chart could not be generated due to missing libraries.")
         
