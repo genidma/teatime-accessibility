@@ -1,6 +1,6 @@
 TeaTime Accessibility Issue Categorizer
 ======================================
-Generated on: 2025-10-27 14:17:06
+Generated on: 2025-10-27 14:33:37
 Total issues found: 24
 
 === TASK LIST BY CATEGORY ===
@@ -15,7 +15,7 @@ Total issues found: 24
     - [9] Medium Priority: New features to add
 
   ENHANCEMENT (6 issues):
-    - [64] Medium priority: investigate for flowcharts
+    - [64] Medium priority: investigate for flowcharts for task prioritization
     - [60] medium priority: automated ui (user interface) testing
     - [29] Low priority: Improve icon quality for future iterations
     - [21] Exploring 'sprite creation' in order to import it as a gif into the app
@@ -46,7 +46,7 @@ Total issues found: 24
 
   MEDIUM (24 issues):
     - [66] Merge changes for #65 (nano-mode) in photosensitive mode
-    - [64] Medium priority: investigate for flowcharts
+    - [64] Medium priority: investigate for flowcharts for task prioritization
     - [63] Low Priority: UI doesn't revert back to normal mode properly after mini-mode is enabled
     - [61] low priority: learn more about the milestones feature on Github issues
     - [60] medium priority: automated ui (user interface) testing
@@ -82,7 +82,7 @@ Total issues found: 24
     - [3] This came up in my feed
 
   MEDIUM (17 issues):
-    - [64] Medium priority: investigate for flowcharts
+    - [64] Medium priority: investigate for flowcharts for task prioritization
     - [63] Low Priority: UI doesn't revert back to normal mode properly after mini-mode is enabled
     - [61] low priority: learn more about the milestones feature on Github issues
     - [60] medium priority: automated ui (user interface) testing

@@ -408,6 +408,9 @@ def main():
                                     exe,
                                     '--disable-gpu',
                                     '--disable-software-rasterizer',
+                                    '--disable-dev-shm-usage',
+                                    # --disable-setuid-sandbox removed: it triggers "unsupported" warnings under
+                                    # snap and may reduce stability; keep --no-sandbox only when explicitly allowed.
                                     # --no-sandbox is potentially problematic; include only if explicitly allowed
                                 ]
                                 if allow_no_sandbox:
@@ -417,9 +420,11 @@ def main():
                                 os.makedirs(tmp_dir, mode=0o755, exist_ok=True)
                                 tmp_copy_path = os.path.join(tmp_dir, 'gantt-chart.html')
                                 try:
+                                    # Copy file and ensure the temp dir and file have reasonable permissions.
                                     shutil.copy2(file_path, tmp_copy_path)
-                                    # Ensure the file has proper permissions
                                     os.chmod(tmp_copy_path, 0o644)
+                                    os.chmod(tmp_dir, 0o755)
+                                    # Do NOT attempt to chmod '/tmp' (not permitted for unprivileged users).
                                     print(f"Copied gantt file to temporary path: {tmp_copy_path}")
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
@@ -427,6 +432,7 @@ def main():
                                     except Exception:
                                         pass
                                 except Exception as e:
+                                    # If copy fails, fall back to original file path but log clearly.
                                     print(f"Failed to copy gantt file to {tmp_copy_path}: {e}")
                                     print("Attempting to open the original path directly (may fail under snap confinement).")
                                     try:
@@ -435,9 +441,19 @@ def main():
                                     except Exception:
                                         pass
                                     tmp_copy_path = file_path
+                                # Use pathname2url to create a proper file:// URL without over-quoting
+                                try:
+                                    from urllib.request import pathname2url
+                                    file_url = 'file://' + pathname2url(os.path.abspath(tmp_copy_path))
+                                except Exception:
+                                    # Fallback: basic quoting
+                                    import urllib.parse
+                                    file_url = 'file://' + urllib.parse.quote(os.path.abspath(tmp_copy_path))
                                 cmd.extend([
                                     '--user-data-dir=/tmp/tt-gantt-userdata',
-                                    'file://' + tmp_copy_path,
+                                    '--no-first-run',
+                                    '--no-default-browser-check',
+                                    file_url
                                 ])
 
                                 # Prepare a log file to capture Chromium stdout/stderr for debugging
