@@ -343,6 +343,13 @@ def main():
 
             if open_env in ('1', 'true', 'yes'):
                 print("Auto-open enabled via OPEN_GANTT.")
+                # Debug: record environment and quick trace to disk
+                print(f"DEBUG: OPEN_GANTT={open_env!r}, BROWSER_NAME={browser_override!r}, ALLOW_NO_SANDBOX={os.getenv('ALLOW_NO_SANDBOX')!r}")
+                try:
+                    with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                        df.write((f"[{datetime.now().isoformat()}] Auto-open envs: OPEN_GANTT={open_env}, BROWSER_NAME={browser_override}, ALLOW_NO_SANDBOX={os.getenv('ALLOW_NO_SANDBOX')}\n").encode())
+                except Exception:
+                    pass
                 try:
                     # Use filesystem path for subprocess invocations to avoid ERR_FILE_NOT_FOUND
                     file_path = os.path.abspath(gantt_path)
@@ -367,11 +374,18 @@ def main():
                                 possible_bins = ['chromium', 'chromium-browser', 'google-chrome']
 
                             exe = None
+                            which_results = {}
                             for name in possible_bins:
                                 path = shutil.which(name)
-                                if path:
+                                which_results[name] = path
+                                if path and exe is None:
                                     exe = path
-                                    break
+                            print(f"shutil.which results: {which_results}")
+                            try:
+                                with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                    df.write((f"[{datetime.now().isoformat()}] which_results={which_results}\n").encode())
+                            except Exception:
+                                pass
 
                             if not exe:
                                 print(f"Could not find Chromium/Chrome executable among: {possible_bins}. Falling back to webbrowser module.")
@@ -390,9 +404,28 @@ def main():
                                 ]
                                 if allow_no_sandbox:
                                     cmd.append('--no-sandbox')
+                                # Copy the gantt file to /tmp so snap-confined browsers can access it
+                                tmp_copy_path = '/tmp/tt-gantt-chromium.html'
+                                try:
+                                    shutil.copy2(file_path, tmp_copy_path)
+                                    print(f"Copied gantt file to temporary path: {tmp_copy_path}")
+                                    try:
+                                        with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                            df.write((f"[{datetime.now().isoformat()}] Copied to {tmp_copy_path}\n").encode())
+                                    except Exception:
+                                        pass
+                                except Exception as e:
+                                    print(f"Failed to copy gantt file to {tmp_copy_path}: {e}")
+                                    print("Attempting to open the original path directly (may fail under snap confinement).")
+                                    try:
+                                        with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                            df.write((f"[{datetime.now().isoformat()}] Copy failed: {e}\n").encode())
+                                    except Exception:
+                                        pass
+                                    tmp_copy_path = file_path
                                 cmd.extend([
                                     '--user-data-dir=/tmp/tt-gantt',
-                                    file_path,
+                                    tmp_copy_path,
                                 ])
 
                                 # Prepare a log file to capture Chromium stdout/stderr for debugging
@@ -401,8 +434,16 @@ def main():
                                 print(f"Chromium stdout/stderr will be redirected to: {log_path}")
                                 try:
                                     with open(log_path, 'ab') as logf:
+                                        # write a marker so log is never empty if we reach here
+                                        logf.write((f"[{datetime.now().isoformat()}] Launching cmd: {' '.join(cmd)}\n").encode())
+                                        logf.flush()
                                         proc = subprocess.Popen(cmd, stdout=logf, stderr=logf)
                                         print(f"Chromium launched (PID: {proc.pid}).")
+                                        try:
+                                            with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                                df.write((f"[{datetime.now().isoformat()}] Launched PID {proc.pid}\n").encode())
+                                        except Exception:
+                                            pass
                                         # Wait briefly to detect immediate exit/crash
                                         try:
                                             proc.wait(timeout=2)
@@ -413,6 +454,11 @@ def main():
                                             print(f"See {log_path} for ongoing stdout/stderr.")
                                 except Exception as e:
                                     print(f"Failed to launch Chromium subprocess: {e}")
+                                    try:
+                                        with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                            df.write((f"[{datetime.now().isoformat()}] Launch failed: {e}\n").encode())
+                                    except Exception:
+                                        pass
                         else:
                             try:
                                 webbrowser.get(browser_override).open_new_tab(file_url)
