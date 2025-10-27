@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """
-Author: Chatgpt, Lingma & Gemini. With supports for Debugging from Copilot. With prompts provided by @genidma at Github
+Original idea provided by: Chatgpt
 
-Script to categorize GitHub issues and create corresponding tasks for TeaTime Accessibility project.
+Authors: Chatgpt, Lingma & Gemini.
+- Original implementation kept crashing main machine because of Chrome OS instabilities and lack of compatibility in GPU enabled mode with my OS (Operating Syste)
+- Heavy supports for Debugging from Microsoft's Github Copilot.
+- Prompts provided by @genidma at Github throughout this cycle
+
+---
+Purpose of this script:
+This script is designed to categorize the GitHub issues inside of a repository and then recommend a prioritized task list based on issue type, priority, and complexity. Right now, this script is inside of teatime-accessibility repository (repo) on Github.
 
 This script is designed to:
 1. Fetch open issues from the GitHub repository
