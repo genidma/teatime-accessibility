@@ -36,6 +36,9 @@ firefox_path = '/usr/bin/firefox'  # Adjust if your Firefox executable is in a d
 if os.path.exists(firefox_path):
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
 
+# Path to the repository README with safe open instructions
+README_SAFE_OPEN = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "SAFE_GANTT_OPEN.md")
+
     
 class IssueCategorizer:
     """
@@ -575,6 +578,11 @@ def main():
                 print("\nThe Gantt chart is saved here for reference:")
                 print(f"  {os.path.abspath(gantt_path)}")
                 print("\nDO NOT open this file directly in your browser.")
+                # Point users at the included README with detailed safe commands
+                try:
+                    print(f"\nFor full safe-open instructions, see: {README_SAFE_OPEN}")
+                except Exception:
+                    pass
 
         else:
             print("Gantt chart could not be generated due to missing libraries.")
