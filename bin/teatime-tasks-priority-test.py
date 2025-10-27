@@ -29,6 +29,47 @@ if os.path.exists(firefox_path):
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
 
     
+class IssueCategorizer:
+    """
+    Class to categorize GitHub issues for the TeaTime Accessibility project.
+    """
+    def __init__(self, repo_owner="genidma", repo_name="teatime-accessibility"):
+        self.repo_owner = repo_owner
+        self.repo_name = repo_name
+        self.github_token = os.getenv('GITHUB_TOKEN')  # Optional, for authenticated requests
+        self.issues = []
+
+    def fetch_open_issues(self):
+        """
+        Fetch all open issues from the GitHub repository.
+        """
+        headers = {
+            'Accept': 'application/vnd.github.v3+json'
+        }
+
+        # Add authentication if token is available
+        if self.github_token:
+            headers['Authorization'] = f'token {self.github_token}'
+
+        url = f'https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/issues'
+        params = {
+            'state': 'open',
+            'per_page': 100  # Get up to 100 issues
+        }
+
+        response = requests.get(url, headers=headers, params=params)
+
+        if response.status_code == 200:
+            # Filter out pull requests (they have 'pull_request' key)
+            self.issues = [issue for issue in response.json() if 'pull_request' not in issue]
+            print(f"Found {len(self.issues)} open issues")
+            return self.issues
+        else:
+            print(f"Error fetching issues: {response.status_code}")
+            print(response.text)
+            return []
+
+
     def categorize_issues(self):
         """
         Categorize issues by type, priority, and complexity.
