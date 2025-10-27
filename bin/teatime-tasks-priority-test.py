@@ -37,7 +37,7 @@ if os.path.exists(firefox_path):
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
 
 # Path to the repository README with safe open instructions
-README_SAFE_OPEN = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "SAFE_GANTT_OPEN.md")
+README_SAFE_OPEN = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "RUN_PY_SAFE_NO_GPU.md")
 
     
 class IssueCategorizer:
@@ -229,38 +229,105 @@ class IssueCategorizer:
             
         return "\n".join(output)
 
-def create_gantt_chart():
+def create_gantt_chart(categorized_issues, max_initial=20, show_all=False):
     """
-    Create a Gantt chart for sample tasks.
+    Create an interactive Gantt chart from categorized issues.
+
+    - categorized_issues: output of categorizer.categorize_issues()
+    - max_initial: number of tasks to show by default (to avoid overwhelming the chart)
+    - show_all: if True, include all tasks
     """
     try:
         import pandas as pd
-        import plotly.figure_factory as ff
-        
-        # Define tasks
-        df = pd.DataFrame([
-            {"Task":"Implement Nano Mode #65",   "Start":"2025-10-23 01:32","Finish":"2025-10-23 02:26","Step":"Step 1"},
-            {"Task":"Test in main-dev and perform SV",   "Start":"2025-10-23 02:26","Finish":"2025-10-23 02:40","Step":"Step 2"},
-            {"Task":"Update Readme for Nano mode",      "Start":"2025-10-23 02:40","Finish":"2025-10-23 02:45","Step":"Step 3"},
-            {"Task":"Commit code to main-dev and sign off",      "Start":"2025-10-23 02:45","Finish":"2025-10-23 02:50","Step":"Step 4"},
-            {"Task":"merge main-dev with main",         "Start":"2025-10-23 02:50","Finish":"2025-10-23 02:55","Step":"Step 5"},
-            {"Task":"SV in main",      "Start":"2025-10-23 02:55","Finish":"2025-10-23 03:00","Step":"Step 6"}
-        ])
+        import plotly.express as px
+        from datetime import datetime, timedelta
 
-        # Force Step column to be categorical with explicit order
-        df['Step'] = pd.Categorical(df['Step'],
-                                    categories=["Step 1","Step 2","Step 3","Step 4","Step 5", "Step 6"],
-                                    ordered=True)
+        # Build mapping from issue number to priority and complexity
+        priority_map = {}
+        for prio, issues in categorized_issues.get('by_priority', {}).items():
+            for issue in issues:
+                priority_map[issue['number']] = prio.capitalize()
 
-        # Create Gantt
-        fig = ff.create_gantt(
-            df,
-            index_col='Step',       # colors bars by Step
-            show_colorbar=True,     # right-hand legend
-            group_tasks=True,
-            title="Teatime Task Timeline - Testing Python script for Gantt Chart",
-        )
-        
+        complexity_map = {}
+        for comp, issues in categorized_issues.get('by_complexity', {}).items():
+            for issue in issues:
+                complexity_map[issue['number']] = comp
+
+        # Gather all unique issues from categorized_issues (fall back to by_type grouping)
+        seen = set()
+        rows = []
+        # iterate over by_priority lists to preserve priority ordering
+        for prio in ['high', 'medium', 'low']:
+            for issue in categorized_issues.get('by_priority', {}).get(prio, []):
+                num = issue['number']
+                if num in seen:
+                    continue
+                seen.add(num)
+                title = issue.get('title', '').strip()
+                labels = [l['name'] for l in issue.get('labels', [])]
+                lbls = ','.join(labels)
+                # estimate duration by complexity
+                comp = complexity_map.get(num, 'medium')
+                if comp == 'simple':
+                    days = 1
+                elif comp == 'complex':
+                    days = 7
+                else:
+                    days = 3
+                rows.append({'IssueNumber': num, 'Task': f"[{num}] {title}", 'Labels': lbls, 'Priority': priority_map.get(num, 'Medium'), 'DurationDays': days})
+
+        # if no items found in by_priority (fallback): flatten by_type
+        if not rows:
+            for category, issues in categorized_issues.get('by_type', {}).items():
+                for issue in issues:
+                    num = issue['number']
+                    if num in seen:
+                        continue
+                    seen.add(num)
+                    title = issue.get('title', '').strip()
+                    labels = [l['name'] for l in issue.get('labels', [])]
+                    lbls = ','.join(labels)
+                    comp = complexity_map.get(num, 'medium')
+                    if comp == 'simple':
+                        days = 1
+                    elif comp == 'complex':
+                        days = 7
+                    else:
+                        days = 3
+                    rows.append({'IssueNumber': num, 'Task': f"[{num}] {title}", 'Labels': lbls, 'Priority': 'Medium', 'DurationDays': days})
+
+        if not rows:
+            print("No issues available to build Gantt chart.")
+            return None
+
+        # build DataFrame with staggered start times
+        base = datetime.now()
+        df_rows = []
+        for i, r in enumerate(rows):
+            start = base + timedelta(days=i)  # stagger each task by a day
+            finish = start + timedelta(days=r['DurationDays'])
+            df_rows.append({
+                'Task': r['Task'],
+                'Start': start,
+                'Finish': finish,
+                'Priority': r['Priority'],
+                'IssueNumber': r['IssueNumber'],
+                'Labels': r['Labels']
+            })
+
+        df_all = pd.DataFrame(df_rows)
+
+        if not show_all:
+            df = df_all.head(max_initial)
+            note = f"(showing first {len(df)} of {len(df_all)} tasks). Set OPEN_GANTT_ALL=1 to see all."
+        else:
+            df = df_all
+            note = f"(showing all {len(df)} tasks)"
+
+        fig = px.timeline(df, x_start='Start', x_end='Finish', y='Task', color='Priority', hover_data=['IssueNumber', 'Labels'])
+        fig.update_yaxes(autorange='reversed')
+        fig.update_layout(title_text=f"Teatime Gantt Chart {note}", height=400 + min(800, len(df)*20))
+
         return fig
     except ImportError as e:
         print(f"Warning: Could not create Gantt chart. Missing required libraries: {e}")
@@ -319,9 +386,10 @@ def main():
         print(f"\nOutput has been saved to: {output_path}")
         print(f"You can view the file directly with: cat {output_path}")
         
-        # Create and save Gantt chart
+        # Create and save Gantt chart (built from fetched issues)
         print("\nGenerating Gantt chart...")
-        fig = create_gantt_chart()
+        show_all = os.getenv('OPEN_GANTT_ALL', '').lower() in ('1', 'true', 'yes')
+        fig = create_gantt_chart(categorized, show_all=show_all)
         if fig:
             fig.write_html(gantt_path)
             print(f"Gantt chart has been saved to: {gantt_path}")
