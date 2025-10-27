@@ -408,7 +408,14 @@ def main():
                                     exe,
                                     '--disable-gpu',
                                     '--disable-software-rasterizer',
+                                    '--disable-accelerated-2d-canvas',
+                                    '--disable-accelerated-jpeg-decoding',
+                                    '--disable-accelerated-mjpeg-decode',
+                                    '--disable-accelerated-video-decode',
+                                    '--disable-gpu-compositing',
                                     '--disable-dev-shm-usage',
+                                    '--disable-software-rasterizer',
+                                    '--in-process-gpu',
                                     # --disable-setuid-sandbox removed: it triggers "unsupported" warnings under
                                     # snap and may reduce stability; keep --no-sandbox only when explicitly allowed.
                                     # --no-sandbox is potentially problematic; include only if explicitly allowed
@@ -450,6 +457,9 @@ def main():
                                     import urllib.parse
                                     file_url = 'file://' + urllib.parse.quote(os.path.abspath(tmp_copy_path))
 
+                                # Prepare a log path for any subprocesses we may spawn
+                                log_path = '/tmp/tt-gantt-chromium.log'
+
                                 # If the Chromium executable is a snap build, snap confinement may prevent
                                 # file:// access. In that case start a tiny HTTP server serving the
                                 # temp directory and open via http://127.0.0.1:PORT/gantt-chart.html
@@ -470,10 +480,11 @@ def main():
                                         s.close()
                                         server_cmd = [sys.executable, '-m', 'http.server', str(port)]
                                         try:
-                                            with open(log_path, 'ab') as logf:
-                                                logf.write((f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
-                                                logf.flush()
-                                            server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=logf, stderr=logf)
+                                            # open the log file and keep the handle open for the server subprocess
+                                            server_logf = open(log_path, 'ab')
+                                            server_logf.write((f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
+                                            server_logf.flush()
+                                            server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=server_logf, stderr=server_logf)
                                             # give server a moment to start
                                             time.sleep(0.2)
                                             http_url = f'http://127.0.0.1:{port}/gantt-chart.html'
@@ -485,6 +496,7 @@ def main():
                                                 pass
                                             # Replace file_url with http_url so Chromium opens HTTP endpoint
                                             file_url = http_url
+                                            # Note: server_logf intentionally not closed here so the server keeps writing to the file
                                             # And set a short timeout for server liveness check later if needed
                                         except Exception as e:
                                             print(f"Failed to start local HTTP server fallback: {e}")
@@ -554,9 +566,16 @@ def main():
                     print("Please open the file manually in your browser")
             else:
                 print("Auto-open disabled (set OPEN_GANTT=1 to enable).")
-                print(f"Gantt chart file is available at: {os.path.abspath(gantt_path)}")
-                print("To open it safely in Chromium with mitigations, try:")
-                print("  chromium --disable-gpu --disable-software-rasterizer --no-sandbox --user-data-dir=/tmp/tt-gantt 'file://" + os.path.abspath(gantt_path) + "'")
+                print(f"\nWARNING: DO NOT open the file directly in a browser using file:// URLs.")
+                print("This can crash your system due to GPU acceleration issues.")
+                print("\nInstead, use one of these safer methods:")
+                print("1. Run this script with: OPEN_GANTT=1 BROWSER_NAME=chromium ALLOW_NO_SANDBOX=1")
+                print("2. Start a local server: python -m http.server 8000")
+                print("   Then open: http://localhost:8000/teatime-gantt-chart.html")
+                print("\nThe Gantt chart is saved here for reference:")
+                print(f"  {os.path.abspath(gantt_path)}")
+                print("\nDO NOT open this file directly in your browser.")
+
         else:
             print("Gantt chart could not be generated due to missing libraries.")
         
