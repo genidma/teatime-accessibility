@@ -27,13 +27,7 @@ import sys
 firefox_path = '/usr/bin/firefox'  # Adjust if your Firefox executable is in a different location
 if os.path.exists(firefox_path):
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
-            self.issues = [issue for issue in response.json() if 'pull_request' not in issue]
-            print(f"Found {len(self.issues)} open issues")
-            return self.issues
-        else:
-            print(f"Error fetching issues: {response.status_code}")
-            print(response.text)
-            return []
+
     
     def categorize_issues(self):
         """
