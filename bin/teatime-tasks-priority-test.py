@@ -449,6 +449,52 @@ def main():
                                     # Fallback: basic quoting
                                     import urllib.parse
                                     file_url = 'file://' + urllib.parse.quote(os.path.abspath(tmp_copy_path))
+
+                                # If the Chromium executable is a snap build, snap confinement may prevent
+                                # file:// access. In that case start a tiny HTTP server serving the
+                                # temp directory and open via http://127.0.0.1:PORT/gantt-chart.html
+                                try:
+                                    use_http_fallback = False
+                                    if exe and '/snap/' in exe:
+                                        use_http_fallback = True
+                                    # Allow override via env var
+                                    if os.getenv('OPEN_GANTT_SERVER', '').lower() in ('1', 'true', 'yes'):
+                                        use_http_fallback = True
+
+                                    if use_http_fallback:
+                                        import socket
+                                        # find a free port
+                                        s = socket.socket()
+                                        s.bind(('127.0.0.1', 0))
+                                        port = s.getsockname()[1]
+                                        s.close()
+                                        server_cmd = [sys.executable, '-m', 'http.server', str(port)]
+                                        try:
+                                            with open(log_path, 'ab') as logf:
+                                                logf.write((f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
+                                                logf.flush()
+                                            server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=logf, stderr=logf)
+                                            # give server a moment to start
+                                            time.sleep(0.2)
+                                            http_url = f'http://127.0.0.1:{port}/gantt-chart.html'
+                                            print(f"Started local HTTP server (PID: {server_proc.pid}) serving {tmp_dir} at {http_url}")
+                                            try:
+                                                with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                                    df.write((f"[{datetime.now().isoformat()}] Started HTTP server PID {server_proc.pid} port {port}\n").encode())
+                                            except Exception:
+                                                pass
+                                            # Replace file_url with http_url so Chromium opens HTTP endpoint
+                                            file_url = http_url
+                                            # And set a short timeout for server liveness check later if needed
+                                        except Exception as e:
+                                            print(f"Failed to start local HTTP server fallback: {e}")
+                                            try:
+                                                with open('/tmp/tt-gantt-debug.log', 'ab') as df:
+                                                    df.write((f"[{datetime.now().isoformat()}] HTTP server start failed: {e}\n").encode())
+                                            except Exception:
+                                                pass
+                                except Exception:
+                                    pass
                                 cmd.extend([
                                     '--user-data-dir=/tmp/tt-gantt-userdata',
                                     '--no-first-run',
