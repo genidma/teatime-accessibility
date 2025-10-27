@@ -23,6 +23,7 @@ import webbrowser
 import time
 import shutil
 import sys
+import subprocess
 # Register Firefox as the browser to use
 firefox_path = '/usr/bin/firefox'  # Adjust if your Firefox executable is in a different location
 if os.path.exists(firefox_path):
