@@ -412,14 +412,18 @@ def main():
                                 ]
                                 if allow_no_sandbox:
                                     cmd.append('--no-sandbox')
-                                # Copy the gantt file to /tmp so snap-confined browsers can access it
-                                tmp_copy_path = '/tmp/tt-gantt-chromium.html'
+                                # Create a dedicated directory in /tmp with proper permissions
+                                tmp_dir = '/tmp/tt-gantt'
+                                os.makedirs(tmp_dir, mode=0o755, exist_ok=True)
+                                tmp_copy_path = os.path.join(tmp_dir, 'gantt-chart.html')
                                 try:
                                     shutil.copy2(file_path, tmp_copy_path)
+                                    # Ensure the file has proper permissions
+                                    os.chmod(tmp_copy_path, 0o644)
                                     print(f"Copied gantt file to temporary path: {tmp_copy_path}")
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
-                                            df.write((f"[{datetime.now().isoformat()}] Copied to {tmp_copy_path}\n").encode())
+                                            df.write((f"[{datetime.now().isoformat()}] Created {tmp_dir} and copied to {tmp_copy_path}\n").encode())
                                     except Exception:
                                         pass
                                 except Exception as e:
@@ -432,8 +436,8 @@ def main():
                                         pass
                                     tmp_copy_path = file_path
                                 cmd.extend([
-                                    '--user-data-dir=/tmp/tt-gantt',
-                                    tmp_copy_path,
+                                    '--user-data-dir=/tmp/tt-gantt-userdata',
+                                    'file://' + tmp_copy_path,
                                 ])
 
                                 # Prepare a log file to capture Chromium stdout/stderr for debugging
