@@ -32,4 +32,10 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.xticks(rotation=45)
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+filename = f'memory_usage_{timestamp}.png'
+plt.savefig(filename, dpi=150)
+print(f'Plot saved as {filename}')
+
 plt.show()
