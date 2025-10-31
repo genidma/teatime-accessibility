@@ -13,9 +13,14 @@ df = pd.read_csv('mem_log.csv', names=['Time', 'PID', 'RSS_MB'])
 
 df = df[df['Time'].str.match(r'^\d{2}:\d{2}:\d{2}$')]
 
-# Convert Time column to pandas datetime (today's date + time)
+# Convert Time column to pandas datetime
 
 df['Time'] = pd.to_datetime(df['Time'], format='%H:%M:%S')
+
+# Ensure RSS_MB is numeric, drop rows that are not
+
+df['RSS_MB'] = pd.to_numeric(df['RSS_MB'], errors='coerce')
+df = df.dropna(subset=['RSS_MB'])
 
 plt.figure(figsize=(12,6))
 plt.plot(df['Time'], df['RSS_MB'], label='Memory Usage (MB)')
@@ -26,5 +31,5 @@ plt.title('Process Memory Usage Over Time')
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
-plt.xticks(rotation=45)  # rotate X-axis labels for readability
+plt.xticks(rotation=45)
 plt.show()
