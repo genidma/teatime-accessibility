@@ -6,9 +6,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load CSV (assumes columns: Time, PID, RSS_MB)
+
 df = pd.read_csv('mem_log.csv', names=['Time', 'PID', 'RSS_MB'])
 
+# Keep only rows where 'Time' looks like HH:MM:SS
+
+df = df[df['Time'].str.match(r'^\d{2}:\d{2}:\d{2}$')]
+
 # Convert Time column to pandas datetime (today's date + time)
+
 df['Time'] = pd.to_datetime(df['Time'], format='%H:%M:%S')
 
 plt.figure(figsize=(12,6))
