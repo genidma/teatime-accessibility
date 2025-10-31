@@ -1,4 +1,6 @@
 # Author: Lingma
+## Co-author: Chatgpt (the plot generation via files bit and original logic also)
+## Original idea proposed by: Chatgpt
 # Date of creation: 2025-10-31
 # Description: This script reads a CSV file containing memory usage logs and plots the data
 
