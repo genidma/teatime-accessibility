@@ -44,7 +44,7 @@ plt.tight_layout()
 
 # Show every 60th timestamp on x-axis for readability
 
-plt.xticks(df['FullTime'][::60], rotation=90)
+plt.xticks(df['FullTime'][::60], rotation=90, fontsize=8)
 
 # Timestamped filename
 
