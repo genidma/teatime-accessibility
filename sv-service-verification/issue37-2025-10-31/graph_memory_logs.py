@@ -4,7 +4,7 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+from datetime import timedelta, datetime
 
 # Load CSV (Time, AM/PM, RSS_MB)
 
@@ -14,15 +14,15 @@ df = pd.read_csv('mem_log.csv', names=['Time', 'AMPM', 'RSS_MB'])
 
 df['FullTime'] = df['Time'] + ' ' + df['AMPM']
 
-# Keep only rows where FullTime is valid
+# Keep only valid times
 
 df = df[df['FullTime'].str.match(r'^\d{2}:\d{2}:\d{2} [AP]M$')]
 
-# Convert to datetime (arbitrary date, just for timedelta calculation)
+# Convert to naive datetime (no timezone)
 
 df['FullTime'] = pd.to_datetime(df['FullTime'], format='%I:%M:%S %p')
 
-# Compute elapsed time in seconds from the first timestamp
+# Compute elapsed seconds from the first timestamp
 
 start_time = df['FullTime'].iloc[0]
 df['Elapsed'] = (df['FullTime'] - start_time).dt.total_seconds()
@@ -39,24 +39,22 @@ plt.subplots_adjust(bottom=0.25)
 
 plt.plot(df['Elapsed'], df['RSS_MB'], label='Memory Usage (MB)')
 
-plt.xlabel('Elapsed Time (seconds)')
+plt.xlabel('Time (EST)')
 plt.ylabel('Memory (MB)')
 plt.title('Process Memory Usage Over Time')
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
 
+# Create x-axis labels: every 60 seconds
 
-# Create a formatted label for every 60 seconds
-xticks = df['Elapsed'][::60]  # every 60th second
-xtick_labels = [(start_time + pd.to_timedelta(s, unit='s')).strftime('%I:%M:%S %p') for s in xticks]
+xticks = df['Elapsed'][::60]
+xtick_labels = [(start_time + timedelta(seconds=s)).strftime('%I:%M:%S %p') for s in xticks]
 
-# Label every 60th second (adjust font size)
 plt.xticks(xticks, xtick_labels, rotation=90, fontsize=8)
 
-# Timestamped filename
+# Save PNG with timestamp
 
-from datetime import datetime
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f'memory_usage_{timestamp}.png'
 plt.savefig(filename, dpi=150)
