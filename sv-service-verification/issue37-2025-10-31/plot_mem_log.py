@@ -1,4 +1,5 @@
 # Author: Lingma
+## Co-author: Chatgpt (the portion where plot is saved via a file also)
 # Date of creation: 2025-10-31
 # Description: This script reads a CSV file containing memory usage logs and plots the data
 
@@ -9,6 +10,7 @@ Time values will be on the x-axis and memory values on the y-axis.
 """
 
 import sys
+import os
 
 try:
     import pandas as pd
@@ -21,8 +23,19 @@ except ImportError as e:
     sys.exit(1)
 
 try:
-    # Read the CSV file
-    file_path = 'sv-service-verification/issue37-2025-10-31/mem_log.csv'
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Construct path to the CSV file relative to the script location
+    file_path = os.path.join(script_dir, 'sv-service-verification/issue37-2025-10-31/mem_log.csv')
+    
+    # Check if the file exists at the expected location
+    if not os.path.exists(file_path):
+        # Try alternative path (if script is run from the issue directory)
+        file_path = os.path.join(script_dir, 'mem_log.csv')
+        
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Could not find mem_log.csv at {file_path}")
 
     # Read data with custom column names since the CSV has no header
     df = pd.read_csv(file_path, names=['time', 'period', 'memory'])
@@ -55,16 +68,26 @@ try:
     # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save the plot
-    plt.savefig('memory_usage_plot.png', dpi=300, bbox_inches='tight')
+    # Save the plot in the same directory as the script
+    output_path = os.path.join(script_dir, 'memory_usage_plot.png')
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
     print("Plot saved as 'memory_usage_plot.png'")
+
+    # Save PNG with timestamp
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f'memory_usage_{timestamp}.png'
+    plt.savefig(filename, dpi=150)
+    print(f'Plot saved as {filename}')
 
     # Display the plot
     plt.show()
 
-except FileNotFoundError:
-    print(f"Error: Could not find the file {file_path}")
+except FileNotFoundError as e:
+    print(f"Error: {e}")
     sys.exit(1)
 except Exception as e:
     print(f"Error while processing data or creating plot: {e}")
+    import traceback
+    traceback.print_exc()
     sys.exit(1)
