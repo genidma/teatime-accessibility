@@ -4,6 +4,7 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Load CSV (assumes columns: Time, PID, RSS_MB)
 
@@ -33,9 +34,13 @@ plt.grid(True)
 plt.tight_layout()
 plt.xticks(rotation=45)
 
+# Create a timestamped filename to avoid overwriting
+
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f'memory_usage_{timestamp}.png'
 plt.savefig(filename, dpi=150)
 print(f'Plot saved as {filename}')
+
+# Show the plot on screen
 
 plt.show()
