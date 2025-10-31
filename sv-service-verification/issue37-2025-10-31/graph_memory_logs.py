@@ -4,40 +4,31 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import timedelta, datetime
+from datetime import datetime
 
 # Load CSV (Time, AM/PM, RSS_MB)
 
 df = pd.read_csv('mem_log.csv', names=['Time', 'AMPM', 'RSS_MB'])
 
-# Combine Time + AMPM into one string
+# Combine Time + AMPM as string
 
-df['FullTime'] = df['Time'] + ' ' + df['AMPM']
-
-# Keep only valid times
-
-df = df[df['FullTime'].str.match(r'^\d{2}:\d{2}:\d{2} [AP]M$')]
-
-# Convert to naive datetime (no timezone)
-
-df['FullTime'] = pd.to_datetime(df['FullTime'], format='%I:%M:%S %p')
-
-# Compute elapsed seconds from the first timestamp
-
-start_time = df['FullTime'].iloc[0]
-df['Elapsed'] = (df['FullTime'] - start_time).dt.total_seconds()
+df['FullTimeStr'] = df['Time'] + ' ' + df['AMPM']
 
 # Ensure RSS_MB is numeric
 
 df['RSS_MB'] = pd.to_numeric(df['RSS_MB'], errors='coerce')
 df = df.dropna(subset=['RSS_MB'])
 
+# Create a numeric x-axis for plotting (0,1,2,...)
+
+df['Index'] = range(len(df))
+
 plt.figure(figsize=(24,8))
 plt.subplots_adjust(bottom=0.25)
 
 # Plot all memory usage points
 
-plt.plot(df['Elapsed'], df['RSS_MB'], label='Memory Usage (MB)')
+plt.plot(df['Index'], df['RSS_MB'], label='Memory Usage (MB)')
 
 plt.xlabel('Time (EST)')
 plt.ylabel('Memory (MB)')
@@ -46,10 +37,10 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 
-# Create x-axis labels: every 60 seconds
+# Label every 60th second using the original time strings
 
-xticks = df['Elapsed'][::60]
-xtick_labels = [(start_time + timedelta(seconds=s)).strftime('%I:%M:%S %p') for s in xticks]
+xticks = df['Index'][::60]
+xtick_labels = df['FullTimeStr'][::60]
 
 plt.xticks(xticks, xtick_labels, rotation=90, fontsize=8)
 
