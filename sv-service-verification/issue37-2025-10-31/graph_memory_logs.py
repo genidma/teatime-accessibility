@@ -27,7 +27,8 @@ df['FullTime'] = pd.to_datetime(df['FullTime'], format='%I:%M:%S %p')
 df['RSS_MB'] = pd.to_numeric(df['RSS_MB'], errors='coerce')
 df = df.dropna(subset=['RSS_MB'])
 
-plt.figure(figsize=(18,6))  # wider figure for more labels
+plt.figure(figsize=(24,8))  # wider figure for more labels
+plt.subplots_adjust(bottom=0.25)
 plt.plot(df['FullTime'], df['RSS_MB'], label='Memory Usage (MB)')
 
 plt.xlabel('Time (P<)')
