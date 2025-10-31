@@ -4,6 +4,7 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from datetime import datetime
 
 # Load CSV (Time, AM/PM, RSS_MB)
@@ -30,6 +31,9 @@ df = df.dropna(subset=['RSS_MB'])
 plt.figure(figsize=(24,8))  # wider figure for more labels
 plt.subplots_adjust(bottom=0.25)
 plt.plot(df['FullTime'], df['RSS_MB'], label='Memory Usage (MB)')
+
+# Format x-axis to show only time (HH:MM:SS AM/PM)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%I:%M:%S %p'))
 
 plt.xlabel('Time (P<)')
 plt.ylabel('Memory (MB)')
