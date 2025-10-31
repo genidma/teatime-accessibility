@@ -1,5 +1,4 @@
 # Author: Lingma
-## Co-author: Chatgpt (the portion where plot is saved via a file also)
 # Date of creation: 2025-10-31
 # Description: This script reads a CSV file containing memory usage logs and plots the data
 
@@ -68,16 +67,11 @@ try:
     # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save the plot in the same directory as the script
-    output_path = os.path.join(script_dir, 'memory_usage_plot.png')
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    print("Plot saved as 'memory_usage_plot.png'")
-
-    # Save PNG with timestamp
-
+    # Save PNG with timestamp in the same directory as the script
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f'memory_usage_{timestamp}.png'
-    plt.savefig(filename, dpi=150)
+    output_path = os.path.join(script_dir, filename)
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
     print(f'Plot saved as {filename}')
 
     # Display the plot
