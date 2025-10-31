@@ -52,7 +52,7 @@ xticks = df['Elapsed'][::60]  # every 60th second
 xtick_labels = [(start_time + pd.to_timedelta(s, unit='s')).strftime('%I:%M:%S %p') for s in xticks]
 
 # Label every 60th second (adjust font size)
-plt.xticks(df['Elapsed'][::60], rotation=90, fontsize=8)
+plt.xticks(xticks, xtick_labels, rotation=90, fontsize=8)
 
 # Timestamped filename
 
