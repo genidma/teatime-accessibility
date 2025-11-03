@@ -41,6 +41,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        setup: advanced
         # Skip default queries that don't work with GUI applications
         queries: security-and-quality
 
