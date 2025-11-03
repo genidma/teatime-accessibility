@@ -28,14 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt --user --no-cache-dir
-      - name: Verify pipx installed dependencies
-        run: |
-          python -c "
-          import requests
-          import pandas
-          import plotly
-          print('All dependencies working correctly')
-          "
+
       - name: Test imports
         run: |
           python -c "
