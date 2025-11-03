@@ -1,7 +1,0 @@
-name: Advanced Security Configuration
-
-on:
-  push:
-    branches: [ main ]
-
-# Disable advanced security features that are causing conflicts
