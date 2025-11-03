@@ -23,13 +23,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 
-      - name: Install pip-tools with compatible versions
+      - name: Install and test dependencies
         run: |
           python -m pip install --upgrade pip
-          # Install compatible versions to avoid AttributeError with use_pep517
-          pip install "pip-tools<7.0.0" "pip<25.0"
-
-      - name: Validate requirements.txt
-        run: |
-          # Test that pip-compile can process our requirements file
-          pip-compile --dry-run -o requirements.out requirements.txt
+          pip install -r requirements.txt
+          python -c "import gi; import requests; import pandas; import plotly; print('All dependencies imported successfully')"

@@ -25,21 +25,12 @@ jobs:
           # Cairo and related development packages required to build pycairo
           sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev libgirepository1.0-dev libpixman-1-dev
 
-      - name: Install pip-tools with compatible versions
+      - name: Install and test dependencies
         run: |
           python -m pip install --upgrade pip
-          # Install compatible versions to avoid AttributeError with use_pep517
-          pip install "pip-tools<7.0.0" "pip<25.0"
-
-      - name: Compile requirements (example)
-        run: |
-          if [ -f requirements.in ]; then
-            pip-compile requirements.in
-          elif [ -f requirements.txt ]; then
-            # Validate that pip-compile can process our requirements file
-            pip-compile --dry-run -o requirements.out requirements.txt
-          fi
-
+          pip install -r requirements.txt
+          python -c "import gi; import requests; import pandas; import plotly; print('All dependencies imported successfully')"
+          
       - name: Run dependency submission action
         uses: actions/component-detection-dependency-submission-action@v1
         with:
