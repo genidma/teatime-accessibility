@@ -25,8 +25,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip pipx
+          pip install -r requirements.txt --no-cache-dir
+      - name: Verify pipx installed dependencies
+        run: |
+          python -c "
+          import gi
+          import requests
+          import pandas
+          import plotly
+          print('All dependencies working correctly')
+          "
 
       - name: Test imports
         run: |
