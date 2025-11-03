@@ -1,0 +1,37 @@
+name: Automatic Dependency Submission
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate-and-submit-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: c2e52c4a27810ff9ae0dffb19035d3967f9079d9
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install Cairo and build dependencies
+        run: |
+          sudo apt-get update
+          # Cairo and related development packages required to build pycairo
+          sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev libgirepository1.0-dev libpixman-1-dev
+
+      - name: Install and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -c "import gi; import requests; import pandas; import plotly; print('All dependencies imported successfully')"
+          
+      - name: Run dependency submission action
+        uses: actions/component-detection-dependency-submission-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
