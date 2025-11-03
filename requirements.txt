@@ -1,5 +1,4 @@
 # This file lists the Python packages required by the TeaTime application.
-PyGObject
 requests
 pandas
 plotly
