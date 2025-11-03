@@ -39,6 +39,6 @@ jobs:
           "
 
       - name: Run dependency submission
-        uses: advanced-security/component-detection-dependency-submission-action@v0.0.3
+        uses: advanced-security/component-detection-dependency-submission-action@v0.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
