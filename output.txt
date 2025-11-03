@@ -1,4 +1,4 @@
-TeaTime Accessibility Issue Categorizer
+TeaTime Accessibility Issue Categorizer 
 ======================================
 Found 24 open issues
 
