@@ -41,11 +41,10 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        setup: advanced
-        # Skip default queries that don't work with GUI applications
+        # Focus exclusively on Python analysis and skip unnecessary configurations
         queries: security-and-quality
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        category: "/language:${{matrix.language}}"
+        category: "/language:${{ matrix.language }}"  # Ensures focus stays on Python code analysis
