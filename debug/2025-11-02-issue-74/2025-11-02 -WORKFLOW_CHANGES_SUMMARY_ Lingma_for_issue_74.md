@@ -44,3 +44,8 @@ This document summarizes the changes made to fix GitHub Actions workflow issues 
 
 ## Author
 This summary was created by Lingma (灵码), an AI coding assistant from Alibaba Cloud.
+
+
+## Issue Tracker
+
+This issue is being tracked under [issue 74](https://github.com/genidma/teatime-accessibility/issues/74)
