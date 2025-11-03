@@ -25,17 +25,12 @@ jobs:
           sudo apt-get install -y libcairo2-dev libgirepository1.0-dev pkg-config \
             python3-gi python3-gi-cairo gir1.2-gtk-3.0
 
-
-      - name: Set Python path for system packages
-        run: echo "PYTHONPATH=/usr/lib/python3/dist-packages:$PYTHONPATH" >> $GITHUB_ENV
-
       - name: Install dependencies
         run: |
           pip install -r requirements.txt --user --no-cache-dir
       - name: Verify pipx installed dependencies
         run: |
           python -c "
-          import gi
           import requests
           import pandas
           import plotly
@@ -44,7 +39,6 @@ jobs:
       - name: Test imports
         run: |
           python -c "
-          import gi
           import requests
           import pandas
           import plotly
