@@ -15,14 +15,15 @@ jobs:
           ref: c2e52c4a27810ff9ae0dffb19035d3967f9079d9
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.13'
 
-      - name: Install Cairo dependencies
+      - name: Install Cairo and build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcairo2-dev pkg-config libffi-dev libgirepository1.0-dev
+          # Cairo and related development packages required to build pycairo
+          sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev libgirepository1.0-dev libpixman-1-dev
 
       - name: Install pip-tools
         run: python -m pip install --upgrade pip pip-tools
