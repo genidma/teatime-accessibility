@@ -3,3 +3,5 @@ PyGObject
 requests
 pandas
 plotly
+setuptools>=80.9.0
+wheel
