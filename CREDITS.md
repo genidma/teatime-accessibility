@@ -48,7 +48,11 @@
 
 #### System Monitor(s)
 - [Gnome System Monitor](https://en.wikipedia.org/wiki/GNOME#:~:text=GNOME%201,-Main%20article:%20GNOME&text=GNOME%20was%20started%20on%2015,environment%20and%20applications%20for%20it.) by [Miguel de Icaza](https://en.wikipedia.org/wiki/Miguel_de_Icaza) and [Federico Mena](https://en.wikipedia.org/wiki/Federico_Mena) 
+- [htop](https://en.wikipedia.org/wiki/Htop) by Hisham Muhammad
+- [nmon](https://en.wikipedia.org/wiki/Nmon) by Nigel Griffiths
+- [pidstat](https://man7.org/linux/man-pages/man1/pidstat.1.html) by Sebastien Godard. Note: Particularly for issue #37 to date. 
 
+#### Timer App
 - [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
  
 #### Script usage outside of this repo
