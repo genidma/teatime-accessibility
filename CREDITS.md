@@ -73,9 +73,11 @@
 - [ginla](https://www.youtube.com/@virtualginla/videos)
 - [vansire](https://www.youtube.com/@vansiretheband5497)
 
-## Special Thanks
+## Special Thanks (in random order)
 
-- To all the folks who make open-source software. Surely, this must be a labor  of love. This work could not have been possible without the tools that many have built before us and many are building/contributing towards today. 
+- To all the creators of open-source software: your passion and dedication form the foundation of our digital world.
+    - This project stands on the shoulders of giants — those who came before us and those actively shaping our future through their generous contributions.
+    - May we work towards creating a world where all meaningful contributions are cherished, celebrated, and supported in a manner that is meaningful and intentional.
 - AI assistants (or intelligences independent of a substrate) who helped throughout the development process.
 - Many neighbors who provided me with computer parts. Often for a steep discount. Including the computer that I am using right now!
 - Family supports
