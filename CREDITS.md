@@ -2,13 +2,13 @@
 
 ## Main Authors
 
-- Lingma from Alibaba Cloud
-- Gemini by Google
-- genidma on Github
+- [Lingma](https://github.com/genidma/teatime-accessibility) from Alibaba Cloud
+- [Gemini](https://gemini.google.com/) by Google
+- [genidma](https://github.com/genidma) on Github
 
 ## Contributors
 
-- shanaya-gupta (photosensitive version)
+- [shanaya-gupta](https://github.com/shanaya-gupta) (photosensitive version)
 - AIs (or intelligences of a substrate)
 - Simion (bell sound asset)
 
