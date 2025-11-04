@@ -49,6 +49,7 @@
 
 ##### sound-effects
 - [Tone.js - Chrome Experiments - Song Maker](https://musiclab.chromeexperiments.com/Song-Maker)
+    - sound-effects created by @genidma
 
 
 ### operating systems

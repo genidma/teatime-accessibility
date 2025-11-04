@@ -710,7 +710,7 @@ class TeaTimerApp(Gtk.Application):
         dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
         dialog.set_program_name(APP_NAME)
         dialog.set_version(APP_VERSION)
-        dialog.set_comments("An accessible tea timer application with customizable animations.")
+        dialog.set_comments("An accessible tea timer application with customizable animations.\n\nFull credits: https://github.com/genidma/teatime-accessibility/blob/main/CREDITS.md")
         dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
         dialog.set_website_label("GitHub Repository")
         dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
@@ -760,7 +760,7 @@ class TeaTimerApp(Gtk.Application):
             def strategy_system_beep():
                 # A simple, reliable fallback
                 try:
-                    print("", end="", flush=True)
+                    print("\a", end="", flush=True)
                     return True
                 except:
                     return False
