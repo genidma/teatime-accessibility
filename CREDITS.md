@@ -30,12 +30,27 @@
 - Redacted for privacy and security considerations
 
 ### Open-Source Software (in random order)
+
+#### VM (Virtual Machines)
 - [Cockpit by Redhat](https://www.redhat.com/en/blog/intro-cockpit)
+
+#### Media converters
 - [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) by [Fabrice Bellard](https://en.wikipedia.org/wiki/Fabrice_Bellard) 
-- [VokoscreenNG](https://github.com/vkohaupt/vokoscreenNG) by [Volker Kohaupt](https://github.com/vkohaupt) Note: I downloaded the app from the apt repository
-- [Gnome System Monitor](https://en.wikipedia.org/wiki/GNOME#:~:text=GNOME%201,-Main%20article:%20GNOME&text=GNOME%20was%20started%20on%2015,environment%20and%20applications%20for%20it.) by [Miguel de Icaza](https://en.wikipedia.org/wiki/Miguel_de_Icaza) and [Federico Mena](https://en.wikipedia.org/wiki/Federico_Mena) I am guessing?
+
+#### Media players
 - [VLC Media Player](https://en.wikipedia.org/wiki/VLC_media_player) by [Jean-Baptiste Kempf](https://en.wikipedia.org/wiki/Jean-Baptiste_Kempf) 
-- [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility) by myself in collaboration with many other intelligences independent of a substrate. Also, see the 'Credits' section within the app itself
+
+#### Game Engine for Animations
+- [Unity Hub](https://docs.unity3d.com/hub/manual/InstallHub.html)
+
+#### Screen recorders
+- [VokoscreenNG](https://github.com/vkohaupt/vokoscreenNG) by [Volker Kohaupt](https://github.com/vkohaupt) Note: Downloaded from the app from the apt repository (not directly from the github repo)
+- [Peek](https://en.ubunlog.com/peek-animated-gif-ubuntu/) For creating animated gifs
+
+#### System Monitor(s)
+- [Gnome System Monitor](https://en.wikipedia.org/wiki/GNOME#:~:text=GNOME%201,-Main%20article:%20GNOME&text=GNOME%20was%20started%20on%2015,environment%20and%20applications%20for%20it.) by [Miguel de Icaza](https://en.wikipedia.org/wiki/Miguel_de_Icaza) and [Federico Mena](https://en.wikipedia.org/wiki/Federico_Mena) 
+
+- [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
  
 
 
