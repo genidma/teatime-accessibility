@@ -710,13 +710,16 @@ class TeaTimerApp(Gtk.Application):
         dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
         dialog.set_program_name(APP_NAME)
         dialog.set_version(APP_VERSION)
-        dialog.set_comments("An accessible tea timer application with customizable animations.\n\nFull credits: https://github.com/genidma/teatime-accessibility/blob/main/CREDITS.md")
+        dialog.set_comments("An accessible tea timer application with customizable animations.")
         dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
         dialog.set_website_label("GitHub Repository")
         dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
         dialog.set_copyright("Copyright 2025 TeaTime Accessibility Team")
         dialog.set_license_type(Gtk.License.MIT_X11)
         dialog.set_logo_icon_name("timer")
+        
+        # Add a credit section for full credits with hyperlink
+        dialog.add_credit_section("Full Credits", ["https://github.com/genidma/teatime-accessibility/blob/main/CREDITS.md"])
         
         # Show the dialog
         dialog.run()
