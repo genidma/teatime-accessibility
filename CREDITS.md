@@ -15,8 +15,14 @@
 - Simion (bell sound asset)
 
 ## Tool Use
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
+- [GitHub](https://github.com/)
+- [Github Projects Classic](https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/)
+- [Github Projects](https://github.blog/news-insights/product-news/planning-next-to-your-code-github-projects-is-now-generally-available/)
 
 ### Operating Systems
+- Redacted for privacy and security considerations
 
 ### Open-Source Software
 
