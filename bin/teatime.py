@@ -707,6 +707,18 @@ class TeaTimerApp(Gtk.Application):
     def show_about_dialog(self):
         """Displays the about dialog."""
         try:
+            # Test with a simple dialog first
+            dialog = Gtk.Dialog(title="Test Dialog", 
+                              transient_for=self.window, 
+                              modal=True)
+            dialog.add_button("OK", Gtk.ResponseType.OK)
+            label = Gtk.Label(label="Test dialog - if you can see this, dialog creation works")
+            dialog.get_content_area().add(label)
+            label.show()
+            response = dialog.run()
+            dialog.destroy()
+            
+            # If the test dialog works, try the AboutDialog
             # Create about dialog
             dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
             dialog.set_program_name(APP_NAME)
@@ -727,8 +739,21 @@ class TeaTimerApp(Gtk.Application):
             dialog.run()
         except Exception as e:
             print(f"Error showing about dialog: {e}")
+            # Show error in a message dialog
+            error_dialog = Gtk.MessageDialog(
+                transient_for=self.window,
+                modal=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=f"Error showing about dialog: {e}"
+            )
+            error_dialog.run()
+            error_dialog.destroy()
         finally:
-            dialog.destroy()
+            try:
+                dialog.destroy()
+            except:
+                pass
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
