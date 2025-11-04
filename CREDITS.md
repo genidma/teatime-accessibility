@@ -22,11 +22,18 @@
 - [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
 
 ### Programming Languages
+#### mostly
 - [Python](https://www.python.org/)
 - [GTK](https://www.gtk.org/)
 - [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+
+#### (un)install scripts
 - [Shell Script](https://en.wikipedia.org/wiki/Shell_script)
+
+#### documentation
 - [Markdown](https://en.wikipedia.org/wiki/Markdown)
+
+#### for administrative tasks (Unity Engine)
 - [C](https://en.wikipedia.org/wiki/C_(programming_language))
 
 ### Other Tool Use
