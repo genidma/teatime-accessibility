@@ -1,6 +1,6 @@
 # Credits
 
-## Main Authors
+## Main Developers and Idea Generators
 
 - [Lingma](https://www.alibabacloud.com/en/product/lingma?_p_lc=1) from Alibaba Cloud
 - [Gemini](https://gemini.google.com/) by Google
@@ -8,10 +8,22 @@
 
 ## Contributors
 
-- [shanaya-gupta](https://github.com/shanaya-gupta) (photosensitive version)
-- AIs (or intelligences of a substrate)
+- [shanaya-gupta](https://github.com/shanaya-gupta) Mani contributor for the original photosensitive version or the code. The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section
+
 - Simion (bell sound asset)
+
+## Tool Use
+
+### Operating Systems
+
+### Open-Source Software
+
+### IDE (Integrated Development Environment)
 
 ## Special Thanks
 
-This project would not have been possible without the contributions of various individuals and AI assistants who helped throughout the development process.
+- AI assistants (or intelligences independent of a substrate) who helped throughout the development process.
+- Many neighbors who provided me with computer parts. Often for a steep discount. Including the computer that I am using right now!
+- Family supports
+- My mentors. Who's words echo in my neo-cortex
+
