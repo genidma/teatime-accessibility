@@ -10,7 +10,7 @@
 
 ## Notable Contributors
 
-- [shanaya-gupta](https://github.com/shanaya-gupta) Main contributor for the original photosensitive version or the code. 
+- [shanaya-gupta](https://github.com/shanaya-gupta) Main contributor for the original photosensitive version or the code. :low_brightness:
     - The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases)
 
 - Simion - sound asset for the bell
@@ -37,11 +37,21 @@
 - [C](https://en.wikipedia.org/wiki/C_(programming_language))
 
 ### Other Tool Use
+
+#### Repository Management
 - [GitHub](https://github.com/)
 - [Github Projects Classic](https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/)
 - [Github Projects](https://github.blog/news-insights/product-news/planning-next-to-your-code-github-projects-is-now-generally-available/)
+
+#### Queries
 - [Google's AI powered search](https://www.google.com/search?udm=50&aep=11?utm_source=ai.google&utm_medium=referral) Separate from Gemini (even though it is probably powered by Gemini)
+
+#### Media
 - [Unity Hub & Unity](https://docs.unity3d.com/hub/manual/InstallHub.html)
+
+##### Sound-effects
+- [Tone.js - Chrome Experiments - Song Maker](https://musiclab.chromeexperiments.com/Song-Maker)
+
 
 ### Operating Systems
 - Redacted for privacy and security considerations
@@ -85,7 +95,7 @@
 - Various. Currently sitting on private repositories, like: sysadmin-scripts, back2school e.t.c
  
 
-## Music
+## Music to listen to
 - [Grind and Groove](https://www.youtube.com/@GrindnGroove/videos) on Youtube Music and Youtube also
 - [Far Caspian](https://www.youtube.com/watch?v=li46czmgpP0) :four_leaf_clover:
 - [Arc De Soleil](https://www.youtube.com/watch?v=QyuFdeHShNA)
@@ -99,9 +109,8 @@
 
 - To all the creators of open-source software: your passion and dedication form the foundation of our digital world.
     - This project stands on the shoulders of giants — those who came before us and those actively shaping our future through their generous contributions.
-    - May we work towards creating a world where all meaningful contributions are cherished, celebrated, and supported in a manner that is meaningful and intentional.
-- AI assistants (or intelligences independent of a substrate) who helped throughout the development process.
-- Many neighbors who provided me with computer parts. Often for a steep discount. Including the computer that I am using right now!
-- Family supports
-- My mentors. Who's words echo in my neo-cortex or however thinking works
-
+    - May we work towards creating a world where all meaningful contributions are cherished, celebrated, and supported in a manner that is intentional. :pray:
+- AI assistants (or intelligences independent of a substrate) who have helped throughout the development process and continue investing. What a time to be alive!
+- Many neighbors who provided me with computer parts. Often for a steep discount. The computer that I am using right now included.
+- Family supports & loved ones. Who understand my new passion.
+- My mentors. Who's words echo in my neo-cortex
