@@ -4,6 +4,8 @@
 
 - [Lingma](https://www.alibabacloud.com/en/product/lingma?_p_lc=1) from Alibaba Cloud
 - [Gemini](https://gemini.google.com/) by Google
+- [Claude by Anthropic](https://claude.ai/)
+- [Chatgpt by OpenAI](https://openai.com/)]
 - [genidma](https://github.com/genidma) on Github
 
 ## Contributors
