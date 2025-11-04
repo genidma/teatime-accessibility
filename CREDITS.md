@@ -15,19 +15,32 @@
 - Simion (bell sound asset)
 
 ## Tool Use
+
+### IDE (Integrated Development Environment)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
+
+### Other Tool Use
 - [GitHub](https://github.com/)
 - [Github Projects Classic](https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/)
 - [Github Projects](https://github.blog/news-insights/product-news/planning-next-to-your-code-github-projects-is-now-generally-available/)
+- [Google's AI powered search](https://www.google.com/search?udm=50&aep=11?utm_source=ai.google&utm_medium=referral) Separate from Gemini (even though it is probably powered by Gemini)
 
 ### Operating Systems
 - Redacted for privacy and security considerations
 
-### Open-Source Software
+### Open-Source Software (in random order)
+- [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) by [Fabrice Bellard](https://en.wikipedia.org/wiki/Fabrice_Bellard) Note: I didn't realize that Bellard was also the success behind qemu. 
+- [VokoscreenNG](https://github.com/vkohaupt/vokoscreenNG) by [Volker Kohaupt](https://github.com/vkohaupt) Note: I downloaded the app from the apt repository
+- [Gnome System Monitor](https://en.wikipedia.org/wiki/GNOME#:~:text=GNOME%201,-Main%20article:%20GNOME&text=GNOME%20was%20started%20on%2015,environment%20and%20applications%20for%20it.) by [Miguel de Icaza](https://en.wikipedia.org/wiki/Miguel_de_Icaza) and [Federico Mena](https://en.wikipedia.org/wiki/Federico_Mena) I am guessing?
+- [VLC Media Player](https://en.wikipedia.org/wiki/VLC_media_player) by [Jean-Baptiste Kempf](https://en.wikipedia.org/wiki/Jean-Baptiste_Kempf) 
+- [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility) by myself in collaboration with many other intelligences independent of a substrate. Also, see the 'Credits' section within the app itself
+- [Cockpit by Redhat](https://www.redhat.com/en/blog/intro-cockpit) 
 
-### IDE (Integrated Development Environment)
 
+## Music
+- [Grind and Groove](https://www.youtube.com/@GrindnGroove/videos) on Youtube Music and Youtube also
+- 
 ## Special Thanks
 
 - AI assistants (or intelligences independent of a substrate) who helped throughout the development process.
