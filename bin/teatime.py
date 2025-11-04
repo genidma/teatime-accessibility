@@ -711,7 +711,7 @@ class TeaTimerApp(Gtk.Application):
         dialog.set_program_name(APP_NAME)
         dialog.set_version(APP_VERSION)
         dialog.set_comments("An accessible tea timer application with customizable animations.")
-        dialog.set_website("https://github.com/harmonoid/teatime-accessibility")
+        dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
         dialog.set_website_label("GitHub Repository")
         dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
         dialog.set_copyright("Copyright 2025 TeaTime Accessibility Team")
