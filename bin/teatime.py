@@ -706,50 +706,21 @@ class TeaTimerApp(Gtk.Application):
 
     def show_about_dialog(self):
         """Displays the about dialog."""
-        try:
-            # Test with a simple dialog first
-            dialog = Gtk.Dialog(title="Test Dialog", 
-                              transient_for=self.window, 
-                              modal=True)
-            dialog.add_button("OK", Gtk.ResponseType.OK)
-            label = Gtk.Label(label="Test dialog - if you can see this, dialog creation works")
-            dialog.get_content_area().add(label)
-            label.show()
-            response = dialog.run()
-            dialog.destroy()
-            
-            # If the test dialog works, try the AboutDialog
-            # Create about dialog
-            dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
-            dialog.set_program_name(APP_NAME)
-            dialog.set_version(APP_VERSION)
-            dialog.set_comments("An accessible tea timer application with customizable animations.")
-            dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
-            dialog.set_website_label("GitHub Repository")
-            dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
-            dialog.set_copyright("Copyright 2025 TeaTime Accessibility Team")
-            dialog.set_license_type(Gtk.License.MIT_X11)
-            dialog.set_logo_icon_name("timer")
-            
-            # Show the dialog
-            dialog.run()
-        except Exception as e:
-            print(f"Error showing about dialog: {e}")
-            # Show error in a message dialog
-            error_dialog = Gtk.MessageDialog(
-                transient_for=self.window,
-                modal=True,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text=f"Error showing about dialog: {e}"
-            )
-            error_dialog.run()
-            error_dialog.destroy()
-        finally:
-            try:
-                dialog.destroy()
-            except:
-                pass
+        # Create about dialog
+        dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
+        dialog.set_program_name(APP_NAME)
+        dialog.set_version(APP_VERSION)
+        dialog.set_comments("An accessible tea timer application with customizable animations.")
+        dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
+        dialog.set_website_label("GitHub Repository")
+        dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
+        dialog.set_copyright("Copyright 2025 TeaTime Accessibility Team")
+        dialog.set_license_type(Gtk.License.MIT_X11)
+        dialog.set_logo_icon_name("timer")
+        
+        # Show the dialog
+        dialog.run()
+        dialog.destroy()
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
