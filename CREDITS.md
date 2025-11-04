@@ -49,7 +49,7 @@
 #### Media
 - [Unity Hub & Unity](https://docs.unity3d.com/hub/manual/InstallHub.html)
 
-##### Sound-effects
+##### sound-effects
 - [Tone.js - Chrome Experiments - Song Maker](https://musiclab.chromeexperiments.com/Song-Maker)
 
 

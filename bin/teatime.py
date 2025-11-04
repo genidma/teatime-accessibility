@@ -730,7 +730,7 @@ class TeaTimerApp(Gtk.Application):
         def play_sound_task():
             """Defines and tries different strategies to play a sound."""
             sound_files = [
-                "service-bell_daniel_simion.wav",
+                "assets/sound-effects/2025-11-04-session-concludes-01.wav",
             ]
 
             def strategy_paplay():
