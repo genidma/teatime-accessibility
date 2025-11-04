@@ -32,6 +32,9 @@
 
 ### Open-Source Software (in random order)
 
+#### Timer App
+- [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
+
 #### VM (Virtual Machines)
 - [Cockpit by Redhat](https://www.redhat.com/en/blog/intro-cockpit)
 
@@ -40,7 +43,6 @@
 
 #### Media players
 - [VLC Media Player](https://en.wikipedia.org/wiki/VLC_media_player) by [Jean-Baptiste Kempf](https://en.wikipedia.org/wiki/Jean-Baptiste_Kempf) 
-
 
 #### Screen recorders
 - [VokoscreenNG](https://github.com/vkohaupt/vokoscreenNG) by [Volker Kohaupt](https://github.com/vkohaupt) Note: Downloaded from the app from the apt repository (not directly from the github repo)
@@ -52,9 +54,9 @@
 - [nmon](https://en.wikipedia.org/wiki/Nmon) by Nigel Griffiths
 - [pidstat](https://man7.org/linux/man-pages/man1/pidstat.1.html) by Sebastien Godard. Note: Particularly for issue #37 to date. 
 
-#### Timer App
-- [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
- 
+#### Anti-virus Software
+- [ClamAV](https://en.wikipedia.org/wiki/ClamAV) by Tomasz Kojm. Now maintained by [Cisco Talos](https://en.wikipedia.org/wiki/Cisco_Talos) 
+
 #### Script usage outside of this repo
 - Various. Currently sitting on private repositories, like: sysadmin-scripts, back2school e.t.c
  
