@@ -1,6 +1,8 @@
 # TeaTime Accessibility
 
-GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). New features are added regularly.
+GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). 
+
+_New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
 ## Release Notes
 

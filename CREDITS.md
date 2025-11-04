@@ -10,9 +10,10 @@
 
 ## Notable Contributors
 
-- [shanaya-gupta](https://github.com/shanaya-gupta) Mani contributor for the original photosensitive version or the code. The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases)
+- [shanaya-gupta](https://github.com/shanaya-gupta) Main contributor for the original photosensitive version or the code. 
+    - The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases)
 
-- Simion (bell sound asset)
+- Simion - sound asset for the bell
 
 ## Tool Use
 
@@ -74,6 +75,7 @@
 
 ## Special Thanks
 
+- To all the folks who make open-source software. Surely, this must be a labor  of love. This work could not have been possible without the tools that many have built before us and many are building/contributing towards today. 
 - AI assistants (or intelligences independent of a substrate) who helped throughout the development process.
 - Many neighbors who provided me with computer parts. Often for a steep discount. Including the computer that I am using right now!
 - Family supports
