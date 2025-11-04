@@ -25,6 +25,7 @@
 - [Github Projects Classic](https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/)
 - [Github Projects](https://github.blog/news-insights/product-news/planning-next-to-your-code-github-projects-is-now-generally-available/)
 - [Google's AI powered search](https://www.google.com/search?udm=50&aep=11?utm_source=ai.google&utm_medium=referral) Separate from Gemini (even though it is probably powered by Gemini)
+- [Unity Hub & Unity](https://docs.unity3d.com/hub/manual/InstallHub.html)
 
 ### Operating Systems
 - Redacted for privacy and security considerations
@@ -40,8 +41,6 @@
 #### Media players
 - [VLC Media Player](https://en.wikipedia.org/wiki/VLC_media_player) by [Jean-Baptiste Kempf](https://en.wikipedia.org/wiki/Jean-Baptiste_Kempf) 
 
-#### Game Engine for Animations
-- [Unity Hub](https://docs.unity3d.com/hub/manual/InstallHub.html)
 
 #### Screen recorders
 - [VokoscreenNG](https://github.com/vkohaupt/vokoscreenNG) by [Volker Kohaupt](https://github.com/vkohaupt) Note: Downloaded from the app from the apt repository (not directly from the github repo)
@@ -52,7 +51,9 @@
 
 - [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
  
-
+#### Script usage outside of this repo
+- Various. Currently sitting on private repositories, like: sysadmin-scripts, back2school e.t.c
+ 
 
 ## Music
 - [Grind and Groove](https://www.youtube.com/@GrindnGroove/videos) on Youtube Music and Youtube also
