@@ -4,13 +4,13 @@
 
 - [Lingma](https://www.alibabacloud.com/en/product/lingma?_p_lc=1) from Alibaba Cloud
 - [Gemini](https://gemini.google.com/) by Google
-- [Claude by Anthropic](https://claude.ai/)
-- [Chatgpt by OpenAI](https://openai.com/)]
+- [Claude](https://claude.ai/) by Anthropic
+- [Chatgpt](https://openai.com/) by OpenAI
 - [genidma](https://github.com/genidma) on Github
 
-## Contributors
+## Notable Contributors
 
-- [shanaya-gupta](https://github.com/shanaya-gupta) Mani contributor for the original photosensitive version or the code. The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section
+- [shanaya-gupta](https://github.com/shanaya-gupta) Mani contributor for the original photosensitive version or the code. The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases)
 
 - Simion (bell sound asset)
 
