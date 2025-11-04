@@ -69,11 +69,13 @@
 - [Silence Mind](https://music.youtube.com/watch?v=D0eE8l87oyY)
 - [Glass Beams](https://www.youtube.com/@GlassBeams/videos)
 - [Beat Plastic](https://soundcloud.com/beat-plastic/theres-something-about-us)
-- 
+- [ginla](https://www.youtube.com/@virtualginla/videos)
+- [vansire](https://www.youtube.com/@vansiretheband5497)
+
 ## Special Thanks
 
 - AI assistants (or intelligences independent of a substrate) who helped throughout the development process.
 - Many neighbors who provided me with computer parts. Often for a steep discount. Including the computer that I am using right now!
 - Family supports
-- My mentors. Who's words echo in my neo-cortex
+- My mentors. Who's words echo in my neo-cortex or however thinking works
 
