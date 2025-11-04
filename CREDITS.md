@@ -53,6 +53,7 @@
 - [htop](https://en.wikipedia.org/wiki/Htop) by Hisham Muhammad
 - [nmon](https://en.wikipedia.org/wiki/Nmon) by Nigel Griffiths
 - [pidstat](https://man7.org/linux/man-pages/man1/pidstat.1.html) by Sebastien Godard. Note: Particularly for issue #37 to date. 
+- [watch](https://en.wikipedia.org/wiki/Watch_(command)) by Tony Rems
 
 #### Anti-virus Software
 - [ClamAV](https://en.wikipedia.org/wiki/ClamAV) by Tomasz Kojm. Now maintained by [Cisco Talos](https://en.wikipedia.org/wiki/Cisco_Talos) 
@@ -63,6 +64,11 @@
 
 ## Music
 - [Grind and Groove](https://www.youtube.com/@GrindnGroove/videos) on Youtube Music and Youtube also
+- [Far Caspian](https://www.youtube.com/watch?v=li46czmgpP0) :four_leaf_clover:
+- [Arc De Soleil](https://www.youtube.com/watch?v=QyuFdeHShNA)
+- [Silence Mind](https://music.youtube.com/watch?v=D0eE8l87oyY)
+- [Glass Beams](https://www.youtube.com/@GlassBeams/videos)
+- [Beat Plastic](https://soundcloud.com/beat-plastic/theres-something-about-us)
 - 
 ## Special Thanks
 
