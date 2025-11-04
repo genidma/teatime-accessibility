@@ -31,6 +31,8 @@
 ### Operating Systems
 - Redacted for privacy and security considerations
 
+
+
 ### Open-Source Software (in random order)
 
 #### Timer App
@@ -58,6 +60,11 @@
 
 #### Anti-virus Software
 - [ClamAV](https://en.wikipedia.org/wiki/ClamAV) by Tomasz Kojm. Now maintained by [Cisco Talos](https://en.wikipedia.org/wiki/Cisco_Talos) 
+
+#### Text Editors
+
+- [nano](https://en.wikipedia.org/wiki/GNU_nano) by Chris Allegretta and Benno Schulenberg
+- [gnome text editor](https://en.wikipedia.org/wiki/GNOME_Text_Editor) by Christian Hergert
 
 #### Script usage outside of this repo
 - Various. Currently sitting on private repositories, like: sysadmin-scripts, back2school e.t.c
