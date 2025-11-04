@@ -714,7 +714,11 @@ class TeaTimerApp(Gtk.Application):
         dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
         dialog.set_website_label("GitHub Repository")
         dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
-        dialog.set_copyright("Copyright 2025 TeaTime Accessibility Team")
+        dialog.set_credits("For full credits, please see the CREDITS.md file directly on Github: https://github.com/genidma/teatime-accessibility/blob/main/CREDITS.md")
+        dialog.add_credit_section("Special Thanks", [
+            "To all the creators of open-source software"
+        ])
+        dialog.set_copyright("Copyright 2025 - karmaconscience dot org")
         dialog.set_license_type(Gtk.License.MIT_X11)
         dialog.set_logo_icon_name("timer")
         
