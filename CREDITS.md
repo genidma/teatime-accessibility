@@ -21,6 +21,14 @@
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
 
+### Programming Languages
+- [Python](https://www.python.org/)
+- [GTK](https://www.gtk.org/)
+- [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- [Shell Script](https://en.wikipedia.org/wiki/Shell_script)
+- [Markdown](https://en.wikipedia.org/wiki/Markdown)
+- [C](https://en.wikipedia.org/wiki/C_(programming_language))
+
 ### Other Tool Use
 - [GitHub](https://github.com/)
 - [Github Projects Classic](https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/)
