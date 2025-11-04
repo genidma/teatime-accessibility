@@ -706,25 +706,29 @@ class TeaTimerApp(Gtk.Application):
 
     def show_about_dialog(self):
         """Displays the about dialog."""
-        # Create about dialog
-        dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
-        dialog.set_program_name(APP_NAME)
-        dialog.set_version(APP_VERSION)
-        dialog.set_comments("An accessible tea timer application with customizable animations.")
-        dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
-        dialog.set_website_label("GitHub Repository")
-        dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
-        dialog.set_credits("For full credits, please see the CREDITS.md file directly on Github: https://github.com/genidma/teatime-accessibility/blob/main/CREDITS.md")
-        dialog.add_credit_section("Special Thanks", [
-            "To all the creators of open-source software"
-        ])
-        dialog.set_copyright("Copyright 2025 - karmaconscience dot org")
-        dialog.set_license_type(Gtk.License.MIT_X11)
-        dialog.set_logo_icon_name("timer")
-        
-        # Show the dialog
-        dialog.run()
-        dialog.destroy()
+        try:
+            # Create about dialog
+            dialog = Gtk.AboutDialog(transient_for=self.window, modal=True)
+            dialog.set_program_name(APP_NAME)
+            dialog.set_version(APP_VERSION)
+            dialog.set_comments("An accessible tea timer application with customizable animations.")
+            dialog.set_website("https://github.com/genidma/teatime-accessibility/releases")
+            dialog.set_website_label("GitHub Repository")
+            dialog.set_authors(["Lingma from Alibaba Cloud", "Gemini by Google", "genidma on Github"])
+            dialog.set_credits("For full credits, please see the CREDITS.md file directly on Github: https://github.com/genidma/teatime-accessibility/blob/main/CREDITS.md")
+            dialog.add_credit_section("Special Thanks", [
+                "To all the creators of open-source software"
+            ])
+            dialog.set_copyright("Copyright 2025 - karmaconscience dot org")
+            dialog.set_license_type(Gtk.License.MIT_X11)
+            dialog.set_logo_icon_name("timer")
+            
+            # Show the dialog
+            dialog.run()
+        except Exception as e:
+            print(f"Error showing about dialog: {e}")
+        finally:
+            dialog.destroy()
 
     def _play_notification_sound(self):
         """Play a sound notification when timer finishes."""
