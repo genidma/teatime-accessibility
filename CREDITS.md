@@ -2,7 +2,7 @@
 
 ## Main Authors
 
-- [Lingma](https://github.com/genidma/teatime-accessibility) from Alibaba Cloud
+- [Lingma](https://www.alibabacloud.com/en/product/lingma?_p_lc=1) from Alibaba Cloud
 - [Gemini](https://gemini.google.com/) by Google
 - [genidma](https://github.com/genidma) on Github
 
