@@ -85,6 +85,35 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run snapshot action
-      uses: github/dependency-submission-toolkit@v1
+      uses: actions/github-script@v6
       with:
-        command: python pip-parse.py --project-path .
+        script: |
+          const path = require('path');
+          const fs = require('fs');
+          
+          // Read requirements.txt
+          const requirementsPath = path.join(process.env.GITHUB_WORKSPACE, 'requirements.txt');
+          const requirements = fs.readFileSync(requirementsPath, 'utf8');
+          
+          // Create dependency snapshot
+          const dependencies = requirements.split('\n')
+            .filter(line => line.trim() !== '' && !line.startsWith('#'))
+            .map(line => {
+              const [name, version] = line.split('==');
+              return {
+                name: name.trim(),
+                version: version ? version.trim() : 'unknown'
+              };
+            });
+          
+          console.log('Dependencies found:', dependencies);
+          
+          // For now, just output the dependencies as artifacts
+          const outputPath = path.join(process.env.GITHUB_WORKSPACE, 'dependencies.json');
+          fs.writeFileSync(outputPath, JSON.stringify(dependencies, null, 2));
+      
+    - name: Upload dependency snapshot
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-snapshot
+        path: dependencies.json
