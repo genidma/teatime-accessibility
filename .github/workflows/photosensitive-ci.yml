@@ -69,7 +69,4 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run snapshot action
-      uses: advanced-security/python-dependency-submission@v1
-      with:
-        project-path: "/vms_and_github/Github/teatime-accessibility"
-        python-interpreter: "/vms_and_github/Github/teatime-accessibility/teatime-venv/bin/python"
+      uses: actions/dependency-review-action@v4      
