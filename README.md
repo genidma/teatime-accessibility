@@ -481,3 +481,6 @@ Issues are best for reporting problems that need to be fixed, while discussions 
 
 ## License
 Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). By now, the code is entirely different and keeps evolving. The release(s) are also with with a different licensing policy.
+
+## Credits
+* For a complete list of credits, please see [CREDITS.md](CREDITS.md)
