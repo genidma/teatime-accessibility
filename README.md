@@ -281,4 +281,4 @@ The application consists of:
 * Custom bell sound: service-bell_daniel_simion.wav
 
 ## Licensing Policy
-* To be determined by @shanaya-Gupta
+* To be determined by @shanaya-Guptahistory | tail -20 | sed 's/^[ ]*[0-9]*[ ]*//'
