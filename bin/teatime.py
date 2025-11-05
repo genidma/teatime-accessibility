@@ -620,6 +620,10 @@ class TeaTimerApp(Gtk.Application):
         about_dialog.set_logo_icon_name("timer") 
         about_dialog.set_transient_for(self.window)
         about_dialog.set_modal(True)
+        
+        # Add a credit section for full credits with hyperlink
+        about_dialog.add_credit_section("Full Credits", ["https://github.com/genidma/teatime-accessibility/blob/photosensitive-dev/CREDITS.md"])
+        
         about_dialog.run()
         about_dialog.destroy()
 
