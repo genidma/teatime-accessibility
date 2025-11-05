@@ -64,6 +64,7 @@
 
 #### vm (virtual machines)
 - [Cockpit by Redhat](https://www.redhat.com/en/blog/intro-cockpit)
+    - [QEMU](https://en.wikipedia.org/wiki/QEMU) As the underlying technology (Same founder as that of ffmpeg)
 
 #### media converters
 - [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) by [Fabrice Bellard](https://en.wikipedia.org/wiki/Fabrice_Bellard) 
