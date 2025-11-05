@@ -188,6 +188,7 @@ The application consists of:
 * Version v1.3.3-photosensitive (this version) code provided by @shanaya-Gupta on Github via #31 
 * Original author: @genidma on Github
 * Custom bell sound: service-bell_daniel_simion.wav
+* For a complete list of credits, please see [CREDITS.md](CREDITS.md).
 
 ## Licensing Policy
 * To be determined by @shanaya-Gupta
