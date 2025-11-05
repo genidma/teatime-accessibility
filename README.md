@@ -279,7 +279,6 @@ The application consists of:
  code provided by @shanaya-Gupta on Github via #31 
 * Original author: @genidma on Github
 * Custom bell sound: service-bell_daniel_simion.wav
-* Photosensitive version original submission: @shanaya-Gupta
 
 ## Licensing Policy
 * To be determined by @shanaya-Gupta
