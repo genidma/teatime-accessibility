@@ -69,4 +69,4 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run snapshot action
-      uses: actions/dependency-review-action@v4      
+      uses: github/dependency-graph/generate-snapshot@v1
