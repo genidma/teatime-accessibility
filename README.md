@@ -282,4 +282,4 @@ The application consists of:
 * For a complete list of credits, please see [CREDITS.md](CREDITS.md)
 
 ## Licensing Policy
-* To be determined by @shanaya-Guptahistory | tail -20 | sed 's/^[ ]*[0-9]*[ ]*//'
+* To be determined by @shanaya-Gupta
