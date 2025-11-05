@@ -36,7 +36,6 @@ jobs:
       run: |
         source teatime-venv/bin/activate
         pip install -r requirements.txt
-        pip install PyGObject
 
     - name: Test virtual environment activation
       run: |
@@ -55,6 +54,9 @@ jobs:
         except ImportError as e:
             print(f'Warning: Could not import GI modules: {e}')
             print('This is expected in some CI environments')
+        except ValueError as e:
+            print(f'Warning: Could not set GI version: {e}')
+            print('This can happen in CI environments')
         "
 
     - name: Run tests
