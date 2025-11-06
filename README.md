@@ -131,8 +131,10 @@ Tea sessions are automatically logged with:
 
 # Demo & Screenshots
 
-Open the app using the icon
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop_timer.gif)
+- Opening the app using the icon
+- Starting and Stopping the timer usnig the buttons (for demo purposes only)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
 
 
 
