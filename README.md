@@ -131,6 +131,10 @@ Tea sessions are automatically logged with:
 
 # Demo & Screenshots
 
+Open the app using the icon
+![Demo - gif format](./screenshots_demo_clones/2025-11-06 14-16-issue-49-open_app_start_timer.gif)
+
+## Stale Data here that needs to be removed
 Main Window
 
 ![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-main.gif)
