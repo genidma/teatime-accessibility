@@ -185,14 +185,29 @@ here
 - overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
 
 - below, two demos are shown. 
-- - 1. In this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
+- - 1. in this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
 
-- - 2. In the second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
+- - 2. in the second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
+- - - this demo concludes with the checkbox for nano mode itself being unselected
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
 
+### Settings and customization options
+
+as of 2025-11-06, there are two options under the 'Settings' area from the dialog box and here is more information about each option.
+
+#### Animations
+- this is where you choose which animation you want to see, once the timer has concluded. Currently there are two options in there. You must have noticed one of the demo from one of the previous section (above), so no point in repeating this demo. Changing this setting is easy, just click on the dropdown menu and select the option you want
+
+#### Skins
+- there are currently two options under the Settings for the 'Skins for Main UI (User Interface):' section. 1. Default - No Skin. 2. Lava Lamp 
+- - note: for the changes to take effect, you have to close the app and open it up again. Meaning, everytime you make a change in the Settings area. 
+- in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
+- - note: the 'Lava Lamp' skin feature makes use of css (cascading style sheets), in order to dynamically change the app's skin. 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
 
 
 ## Stale Data here that needs to be removed

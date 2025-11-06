@@ -44,7 +44,6 @@ python3 bin/teatime.py
    - Starting and stopping the timer
    - Adjusting font size
    - Enabling/disabling sound
-
    - Mini-mode and nano-mode
 
    - Settings and customization options
