@@ -170,13 +170,28 @@ here
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
 
 ### mini mode and nano mode
-- suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy.
+- **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
 - upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
-- to get out of this mode, you simply uncheck the dialog box for 'mini mode'
+- to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
 
-- **nano mode** provides an absolute bare minimum timer. Which can only be controlled with keyboard shortcuts.
+- **nano mode**: this mode provides an absolute bare minimum timer. Once the timer is initiated in nano mode, it can only be controlled with keyboard shortcuts (see below)
+- this feature was developed for individuals who are doing deep work (via Cal Newport). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
+- all other features work and as expected in all modes. including the nano mode (animations after a session has concluded, sound and if you chose the option e.t.c)
+- to get out of this mode. You would either wait for the timer to complete or use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. next, closing and reopening the app will get you back in the mode selected
+- fyi: if for some reason, you choose the both mini-mode and nano-mode dialog box(es), here the nano-mode will be triggered
+- fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
+- overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
+
+- below, two demos are shown. 
+- - 1. In this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
+
+- - 2. In the second demo for the nano mode. We let the timer conclude, and as for all other modes, the timer will display a full-screen animation 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
 
 
 
