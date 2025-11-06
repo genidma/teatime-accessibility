@@ -131,9 +131,13 @@ Tea sessions are automatically logged with:
 
 # Demo & Screenshots
 
-## opening the app using the icon
-## starting & Stopping timer using buttons
+## open app & start/stop the timer
 
+In the first demo.
+- App is opened using the icon on the desktop
+- The timer is started using the buttons on the gui (graphical user interface)
+- Notice how the timer increments in 5 seconds intervals
+- The timer is then stopped. As this is just a demo
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
 
 
