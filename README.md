@@ -158,7 +158,16 @@ here
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/resizing.gif)
 
+### enable or disable sound 
 
+- the 'Enable Sound' checkbox can be used to enable or disable sound
+- this sounds plays when the timer has concluded
+- if you select this checkbox, then a sound will be played (see previous bullet point above) vs to the contrary
+- you will still get the visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
+- because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
+
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
 
 
 ## Stale Data here that needs to be removed
