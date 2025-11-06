@@ -131,19 +131,24 @@ Tea sessions are automatically logged with:
 
 # Demo & Screenshots
 
-## open app & start/stop the timer
+### open app & start/stop the timer
 
-In the first demo.
+In the first demo:
 - App is opened using the icon on the desktop
 - The timer is started using the buttons on the gui (graphical user interface)
 - Notice how the timer increments in 5 seconds intervals
 - The timer is then stopped. As this is just a demo
+- fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
 
+### session presets & manual durations
 
-
-
-
+In this next demo, we will:
+- Invoke the timer using the 'Session Presets' currently locate on the right-hand side of the gui
+- demonstrate that the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
+- To stop the timer, simply use the 'Stop' button or use the keyboard shortcut (below)
+- it will also be demonstrated how to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/session-presets_and_manual-durations.gif)
 
 
 
