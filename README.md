@@ -158,16 +158,26 @@ here
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/resizing.gif)
 
-### enable or disable sound 
+### enable or disable sound and animations
 
 - the 'Enable Sound' checkbox can be used to enable or disable sound
-- this sounds plays when the timer has concluded
-- if you select this checkbox, then a sound will be played (see previous bullet point above) vs to the contrary
-- you will still get the visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
+- this is a .wav file that will play automatically, once the timer has concluded
+- selecting this checkbox will play a sound
+- if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
 - because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
-
+- in this demo, we also go into the Settings section to show you the section whre you can select different animations
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
+
+### mini mode and nano mode
+- suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy.
+- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
+- to get out of this mode, you simply uncheck the dialog box for 'mini mode'
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
+
+- **nano mode** provides an absolute bare minimum timer. Which can only be controlled with keyboard shortcuts.
+
 
 
 ## Stale Data here that needs to be removed

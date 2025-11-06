@@ -44,9 +44,16 @@ python3 bin/teatime.py
    - Starting and stopping the timer
    - Adjusting font size
    - Enabling/disabling sound
+
    - Mini-mode and nano-mode
+
    - Settings and customization options
+   - - Animations
    - Statistics view
+   - Clear History
+   - Credits
+   - Review app critically to ascertain what other features need a demo
+
 
 4. Stop recording after 20 minutes
 
