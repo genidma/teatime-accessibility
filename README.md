@@ -189,7 +189,7 @@ here
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
 
-- - 2. In the second demo for the nano mode. We let the timer conclude (that was already running). As for all other modes, the timer will display a full-screen animation 
+- - 2. In the second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
 
