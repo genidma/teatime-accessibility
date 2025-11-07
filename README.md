@@ -57,6 +57,9 @@ here
 
 ### enable or disable sound and animations
 
+> [!NOTE]
+> more information about the customizable animations feature in one of the following sections. Here's the link [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#customizable-animations)
+
 - the 'Enable Sound' checkbox can be used to enable or disable sound
 - this is a .wav file that will play automatically, once the timer has concluded
 - selecting this checkbox will play a sound
