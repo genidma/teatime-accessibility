@@ -60,12 +60,11 @@ here
 > [!NOTE]
 > in addition to the demo directly below, there's more info about the customizable animations feature in one of the following sections, via: [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#customizable-animations)
 
-- the 'Enable Sound' checkbox can be used to enable or disable sound
-- this is a .wav file that will play automatically, once the timer has concluded
-- selecting this checkbox will play a sound
-- if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
+- the 'Enable Sound' _checkbox_ can be used to enable or disable sound
+- if selected, a .wav file will be played automatically, upon the completion of the timer
+- _note_: if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
 - because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
-- in this demo, we also go into the Settings section to show you the section whre you can select different animations
+- in this demo, we also go into the Settings section to show you the section where you can select different animations
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
 
