@@ -91,6 +91,11 @@
 - [nano](https://en.wikipedia.org/wiki/GNU_nano) by Chris Allegretta and Benno Schulenberg
 - [gnome text editor](https://en.wikipedia.org/wiki/GNOME_Text_Editor) by Christian Hergert
 
+#### csv parsers and/or spreadsheet editors
+- [gnumeric](https://en.wikipedia.org/wiki/Gnumeric) by Miguel de Icaza 
+> [!NOTE]
+> I now realize that Icaza was a co-founder behind the [GNOME project](https://en.wikipedia.org/wiki/GNOME). No wonder, Icaza's name has come up twice in this CREDITS.md file already. :star:
+
 #### script usage outside of this repo
 - Various. Currently sitting on private repositories, like: sysadmin-scripts, back2school e.t.c
  
