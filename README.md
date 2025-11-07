@@ -219,6 +219,11 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
 
 #### Export to CSV
+- this feature allows the user to export the data stored in the Statistics view to a CSV file
+- you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/export2csv.gif)
+
 
 #### Clear History
 - the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
