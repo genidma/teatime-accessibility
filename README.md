@@ -1,30 +1,138 @@
 # TeaTime Accessibility
 
-GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). 
+- a GUI (graphical user interface) based timer application (app) for the Ubuntu (Desktop) environment.
+- ability to make the buttons inside larger and more visible
+- presets for time, reminders (including audible bell(s)), basic statistics
+- visual effects (gifs): animations upon completion of a Session and dynamic skins
+- photosensitive version of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version). the main repo is a regular (and non-photosensitive version)
 
 _New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
-## Release Notes
+# Demo & Screenshots
 
-For information about the latest features, improvements, and bug fixes, please see [RELEASE_NOTES.md](RELEASE_NOTES.md).
+### open app & start/stop the timer
+
+In the first demo:
+- App is opened using the icon on the desktop
+- The timer is started using the buttons on the gui (graphical user interface)
+- Notice how the **timer increments in 5 seconds intervals** 
+- The timer is then stopped. As this is just a demo
+- fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
+
+### session presets & manual durations
+
+In this next demo, let's:
+- Invoke the timer using the 'Session Presets', currently located on the right-hand side of the gui
+- Demo how the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
+- To stop the timer: Simply use the 'Stop' button or use the keyboard shortcuts (below in this Readme)
+- How to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/session-presets_and_manual-durations.gif)
+
+### resizing
+
+here
+- let's resize the gui and the buttons inside of it using the A- and A+ buttons
+- this function can also be performed leveraging the keyboard shortcuts (see in the correspondiong sections)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/resizing.gif)
+
+### enable or disable sound and animations
+
+- the 'Enable Sound' checkbox can be used to enable or disable sound
+- this is a .wav file that will play automatically, once the timer has concluded
+- selecting this checkbox will play a sound
+- if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
+- because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
+- in this demo, we also go into the Settings section to show you the section whre you can select different animations
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
+
+### mini mode and nano mode
+- **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
+- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
+- to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
+
+- **nano mode**: this mode provides an absolute bare minimum timer. Once the timer is initiated in nano mode, it can only be controlled with keyboard shortcuts (see below)
+- this feature was developed for individuals who are doing deep work (via Cal Newport). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
+- all other features work and as expected in all modes. including the nano mode (animations after a session has concluded, sound and if you chose the option e.t.c)
+- to get out of this mode. You would either wait for the timer to complete or use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. next, closing and reopening the app will get you back in the mode selected
+- fyi: if for some reason, you choose the both mini-mode and nano-mode dialog box(es), here the nano-mode will be triggered
+- fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
+- overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
+
+- below, two demos are shown. 
+- - 1. in this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
+
+- - 2. in the second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
+- - - this demo concludes with the checkbox for nano mode itself being unselected
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
+
+### Settings and customization options
+
+as of 2025-11-06, there are two options under the 'Settings' area from the dialog box and here is more information about each option.
+
+#### Animations
+- this is where you choose which animation you want to see, once the timer has concluded. Currently there are two options in there. You must have noticed one of the demo from one of the previous section (above), so no point in repeating this demo. Changing this setting is easy, just click on the dropdown menu and select the option you want
+
+#### Skins
+- there are currently two options under the Settings for the 'Skins for Main UI (User Interface):' section. 1. Default - No Skin. 2. Lava Lamp 
+- - note: for the changes to take effect, you have to close the app and open it up again. Meaning, everytime you make a change in the Settings area. 
+- in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
+- - note: the 'Lava Lamp' skin feature makes use of css (cascading style sheets), in order to dynamically change the app's skin. 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
+
+#### Statistics
+- the statistics section is powered by a local database in the form of a .json file
+- **to note**: as with every other file related to this app, all of the data sits on your machine and no data is ever sent anywhere. period!
+- coming back to the statistics (stats) section (invoked from the dialog box or keyboard shortcut option), the counter stats section goes up by one entry, each time a timer concludes it's full cycle.
+- - A full-cycle is a successful completion of the duration specified for timer. Meaning that the cycle has not been stopped/interrupted by the user
+- as you will notice in the demo, the user has to refresh the ui in the  statistics section to see the updated data
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
+
+#### Export to CSV
+- this feature allows the user to export the data stored in the Statistics view to a CSV file
+- you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
+- exporting data **does not** delete the data from the Statistics view. That is a separate feature, demonstrated in the following section (Clear History)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/export2csv.gif)
+
+
+#### Clear History
+- the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
+- first of all, the color of this button has been deliberately set to red to make it stand out
+- - in addition to: the user is presented with not one, but two reminders that they are about to wipe out the data logged (to date)
+- once the History has been cleared, the app returns back to regular usage. Meaning the successful completion of run(s) will be logged into the Statistics view/engine
+- the amount of rows populated inside of the .json file should have absolutely no bearing on the functioning of the app
+- - in the off situation where the .json file is populated with a large amount of rows (say a thousand rows or more) **and** this is leading to the app taking up more than 700 MB (Megabytes. I mean, it shouldn't take more than 500 MB of Memory Usage anyways [link](https://github.com/genidma/teatime-accessibility/issues/37)) of RAM (Random Access Memory or Physical Memory) on your machine. -> In such a situation, please look into creating a new issue by following the links from the 'Feedack' section [below](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#feedback)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
+
 
 ## Features
 
 - **Simple Timer**: Easy-to-use interface with start/stop controls
-- **Visual Notifications**: Fullscreen alerts when your tea is ready
-- **Sound Notifications**: Audible chime to complement visual notifications
+- **Visual Notifications**: Fullscreen alerts, for you to go and enjoy your cuppa tea
+- **Sound Notifications**: Audible sounds to complement visual notifications (if you choose to enable this option)
 - **Customizable Animations**: Choose from multiple animated sprites to display when timer completes
 - **Accessibility Features**:
   - Large, clear display
   - High contrast mode
   - Font scaling options
   - Keyboard shortcuts
-- **Statistics Tracking**: Automatic logging and viewing of tea sessions
+- **Statistics Tracking**: Automatic logging and viewing of tea sessions w/ the ability to export to CSV
 - **Settings Dialog**: Configure animation preferences through a user-friendly interface
 - **Mini-Mode**: Compact display mode for a smaller window footprint
 - **Nano-Mode**: Ultra-compact mode with transparent background that shows only the timer digits
 - **Custom Skins**: Personalize the appearance with different visual themes
-- **Preset Durations**: Quick access to common tea brewing times
+- **Preset Durations**: Quick access to 45 minute and 60 minute presets
 
 ## Keyboard Shortcuts
 
@@ -129,116 +237,10 @@ Tea sessions are automatically logged with:
 - Timestamp of when the timer completed
 - Duration of the tea session
 
-# Demo & Screenshots
-
-### open app & start/stop the timer
-
-In the first demo:
-- App is opened using the icon on the desktop
-- The timer is started using the buttons on the gui (graphical user interface)
-- Notice how the **timer increments in 5 seconds intervals** 
-- The timer is then stopped. As this is just a demo
-- fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
-
-### session presets & manual durations
-
-In this next demo, let's:
-- Invoke the timer using the 'Session Presets', currently located on the right-hand side of the gui
-- Demo how the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
-- To stop the timer: Simply use the 'Stop' button or use the keyboard shortcuts (below in this Readme)
-- How to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/session-presets_and_manual-durations.gif)
-
-### resizing
-
-here
-- let's resize the gui and the buttons inside of it using the A- and A+ buttons
-- this function can also be performed leveraging the keyboard shortcuts (see in the correspondiong sections)
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/resizing.gif)
-
-### enable or disable sound and animations
-
-- the 'Enable Sound' checkbox can be used to enable or disable sound
-- this is a .wav file that will play automatically, once the timer has concluded
-- selecting this checkbox will play a sound
-- if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
-- because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
-- in this demo, we also go into the Settings section to show you the section whre you can select different animations
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
-
-### mini mode and nano mode
-- **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
-- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
-- to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
-
-- **nano mode**: this mode provides an absolute bare minimum timer. Once the timer is initiated in nano mode, it can only be controlled with keyboard shortcuts (see below)
-- this feature was developed for individuals who are doing deep work (via Cal Newport). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
-- all other features work and as expected in all modes. including the nano mode (animations after a session has concluded, sound and if you chose the option e.t.c)
-- to get out of this mode. You would either wait for the timer to complete or use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. next, closing and reopening the app will get you back in the mode selected
-- fyi: if for some reason, you choose the both mini-mode and nano-mode dialog box(es), here the nano-mode will be triggered
-- fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
-- overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
-
-- below, two demos are shown. 
-- - 1. in this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
-
-- - 2. in the second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
-- - - this demo concludes with the checkbox for nano mode itself being unselected
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
-
-### Settings and customization options
-
-as of 2025-11-06, there are two options under the 'Settings' area from the dialog box and here is more information about each option.
-
-#### Animations
-- this is where you choose which animation you want to see, once the timer has concluded. Currently there are two options in there. You must have noticed one of the demo from one of the previous section (above), so no point in repeating this demo. Changing this setting is easy, just click on the dropdown menu and select the option you want
-
-#### Skins
-- there are currently two options under the Settings for the 'Skins for Main UI (User Interface):' section. 1. Default - No Skin. 2. Lava Lamp 
-- - note: for the changes to take effect, you have to close the app and open it up again. Meaning, everytime you make a change in the Settings area. 
-- in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
-- - note: the 'Lava Lamp' skin feature makes use of css (cascading style sheets), in order to dynamically change the app's skin. 
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
-
-#### Statistics
-- the statistics section is powered by a local database in the form of a .json file
-- **to note**: as with every other file related to this app, all of the data sits on your machine and no data is ever sent anywhere. period!
-- coming back to the statistics (stats) section (invoked from the dialog box or keyboard shortcut option), the counter stats section goes up by one entry, each time a timer concludes it's full cycle.
-- - A full-cycle is a successful completion of the duration specified for timer. Meaning that the cycle has not been stopped/interrupted by the user
-- as you will notice in the demo, the user has to refresh the ui in the  statistics section to see the updated data
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
-
-#### Export to CSV
-- this feature allows the user to export the data stored in the Statistics view to a CSV file
-- you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/export2csv.gif)
-
-
-#### Clear History
-- the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
-- first of all, the color of this button has been deliberately set to red to make it stand out
-- - in addition to: the user is presented with not one, but two reminders that they are about to wipe out the data logged (to date)
-- once the History has been cleared, the app returns back to regular usage. Meaning the successful completion of run(s) will be logged into the Statistics view/engine
-- the amount of rows populated inside of the .json file should have absolutely no bearing on the functioning of the app
-- - in the off situation where the .json file is populated with a large amount of rows (say a thousand rows or more) **and** this is leading to the app taking up more than 700 MB (Megabytes. I mean, it shouldn't take more than 500 MB of Memory Usage anyways [link](https://github.com/genidma/teatime-accessibility/issues/37)) of RAM (Random Access Memory or Physical Memory) on your machine. -> In such a situation, please look into creating a new issue by following the links from the 'Feedack' section [below](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#feedback)
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
 
 
 
-## Stale Data here that needs to be removed
-Main Window
+## Come back here
 
 ![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-main.gif)
 
