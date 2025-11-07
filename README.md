@@ -4,7 +4,12 @@
 - ability to make the buttons inside larger and more visible
 - presets for time, reminders (including audible bell(s)), basic statistics
 - visual effects (gifs): animations upon completion of a Session and dynamic skins
-- photosensitive version of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version). the main repo is a regular (and non-photosensitive version)
+
+> [!IMPORTANT]
+> a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
+
+> [!NOTE]
+> the main branch holds the code for the regular (and non-photosensitive version)
 
 _New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
