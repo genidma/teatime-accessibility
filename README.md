@@ -117,12 +117,12 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
 
 #### Statistics
-- the statistics section is powered by a local database in the form of a .json file
+- the statistics section (engine) is powered by a local database in the form of a .json file
 
 > [!IMPORTANT]
 > as with every other file related to this app, all of the data sits on your machine and no data is ever sent anywhere. period!
-- coming back to the statistics (stats) section (invoked from the dialog box or keyboard shortcut option), the counter stats section goes up by one entry, each time a timer concludes it's full cycle.
-- - A full-cycle is a successful completion of the duration specified for timer. Meaning that the cycle has not been stopped/interrupted by the user
+- coming back to the statistics (stats) section (invoked from the dialog box or keyboard shortcut option): each time a timer concludes it's full cycle, an entry is logged in the engine
+- - A full-cycle is a successful completion of the duration specified for timer. Meaning, that the cycle has not been stopped/interrupted by the user
 - as you will notice in the demo, the user has to refresh the ui in the  statistics section to see the updated data
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
@@ -130,7 +130,9 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 #### Export to CSV
 - this feature allows the user to export the data stored in the Statistics view to a CSV file
 - you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
-- exporting data **does not** delete the data from the Statistics view. That is a separate feature, demonstrated in the following section (Clear History)
+
+> [!NOTE]
+> exporting data **does not** delete the data from the Statistics view. That is a separate feature, demonstrated in the following section (Clear History)
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/export2csv.gif)
 
