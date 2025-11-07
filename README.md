@@ -13,7 +13,7 @@
 - - code submission for the initial photosensitive version by @shanaya-gupta
 
 
-_New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
+_New features are added regularly_. To request or suggest additional features and/or to join, please see a link to the discussions/[feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
 ## Features
 
