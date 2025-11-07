@@ -99,8 +99,8 @@ here
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
 
-- - 2. for this second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
-- - - to disable anno mode, simply uncheck the checkbox 
+- - 2. in this second demo, with nano mode _engaged_. You will notice that the timer is about to conclude. Once, concluded the app displays a full-screen animation.  
+- - - once the timer has concluded, the app will return back to the main GUI and here you can simply uncheck the checkbox for nano mode
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
 
