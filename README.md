@@ -5,11 +5,13 @@
 - presets for time, reminders (including audible bell(s)), basic statistics
 - visual effects (gifs): animations upon completion of a Session and dynamic skins
 
-> [!IMPORTANT]
-> a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
-
 > [!NOTE]
 > the main branch holds the code for the regular (and non-photosensitive version)
+
+> [!IMPORTANT]
+> a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
+- - code submission for the initial photosensitive version by @shanaya-gupta
+
 
 _New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
@@ -263,13 +265,15 @@ following the naming pattern `*sprite_frame_*.png`.
 * [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
 
 
-## Accessibility Features
+## Distinct Branch
 
 ### Photosensitive Epilepsy Safe Version
-* A photosensitive version of the app was created by @shanaya-gupta with further code modifications led by @genidma
-* The photosensitive version does not have any visual effects, sudden screen changes and the timer updates every 5 seconds vs every second
-* The latest stable photosensitive version of the app  [downloaded via the releases section](https://github.com/genidma/teatime-accessibility/releases)
-* * Note the current Stable release for the photosensitive version is v.1.3.5. But best to check the Releases section directly in the future, as the Readme might be a bit stale
+* a photosensitive version of the app was created by @shanaya-gupta with further code modifications led by @genidma
+* it does not have any visual effects or sudden screen changes
+* the latest stable photosensitive version of the app can be [downloaded via the releases section](https://github.com/genidma/teatime-accessibility/releases)
+
+
+## Features
 
 ### Visual and Audio Accessibility
 - **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
@@ -301,7 +305,7 @@ following the naming pattern `*sprite_frame_*.png`.
 ## Installation
 
 ### Prerequisites
-Before running the install script, please install the required system dependencies. Note: See instructions on how to open a terminal and if you are new to Linux:
+Before running the install script, please install the required system dependencies. Note: See [instructions](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) on how to open and use a terminal and if you are new to Linux:
 
 ```bash
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
