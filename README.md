@@ -105,7 +105,7 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 #### Custom Skins
 
 > [!NOTE]
-> There is more information about the custom skins in one of the following sections. Here's the [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#custom-skins)
+> There is more information about the custom skins in one of the following sections. Here's the [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#custom-skins-1)
 
 - there are currently two options under the Settings for the 'Skins for Main UI (User Interface):' section. 1. Default - No Skin. 2. Lava Lamp 
 - - note: for the changes to take effect, you have to close the app and open it up again. Meaning, everytime you make a change in the Settings area. 
