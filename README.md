@@ -26,7 +26,7 @@ _New features are added regularly_. Please see the [feedback](https://github.com
 - **Custom Skins**: Personalize the appearance with different visual themes
 - **Preset Durations**: Quick access to 45 minute and 60 minute presets
 
-# Demo & Screenshots
+# Demo(s) (in gif format)
 
 ### open app & start/stop the timer
 
@@ -247,27 +247,6 @@ To select which animation to display:
 New animations can be added by creating a subdirectory in `assets/sprites/` with PNG frames 
 following the naming pattern `*sprite_frame_*.png`.
 
-
-
-## Come back here
-
-![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-main.gif)
-
-
-A fun animation will appear upon completion of a session
-![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-session-complete-gif.gif)
-
-Keyboard Shortcuts for ease of use
-![Demo  - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-keyboard-shortcuts.gif)
-
-Statistics Engine and About Section
-![Demo  - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-stats_and_about.gif)
-
-Screenshot of the main GUI (graphical user interface) from the latest version of the app
-![screenshot](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
-
-Screenshot of the Statistics engine that is built into the app. It automatically records the number of sessions by date. Including, breakdown for the Total number of sessions, Total Time for Sessions, Average Duration considering duration of all the Sessions
-![screenshot for stats](./screenshots_demo_clones/2025-10-14-screenshot-for-README-STATS.png)
 
 ## Demos on Youtube
 * [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw?t=137)
