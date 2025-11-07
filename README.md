@@ -132,18 +132,20 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 - you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
 
 > [!NOTE]
-> exporting data **does not** delete the data from the Statistics view. That is a separate feature, demonstrated in the following section (Clear History)
+> exporting data **does not** delete the data from the Statistics view 
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/export2csv.gif)
 
 
 #### Clear History
 - the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
-- first of all, the color of this button has been deliberately set to red to make it stand out
-- - in addition to: the user is presented with not one, but two reminders that they are about to wipe out the data logged (to date)
-- once the History has been cleared, the app returns back to regular usage. Meaning the successful completion of run(s) will be logged into the Statistics view/engine
-- the amount of rows populated inside of the .json file should have absolutely no bearing on the functioning of the app
+- this is **not** an **'Export'** (like above)
+- the color of this button has been deliberately set to red to make it stand out
+- - in addition to: the user is presented with not one, but _two reminders_ that they are about to wipe out the data logged (to date)
+- this is like browser history. once you clean it and start using the browser again, your browser automatically starts recording the history again
+- the amount of rows populated inside of the .json file should have absolutely any bearing on the functioning of the app
 - - in the off situation where the .json file is populated with a large amount of rows (say a thousand rows or more) **and** this is leading to the app taking up more than 700 MB (Megabytes. I mean, it shouldn't take more than 500 MB of Memory Usage anyways [link](https://github.com/genidma/teatime-accessibility/issues/37)) of RAM (Random Access Memory or Physical Memory) on your machine. -> In such a situation, please look into creating a new issue by following the links from the 'Feedack' section [below](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#feedback)
+- - - by the way, if you missed the url for the recorded session from the links directly above. the proof is definitive that memory_usage for this app is very stable. here's the link again [https://www.youtube.com/watch?v=m4BbTRmpyaA](https://www.youtube.com/watch?v=m4BbTRmpyaA)
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
 
