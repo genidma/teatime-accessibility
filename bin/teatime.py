@@ -588,14 +588,11 @@ class TeaTimerApp(Gtk.Application):
 
     def show_statistics_window(self):
         """Show the statistics window."""
-        print("DEBUG: show_statistics_window called")  # Debug line at start of method
         # Create statistics window if it doesn't exist
         if not hasattr(self, 'stats_window') or self.stats_window is None:
-            print("DEBUG: Creating new StatisticsWindow")  # Debug line when creating new window
             self.stats_window = StatisticsWindow(self, self.window)
         else:
             # If it exists, just present it
-            print("DEBUG: Presenting existing StatisticsWindow")  # Debug line when presenting existing window
             self.stats_window.present()
         print("DEBUG: show_statistics_window finished")  # Debug line at end of method
 
@@ -1640,7 +1637,6 @@ class TeaTimerApp(Gtk.Application):
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
-        print("DEBUG: Creating StatisticsWindow")  # Debug line to trace when window is created
         super().__init__(title="Timer Statistics", application=application)
         self.set_default_size(400, 300)
         self.set_modal(False)
@@ -1722,10 +1718,8 @@ class StatisticsWindow(Gtk.Window):
         scrolled_window.add(self.treeview)
         self._load_stats()
 
-        print("DEBUG: About to show StatisticsWindow")  # Debug line before showing window
         # Make all widgets inside the window visible
         self.show_all()
-        print("DEBUG: StatisticsWindow shown")  # Debug line after showing window
 
     def _on_delete_event(self, widget, event):
         """Handle window close event."""
@@ -1868,18 +1862,15 @@ class StatisticsWindow(Gtk.Window):
 
     def _load_stats(self):
         """Load statistics from the log file."""
-        print("DEBUG: Loading statistics")  # Debug line at start of method
         if not STATS_LOG_FILE.exists():
             self.store.clear()
             self._reset_summary_labels()
-            print("DEBUG: No stats file found")  # Debug line when no file exists
             return
 
         try:
             with open(STATS_LOG_FILE, 'r') as f:
                 logs = json.load(f)
         except (json.JSONDecodeError, IOError):
-            print("DEBUG: Error loading stats file")  # Debug line on error
             return
 
         # Clear existing data
@@ -1922,8 +1913,6 @@ class StatisticsWindow(Gtk.Window):
             self.avg_duration_label.set_text(f"Average Duration: {avg_duration:.1f} minutes")
         else:
             self._reset_summary_labels()
-        
-        print("DEBUG: Statistics loaded successfully")  # Debug line at end of method
 
     def do_command_line(self, command_line):
         """Handle command line arguments."""
