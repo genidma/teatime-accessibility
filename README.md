@@ -92,8 +92,8 @@ here
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
 
-- - 2. in the second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
-- - - this demo concludes with the checkbox for nano mode itself being unselected
+- - 2. for this second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
+- - - to disable anno mode, simply uncheck the checkbox 
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
 
@@ -109,8 +109,8 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 > [!NOTE]
 > There is more information about the custom skins in one of the following sections. Here's the [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#custom-skins-1)
 
-- there are currently two options under the Settings for the 'Skins for Main UI (User Interface):' section. 1. Default - No Skin. 2. Lava Lamp 
-- - note: for the changes to take effect, you have to close the app and open it up again. Meaning, everytime you make a change in the Settings area. 
+- there are currently two options under the _Settings_ for the **'Skins for Main UI (User Interface):**' section. **1. Default - No Skin** and **2. Lava Lamp** 
+- - note: a change in this (Settings) section requires that the app is closed and opened again  
 - in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
 - - note: the 'Lava Lamp' skin feature makes use of css (cascading style sheets), in order to dynamically change the app's skin. 
 
