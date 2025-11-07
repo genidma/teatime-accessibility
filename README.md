@@ -74,13 +74,13 @@ here
 > in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
 
 - **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
-- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
+- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the GUI is scaled down
 - to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
 
 - **nano mode**: this mode provides an absolute bare minimum timer. Once the timer is initiated in nano mode, it can only be controlled with keyboard shortcuts (see below)
-- this feature was developed for individuals who are doing deep work (via Cal Newport). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
+- this feature was developed for individuals who are doing [deep work](https://www.amazon.com/Deep-Work-Focused-Success-Distracted/dp/1455586692) (via [Cal Newport](https://calnewport.com/)). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
 - all other features work and as expected in all modes. including the nano mode (animations after a session has concluded, sound and if you chose the option e.t.c)
 - to get out of this mode. You would either wait for the timer to complete or use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. next, closing and reopening the app will get you back in the mode selected
 - fyi: if for some reason, you choose the both mini-mode and nano-mode dialog box(es), here the nano-mode will be triggered
