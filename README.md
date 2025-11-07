@@ -1,30 +1,162 @@
 # TeaTime Accessibility
 
-GUI based timer application (app) for the Ubuntu (Desktop) environment. With presets for time, reminders (including audible bell), basic statistics, visual effects (including gifs). 
+- a GUI (graphical user interface) based timer application (app) for the Ubuntu (Desktop) environment.
+- ability to make the buttons inside larger and more visible
+- presets for time, reminders (  including audible bell(s)  ), basic statistics
+- visual effects (gifs): animations upon completion of a Session and dynamic skins
 
-_New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
+> [!NOTE]
+> the main branch holds the code for the regular (and non-photosensitive version)
 
-## Release Notes
+> [!IMPORTANT]
+> a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
+- - code submission for the initial photosensitive version by @shanaya-gupta
 
-For information about the latest features, improvements, and bug fixes, please see [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
+_New features are added regularly_. To request or suggest additional features and/or to join, please see a link to the discussions/[feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
 ## Features
 
 - **Simple Timer**: Easy-to-use interface with start/stop controls
-- **Visual Notifications**: Fullscreen alerts when your tea is ready
-- **Sound Notifications**: Audible chime to complement visual notifications
+- **Visual Notifications**: Fullscreen alerts, for you to go and enjoy your cuppa tea
+- **Sound Notifications**: Audible sounds to complement visual notifications (if you choose to enable this option)
 - **Customizable Animations**: Choose from multiple animated sprites to display when timer completes
 - **Accessibility Features**:
   - Large, clear display
   - High contrast mode
   - Font scaling options
   - Keyboard shortcuts
-- **Statistics Tracking**: Automatic logging and viewing of tea sessions
+- **Statistics Tracking**: Automatic logging and viewing of tea sessions w/ the ability to export to CSV
 - **Settings Dialog**: Configure animation preferences through a user-friendly interface
 - **Mini-Mode**: Compact display mode for a smaller window footprint
 - **Nano-Mode**: Ultra-compact mode with transparent background that shows only the timer digits
 - **Custom Skins**: Personalize the appearance with different visual themes
-- **Preset Durations**: Quick access to common tea brewing times
+- **Preset Durations**: Quick access to 45 minute and 60 minute presets
+
+# Demo(s) (in gif format)
+
+### open app & start/stop the timer
+
+in the first demo:
+- app is opened using the icon on the desktop
+- the timer is started using the buttons on the gui (graphical user interface)
+- notice how the **timer increments in 5 seconds intervals** 
+- the timer is then stopped. As this is just a demo
+- fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
+
+### session presets & manual durations
+
+in this next demo, let's:
+- invoke the timer using the 'Session Presets', currently located on the right-hand side of the gui
+- demo how the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
+- to stop the timer: Simply use the 'Stop' button or use the keyboard shortcuts (below in this Readme)
+- how to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/session-presets_and_manual-durations.gif)
+
+### resizing
+
+here
+- let's resize the gui and the buttons inside of it using the A- and A+ buttons
+- this function can also be performed leveraging the keyboard shortcuts (see in the correspondiong sections)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/resizing.gif)
+
+### enable or disable sound and animations
+
+> [!NOTE]
+> in addition to the demo directly below, there's more info about the customizable animations feature in one of the following sections, via: [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#customizable-animations)
+
+- the 'Enable Sound' _checkbox_ can be used to enable or disable sound
+- if selected, a .wav file will be played automatically, upon the completion of the timer
+- _note_: if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
+- because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
+- in this demo, we also go into the Settings section to show you the section where you can select different animations
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/sound.gif)
+
+### mini mode and nano mode
+
+> [!NOTE]
+> in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
+
+- **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
+- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the GUI is scaled down
+- to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
+
+- **nano mode**: this mode provides an absolute bare minimum timer. Once the timer is initiated in nano mode, it can only be controlled with keyboard shortcuts (see below)
+- this feature was developed for individuals who are doing [deep work](https://www.amazon.com/Deep-Work-Focused-Success-Distracted/dp/1455586692) (via [Cal Newport](https://calnewport.com/)). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
+- all other features work and as expected in all modes. including the nano mode (animations after a session has concluded, sound and if you chose the option e.t.c)
+- to get out of this mode. You would either wait for the timer to complete or use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. next, closing and reopening the app will get you back in the mode selected
+- fyi: if for some reason, you choose the both mini-mode and nano-mode dialog box(es), here the nano-mode will be triggered
+- fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
+- overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
+
+- below, two demos are shown. 
+- - 1. in this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
+
+- - 2. for this second demo for the nano mode. There is an on-going timer, about to conclude. As you will noticed, once the timer has concluded, the app will display a full-screen animation.  
+- - - to disable anno mode, simply uncheck the checkbox 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
+
+### Settings and customization options
+
+as of 2025-11-06, there are two options under the 'Settings' area from the dialog box and here is more information about each option.
+
+#### Animations
+- this is where you choose which animation you want to see, once the timer has concluded. Currently there are two options in there. You must have noticed one of the demo from one of the previous section (above), so no point in repeating this demo. Changing this setting is easy, just click on the dropdown menu and select the option you want
+
+#### Custom Skins
+
+> [!NOTE]
+> There is more information about the custom skins in one of the following sections. Here's the [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#custom-skins-1)
+
+- there are currently two options under the _Settings_ for the **'Skins for Main UI (User Interface):**' section. **1. Default - No Skin** and **2. Lava Lamp** 
+- - note: a change in this (Settings) section requires that the app is closed and opened again  
+- in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
+- - note: the 'Lava Lamp' skin feature makes use of css (cascading style sheets), in order to dynamically change the app's skin. 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
+
+#### Statistics
+- the statistics section (engine) is powered by a local database in the form of a .json file
+
+> [!IMPORTANT]
+> as with every other file related to this app, all of the data sits on your machine and no data is ever sent anywhere. period!
+- coming back to the statistics (stats) section (invoked from the dialog box or keyboard shortcut option): each time a timer concludes it's full cycle, an entry is logged in the engine
+- - A full-cycle is a successful completion of the duration specified for timer. Meaning, that the cycle has not been stopped/interrupted by the user
+- as you will notice in the demo, the user has to refresh the ui in the  statistics section to see the updated data
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
+
+#### Export to CSV
+- this feature allows the user to export the data stored in the Statistics view to a CSV file
+- you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
+
+> [!NOTE]
+> exporting data **does not** delete the data from the Statistics view 
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/export2csv.gif)
+
+
+#### Clear History
+- the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
+- this is **not** an **'Export'** (like above)
+- the color of this button has been deliberately set to red to make it stand out
+- - in addition to: the user is presented with not one, but _two reminders_ that they are about to wipe out the data logged (to date)
+- this is like browser history. once you clean it and start using the browser again, your browser automatically starts recording the history again
+- the amount of rows populated inside of the .json file should have absolutely any bearing on the functioning of the app
+- - in the off situation where the .json file is populated with a large amount of rows (say a thousand rows or more) **and** this is leading to the app taking up more than 700 MB (Megabytes. I mean, it shouldn't take more than 500 MB of Memory Usage anyways [link](https://github.com/genidma/teatime-accessibility/issues/37)) of RAM (Random Access Memory or Physical Memory) on your machine. -> In such a situation, please look into creating a new issue by following the links from the 'Feedack' section [below](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#feedback)
+- - - by the way, if you missed the url for the recorded session from the links directly above. the proof is definitive that memory_usage for this app is very stable. here's the link again [https://www.youtube.com/watch?v=m4BbTRmpyaA](https://www.youtube.com/watch?v=m4BbTRmpyaA)
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
+
+
 
 ## Keyboard Shortcuts
 
@@ -58,19 +190,23 @@ Activate buttons and menu items by pressing Alt plus the underlined letter.
 - **Alt+E**: Export to CSV
 - **Alt+C**: Clear History
 
-## Mini-Mode
+## Display Modes
 
-TeaTime Accessibility includes a compact display mode called "Mini-Mode" which reduces the window size and makes the interface elements more compact. This is especially useful when you want to keep the timer visible but don't need the full interface.
+TeaTime Accessibility offers multiple display modes to suit different preferences and use cases.
 
-To toggle Mini-Mode:
-- Use the "Mini Mode" checkbox in the main interface
-- Or use the keyboard shortcut **Ctrl+D**
+### Mini-Mode
 
-Note: Some keyboard shortcuts may not work properly when in Mini-Mode due to the reduced interface size and focus handling. The Ctrl+D shortcut will always work to toggle Mini-Mode on and off.
+Mini-Mode provides a compact interface that reduces the overall window size while keeping all controls visible. This mode is ideal for when you want a smaller footprint on your desktop but still need access to all controls.
 
-## Nano-Mode
+Features of Mini-Mode:
+- Reduced window size
+- Smaller controls and text
+- All interface elements remain visible
+- Can be toggled on/off with Ctrl+M or via the Settings dialog
 
-Includes an ultra-compact display mode called "Nano-Mode" which displays only the timer digits and colon with a transparent background. This mode is perfect for when you want a minimal, unobtrusive timer that floats on your desktop.
+### Nano-Mode
+
+Nano-Mode is an ultra-compact display mode that shows only the timer digits and colon with a transparent background. This mode automatically activates when a timer starts (if enabled in settings) and provides an unobtrusive timer that floats on your desktop.
 
 Features of Nano-Mode:
 - Transparent background with no window decorations (title bar, borders)
@@ -79,9 +215,9 @@ Features of Nano-Mode:
 - Font size can still be adjusted using Ctrl++ and Ctrl+- even though the buttons are hidden
 - Keyboard shortcuts still work. So to stop the timer in nano mode, you will do a ctrl+T. See the Keyboard Shortcuts section below for additional keyboard shortcuts.
 
-To toggle Nano-Mode:
+To enable Nano-Mode:
 - Use the "Nano Mode" checkbox in the Settings dialog (accessed via Ctrl+,)
-- Or use the keyboard shortcut **Ctrl+N**
+- When enabled, the timer will automatically switch to nano display when started
 
 When a timer is started with Nano-Mode enabled:
 - The window automatically switches to the ultra-compact display
@@ -123,46 +259,21 @@ To select which animation to display:
 New animations can be added by creating a subdirectory in `assets/sprites/` with PNG frames 
 following the naming pattern `*sprite_frame_*.png`.
 
-## Statistics
-
-Tea sessions are automatically logged with:
-- Timestamp of when the timer completed
-- Duration of the tea session
-
-# Demo & Screenshots
-
-Main Window
-
-![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-main.gif)
-
-
-A fun animation will appear upon completion of a session
-![Demo - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-session-complete-gif.gif)
-
-Keyboard Shortcuts for ease of use
-![Demo  - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-keyboard-shortcuts.gif)
-
-Statistics Engine and About Section
-![Demo  - gif format](./screenshots_demo_clones/2025-10-19_16-DEMO-short-stats_and_about.gif)
-
-Screenshot of the main GUI (graphical user interface) from the latest version of the app
-![screenshot](./screenshots_demo_clones/2025-07-15-screenshot-for-README.png)
-
-Screenshot of the Statistics engine that is built into the app. It automatically records the number of sessions by date. Including, breakdown for the Total number of sessions, Total Time for Sessions, Average Duration considering duration of all the Sessions
-![screenshot for stats](./screenshots_demo_clones/2025-10-14-screenshot-for-README-STATS.png)
 
 ## Demos on Youtube
 * [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw?t=137)
 * [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
 
 
-## Accessibility Features
+## Distinct Branch
 
 ### Photosensitive Epilepsy Safe Version
-* A photosensitive version of the app was created by @shanaya-gupta with further code modifications led by @genidma
-* The photosensitive version does not have any visual effects, sudden screen changes and the timer updates every 5 seconds vs every second
-* The latest stable photosensitive version of the app  [downloaded via the releases section](https://github.com/genidma/teatime-accessibility/releases)
-* * Note the current Stable release for the photosensitive version is v.1.3.5. But best to check the Releases section directly in the future, as the Readme might be a bit stale
+* a photosensitive version of the app was created by @shanaya-gupta with further code modifications led by @genidma
+* it does not have any visual effects or sudden screen changes
+* the latest stable photosensitive version of the app can be [downloaded via the releases section](https://github.com/genidma/teatime-accessibility/releases)
+
+
+## Features
 
 ### Visual and Audio Accessibility
 - **Rainbow 🌈 Glow**: Use tab on the keyboard ⌨️. As you cycle through the buttons they glow with a different color, each time the app is launched 
@@ -194,7 +305,7 @@ Screenshot of the Statistics engine that is built into the app. It automatically
 ## Installation
 
 ### Prerequisites
-Before running the install script, please install the required system dependencies. Note: See instructions on how to open a terminal and if you are new to Linux:
+Before running the install script, please install the required system dependencies. Note: See [instructions](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) on how to open and use a terminal and if you are new to Linux:
 
 ```bash
 sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
