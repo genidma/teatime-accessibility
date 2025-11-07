@@ -12,21 +12,21 @@ _New features are added regularly_. Please see the [feedback](https://github.com
 
 ### open app & start/stop the timer
 
-In the first demo:
-- App is opened using the icon on the desktop
-- The timer is started using the buttons on the gui (graphical user interface)
-- Notice how the **timer increments in 5 seconds intervals** 
-- The timer is then stopped. As this is just a demo
+in the first demo:
+- app is opened using the icon on the desktop
+- the timer is started using the buttons on the gui (graphical user interface)
+- notice how the **timer increments in 5 seconds intervals** 
+- the timer is then stopped. As this is just a demo
 - fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
 
 ### session presets & manual durations
 
-In this next demo, let's:
-- Invoke the timer using the 'Session Presets', currently located on the right-hand side of the gui
-- Demo how the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
-- To stop the timer: Simply use the 'Stop' button or use the keyboard shortcuts (below in this Readme)
-- How to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
+in this next demo, let's:
+- invoke the timer using the 'Session Presets', currently located on the right-hand side of the gui
+- demo how the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
+- to stop the timer: Simply use the 'Stop' button or use the keyboard shortcuts (below in this Readme)
+- how to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/session-presets_and_manual-durations.gif)
 
 ### resizing
@@ -166,19 +166,23 @@ Activate buttons and menu items by pressing Alt plus the underlined letter.
 - **Alt+E**: Export to CSV
 - **Alt+C**: Clear History
 
-## Mini-Mode
+## Display Modes
 
-TeaTime Accessibility includes a compact display mode called "Mini-Mode" which reduces the window size and makes the interface elements more compact. This is especially useful when you want to keep the timer visible but don't need the full interface.
+TeaTime Accessibility offers multiple display modes to suit different preferences and use cases.
 
-To toggle Mini-Mode:
-- Use the "Mini Mode" checkbox in the main interface
-- Or use the keyboard shortcut **Ctrl+D**
+### Mini-Mode
 
-Note: Some keyboard shortcuts may not work properly when in Mini-Mode due to the reduced interface size and focus handling. The Ctrl+D shortcut will always work to toggle Mini-Mode on and off.
+Mini-Mode provides a compact interface that reduces the overall window size while keeping all controls visible. This mode is ideal for when you want a smaller footprint on your desktop but still need access to all controls.
 
-## Nano-Mode
+Features of Mini-Mode:
+- Reduced window size
+- Smaller controls and text
+- All interface elements remain visible
+- Can be toggled on/off with Ctrl+M or via the Settings dialog
 
-Includes an ultra-compact display mode called "Nano-Mode" which displays only the timer digits and colon with a transparent background. This mode is perfect for when you want a minimal, unobtrusive timer that floats on your desktop.
+### Nano-Mode
+
+Nano-Mode is an ultra-compact display mode that shows only the timer digits and colon with a transparent background. This mode automatically activates when a timer starts (if enabled in settings) and provides an unobtrusive timer that floats on your desktop.
 
 Features of Nano-Mode:
 - Transparent background with no window decorations (title bar, borders)
@@ -187,9 +191,9 @@ Features of Nano-Mode:
 - Font size can still be adjusted using Ctrl++ and Ctrl+- even though the buttons are hidden
 - Keyboard shortcuts still work. So to stop the timer in nano mode, you will do a ctrl+T. See the Keyboard Shortcuts section below for additional keyboard shortcuts.
 
-To toggle Nano-Mode:
+To enable Nano-Mode:
 - Use the "Nano Mode" checkbox in the Settings dialog (accessed via Ctrl+,)
-- Or use the keyboard shortcut **Ctrl+N**
+- When enabled, the timer will automatically switch to nano display when started
 
 When a timer is started with Nano-Mode enabled:
 - The window automatically switches to the ultra-compact display
