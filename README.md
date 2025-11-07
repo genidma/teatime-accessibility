@@ -6,10 +6,10 @@
 - visual effects (gifs): animations upon completion of a Session and dynamic skins
 
 > [!NOTE]
-> the main branch holds the code for the regular (and non-photosensitive version)
+> the main branch holds the code for the regular (non-photosensitive version). You can clone from the main page directly or from the releases page.
 
 > [!IMPORTANT]
-> a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
+> separately, a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
 - - code submission for the initial photosensitive version by @shanaya-gupta
 
 
