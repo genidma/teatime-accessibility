@@ -1263,7 +1263,9 @@ class TeaTimerApp(Gtk.Application):
             self._show_fullscreen_notification()
             
             # Log the completed timer
+            print("DEBUG: About to call _log_timer_completion")
             self._log_timer_completion()
+            print("DEBUG: Finished calling _log_timer_completion")
             
             try:
                 accessible = self.time_label.get_accessible()
@@ -1291,38 +1293,61 @@ class TeaTimerApp(Gtk.Application):
 
     def _log_timer_completion(self):
         """Logs a completed timer session to the stats file."""
-        log_entry = {
-            "timestamp": datetime.now().isoformat(),
-            "duration": self.current_timer_duration
-        }
-        
         try:
-            STATS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-            
-            if STATS_LOG_FILE.exists():
-                with open(STATS_LOG_FILE, 'r') as f:
-                    logs = json.load(f)
+            # Ensure we have a valid duration value
+            if not hasattr(self, 'current_timer_duration') or self.current_timer_duration is None:
+                print("DEBUG: current_timer_duration not set, using default value")
+                duration = int(self.duration_spin.get_value()) if hasattr(self, 'duration_spin') else 5
             else:
-                logs = []
+                duration = int(self.current_timer_duration)
+                
+            log_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "duration": duration
+            }
             
-            # Remove duplicates based on timestamp while preserving order
-            seen_timestamps = set()
-            unique_logs = []
-            for log in logs:
-                timestamp = log.get('timestamp')
-                if timestamp not in seen_timestamps:
-                    seen_timestamps.add(timestamp)
-                    unique_logs.append(log)
+            print(f"DEBUG: Creating log entry with duration {duration}")
             
-            unique_logs.append(log_entry)
+            # Ensure the data directory exists
+            stats_dir = STATS_LOG_FILE.parent
+            if not stats_dir.exists():
+                stats_dir.mkdir(parents=True, exist_ok=True)
+                print(f"DEBUG: Created directory {stats_dir}")
             
+            # Read existing logs or create empty list
+            logs = []
+            if STATS_LOG_FILE.exists():
+                try:
+                    with open(STATS_LOG_FILE, 'r') as f:
+                        content = f.read().strip()
+                        if content:
+                            logs = json.loads(content)
+                            print(f"DEBUG: Loaded {len(logs)} existing entries")
+                        else:
+                            print("DEBUG: Stats file is empty")
+                except (json.JSONDecodeError, IOError) as e:
+                    print(f"DEBUG: Error reading stats file: {e}")
+                    # If there's an error reading the file, start with empty logs
+                    logs = []
+            else:
+                print("DEBUG: Stats file doesn't exist yet")
+            
+            # Add new entry
+            logs.append(log_entry)
+            print(f"DEBUG: Added entry, now have {len(logs)} entries")
+            
+            # Write updated logs
             with open(STATS_LOG_FILE, 'w') as f:
-                json.dump(unique_logs, f, indent=2)
-            print(f"Logged timer: {log_entry['duration']} minutes.")
-            
+                json.dump(logs, f, indent=2)
+            print(f"DEBUG: Successfully wrote stats to {STATS_LOG_FILE}")
+                
         except Exception as e:
-            print(f"Error logging statistics: {e}")
-
+            # Print to stderr so it's more visible
+            import sys
+            print(f"Error logging statistics: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc(file=sys.stderr)
+            
     def on_preset_clicked(self, button, minutes):
         """Sets the duration spin button to a preset value and starts the timer."""
         self.duration_spin.set_value(minutes)
