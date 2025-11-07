@@ -1305,14 +1305,19 @@ class TeaTimerApp(Gtk.Application):
             else:
                 logs = []
             
-            # Remove duplicates based on timestamp
-            unique_logs = {log['timestamp']: log for log in reversed(logs)}
-            logs = list(unique_logs.values())
+            # Remove duplicates based on timestamp while preserving order
+            seen_timestamps = set()
+            unique_logs = []
+            for log in logs:
+                timestamp = log.get('timestamp')
+                if timestamp not in seen_timestamps:
+                    seen_timestamps.add(timestamp)
+                    unique_logs.append(log)
             
-            logs.append(log_entry)
+            unique_logs.append(log_entry)
             
             with open(STATS_LOG_FILE, 'w') as f:
-                json.dump(logs, f, indent=2)
+                json.dump(unique_logs, f, indent=2)
             print(f"Logged timer: {log_entry['duration']} minutes.")
             
         except Exception as e:
