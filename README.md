@@ -219,9 +219,12 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
 
 #### Clear History
+- the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
+- first of all, the color of this button has been deliberately set to red to make it stand out
+- - in addition to: the user is presented with not one, but two reminders that they are about to wipe out the data logged (to date)
+- once the History has been cleared, the app returns back to regular usage. Meaning the successful completion of run(s) will be logged into the Statistics view/engine
 
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
 
 
 
