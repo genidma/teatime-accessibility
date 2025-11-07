@@ -69,7 +69,7 @@ here
 ### mini mode and nano mode
 
 > [!NOTE]
-> there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
+> in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
 
 - **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
 - upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
@@ -102,7 +102,11 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 #### Animations
 - this is where you choose which animation you want to see, once the timer has concluded. Currently there are two options in there. You must have noticed one of the demo from one of the previous section (above), so no point in repeating this demo. Changing this setting is easy, just click on the dropdown menu and select the option you want
 
-#### Skins
+#### Custom Skins
+
+> [!NOTE]
+> There is more information about the custom skins in one of the following sections. Here's the [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#custom-skins)
+
 - there are currently two options under the Settings for the 'Skins for Main UI (User Interface):' section. 1. Default - No Skin. 2. Lava Lamp 
 - - note: for the changes to take effect, you have to close the app and open it up again. Meaning, everytime you make a change in the Settings area. 
 - in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
