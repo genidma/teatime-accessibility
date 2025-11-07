@@ -2,7 +2,7 @@
 
 - a GUI (graphical user interface) based timer application (app) for the Ubuntu (Desktop) environment.
 - ability to make the buttons inside larger and more visible
-- presets for time, reminders (including audible bell(s)), basic statistics
+- presets for time, reminders (  including audible bell(s)  ), basic statistics
 - visual effects (gifs): animations upon completion of a Session and dynamic skins
 
 > [!NOTE]
