@@ -68,7 +68,9 @@ here
 
 ### mini mode and nano mode
 
-- note: there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
+> [!NOTE]
+> there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
+
 - **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
 - upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the different features is crunched 
 - to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
