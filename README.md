@@ -247,13 +247,6 @@ To select which animation to display:
 New animations can be added by creating a subdirectory in `assets/sprites/` with PNG frames 
 following the naming pattern `*sprite_frame_*.png`.
 
-## Statistics
-
-Tea sessions are automatically logged with:
-- Timestamp of when the timer completed
-- Duration of the tea session
-
-
 
 
 ## Come back here
