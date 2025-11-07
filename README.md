@@ -209,6 +209,14 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
 
+#### Statistics
+- the statistics section is powered by a local database in the form of a .json file
+- the statistics counter goes up by one entry, each time a timer concludes it's full cycle. A full-cycle is a successful completion of the duration specified for a run. Meaning that the cycle has not been stopped/interrupted by the user
+- as you will notice in the demo, the user has to refresh the ui in the  statistics section to see the updated data
+
+![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
+
+
 
 ## Stale Data here that needs to be removed
 Main Window

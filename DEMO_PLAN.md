@@ -45,9 +45,9 @@ python3 bin/teatime.py
    - Adjusting font size
    - Enabling/disabling sound
    - Mini-mode and nano-mode
-
    - Settings and customization options
    - - Animations
+
    - Statistics view
    - Clear History
    - Credits
