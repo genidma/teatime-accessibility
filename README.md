@@ -8,6 +8,24 @@
 
 _New features are added regularly_. Please see the [feedback](https://github.com/genidma/teatime-accessibility?tab=readme-ov-file#feedback) section towards the end of this Readme. 
 
+## Features
+
+- **Simple Timer**: Easy-to-use interface with start/stop controls
+- **Visual Notifications**: Fullscreen alerts, for you to go and enjoy your cuppa tea
+- **Sound Notifications**: Audible sounds to complement visual notifications (if you choose to enable this option)
+- **Customizable Animations**: Choose from multiple animated sprites to display when timer completes
+- **Accessibility Features**:
+  - Large, clear display
+  - High contrast mode
+  - Font scaling options
+  - Keyboard shortcuts
+- **Statistics Tracking**: Automatic logging and viewing of tea sessions w/ the ability to export to CSV
+- **Settings Dialog**: Configure animation preferences through a user-friendly interface
+- **Mini-Mode**: Compact display mode for a smaller window footprint
+- **Nano-Mode**: Ultra-compact mode with transparent background that shows only the timer digits
+- **Custom Skins**: Personalize the appearance with different visual themes
+- **Preset Durations**: Quick access to 45 minute and 60 minute presets
+
 # Demo & Screenshots
 
 ### open app & start/stop the timer
@@ -116,23 +134,6 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
 
 
-## Features
-
-- **Simple Timer**: Easy-to-use interface with start/stop controls
-- **Visual Notifications**: Fullscreen alerts, for you to go and enjoy your cuppa tea
-- **Sound Notifications**: Audible sounds to complement visual notifications (if you choose to enable this option)
-- **Customizable Animations**: Choose from multiple animated sprites to display when timer completes
-- **Accessibility Features**:
-  - Large, clear display
-  - High contrast mode
-  - Font scaling options
-  - Keyboard shortcuts
-- **Statistics Tracking**: Automatic logging and viewing of tea sessions w/ the ability to export to CSV
-- **Settings Dialog**: Configure animation preferences through a user-friendly interface
-- **Mini-Mode**: Compact display mode for a smaller window footprint
-- **Nano-Mode**: Ultra-compact mode with transparent background that shows only the timer digits
-- **Custom Skins**: Personalize the appearance with different visual themes
-- **Preset Durations**: Quick access to 45 minute and 60 minute presets
 
 ## Keyboard Shortcuts
 
