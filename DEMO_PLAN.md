@@ -47,9 +47,9 @@ python3 bin/teatime.py
    - Mini-mode and nano-mode
    - Settings and customization options
    - - Animations
-
    - Statistics view
-   - Clear History
+    - Export to CSV
+    - Clear History (Done)
    - Credits
    - Review app critically to ascertain what other features need a demo
 

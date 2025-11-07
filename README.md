@@ -218,6 +218,8 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
 
+#### Export to CSV
+
 #### Clear History
 - the 'Clear History' feature is a simple way to clear all the data stored the Statistics view
 - first of all, the color of this button has been deliberately set to red to make it stand out
