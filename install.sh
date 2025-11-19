@@ -220,11 +220,40 @@ fi
 # Make the launcher script executable
 chmod +x teatime-accessible.sh
 
+# Add alias to user's shell configuration
+SHELL_CONFIG=""
+
+# Determine which shell config file to use based on the current shell
+if [ -n "$BASH_VERSION" ]; then
+    SHELL_CONFIG="$HOME/.bashrc"
+elif [ -n "$ZSH_VERSION" ]; then
+    SHELL_CONFIG="$HOME/.zshrc"
+else
+    # Default to bashrc
+    SHELL_CONFIG="$HOME/.bashrc"
+fi
+
+# Add the alias if it doesn't already exist
+if ! grep -q "alias tea=" "$SHELL_CONFIG" 2>/dev/null; then
+    echo "" >> "$SHELL_CONFIG"
+    echo "# teatime alias" >> "$SHELL_CONFIG"
+    echo "alias tea='$PWD/teatime-accessible.sh'" >> "$SHELL_CONFIG"
+    echo "Alias added to $SHELL_CONFIG"
+    echo "You can now use the 'tea' command to launch the application!"
+else
+    echo "Alias already exists in $SHELL_CONFIG"
+    echo "You can use the 'tea' command to launch the application!"
+fi
+
 echo ""
 echo "Install completed successfully!"
 echo "=================================="
 echo ""
-echo "You can now run the application in one of the following ways:"
+echo "To use the 'tea' command, please run:"
+echo "  source $SHELL_CONFIG"
+echo "or restart your terminal."
+echo ""
+echo "After that, you can run the application in one of the following ways:"
 echo ""
 echo "Option 1 - From your applications menu:"
 echo "  1. Open your applications menu"
@@ -232,9 +261,7 @@ echo "  2. Look for 'TeaTime Accessibility' under the 'Utilities' category"
 echo "  3. Click on the application icon to launch it"
 echo ""
 echo "Option 2 - From the command line:"
-echo "  1. Navigate to this project directory"
-echo "  2. Run: source teatime-venv/bin/activate"
-echo "  3. Run: ./teatime-accessible.sh"
+echo "  1. Simply type 'tea' and press Enter"
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 echo "Option 3 - From your desktop:"
