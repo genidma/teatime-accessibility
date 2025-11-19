@@ -2,7 +2,10 @@
 # Change to the script's directory. This makes sure that relative paths inside
 # the Python script (like for sound files or icons) work correctly, no matter
 # where the user runs the launcher from.
-cd "$(dirname "$0")"
+
+# Handle symlinks - get the real directory of the script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
 # Function to check if we're in a virtual environment
 is_venv_active() {
