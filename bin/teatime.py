@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 
 import time
 import json
@@ -30,6 +30,61 @@ DEFAULT_FONT_SCALE = 1.5
 FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
+
+class ConfigManager:
+    def __init__(self, config_path=None):
+        self.config_path = Path(config_path) if config_path else CONFIG_FILE
+
+    def load(self):
+        """Loads configuration from the config file."""
+        if self.config_path.exists():
+            try:
+                with open(self.config_path, 'r') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, KeyError, TypeError) as e:
+                print(f"Error decoding config file: {self.config_path}. Error: {e}")
+                return {}
+            except Exception as e:
+                print(f"An unexpected error occurred while loading config: {e}.")
+                return {}
+        return {}
+
+    def save(self, config_data):
+        """Saves the configuration to the config file."""
+        try:
+            self.config_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.config_path, 'w') as f:
+                json.dump(config_data, f, indent=2)
+            return True
+        except Exception as e:
+            print(f"Error saving config file: {e}")
+            return False
+
+class StatsManager:
+    def __init__(self, stats_path=None):
+        self.stats_path = Path(stats_path) if stats_path else STATS_LOG_FILE
+
+    def load(self):
+        """Load statistics from the log file."""
+        if not self.stats_path.exists():
+            return []
+        try:
+            with open(self.stats_path, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Error loading stats file: {e}")
+            return []
+
+    def clear(self):
+        """Deletes the stats file."""
+        try:
+            if self.stats_path.exists():
+                self.stats_path.unlink()
+            return True
+        except Exception as e:
+            print(f"Error clearing statistics: {e}")
+            return False
+
 
 class TeaTimerApp(Gtk.Application):
     def __init__(self, duration=5, auto_start=False):
@@ -1176,7 +1231,7 @@ class TeaTimerApp(Gtk.Application):
         if getattr(self, 'use_seconds', False):
             self.time_left = current_duration  # already in seconds
         else:
-            self.time_left = current_duration * 60  # minutes → seconds
+            self.time_left = current_duration * 60  # minutes â†’ seconds
         # DEBUG: show the exact countdown in seconds
         print(f"DEBUG: time_left = {self.time_left} seconds")    
         self.current_timer_duration = current_duration
@@ -2146,3 +2201,4 @@ if __name__ == "__main__":
     
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
+
