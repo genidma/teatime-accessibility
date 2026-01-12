@@ -8,13 +8,55 @@ from unittest.mock import MagicMock, patch
 # Add bin to path so we can import teatime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bin')))
 
-# Mock GTK and other GI dependencies before importing teatime
+# Create specific mock classes that can be inherited from
+class MockGtkApplication:
+    def __init__(self, *args, **kwargs): pass
+    def add_action(self, *args, **kwargs): pass
+    def set_accels_for_action(self, *args, **kwargs): pass
+    def add_main_option(self, *args, **kwargs): pass
+    def connect(self, *args, **kwargs): pass
+    def run(self, *args, **kwargs): pass
+
+class MockGtkWindow:
+    def __init__(self, *args, **kwargs): pass
+    def set_default_size(self, *args, **kwargs): pass
+    def set_modal(self, *args, **kwargs): pass
+    def set_resizable(self, *args, **kwargs): pass
+    def set_type_hint(self, *args, **kwargs): pass
+    def set_decorated(self, *args, **kwargs): pass
+    def set_role(self, *args, **kwargs): pass
+    def connect(self, *args, **kwargs): pass
+    def add(self, *args, **kwargs): pass
+    def show_all(self, *args, **kwargs): pass
+    def hide(self, *args, **kwargs): pass
+
+# Mock GI dependencies
 mock_gtk = MagicMock()
+mock_gtk.Application = MockGtkApplication
+mock_gtk.Window = MockGtkWindow
+mock_gtk.Box = MagicMock
+mock_gtk.Grid = MagicMock
+mock_gtk.Label = MagicMock
+mock_gtk.ScrolledWindow = MagicMock
+mock_gtk.Button = MagicMock
+mock_gtk.TreeView = MagicMock
+mock_gtk.ListStore = MagicMock
+mock_gtk.Orientation = MagicMock()
+mock_gtk.Align = MagicMock()
+mock_gtk.PolicyType = MagicMock()
+mock_gtk.MessageDialog = MagicMock()
+mock_gtk.MessageType = MagicMock()
+mock_gtk.ButtonsType = MagicMock()
+mock_gtk.FileChooserDialog = MagicMock()
+mock_gtk.FileChooserAction = MagicMock()
+mock_gtk.ResponseType = MagicMock()
+mock_gtk.CssProvider = MagicMock()
+mock_gtk.STYLE_PROVIDER_PRIORITY_APPLICATION = 1
+
 mock_glib = MagicMock()
 mock_gio = MagicMock()
 mock_gdk = MagicMock()
 
-# Mock the entire gi system
 sys.modules['gi'] = MagicMock()
 sys.modules['gi.repository'] = MagicMock()
 sys.modules['gi.repository.Gtk'] = mock_gtk
@@ -22,7 +64,8 @@ sys.modules['gi.repository.GLib'] = mock_glib
 sys.modules['gi.repository.Gio'] = mock_gio
 sys.modules['gi.repository.Gdk'] = mock_gdk
 
-# Now we can import TeaTimerApp safely
+# Now import the actual classes from teatime
+import teatime
 from teatime import TeaTimerApp, StatisticsWindow
 
 class TestCompatibility(unittest.TestCase):
@@ -31,7 +74,6 @@ class TestCompatibility(unittest.TestCase):
         self.tmp_config = self.test_dir / "tmp_config.json"
         self.tmp_stats = self.test_dir / "tmp_stats.json"
         
-        # Ensure cleanup before each test
         if self.tmp_config.exists():
             self.tmp_config.unlink()
         if self.tmp_stats.exists():
@@ -53,15 +95,17 @@ class TestCompatibility(unittest.TestCase):
         with open(self.tmp_config, 'w') as f:
             json.dump(legacy_data, f)
             
+        # We need to mock some properties that TeaTimerApp expects to exist after __init__
+        # to avoid crashes during _load_config or other calls
         app = TeaTimerApp()
-        # Call the refactored method specifically
+        app.window = None # Ensure it doesn't try to save
+        
+        # Call the refactored method
         app._load_config(config_path=self.tmp_config)
         
         self.assertEqual(app.font_scale_factor, 2.0)
         self.assertEqual(app.last_duration, 10)
         self.assertEqual(app.preferred_animation, "test_animation")
-        
-        # Verify defaults for missing fields (backward compatibility)
         self.assertEqual(app.preferred_skin, "default")
         self.assertFalse(app.mini_mode)
         self.assertFalse(app.nano_mode)
@@ -72,9 +116,9 @@ class TestCompatibility(unittest.TestCase):
             f.write("{ invalid json")
             
         app = TeaTimerApp()
-        # Should not crash and use defaults
         app._load_config(config_path=self.tmp_config)
         
+        # Should reset to defaults
         self.assertEqual(app.preferred_skin, "default")
         self.assertEqual(app.preferred_animation, "puppy_animation")
 
@@ -90,16 +134,15 @@ class TestCompatibility(unittest.TestCase):
         mock_app = MagicMock()
         mock_parent = MagicMock()
         
-        with patch('gi.repository.Gtk.ListStore') as mock_store:
-            with patch('gi.repository.Gtk.Label') as mock_label:
-                stats_win = StatisticsWindow(mock_app, mock_parent)
-                stats_win.store = MagicMock()
-                
-                # Check the stats were loaded without category field
-                stats_win._load_stats(stats_path=self.tmp_stats)
-                
-                # Verify 2 items were appended
-                self.assertEqual(stats_win.store.append.call_count, 2)
+        # StatisticsWindow calls _load_stats in __init__
+        # We need to make sure the TreeView store is usable
+        stats_win = StatisticsWindow(mock_app, mock_parent)
+        stats_win.store = MagicMock()
+        
+        stats_win._load_stats(stats_path=self.tmp_stats)
+        
+        # Verify 2 items were appended (legacy data handled)
+        self.assertEqual(stats_win.store.append.call_count, 2)
 
 if __name__ == '__main__':
     unittest.main()
