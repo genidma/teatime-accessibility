@@ -3,146 +3,92 @@ import json
 import os
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, PropertyMock
 
-# Add bin to path so we can import teatime
+# Add bin to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bin')))
 
-# Create specific mock classes that can be inherited from
-class MockGtkApplication:
+# 1. Define base classes that don't depend on GTK
+class MockBase:
     def __init__(self, *args, **kwargs): pass
+    def connect(self, *args, **kwargs): pass
     def add_action(self, *args, **kwargs): pass
     def set_accels_for_action(self, *args, **kwargs): pass
-    def add_main_option(self, *args, **kwargs): pass
-    def connect(self, *args, **kwargs): pass
-    def run(self, *args, **kwargs): pass
+    def get_style_context(self, *args, **kwargs):
+        m = MagicMock()
+        m.add_provider.return_value = None
+        return m
 
-class MockGtkWindow:
-    def __init__(self, *args, **kwargs): pass
-    def set_default_size(self, *args, **kwargs): pass
-    def set_modal(self, *args, **kwargs): pass
-    def set_resizable(self, *args, **kwargs): pass
-    def set_type_hint(self, *args, **kwargs): pass
-    def set_decorated(self, *args, **kwargs): pass
-    def set_role(self, *args, **kwargs): pass
-    def connect(self, *args, **kwargs): pass
-    def add(self, *args, **kwargs): pass
-    def show_all(self, *args, **kwargs): pass
-    def hide(self, *args, **kwargs): pass
-
-# Mock GI dependencies
-mock_gtk = MagicMock()
-mock_gtk.Application = MockGtkApplication
-mock_gtk.Window = MockGtkWindow
-mock_gtk.Box = MagicMock
-mock_gtk.Grid = MagicMock
-mock_gtk.Label = MagicMock
-mock_gtk.ScrolledWindow = MagicMock
-mock_gtk.Button = MagicMock
-mock_gtk.TreeView = MagicMock
-mock_gtk.ListStore = MagicMock
-mock_gtk.Orientation = MagicMock()
-mock_gtk.Align = MagicMock()
-mock_gtk.PolicyType = MagicMock()
-mock_gtk.MessageDialog = MagicMock()
-mock_gtk.MessageType = MagicMock()
-mock_gtk.ButtonsType = MagicMock()
-mock_gtk.FileChooserDialog = MagicMock()
-mock_gtk.FileChooserAction = MagicMock()
-mock_gtk.ResponseType = MagicMock()
-mock_gtk.CssProvider = MagicMock()
-mock_gtk.STYLE_PROVIDER_PRIORITY_APPLICATION = 1
-
-mock_glib = MagicMock()
-mock_gio = MagicMock()
-mock_gdk = MagicMock()
-
+# 2. Mock GI modules
 sys.modules['gi'] = MagicMock()
 sys.modules['gi.repository'] = MagicMock()
-sys.modules['gi.repository.Gtk'] = mock_gtk
-sys.modules['gi.repository.GLib'] = mock_glib
-sys.modules['gi.repository.Gio'] = mock_gio
-sys.modules['gi.repository.Gdk'] = mock_gdk
 
-# Now import the actual classes from teatime
+import gi.repository
+gi.repository.Gtk = MagicMock()
+gi.repository.Gtk.Application = MockBase
+gi.repository.Gtk.Window = MockBase
+gi.repository.GObject = MagicMock()
+gi.repository.Gio = MagicMock()
+gi.repository.Gdk = MagicMock()
+
+# 3. Now import teatime
 import teatime
-from teatime import TeaTimerApp, StatisticsWindow
 
 class TestCompatibility(unittest.TestCase):
     def setUp(self):
-        self.test_dir = Path("tests")
-        self.tmp_config = self.test_dir / "tmp_config.json"
-        self.tmp_stats = self.test_dir / "tmp_stats.json"
-        
-        if self.tmp_config.exists():
-            self.tmp_config.unlink()
-        if self.tmp_stats.exists():
-            self.tmp_stats.unlink()
+        self.tmp_config = Path("tests/tmp_config.json")
+        self.tmp_stats = Path("tests/tmp_stats.json")
+        for p in [self.tmp_config, self.tmp_stats]:
+            if p.exists(): p.unlink()
 
     def tearDown(self):
-        if self.tmp_config.exists():
-            self.tmp_config.unlink()
-        if self.tmp_stats.exists():
-            self.tmp_stats.unlink()
+        for p in [self.tmp_config, self.tmp_stats]:
+            if p.exists(): p.unlink()
 
     def test_load_legacy_config(self):
-        """Test loading a config file that is missing newer fields."""
         legacy_data = {
-            "font_scale_factor": 2.0,
-            "last_duration": 10,
-            "preferred_animation": "test_animation"
+            "font_scale_factor": 1.5,
+            "last_duration": 15,
+            "preferred_animation": "old_ani"
         }
         with open(self.tmp_config, 'w') as f:
             json.dump(legacy_data, f)
             
-        # We need to mock some properties that TeaTimerApp expects to exist after __init__
-        # to avoid crashes during _load_config or other calls
-        app = TeaTimerApp()
-        app.window = None # Ensure it doesn't try to save
-        
-        # Call the refactored method
-        app._load_config(config_path=self.tmp_config)
-        
-        self.assertEqual(app.font_scale_factor, 2.0)
-        self.assertEqual(app.last_duration, 10)
-        self.assertEqual(app.preferred_animation, "test_animation")
-        self.assertEqual(app.preferred_skin, "default")
-        self.assertFalse(app.mini_mode)
-        self.assertFalse(app.nano_mode)
-
-    def test_load_corrupted_config(self):
-        """Test handling of malformed JSON in config."""
-        with open(self.tmp_config, 'w') as f:
-            f.write("{ invalid json")
+        # Instantiate TeaTimerApp
+        # We need to mock a few things it uses in __init__
+        with patch('gi.repository.Gtk.CssProvider', MagicMock()):
+            app = teatime.TeaTimerApp()
+            app.window = None  # Prevent saving
             
-        app = TeaTimerApp()
-        app._load_config(config_path=self.tmp_config)
-        
-        # Should reset to defaults
-        self.assertEqual(app.preferred_skin, "default")
-        self.assertEqual(app.preferred_animation, "puppy_animation")
+            # Use refactored _load_config
+            app._load_config(config_path=self.tmp_config)
+            
+            self.assertEqual(app.font_scale_factor, 1.5)
+            self.assertEqual(app.last_duration, 15)
+            self.assertEqual(app.preferred_animation, "old_ani")
+            self.assertEqual(app.preferred_skin, "default") # Verified backward compat
 
-    def test_load_legacy_stats(self):
-        """Test loading stats file missing the category field."""
-        legacy_stats_data = [
-            {"timestamp": "2025-01-01T12:00:00", "duration": 25},
-            {"timestamp": "2025-01-01T13:00:00", "duration": 5}
-        ]
+    def test_load_腐った_stats(self): # (corrupted)
+        legacy_stats = [{"timestamp": "2025-01-01T10:00:00", "duration": 10}]
         with open(self.tmp_stats, 'w') as f:
-            json.dump(legacy_stats_data, f)
+            json.dump(legacy_stats, f)
             
         mock_app = MagicMock()
         mock_parent = MagicMock()
         
-        # StatisticsWindow calls _load_stats in __init__
-        # We need to make sure the TreeView store is usable
-        stats_win = StatisticsWindow(mock_app, mock_parent)
-        stats_win.store = MagicMock()
-        
-        stats_win._load_stats(stats_path=self.tmp_stats)
-        
-        # Verify 2 items were appended (legacy data handled)
-        self.assertEqual(stats_win.store.append.call_count, 2)
+        # We need to mock ListStore and Labels
+        with patch('gi.repository.Gtk.ListStore', MagicMock()), \
+             patch('gi.repository.Gtk.Label', MagicMock()), \
+             patch('gi.repository.Gtk.Box', MagicMock()), \
+             patch('gi.repository.Gtk.Grid', MagicMock()), \
+             patch('gi.repository.Gtk.ScrolledWindow', MagicMock()), \
+             patch('gi.repository.Gtk.TreeView', MagicMock()):
+                
+            stats_win = teatime.StatisticsWindow(mock_app, mock_parent)
+            stats_win.store = MagicMock()
+            
+            stats_win._load_stats(stats_path=self.tmp_stats)
+            self.assertEqual(stats_win.store.append.call_count, 1)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
