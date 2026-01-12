@@ -923,7 +923,7 @@ class TeaTimerApp(Gtk.Application):
         quit_action = Gio.SimpleAction.new("quit", None)
         quit_action.connect("activate", lambda a, p: self.quit())
         self.add_action(quit_action)
-        self.set_accels_for_action("app.quit", ["<Control>q"])
+        self.set_accels_for_action("app.quit", ["<Control>q"]); self.config_manager = ConfigManager()
 
     def _load_config(self):
         """Loads configuration from the config file."""
@@ -1693,8 +1693,7 @@ class TeaTimerApp(Gtk.Application):
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
         super().__init__(title="Timer Statistics", application=application)
-        self.set_default_size(400, 300)
-        self.set_modal(False)
+        self.set_default_size(400, 300); self.stats_manager = StatsManager(); self.set_modal(False)
         self.set_resizable(True)
         # Ensure window decorations including maximize button are displayed
         self.set_type_hint(Gdk.WindowTypeHint.NORMAL)
@@ -2201,4 +2200,5 @@ if __name__ == "__main__":
     
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)
+
 
