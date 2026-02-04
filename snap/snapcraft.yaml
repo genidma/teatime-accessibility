@@ -30,7 +30,7 @@ apps:
 parts:
   teatime:
     plugin: python
-    source: .
+    source: ..
     build-packages:
       - libgirepository1.0-dev
       - libcairo2-dev
