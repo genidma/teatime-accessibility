@@ -1,0 +1,31 @@
+app-id: org.genidma.TeatimeAccessibility
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: teatime-accessibility
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --filesystem=home
+  # Allow network access for requests library
+  - --share=network
+
+modules:
+  - name: python-dependencies
+    buildsystem: simple
+    build-commands:
+      # Note: For strict Flathub publishing, these should be generated sources using flatpak-pip-generator
+      - pip3 install --prefix=/app --no-deps requests pandas plotly setuptools wheel
+
+  - name: teatime-accessibility
+    buildsystem: simple
+    build-commands:
+      - install -D bin/teatime.py /app/bin/teatime-accessibility
+      # Install assets to /app/assets so relative path logic (Path(__file__).parent.parent / "assets") works
+      # if __file__ is /app/bin/teatime-accessibility, parent is bin, parent.parent is /app.
+      - cp -r assets /app/assets
+    sources:
+      - type: dir
+        path: .
