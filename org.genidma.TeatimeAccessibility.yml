@@ -26,3 +26,8 @@ modules:
       - chmod +x /app/bin/teatime-accessibility
       - mkdir -p /app/assets
       - cp -r assets/* /app/assets/
+      # Install standard metadata for Flathub
+      - install -Dm644 org.genidma.TeatimeAccessibility.desktop /app/share/applications/org.genidma.TeatimeAccessibility.desktop
+      - install -Dm644 org.genidma.TeatimeAccessibility.metainfo.xml /app/share/metainfo/org.genidma.TeatimeAccessibility.metainfo.xml
+      - install -Dm644 assets/teatime-icon.png /app/share/icons/hicolor/128x128/apps/org.genidma.TeatimeAccessibility.png
+      - install -Dm644 assets/teatime-icon.svg /app/share/icons/hicolor/scalable/apps/org.genidma.TeatimeAccessibility.svg

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=TeaTime Accessibility
+Comment=Accessible tea timer with animations and statistics
+Exec=teatime-accessibility
+Icon=org.genidma.TeatimeAccessibility
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Keywords=timer;accessibility;tea;
+StartupWMClass=teatime.py
