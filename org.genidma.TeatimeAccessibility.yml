@@ -25,8 +25,9 @@ modules:
       - plotly
     build-commands: 
       - sed -i '1s|.*|#!/app/bin/python3|' bin/teatime.py
-      - install -D bin/teatime.py /app/bin/teatime-accessibility
-      - chmod +x /app/bin/teatime-accessibility
+      - mkdir -p /app/bin
+      - install -m755 bin/teatime.py /app/bin/teatime-accessibility
+      - mkdir -p /app/assets
       # Install assets to /app/assets so relative path logic (Path(__file__).parent.parent / "assets") works
       # if __file__ is /app/bin/teatime-accessibility, parent is bin, parent.parent is /app.
       - cp -r assets /app/assets
