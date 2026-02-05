@@ -46,3 +46,9 @@ bwrap: execvp teatime-accessibility: No such file or directory
 ## now we try new commadsky
 
 ostree --repo=~/.local/share/flatpak/repo ls -R $(flatpak info org.genidma.TeatimeAccessibility | grep Commit | awk '{print $2}') /files
+
+--
+and the outputsky. but not ouspensky!
+
+ostree --repo=~/.local/share/flatpak/repo ls -R $(flatpak info org.genidma.TeatimeAccessibility | grep Commit | awk '{print $2}') /files
+error: opening repo: opendir(/exoplanetok/oss/teatime-accessibility/~/.local/share/flatpak/repo): No such file or directory
