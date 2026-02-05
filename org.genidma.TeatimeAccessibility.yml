@@ -25,4 +25,4 @@ modules:
       - printf '#!/bin/bash\nexec /usr/bin/python3 /app/bin/teatime.py "$@"\n' > /app/bin/teatime-accessibility
       - chmod +x /app/bin/teatime-accessibility
       - mkdir -p /app/assets
-      - cp -r assets /app/assets
+      - cp -r assets/* /app/assets/
