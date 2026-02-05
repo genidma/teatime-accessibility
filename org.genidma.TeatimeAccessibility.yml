@@ -2,7 +2,7 @@ app-id: org.genidma.TeatimeAccessibility
 runtime: org.gnome.Platform
 runtime-version: '48'
 sdk: org.gnome.Sdk
-command: teatime-accessibility
+command: /app/bin/teatime-accessibility
 finish-args:
   - --share=ipc
   - --socket=fallback-x11
