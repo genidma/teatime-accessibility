@@ -1,0 +1,27 @@
+flatpak run org.genidma.TeatimeAccessibility 
+
+Note that the directories 
+
+'/var/lib/flatpak/exports/share'
+'/home/socraplato/.local/share/flatpak/exports/share'
+
+are not in the search path set by the XDG_DATA_DIRS environment variable, so
+applications installed by Flatpak may not appear on your desktop until the
+session is restarted.
+
+/app/bin/teatime-accessibility: line 1: #!/usr/bin/env: No such file or directory
+/app/bin/teatime-accessibility: line 3: import: command not found
+/app/bin/teatime-accessibility: line 4: import: command not found
+/app/bin/teatime-accessibility: line 5: import: command not found
+/app/bin/teatime-accessibility: line 6: import: command not found
+/app/bin/teatime-accessibility: line 7: import: command not found
+/app/bin/teatime-accessibility: line 8: from: command not found
+/app/bin/teatime-accessibility: line 9: from: command not found
+/app/bin/teatime-accessibility: line 10: import: command not found
+/app/bin/teatime-accessibility: line 11: import: command not found
+/app/bin/teatime-accessibility: line 12: import: command not found
+/app/bin/teatime-accessibility: line 13: import: command not found
+/app/bin/teatime-accessibility: line 15: import: command not found
+/app/bin/teatime-accessibility: line 17: syntax error near unexpected token `"Gtk",'
+/app/bin/teatime-accessibility: line 17: `gi.require_version("Gtk", "3.0")'
+socraplato@kontiki-vm:~$ 
