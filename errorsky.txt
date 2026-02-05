@@ -61,3 +61,63 @@ flatpak run --command=find org.genidma.TeatimeAccessibility /app -type f
 and 
 
 ls ~/.local/share/flatpak/app/org.genidma.TeatimeAccessibility/
+
+
+---
+
+
+and the outputsky
+
+flatpak run --command=find org.genidma.TeatimeAccessibility /app -type f
+
+Note that the directories 
+
+'/var/lib/flatpak/exports/share'
+'/home/adeel/.local/share/flatpak/exports/share'
+
+are not in the search path set by the XDG_DATA_DIRS environment variable, so
+applications installed by Flatpak may not appear on your desktop until the
+session is restarted.
+
+/app/assets/assets/scripts/Unity_export_cut_sprites.cs
+/app/assets/assets/test_animation.gif
+/app/assets/assets/sprites/test_animation/sprite_frame_08.png
+/app/assets/assets/sprites/test_animation/sprite_frame_09.png
+/app/assets/assets/sprites/test_animation/sprite_frame_05.png
+/app/assets/assets/sprites/test_animation/sprite_frame_04.png
+/app/assets/assets/sprites/test_animation/sprite_frame_06.png
+/app/assets/assets/sprites/test_animation/sprite_frame_03.png
+/app/assets/assets/sprites/test_animation/sprite_frame_00.png
+/app/assets/assets/sprites/test_animation/sprite_frame_11.png
+/app/assets/assets/sprites/test_animation/sprite_frame_02.png
+/app/assets/assets/sprites/test_animation/sprite_frame_01.png
+/app/assets/assets/sprites/test_animation/sprite_frame_10.png
+/app/assets/assets/sprites/test_animation/sprite_frame_07.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_11.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_08.png
+/app/assets/assets/sprites/puppy_animation/puppy_animation.gif
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_00.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_05.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_02.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_03.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_04.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_06.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_09.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_01.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_10.png
+/app/assets/assets/sprites/puppy_animation/puppy_sprite_frame_07.png
+/app/assets/assets/sprites/puppy_animation/README.md
+/app/assets/assets/teatime-icon.png
+/app/assets/assets/icon2.png
+/app/assets/assets/teatime-icon.svg
+/app/assets/assets/sound-effects/2025-11-04-session-concludes-01.wav
+/app/assets/assets/sprites_master_sheets/_Puppy_Main_SpriteSheet-ChatGPT-2025-10-15.png
+/app/assets/assets/README_SPRITES.md
+/app/assets/assets/icon.png
+/app/bin/teatime-accessibility
+/app/manifest.json
+/app/.ref
+/app/share/licenses/org.genidma.TeatimeAccessibility/teatime-accessibility/LICENSE
+
+$ ls ~/.local/share/flatpak/app/org.genidma.TeatimeAccessibility/
+current  x86_64
