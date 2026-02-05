@@ -23,6 +23,7 @@ modules:
     buildsystem: simple
     build-commands:
       - install -D bin/teatime.py /app/bin/teatime-accessibility
+      - chmod +x /app/bin/teatime-accessibility
       # Install assets to /app/assets so relative path logic (Path(__file__).parent.parent / "assets") works
       # if __file__ is /app/bin/teatime-accessibility, parent is bin, parent.parent is /app.
       - cp -r assets /app/assets
