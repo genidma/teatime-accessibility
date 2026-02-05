@@ -359,6 +359,32 @@ If you prefer to install manually:
    cp teatime-accessibility.desktop ~/Desktop/
    ```
 
+### Snap Installation
+TeaTime Accessibility is available as a Snap package for easy installation on Ubuntu and other Linux distributions.
+
+#### Standard Version (main branch)
+```bash
+sudo snap install teatime-accessibility --channel=latest/stable
+```
+
+#### Photosensitive Version (photosensitive-version branch)
+```bash
+sudo snap install teatime-accessibility --channel=photosensitive/stable
+```
+
+### Flatpak Installation
+TeaTime Accessibility is also available as a Flatpak for sandboxed installation.
+
+#### Standard Version (main branch)
+```bash
+flatpak install flathub org.genidma.TeatimeAccessibility
+```
+
+#### Photosensitive Version (photosensitive-version branch)
+```bash
+flatpak install flathub org.genidma.TeatimeAccessibility.Photosensitive
+```
+
 After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. The desktop entry will be created at `~/.local/share/applications/teatime-accessibility.desktop`. If you choose to create a desktop shortcut during the installation process, you can also launch the app directly from your desktop in future instances.
 
 ## Installation Locations
