@@ -16,8 +16,9 @@ modules:
   - name: teatime-accessibility
     buildsystem: simple
     sources:
-      - type: dir
-        path: .
+      - type: git
+        url: https://github.com/genidma/teatime-accessibility
+        branch: main
     build-commands:
       - mkdir -p /app/bin
       - cp bin/teatime.py /app/bin/teatime.py
