@@ -19,7 +19,7 @@ modules:
       - type: dir
         path: .
     build-commands:
-      - sed -i '1s|.*|#!/app/bin/python3|' bin/teatime.py
+      - sed -i '1s|.*|#!/usr/bin/python3|' bin/teatime.py
       - mkdir -p /app/bin
       - install -m755 bin/teatime.py /app/bin/teatime-accessibility
       - mkdir -p /app/assets
