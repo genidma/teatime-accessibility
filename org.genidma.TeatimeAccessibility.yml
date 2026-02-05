@@ -14,7 +14,7 @@ finish-args:
 
 modules:
   - name: teatime-accessibility
-    buildsystem: python
+    buildsystem: simple
     builddir: true
     sources:
       - type: dir
@@ -24,6 +24,7 @@ modules:
       - pandas
       - plotly
     build-commands:
+      - pip3 install --no-deps --prefix=/app .  
       - install -D bin/teatime.py /app/bin/teatime-accessibility
       - chmod +x /app/bin/teatime-accessibility
       # Install assets to /app/assets so relative path logic (Path(__file__).parent.parent / "assets") works
