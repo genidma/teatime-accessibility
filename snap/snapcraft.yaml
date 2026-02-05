@@ -17,7 +17,7 @@ confinement: strict
 apps:
   teatime-accessibility:
     command: bin/teatime.py
-    extensions: [gnome-42]
+    extensions: [gnome]
     plugs:
       - audio-playback
       - home

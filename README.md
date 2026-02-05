@@ -385,6 +385,27 @@ flatpak install flathub org.genidma.TeatimeAccessibility
 flatpak install flathub org.genidma.TeatimeAccessibility.Photosensitive
 ```
 
+### Running After Installation
+
+#### Running the Snap
+```bash
+# From command line
+teatime-accessibility
+
+# Or find "TeaTime Accessibility" in your desktop application menu
+```
+
+#### Running the Flatpak
+```bash
+# From command line
+flatpak run org.genidma.TeatimeAccessibility
+
+# For photosensitive version
+flatpak run org.genidma.TeatimeAccessibility.Photosensitive
+
+# Or find "TeaTime Accessibility" in your desktop application menu
+```
+
 After running these commands, you'll find "TeaTime Accessibility" in the Utilities section of your application menu. The desktop entry will be created at `~/.local/share/applications/teatime-accessibility.desktop`. If you choose to create a desktop shortcut during the installation process, you can also launch the app directly from your desktop in future instances.
 
 ## Installation Locations
