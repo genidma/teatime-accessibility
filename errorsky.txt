@@ -52,3 +52,12 @@ and the outputsky. but not ouspensky!
 
 ostree --repo=~/.local/share/flatpak/repo ls -R $(flatpak info org.genidma.TeatimeAccessibility | grep Commit | awk '{print $2}') /files
 error: opening repo: opendir(/exoplanetok/oss/teatime-accessibility/~/.local/share/flatpak/repo): No such file or directory
+
+--
+new commands to trysky
+
+flatpak run --command=find org.genidma.TeatimeAccessibility /app -type f
+
+and 
+
+ls ~/.local/share/flatpak/app/org.genidma.TeatimeAccessibility/
