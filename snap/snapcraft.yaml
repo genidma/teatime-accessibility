@@ -17,7 +17,7 @@ confinement: strict
 apps:
   teatime-accessibility:
     command: bin/teatime.py
-    extensions: [gnome]
+    extensions: [gnome-42]
     plugs:
       - audio-playback
       - home
@@ -43,3 +43,6 @@ parts:
       - gir1.2-gtk-3.0
       - gir1.2-gdkpixbuf-2.0
       - gir1.2-pango-1.0
+    override-build: |
+      snapcraftctl build
+      chmod +x bin/teatime.py
