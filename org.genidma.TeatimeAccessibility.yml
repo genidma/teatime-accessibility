@@ -20,9 +20,9 @@ modules:
         path: .
     build-commands:
       - mkdir -p /app/bin
-      - install -m755 bin/teatime.py /app/bin/teatime.py
-      - echo '#!/usr/bin/python3' > /app/bin/teatime-accessibility
-      - echo 'exec /usr/bin/python3 /app/bin/teatime.py "$@"' >> /app/bin/teatime-accessibility
+      - cp bin/teatime.py /app/bin/teatime.py
+      - chmod +x /app/bin/teatime.py
+      - printf '#!/bin/bash\nexec /usr/bin/python3 /app/bin/teatime.py "$@"\n' > /app/bin/teatime-accessibility
       - chmod +x /app/bin/teatime-accessibility
       - mkdir -p /app/assets
       - cp -r assets /app/assets
