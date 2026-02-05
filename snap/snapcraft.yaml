@@ -1,0 +1,45 @@
+name: teatime-accessibility
+base: core22
+version: '1.3.6'
+summary: Accessible Tea Timer
+description: |
+  A GUI based timer application for the Ubuntu (Desktop) environment.
+  Features include:
+  - Large, clear display
+  - High contrast mode
+  - Font scaling options
+  - Customizable animations
+  - Statistics tracking
+
+grade: stable
+confinement: strict
+
+apps:
+  teatime-accessibility:
+    command: bin/teatime.py
+    extensions: [gnome]
+    plugs:
+      - audio-playback
+      - home
+      - desktop
+      - desktop-legacy
+      - unity7
+      - wayland
+      - x11
+
+parts:
+  teatime:
+    plugin: python
+    source: ..
+    build-packages:
+      - libgirepository1.0-dev
+      - libcairo2-dev
+      - pkg-config
+      - gcc
+      - gir1.2-gtk-3.0
+    stage-packages:
+      - libgirepository-1.0-1
+      - libcairo2
+      - gir1.2-gtk-3.0
+      - gir1.2-gdkpixbuf-2.0
+      - gir1.2-pango-1.0
