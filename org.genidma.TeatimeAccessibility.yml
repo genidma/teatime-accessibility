@@ -24,6 +24,7 @@ modules:
       - pandas
       - plotly
     build-commands: 
+      - sed -i '1s|.*|#!/app/bin/python3|' bin/teatime.py
       - install -D bin/teatime.py /app/bin/teatime-accessibility
       - chmod +x /app/bin/teatime-accessibility
       # Install assets to /app/assets so relative path logic (Path(__file__).parent.parent / "assets") works
