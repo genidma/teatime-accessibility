@@ -23,8 +23,7 @@ modules:
       - requests
       - pandas
       - plotly
-    build-commands:
-      - pip3 install --no-deps --prefix=/app .  
+    build-commands: 
       - install -D bin/teatime.py /app/bin/teatime-accessibility
       - chmod +x /app/bin/teatime-accessibility
       # Install assets to /app/assets so relative path logic (Path(__file__).parent.parent / "assets") works
