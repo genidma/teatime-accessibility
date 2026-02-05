@@ -42,3 +42,7 @@ applications installed by Flatpak may not appear on your desktop until the
 session is restarted.
 
 bwrap: execvp teatime-accessibility: No such file or directory
+
+## now we try new commadsky
+
+ostree --repo=~/.local/share/flatpak/repo ls -R $(flatpak info org.genidma.TeatimeAccessibility | grep Commit | awk '{print $2}') /files
