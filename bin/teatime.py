@@ -1962,7 +1962,7 @@ class StatisticsWindow(Gtk.Window):
             error_dialog.run()
             error_dialog.destroy()
 
-        def _on_selection_changed(self, selection):
+    def _on_selection_changed(self, selection):
         (model, iter) = selection.get_selected()
         if iter is not None:
             comments = model.get_value(iter, 17) # Index 17 is comments
