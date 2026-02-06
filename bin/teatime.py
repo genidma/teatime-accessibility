@@ -449,6 +449,8 @@ class TeaTimerApp(Gtk.Application):
         dialog.run(); dialog.destroy()
 
     def on_start_clicked(self, *args):
+        if self.timer_id: return
+        
         if self.nano_mode:
             self.pre_timer_mode = 'mini' if self.mini_mode else 'normal'
             self._activate_nano_mode()
@@ -459,7 +461,8 @@ class TeaTimerApp(Gtk.Application):
         self.current_timer_duration = duration
         self._update_label()
         
-        self.timer_id = GLib.timeout_add_seconds(5, self.update_timer)
+        # Use milliseconds for better reliability across platforms
+        self.timer_id = GLib.timeout_add(5000, self.update_timer)
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
 
