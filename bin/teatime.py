@@ -31,7 +31,7 @@ FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
-KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "r", "MWHH", "yss", "we", "gotb", "rf", "breaks"]
+KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "MWHH", "yss", "we", "gotb", "rf", "breaks"]
 
 class ConfigManager:
     def __init__(self, config_path=None):
@@ -216,23 +216,24 @@ class StatisticsWindow(Gtk.Window):
 
     def _on_export_clicked(self, button):
         # Implementation similar to previous but handles multi-columns
-        dialog = Gtk.FileChooserDialog(title="Export CSV", parent=self, action=Gtk.FileChooserAction.SAVE)
+        dialog = Gtk.FileChooserDialog(title="Export CSV", parent=self, action=Gtk.FileChooserAction.SAVE, modal=True)
         dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT)
         dialog.set_current_name(f"teatime_stats_{datetime.now().strftime('%Y-%m-%d')}.csv")
         
-        response = dialog.run()
-        if response == Gtk.ResponseType.ACCEPT:
-            filename = dialog.get_filename()
-            if not filename.endswith(".csv"): filename += ".csv"
-            with open(filename, 'w', newline='') as f:
-                writer = csv.writer(f)
-                header = ["Date"] + KC_CATEGORIES + ["Comments"]
-                writer.writerow(header)
-                for row in self.store:
-                    writer.writerow([row[i] for i in range(len(row))])
-            print(f"Exported stats to {filename}")
-        
-        dialog.destroy()
+        try:
+            response = dialog.run()
+            if response == Gtk.ResponseType.ACCEPT:
+                filename = dialog.get_filename()
+                if not filename.endswith(".csv"): filename += ".csv"
+                with open(filename, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    header = ["Date"] + KC_CATEGORIES + ["Comments"]
+                    writer.writerow(header)
+                    for row in self.store:
+                        writer.writerow([row[i] for i in range(len(row))])
+                print(f"Exported stats to {filename}")
+        finally:
+            dialog.destroy()
 
     def _on_clear_history_clicked(self, button):
         dialog = Gtk.MessageDialog(parent=self, modal=True, message_type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO, text="Clear all history?")
@@ -378,17 +379,10 @@ class TeaTimerApp(Gtk.Application):
             cat_frame = Gtk.Frame(label="Categories")
             cat_grid = Gtk.Grid(column_spacing=10, row_spacing=5, margin=10)
             self.category_checkboxes = {}
-            self.category_entries = {}
             for i, cat in enumerate(KC_CATEGORIES):
-                box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
                 cb = Gtk.CheckButton(label=cat)
-                box.pack_start(cb, False, False, 0)
-                entry = Gtk.Entry()
-                entry.set_width_chars(6)
-                box.pack_start(entry, True, True, 0)
-                cat_grid.attach(box, i % 4, i // 4, 1, 1)
+                cat_grid.attach(cb, i % 4, i // 4, 1, 1)
                 self.category_checkboxes[cat] = cb
-                self.category_entries[cat] = entry
             cat_frame.add(cat_grid)
             self.category_ui = cat_frame
             self.control_grid.attach(cat_frame, 0, 1, 2, 1)
@@ -534,13 +528,17 @@ class TeaTimerApp(Gtk.Application):
             path = Path(__file__).parent.parent / "assets" / "sprites" / "test_animation"
             
         if path.exists():
-            files = sorted(list(path.glob("*sprite_frame_*.png")))
+            files = sorted(list(path.glob("*.png")))
             for f in files:
-                try: frames.append(GdkPixbuf.Pixbuf.new_from_file(str(f)))
-                except: pass
+                try: 
+                    pix = GdkPixbuf.Pixbuf.new_from_file(str(f))
+                    if pix: frames.append(pix)
+                except Exception as e:
+                    print(f"Error loading frame {f}: {e}")
         return frames
 
     def _on_sprite_draw(self, widget, cr, frames):
+        if not frames: return False
         cur = (int(time.time() * 10)) % len(frames)
         pix = frames[cur]
         
@@ -558,15 +556,10 @@ class TeaTimerApp(Gtk.Application):
         today = datetime.now().strftime("%Y-%m-%d")
         logs = StatsManager().load()
         
-        # Determine selected categories and their values
         selected_data = {}
         for cat, cb in self.category_checkboxes.items():
             if cb.get_active():
-                val_str = self.category_entries[cat].get_text().strip()
-                if val_str.isdigit():
-                    selected_data[cat] = int(val_str)
-                else:
-                    selected_data[cat] = self.current_timer_duration
+                selected_data[cat] = self.current_timer_duration
         
         if not selected_data:
             selected_data = {"General": self.current_timer_duration}
@@ -669,7 +662,7 @@ class TeaTimerApp(Gtk.Application):
 
     def _start_rainbow_timer(self):
         if self.rainbow_timer_id: GLib.source_remove(self.rainbow_timer_id)
-        self.rainbow_timer_id = GLib.timeout_add(100, self._update_rainbow)
+        self.rainbow_timer_id = GLib.timeout_add(1000, self._update_rainbow)
 
     def _stop_rainbow_timer(self):
         if self.rainbow_timer_id:
