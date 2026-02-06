@@ -311,6 +311,7 @@ class TeaTimerApp(Gtk.Application):
         self.selected_categories = [] 
         self.preferred_skin = "default"
         self.preferred_animation = "test_animation"
+        self.wall_clock_mode = False
         self.rainbow_hue = 0
         self.rainbow_timer_id = None
         
@@ -454,6 +455,8 @@ class TeaTimerApp(Gtk.Application):
         if self.nano_mode:
             self.pre_timer_mode = 'mini' if self.mini_mode else 'normal'
             self._activate_nano_mode()
+        elif self.wall_clock_mode:
+            self._activate_wall_clock_mode()
         
         self._stop_rainbow_timer()
         duration = int(self.duration_spin.get_value())
@@ -606,11 +609,23 @@ class TeaTimerApp(Gtk.Application):
         self.content_box.set_visible(False)
         self.category_ui.set_visible(False)
         self.window.resize(100, 50)
+        self._apply_skin() # Re-apply to ensure no background
+
+    def _activate_wall_clock_mode(self):
+        self.content_box.set_visible(False)
+        self.time_label.set_margin_start(170)
+        self.time_label.set_margin_end(170)
+        self.time_label.set_margin_top(132)
+        self.time_label.set_margin_bottom(132)
 
     def _restore_pre_timer_mode(self):
         self.window.set_decorated(True)
         self.content_box.set_visible(True)
         self.category_ui.set_visible(True)
+        self.time_label.set_margin_start(0)
+        self.time_label.set_margin_end(0)
+        self.time_label.set_margin_top(0)
+        self.time_label.set_margin_bottom(0)
         self._apply_mini_mode()
 
     def _apply_mini_mode(self):
@@ -635,6 +650,10 @@ class TeaTimerApp(Gtk.Application):
         self.css_provider.load_from_data(css.encode())
 
     def _apply_skin(self):
+        if self.nano_mode: 
+            # Remove high-priority lava provider if exists
+            return 
+
         skin = self.preferred_skin
         if skin == 'lava':
             h1 = self.rainbow_hue
@@ -694,6 +713,7 @@ class TeaTimerApp(Gtk.Application):
             "mini_mode": self.mini_mode,
             "nano_mode": self.nano_mode,
             "sound_enabled": self.sound_enabled,
+            "wall_clock_mode": self.wall_clock_mode,
             "preferred_skin": self.preferred_skin,
             "preferred_animation": self.preferred_animation
         }
@@ -709,6 +729,7 @@ class TeaTimerApp(Gtk.Application):
                     self.mini_mode = c.get("mini_mode", False)
                     self.nano_mode = c.get("nano_mode", False)
                     self.sound_enabled = c.get("sound_enabled", True)
+                    self.wall_clock_mode = c.get("wall_clock_mode", False)
                     self.preferred_skin = c.get("preferred_skin", "default")
                     self.preferred_animation = c.get("preferred_animation", "test_animation")
             except: pass
@@ -749,10 +770,16 @@ class TeaTimerApp(Gtk.Application):
         anim_combo.set_active_id(self.preferred_animation)
         grid.attach(anim_combo, 1, 1, 1, 1)
         
+        # Wall Clock Mode
+        wc_check = Gtk.CheckButton(label="Wall Clock Mode (active only during timer)")
+        wc_check.set_active(self.wall_clock_mode)
+        grid.attach(wc_check, 0, 2, 2, 1)
+        
         dialog.show_all()
         if dialog.run() == Gtk.ResponseType.OK:
             self.preferred_skin = skin_combo.get_active_id()
             self.preferred_animation = anim_combo.get_active_id()
+            self.wall_clock_mode = wc_check.get_active()
             self._save_config()
             self._apply_skin()
         dialog.destroy()
