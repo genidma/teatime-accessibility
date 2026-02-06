@@ -317,7 +317,8 @@ class TeaTimerApp(Gtk.Application):
         
         self._load_config()
         self._setup_actions()
-
+            
+    def _setup_actions(self):
         actions = [
             ("start", self.on_start_clicked, ["<Control>s"]),
             ("stop", self.on_stop_clicked, ["<Control>t"]),
