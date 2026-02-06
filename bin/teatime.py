@@ -142,15 +142,15 @@ class StatisticsWindow(Gtk.Window):
         button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10, halign=Gtk.Align.CENTER)
         main_box.pack_start(button_box, False, False, 0)
 
-        refresh_button = Gtk.Button(label="Refresh")
+        refresh_button = Gtk.Button(label="_Refresh", use_underline=True)
         refresh_button.connect("clicked", self._on_refresh_clicked)
         button_box.pack_start(refresh_button, False, False, 0)
 
-        export_button = Gtk.Button(label="Export to CSV")
+        export_button = Gtk.Button(label="_Export to CSV", use_underline=True)
         export_button.connect("clicked", self._on_export_clicked)
         button_box.pack_start(export_button, False, False, 0)
 
-        clear_button = Gtk.Button(label="Clear History")
+        clear_button = Gtk.Button(label="_Clear History", use_underline=True)
         clear_button.get_style_context().add_class("destructive-action")
         clear_button.connect("clicked", self._on_clear_history_clicked)
         button_box.pack_start(clear_button, False, False, 0)
@@ -318,14 +318,17 @@ class TeaTimerApp(Gtk.Application):
         self._load_config()
         self._setup_actions()
 
-    def _setup_actions(self):
         actions = [
             ("start", self.on_start_clicked, ["<Control>s"]),
             ("stop", self.on_stop_clicked, ["<Control>t"]),
+            ("toggle-timer", self._on_toggle_timer, ["space"]),
+            ("statistics", self.on_stats_activated, ["<Control>i"]),
+            ("settings", self.on_settings_activated, ["<Control>comma"]),
             ("increase-font", self.on_increase_font_clicked, ["<Control>plus", "<Control>equal"]),
             ("decrease-font", self.on_decrease_font_clicked, ["<Control>minus"]),
             ("toggle-sound", self.on_toggle_sound_activated, ["<Control>m"]),
             ("toggle-mini-mode", self.on_toggle_mini_mode_activated, ["<Control>d"]),
+            ("toggle-nano-mode", self.on_toggle_nano_mode_activated, ["<Control>n"]),
             ("quit", lambda a, p: self.quit(), ["<Control>q"])
         ]
         for name, callback, accels in actions:
@@ -333,6 +336,12 @@ class TeaTimerApp(Gtk.Application):
             action.connect("activate", callback)
             self.add_action(action)
             self.set_accels_for_action(f"app.{name}", accels)
+            
+    def _on_toggle_timer(self, *args):
+        if self.timer_id:
+            self.on_stop_clicked()
+        else:
+            self.on_start_clicked()
 
     def do_activate(self):
         if not self.window:
@@ -389,9 +398,9 @@ class TeaTimerApp(Gtk.Application):
             self.control_grid.attach(cat_frame, 0, 1, 2, 1)
 
             # Row 2: Controls
-            self.start_button = Gtk.Button(label="Start")
+            self.start_button = Gtk.Button(label="_Start", use_underline=True)
             self.start_button.connect("clicked", self.on_start_clicked)
-            self.stop_button = Gtk.Button(label="Stop", sensitive=False)
+            self.stop_button = Gtk.Button(label="_Stop", use_underline=True, sensitive=False)
             self.stop_button.connect("clicked", self.on_stop_clicked)
             self.control_grid.attach(self.start_button, 0, 2, 1, 1)
             self.control_grid.attach(self.stop_button, 1, 2, 1, 1)
@@ -405,17 +414,17 @@ class TeaTimerApp(Gtk.Application):
             self.control_grid.attach(btn_plus, 1, 3, 1, 1)
 
             # Row 4: Sound Toggle
-            self.sound_toggle = Gtk.CheckButton(label="Enable Sound", active=self.sound_enabled)
+            self.sound_toggle = Gtk.CheckButton(label="_Enable Sound", use_underline=True, active=self.sound_enabled)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
             self.control_grid.attach(self.sound_toggle, 0, 4, 2, 1)
 
             # Row 5: Mini Mode Toggle (FIXED OVERLAP)
-            self.mini_mode_toggle = Gtk.CheckButton(label="Mini Mode", active=self.mini_mode)
+            self.mini_mode_toggle = Gtk.CheckButton(label="_Mini Mode", use_underline=True, active=self.mini_mode)
             self.mini_mode_toggle.connect("toggled", self.on_mini_mode_toggled)
             self.control_grid.attach(self.mini_mode_toggle, 0, 5, 2, 1)
 
             # Row 6: Nano Mode Toggle
-            self.nano_mode_toggle = Gtk.CheckButton(label="Nano Mode (auto)", active=self.nano_mode)
+            self.nano_mode_toggle = Gtk.CheckButton(label="_Nano Mode (auto)", use_underline=True, active=self.nano_mode)
             self.nano_mode_toggle.connect("toggled", self.on_nano_mode_toggled)
             self.control_grid.attach(self.nano_mode_toggle, 0, 6, 2, 1)
 
@@ -423,8 +432,17 @@ class TeaTimerApp(Gtk.Application):
             self.presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5, halign=Gtk.Align.CENTER)
             content_box.pack_start(self.presets_box, False, False, 0)
             self.presets_box.add(Gtk.Label(label="<b>Presets</b>", use_markup=True))
-            for mins in [15, 30, 45, 60]:
-                btn = Gtk.Button(label=f"{mins}m")
+            self.presets_box.add(Gtk.Label(label="<b>Presets</b>", use_markup=True))
+            
+            # Presets with mnemonics
+            presets = [
+                (15, "15m"), 
+                (30, "30m"), 
+                (45, "_45m"), 
+                (60, "_1 Hour")
+            ]
+            for mins, label in presets:
+                btn = Gtk.Button(label=label, use_underline=True)
                 btn.connect("clicked", lambda b, m=mins: self.on_preset_clicked(b, m))
                 self.presets_box.add(btn)
 
@@ -789,6 +807,9 @@ class TeaTimerApp(Gtk.Application):
 
     def on_toggle_mini_mode_activated(self, *args):
         self.mini_mode_toggle.set_active(not self.mini_mode_toggle.get_active())
+
+    def on_toggle_nano_mode_activated(self, *args):
+        self.nano_mode_toggle.set_active(not self.nano_mode_toggle.get_active())
 
     def _on_focus_changed(self, *args):
         pass
