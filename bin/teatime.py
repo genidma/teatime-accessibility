@@ -531,15 +531,18 @@ class TeaTimerApp(Gtk.Application):
             path = Path(__file__).parent.parent / "assets" / "sprites" / "test_animation"
             
         if path.exists():
+            print(f"DEBUG: Animation path found: {path}")
             files = sorted(list(path.glob("*.png")))
+            print(f"DEBUG: Found {len(files)} PNG frames")
             for f in files:
                 try: 
                     pix = GdkPixbuf.Pixbuf.new_from_file(str(f))
                     if pix: frames.append(pix)
                 except Exception as e:
                     print(f"Error loading frame {f}: {e}")
+        else:
+            print(f"DEBUG: Animation path NOT found: {path}")
         return frames
-
     def _on_sprite_draw(self, widget, cr, frames):
         if not frames: return False
         cur = (int(time.time() * 10)) % len(frames)
@@ -711,7 +714,9 @@ class TeaTimerApp(Gtk.Application):
             except: pass
 
     def on_preset_clicked(self, btn, mins):
+        self.stop_timer()
         self.duration_spin.set_value(mins)
+        # We need to manually call this because 'self.timer_id' was just cleared
         self.on_start_clicked()
 
     def on_settings_activated(self, *args):
