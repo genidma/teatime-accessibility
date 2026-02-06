@@ -20,7 +20,7 @@ from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 import argparse
 
 # Application metadata
-APP_NAME = "Accessible Tea Timer"
+APP_NAME = "Karma Conscience Resonance"
 APP_VERSION = "1.3.6"
 
 # Configuration file for font size persistence
