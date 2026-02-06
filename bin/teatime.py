@@ -31,6 +31,8 @@ FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
+KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "r", "MWHH", "yss", "we", "gotb", "rf"]
+
 class ConfigManager:
     def __init__(self, config_path=None):
         self.config_path = Path(config_path) if config_path else CONFIG_FILE
@@ -123,6 +125,7 @@ class TeaTimerApp(Gtk.Application):
         self.mini_mode = False  # Mini-mode flag
         self.nano_mode = False  # Nano-mode flag (active only during timer)
         self.pre_timer_mode = None  # Store the mode before timer starts
+        self.selected_category = KC_CATEGORIES[0] if KC_CATEGORIES else "General"
         self._load_config()  # Load settings from file
 
         # Set up keyboard shortcuts
@@ -229,25 +232,37 @@ class TeaTimerApp(Gtk.Application):
             grid.attach(duration_label, 0, 0, 1, 1)
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
-            # Row 1: Control buttons
+            # Row 1: Category selection
+            category_label = Gtk.Label(label="Category:")
+            category_label.get_style_context().add_class("input-label")
+            self.category_combo = Gtk.ComboBoxText()
+            for cat in KC_CATEGORIES:
+                self.category_combo.append_text(cat)
+            self.category_combo.set_active(0)
+            self.category_combo.connect("changed", self._on_category_changed)
+            grid.attach(category_label, 0, 1, 1, 1)
+            grid.attach(self.category_combo, 1, 1, 1, 1)
+            self.category_label_widget = category_label
+
+            # Row 2: Control buttons
             self.start_button = Gtk.Button(label="_Start")
             self.start_button.set_use_underline(True)
             self.stop_button = Gtk.Button(label="S_top")
             self.stop_button.set_use_underline(True)
-            grid.attach(self.start_button, 0, 1, 1, 1)
-            grid.attach(self.stop_button, 1, 1, 1, 1)
+            grid.attach(self.start_button, 0, 2, 1, 1)
+            grid.attach(self.stop_button, 1, 2, 1, 1)
 
-            # Row 2: Font size controls
+            # Row 3: Font size controls
             self.decrease_font_button = Gtk.Button(label="A-")
             self.increase_font_button = Gtk.Button(label="A+")
-            grid.attach(self.decrease_font_button, 0, 2, 1, 1)
-            grid.attach(self.increase_font_button, 1, 2, 1, 1)
+            grid.attach(self.decrease_font_button, 0, 3, 1, 1)
+            grid.attach(self.increase_font_button, 1, 3, 1, 1)
 
-            # Row 3: Sound toggle (spans both columns)
+            # Row 4: Sound toggle (spans both columns)
             self.sound_toggle = Gtk.CheckButton(label="_Enable Sound")
             self.sound_toggle.set_use_underline(True)
             self.sound_toggle.set_active(self.sound_enabled)
-            grid.attach(self.sound_toggle, 0, 3, 2, 1)
+            grid.attach(self.sound_toggle, 0, 4, 2, 1)
 
             # Row 4: Mini-mode toggle (spans both columns)
             self.mini_mode_toggle = Gtk.CheckButton(label="_Mini Mode")
@@ -1202,6 +1217,12 @@ class TeaTimerApp(Gtk.Application):
             GLib.source_remove(self.rainbow_timer_id)
             self.rainbow_timer_id = None
 
+    def _on_category_changed(self, combo):
+        """Handle category selection change."""
+        self.selected_category = combo.get_active_text()
+        # Save to config if needed
+        self._save_config()
+
     def _update_rainbow(self):
         """Update the rainbow color effect."""
         self.rainbow_hue = (self.rainbow_hue + 1) % 360
@@ -1348,27 +1369,21 @@ class TeaTimerApp(Gtk.Application):
         return GLib.SOURCE_REMOVE
 
     def _log_timer_completion(self):
-        """Logs a completed timer session to the stats file."""
+        """Logs a completed timer session to the stats file with summing logic."""
         try:
             # Ensure we have a valid duration value
             if not hasattr(self, 'current_timer_duration') or self.current_timer_duration is None:
-                print("DEBUG: current_timer_duration not set, using default value")
                 duration = int(self.duration_spin.get_value()) if hasattr(self, 'duration_spin') else 5
             else:
                 duration = int(self.current_timer_duration)
-                
-            log_entry = {
-                "timestamp": datetime.now().isoformat(),
-                "duration": duration
-            }
             
-            print(f"DEBUG: Creating log entry with duration {duration}")
+            today = datetime.now().strftime("%Y-%m-%d")
+            category = getattr(self, "selected_category", "General")
             
             # Ensure the data directory exists
             stats_dir = STATS_LOG_FILE.parent
             if not stats_dir.exists():
                 stats_dir.mkdir(parents=True, exist_ok=True)
-                print(f"DEBUG: Created directory {stats_dir}")
             
             # Read existing logs or create empty list
             logs = []
@@ -1378,31 +1393,49 @@ class TeaTimerApp(Gtk.Application):
                         content = f.read().strip()
                         if content:
                             logs = json.loads(content)
-                            print(f"DEBUG: Loaded {len(logs)} existing entries")
-                        else:
-                            print("DEBUG: Stats file is empty")
-                except (json.JSONDecodeError, IOError) as e:
-                    print(f"DEBUG: Error reading stats file: {e}")
-                    # If there's an error reading the file, start with empty logs
+                except (json.JSONDecodeError, IOError):
                     logs = []
-            else:
-                print("DEBUG: Stats file doesn't exist yet")
             
-            # Add new entry
-            logs.append(log_entry)
-            print(f"DEBUG: Added entry, now have {len(logs)} entries")
+            # Summing logic: Find entry for today
+            day_entry = None
+            # Handle both old format (list of sessions) and new format (list of days)
+            # Actually, to make it simple, we'll keep it as a list of objects.
+            # If an object has the same date, we sum it.
+            for entry in logs:
+                if entry.get("date") == today:
+                    day_entry = entry
+                    break
+            
+            if day_entry:
+                # Update existing entry
+                current_val = day_entry.get(category, 0)
+                if isinstance(current_val, str) and "+" in current_val:
+                    # User requested 10+20 style in comments 
+                    # "the times are going to be logged as 10+20"
+                    day_entry[category] = f"{current_val}+{duration}"
+                else:
+                    # If it's a number, we can either sum it or use the string format
+                    # The user specifically mentioned 10+20 in the issue description.
+                    if current_val == 0:
+                        day_entry[category] = duration
+                    else:
+                        day_entry[category] = f"{current_val}+{duration}"
+            else:
+                # Create new entry for today
+                new_entry = {"date": today, "comments": ""}
+                for cat in KC_CATEGORIES:
+                    new_entry[cat] = 0
+                new_entry[category] = duration
+                logs.append(new_entry)
             
             # Write updated logs
             with open(STATS_LOG_FILE, 'w') as f:
                 json.dump(logs, f, indent=2)
-            print(f"DEBUG: Successfully wrote stats to {STATS_LOG_FILE}")
                 
         except Exception as e:
-            # Print to stderr so it's more visible
             import sys
             print(f"Error logging statistics: {e}", file=sys.stderr)
-            import traceback
-            traceback.print_exc(file=sys.stderr)
+
             
     def on_preset_clicked(self, button, minutes):
         """Sets the duration spin button to a preset value and starts the timer."""
@@ -1750,9 +1783,30 @@ class StatisticsWindow(Gtk.Window):
         button_box.pack_start(clear_button, False, False, 0)
 
         button_box.set_margin_top(10)
+
+        # Comments Editor
+        comments_label = Gtk.Label(label="<b>Comments for Selected Date</b>")
+        comments_label.set_use_markup(True)
+        main_box.pack_start(comments_label, False, False, 0)
         
-        # Model: Date (string), Duration (int)
-        self.store = Gtk.ListStore(str, int)
+        self.comments_view = Gtk.TextView()
+        self.comments_view.set_wrap_mode(Gtk.WrapMode.WORD)
+        comments_scrolled = Gtk.ScrolledWindow()
+        comments_scrolled.set_min_content_height(100)
+        comments_scrolled.add(self.comments_view)
+        main_box.pack_start(comments_scrolled, False, False, 0)
+        
+        save_comments_button = Gtk.Button(label="Save Comments (Ctrl+Enter)")
+        save_comments_button.connect("clicked", self._on_save_comments_clicked)
+        main_box.pack_start(save_comments_button, False, False, 0)
+        
+        # Connect selection change to load comments
+        self.treeview.get_selection().connect("changed", self._on_selection_changed)
+        
+        # Model: Date (str), 16 categories (str to support 10+20), Comments (str)
+        # We use str for categories to support the "10+20" summing visualization
+        types = [str] * (2 + len(KC_CATEGORIES))
+        self.store = Gtk.ListStore(*types)
         self.treeview = Gtk.TreeView(model=self.store)
 
         # Date Column
@@ -1762,12 +1816,16 @@ class StatisticsWindow(Gtk.Window):
         column_date.set_resizable(True)
         self.treeview.append_column(column_date)
 
-        # Duration Column
-        renderer_text = Gtk.CellRendererText()
-        column_duration = Gtk.TreeViewColumn("Duration (minutes)", renderer_text, text=1)
-        column_duration.set_sort_column_id(1)
-        column_duration.set_resizable(True)
-        self.treeview.append_column(column_duration)
+        # Category Columns
+        for i, cat in enumerate(KC_CATEGORIES):
+            renderer = Gtk.CellRendererText()
+            column = Gtk.TreeViewColumn(cat, renderer, text=i+1)
+            column.set_resizable(True)
+            self.treeview.append_column(column)
+            
+        # Comments Column (Hidden in TreeView, we use a separate editor)
+        # Actually, let's show a truncated preview or just use the editor below.
+        # But we'll add it to the store anyway.
 
         scrolled_window.add(self.treeview)
         self._load_stats()
@@ -1903,6 +1961,37 @@ class StatisticsWindow(Gtk.Window):
             error_dialog.format_secondary_text(str(e))
             error_dialog.run()
             error_dialog.destroy()
+
+        def _on_selection_changed(self, selection):
+        (model, iter) = selection.get_selected()
+        if iter is not None:
+            comments = model.get_value(iter, 17) # Index 17 is comments
+            buffer = self.comments_view.get_buffer()
+            buffer.set_text(comments if comments else "")
+
+    def _on_save_comments_clicked(self, button):
+        selection = self.treeview.get_selection()
+        (model, iter) = selection.get_selected()
+        if iter is not None:
+            date = model.get_value(iter, 0)
+            buffer = self.comments_view.get_buffer()
+            comments = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), True)
+            
+            # Save to file
+            logs = self.stats_manager.load()
+            for entry in logs:
+                if entry.get("date") == date:
+                    entry["comments"] = comments
+                    break
+            
+            # Write back
+            import json
+            with open(STATS_LOG_FILE, 'w') as f:
+                json.dump(logs, f, indent=2)
+            
+            # Update store
+            model.set_value(iter, 17, comments)
+            print(f"Comments saved for {date}")
 
     def _on_refresh_clicked(self, button):
         """Handle refresh button click."""
@@ -2088,25 +2177,37 @@ class StatisticsWindow(Gtk.Window):
             grid.attach(duration_label, 0, 0, 1, 1)
             grid.attach(self.duration_spin, 1, 0, 1, 1)
 
-            # Row 1: Control buttons
+            # Row 1: Category selection
+            category_label = Gtk.Label(label="Category:")
+            category_label.get_style_context().add_class("input-label")
+            self.category_combo = Gtk.ComboBoxText()
+            for cat in KC_CATEGORIES:
+                self.category_combo.append_text(cat)
+            self.category_combo.set_active(0)
+            self.category_combo.connect("changed", self._on_category_changed)
+            grid.attach(category_label, 0, 1, 1, 1)
+            grid.attach(self.category_combo, 1, 1, 1, 1)
+            self.category_label_widget = category_label
+
+            # Row 2: Control buttons
             self.start_button = Gtk.Button(label="_Start")
             self.start_button.set_use_underline(True)
             self.stop_button = Gtk.Button(label="S_top")
             self.stop_button.set_use_underline(True)
-            grid.attach(self.start_button, 0, 1, 1, 1)
-            grid.attach(self.stop_button, 1, 1, 1, 1)
+            grid.attach(self.start_button, 0, 2, 1, 1)
+            grid.attach(self.stop_button, 1, 2, 1, 1)
 
-            # Row 2: Font size controls
+            # Row 3: Font size controls
             self.decrease_font_button = Gtk.Button(label="A-")
             self.increase_font_button = Gtk.Button(label="A+")
-            grid.attach(self.decrease_font_button, 0, 2, 1, 1)
-            grid.attach(self.increase_font_button, 1, 2, 1, 1)
+            grid.attach(self.decrease_font_button, 0, 3, 1, 1)
+            grid.attach(self.increase_font_button, 1, 3, 1, 1)
 
-            # Row 3: Sound toggle (spans both columns)
+            # Row 4: Sound toggle (spans both columns)
             self.sound_toggle = Gtk.CheckButton(label="_Enable Sound")
             self.sound_toggle.set_use_underline(True)
             self.sound_toggle.set_active(self.sound_enabled)
-            grid.attach(self.sound_toggle, 0, 3, 2, 1)
+            grid.attach(self.sound_toggle, 0, 4, 2, 1)
 
             # --- Presets Box (RIGHT SIDE) ---
             presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
