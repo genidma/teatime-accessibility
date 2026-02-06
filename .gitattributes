@@ -1,0 +1,4 @@
+# Enforce LF for scripts to ensure they work on Linux even if edited on Windows
+*.sh text eol=lf
+*.py text eol=lf
+*.desktop text eol=lf
