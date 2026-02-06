@@ -31,7 +31,7 @@ FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
-KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "r", "MWHH", "yss", "we", "gotb", "rf"]
+KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "r", "MWHH", "yss", "we", "gotb", "rf", "breaks"]
 
 class ConfigManager:
     def __init__(self, config_path=None):
@@ -218,7 +218,10 @@ class StatisticsWindow(Gtk.Window):
         # Implementation similar to previous but handles multi-columns
         dialog = Gtk.FileChooserDialog(title="Export CSV", parent=self, action=Gtk.FileChooserAction.SAVE)
         dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT)
-        if dialog.run() == Gtk.ResponseType.ACCEPT:
+        dialog.set_current_name(f"teatime_stats_{datetime.now().strftime('%Y-%m-%d')}.csv")
+        
+        response = dialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
             filename = dialog.get_filename()
             if not filename.endswith(".csv"): filename += ".csv"
             with open(filename, 'w', newline='') as f:
@@ -227,6 +230,8 @@ class StatisticsWindow(Gtk.Window):
                 writer.writerow(header)
                 for row in self.store:
                     writer.writerow([row[i] for i in range(len(row))])
+            print(f"Exported stats to {filename}")
+        
         dialog.destroy()
 
     def _on_clear_history_clicked(self, button):
@@ -302,7 +307,11 @@ class TeaTimerApp(Gtk.Application):
         self.mini_mode = False
         self.nano_mode = False
         self.pre_timer_mode = None
-        self.selected_categories = [] # Now supporting multiple selections
+        self.selected_categories = [] 
+        self.preferred_skin = "default"
+        self.preferred_animation = "test_animation"
+        self.rainbow_hue = 0
+        self.rainbow_timer_id = None
         
         self._load_config()
         self._setup_actions()
@@ -334,7 +343,7 @@ class TeaTimerApp(Gtk.Application):
             self.window.set_titlebar(header_bar)
 
             menu = Gtk.Menu()
-            items = [("_Statistics", self.on_stats_activated), ("_About", self.on_about_activated)]
+            items = [("_Statistics", self.on_stats_activated), ("S_ettings", self.on_settings_activated), ("_About", self.on_about_activated)]
             for label, callback in items:
                 item = Gtk.MenuItem(label=label, use_underline=True)
                 item.connect("activate", callback)
@@ -456,7 +465,7 @@ class TeaTimerApp(Gtk.Application):
         self.current_timer_duration = duration
         self._update_label()
         
-        self.timer_id = GLib.timeout_add_seconds(1, self.update_timer)
+        self.timer_id = GLib.timeout_add_seconds(5, self.update_timer)
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
 
@@ -471,7 +480,7 @@ class TeaTimerApp(Gtk.Application):
         if self.timer_id: GLib.source_remove(self.timer_id); self.timer_id = None
 
     def update_timer(self):
-        self.time_left -= 1
+        self.time_left -= 5
         self._update_label()
         if self.time_left <= 0:
             self.on_timer_complete()
@@ -519,7 +528,11 @@ class TeaTimerApp(Gtk.Application):
 
     def _load_sprite_frames(self):
         frames = []
-        path = Path(__file__).parent.parent / "assets" / "sprites" / "test_animation"
+        anim = getattr(self, 'preferred_animation', 'test_animation')
+        path = Path(__file__).parent.parent / "assets" / "sprites" / anim
+        if not path.exists():
+            path = Path(__file__).parent.parent / "assets" / "sprites" / "test_animation"
+            
         if path.exists():
             files = sorted(list(path.glob("*sprite_frame_*.png")))
             for f in files:
@@ -623,13 +636,50 @@ class TeaTimerApp(Gtk.Application):
         self.css_provider.load_from_data(css.encode())
 
     def _apply_skin(self):
-        pass # To be implemented if skins are needed
+        skin = self.preferred_skin
+        if skin == 'lava':
+            h1 = self.rainbow_hue
+            h2 = (self.rainbow_hue + 120) % 360
+            h3 = (self.rainbow_hue + 240) % 360
+            r1, g1, b1 = colorsys.hsv_to_rgb(h1 / 360.0, 0.8, 0.7)
+            r2, g2, b2 = colorsys.hsv_to_rgb(h2 / 360.0, 0.8, 0.7)
+            r3, g3, b3 = colorsys.hsv_to_rgb(h3 / 360.0, 0.8, 0.7)
+            c1 = f"rgb({int(r1*255)}, {int(g1*255)}, {int(b1*255)})"
+            c2 = f"rgb({int(r2*255)}, {int(g2*255)}, {int(b2*255)})"
+            c3 = f"rgb({int(r3*255)}, {int(g3*255)}, {int(b3*255)})"
+            
+            css = f"""
+            window {{
+                background: linear-gradient(45deg, {c1}, {c2}, {c3});
+                background-size: 300% 300%;
+                animation: lavaFlow 20s ease infinite;
+            }}
+            @keyframes lavaFlow {{
+                0% {{ background-position: 0% 50%; }}
+                50% {{ background-position: 100% 50%; }}
+                100% {{ background-position: 0% 50%; }}
+            }}
+            """
+            provider = Gtk.CssProvider()
+            provider.load_from_data(css.encode())
+            self.window.get_style_context().add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
+        else:
+            # Default or reset
+            self.window.get_style_context().remove_class("lava-skin") # Just in case
 
     def _start_rainbow_timer(self):
-        pass # To be implemented
+        if self.rainbow_timer_id: GLib.source_remove(self.rainbow_timer_id)
+        self.rainbow_timer_id = GLib.timeout_add(100, self._update_rainbow)
 
     def _stop_rainbow_timer(self):
-        pass
+        if self.rainbow_timer_id:
+            GLib.source_remove(self.rainbow_timer_id)
+            self.rainbow_timer_id = None
+
+    def _update_rainbow(self):
+        self.rainbow_hue = (self.rainbow_hue + 1) % 360
+        self._apply_skin()
+        return True
 
     def on_sound_toggled(self, btn):
         self.sound_enabled = btn.get_active()
@@ -644,7 +694,9 @@ class TeaTimerApp(Gtk.Application):
             "last_duration": int(self.duration_spin.get_value()),
             "mini_mode": self.mini_mode,
             "nano_mode": self.nano_mode,
-            "sound_enabled": self.sound_enabled
+            "sound_enabled": self.sound_enabled,
+            "preferred_skin": self.preferred_skin,
+            "preferred_animation": self.preferred_animation
         }
         with open(CONFIG_FILE, 'w') as f: json.dump(config, f, indent=2)
 
@@ -658,6 +710,8 @@ class TeaTimerApp(Gtk.Application):
                     self.mini_mode = c.get("mini_mode", False)
                     self.nano_mode = c.get("nano_mode", False)
                     self.sound_enabled = c.get("sound_enabled", True)
+                    self.preferred_skin = c.get("preferred_skin", "default")
+                    self.preferred_animation = c.get("preferred_animation", "test_animation")
             except: pass
 
     def on_preset_clicked(self, btn, mins):
@@ -665,7 +719,42 @@ class TeaTimerApp(Gtk.Application):
         self.on_start_clicked()
 
     def on_settings_activated(self, *args):
-        pass
+        self.show_settings_dialog()
+
+    def show_settings_dialog(self):
+        dialog = Gtk.Dialog(title="Settings", parent=self.window, flags=0)
+        dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        dialog.set_default_size(300, 200)
+        content = dialog.get_content_area()
+        grid = Gtk.Grid(row_spacing=10, column_spacing=10, margin=15)
+        content.add(grid)
+        
+        # Skin selection
+        grid.attach(Gtk.Label(label="Skin:"), 0, 0, 1, 1)
+        skin_combo = Gtk.ComboBoxText()
+        skin_combo.append("default", "Default")
+        skin_combo.append("lava", "Lava Lamp")
+        skin_combo.set_active_id(self.preferred_skin)
+        grid.attach(skin_combo, 1, 0, 1, 1)
+        
+        # Animation selection
+        grid.attach(Gtk.Label(label="Animation:"), 0, 1, 1, 1)
+        anim_combo = Gtk.ComboBoxText()
+        # Find animations in assets/sprites/
+        sprites_path = Path(__file__).parent.parent / "assets" / "sprites"
+        if sprites_path.exists():
+            for d in sprites_path.iterdir():
+                if d.is_dir(): anim_combo.append(d.name, d.name.replace("_", " ").title())
+        anim_combo.set_active_id(self.preferred_animation)
+        grid.attach(anim_combo, 1, 1, 1, 1)
+        
+        dialog.show_all()
+        if dialog.run() == Gtk.ResponseType.OK:
+            self.preferred_skin = skin_combo.get_active_id()
+            self.preferred_animation = anim_combo.get_active_id()
+            self._save_config()
+            self._apply_skin()
+        dialog.destroy()
 
     def on_toggle_sound_activated(self, *args):
         self.sound_toggle.set_active(not self.sound_toggle.get_active())
@@ -676,8 +765,6 @@ class TeaTimerApp(Gtk.Application):
     def _on_focus_changed(self, *args):
         pass
 
-    def _apply_skin(self):
-        pass
 
 if __name__ == "__main__":
     app = TeaTimerApp()
