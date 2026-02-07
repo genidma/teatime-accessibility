@@ -3,7 +3,7 @@ import json
 
 # Application metadata
 APP_NAME = "teatime kcresonance"
-APP_VERSION = "1.3.6"
+APP_VERSION = "1.0.2"
 
 # Configuration file for font size persistence
 CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
