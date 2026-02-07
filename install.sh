@@ -62,7 +62,7 @@ pip install --upgrade pip
 echo ""
 echo "Before installing Python packages, you may need to install system dependencies."
 echo "Run the following command if you encounter installation errors:"
-echo "  sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0"
+echo "  sudo apt install python3-dev libgirepository1.0-dev libgirepository-2.0-dev gobject-introspection cmake gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0"
 echo ""
 
 # Ask user if they want to install system dependencies
@@ -70,7 +70,7 @@ read -p "Do you want to install system dependencies now? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing system dependencies..."
-    sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
+    sudo apt install python3-dev libgirepository1.0-dev libgirepository-2.0-dev gobject-introspection cmake gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
 fi
 
 # Try to install required packages
@@ -82,7 +82,7 @@ if [ -f "requirements.txt" ]; then
         
         # Install system dependencies and retry in the isolated venv
         echo "Installing PyGObject system dependencies..."
-        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
+        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository-2.0-dev gobject-introspection cmake
         echo "Retrying package install..."
         pip install -r requirements.txt || true
     fi
@@ -91,7 +91,7 @@ else
     if ! pip install PyGObject; then
         echo "Failed to install PyGObject"
         echo "Installing system dependencies..."
-        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
+        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository-2.0-dev gobject-introspection cmake
         echo "Retrying PyGObject install..."
         pip install PyGObject || true
     fi
@@ -104,7 +104,7 @@ if python3 -c "import gi; print('PyGObject is installed')" &> /dev/null; then
 else
     echo "Warning: PyGObject verification failed"
     echo "You might need to install system dependencies:"
-    echo "  sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0"
+    echo "  sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0 libgirepository-2.0-dev gobject-introspection cmake"
 fi
 
 # Create icons directory if it doesn't exist
