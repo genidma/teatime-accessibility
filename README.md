@@ -569,12 +569,22 @@ To manually uninstall:
 ## Development
 The application consists of several scripts, each with a specific purpose:
 
-- `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
+- `bin/teatime.py`: Thin wrapper that launches the modular application package.
+
+- `bin/teatime/`: Core application package (modularized in #95):
+
+- `bin/teatime/core.py`: Application constants, config paths, and shared helpers.
+
+- `bin/teatime/app.py`: Main GTK application logic and UI.
+
+- `bin/teatime/stats.py`: Statistics window logic (or placeholders in variants that keep stats in app).
+
+- `bin/teatime/ui_utils.py`: UI helper utilities.
 
 - `teatime-accessible.sh`: The launcher script that activates the virtual environment (if available) and starts the application. This is the recommended way to run the application as it ensures proper environment setup.
 
 - `install.sh`: The installation script that:
-  - Creates a Python virtual environment with system site packages access
+  - Creates an isolated Python virtual environment (no system site-packages leakage)
   - Installs all required dependencies from requirements.txt
   - Sets up desktop integration by creating a .desktop file
   - Makes the launcher script executable
@@ -592,6 +602,24 @@ The application consists of several scripts, each with a specific purpose:
 - `test_short_timer.py`: Test script used during development to verify timer functionality.
 
 The application stores user configuration in `~/.config/teatime_config.json` and session statistics in `~/.local/share/teatime_stats.json`.
+
+### Architecture and Branch Flow
+
+```mermaid
+flowchart TD
+    A[Issue #95: Split bin/teatime.py into modules] --> B[Modular package: bin/teatime/]
+    B --> C[core.py]
+    B --> D[app.py]
+    B --> E[stats.py]
+    B --> F[ui_utils.py]
+
+    A --> G[Issue #108: kcresonance rollout]
+    A --> H[Issue #109: photosensitive rollout]
+
+    G --> I[kcresonance branch]
+    H --> J[photosensitive-dev branch]
+    J --> K[photosensitive-version branch]
+```
 
 ## Testing Tools
 
