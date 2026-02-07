@@ -115,8 +115,11 @@ class StatisticsWindow(Gtk.Window):
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         main_box.pack_start(scrolled_window, True, True, 0)
         
-        # Model: Date (str), 16 categories (str), Comments (str)
-        types = [str] * (len(KC_CATEGORIES) + 2)
+        # Filtered categories for data operations
+        self.data_categories = [c for c in KC_CATEGORIES if c.strip()]
+
+        # Model: Date (str), N categories (str), Comments (str)
+        types = [str] * (len(self.data_categories) + 2)
         self.store = Gtk.ListStore(*types)
         self.treeview = Gtk.TreeView(model=self.store)
 
@@ -128,7 +131,7 @@ class StatisticsWindow(Gtk.Window):
         self.treeview.append_column(column_date)
 
         # Category Columns
-        for i, cat in enumerate(KC_CATEGORIES):
+        for i, cat in enumerate(self.data_categories):
             renderer = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(cat, renderer, text=i+1)
             column.set_resizable(True)
@@ -185,7 +188,7 @@ class StatisticsWindow(Gtk.Window):
         (model, iter) = selection.get_selected()
         if iter is not None:
             # Comments is at the last index
-            comments_idx = len(KC_CATEGORIES) + 1
+            comments_idx = len(self.data_categories) + 1
             comments = model.get_value(iter, comments_idx)
             buffer = self.comments_view.get_buffer()
             buffer.set_text(comments if comments else "")
@@ -207,7 +210,7 @@ class StatisticsWindow(Gtk.Window):
             with open(STATS_LOG_FILE, 'w') as f:
                 json.dump(logs, f, indent=2)
             
-            comments_idx = len(KC_CATEGORIES) + 1
+            comments_idx = len(self.data_categories) + 1
             model.set_value(iter, comments_idx, comments)
             print(f"Comments saved for {date}")
 
@@ -227,7 +230,7 @@ class StatisticsWindow(Gtk.Window):
                 if not filename.endswith(".csv"): filename += ".csv"
                 with open(filename, 'w', newline='') as f:
                     writer = csv.writer(f)
-                    header = ["Date"] + KC_CATEGORIES + ["Comments"]
+                    header = ["Date"] + self.data_categories + ["Comments"]
                     writer.writerow(header)
                     for row in self.store:
                         writer.writerow([row[i] for i in range(len(row))])
@@ -264,7 +267,7 @@ class StatisticsWindow(Gtk.Window):
         for entry in sorted_logs:
             row = [entry.get("date", "Unknown")]
             day_sum = 0
-            for cat in KC_CATEGORIES:
+            for cat in self.data_categories:
                 val = entry.get(cat, 0)
                 row.append(str(val))
                 # Calculate numeric sum for this entry
@@ -597,7 +600,8 @@ class TeaTimerApp(Gtk.Application):
         entry = next((e for e in logs if e.get("date") == today), None)
         if not entry:
             entry = {"date": today, "comments": ""}
-            for cat in KC_CATEGORIES: entry[cat] = 0
+            for cat in KC_CATEGORIES:
+                if cat.strip(): entry[cat] = 0
             logs.append(entry)
         
         for cat, duration in selected_data.items():
