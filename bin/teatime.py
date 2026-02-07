@@ -31,7 +31,7 @@ FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
-KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "MWHH", "yss", "we", "gotb", "rf", "breaks"]
+KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "MWHH", "yss", "we", "gotb", "rf", "dw", " ", "breaks"]
 
 class ConfigManager:
     def __init__(self, config_path=None):
@@ -391,6 +391,8 @@ class TeaTimerApp(Gtk.Application):
             cat_grid = Gtk.Grid(column_spacing=10, row_spacing=5, margin=10)
             self.category_checkboxes = {}
             for i, cat in enumerate(KC_CATEGORIES):
+                if cat.strip() == "":
+                    continue
                 cb = Gtk.CheckButton(label=cat)
                 cat_grid.attach(cb, i % 4, i // 4, 1, 1)
                 self.category_checkboxes[cat] = cb
