@@ -19,6 +19,7 @@
 ### ide (integrated development environment)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
+- [antigravity](https://antigravity.google/) by google
 
 ### programming languages
 #### mostly
@@ -60,7 +61,7 @@
 
 ### open-source software (in random order)
 
-#### timer app
+#### this app! timer app/productivity/deep work
 - [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
 
 #### vm (virtual machines)
@@ -110,6 +111,7 @@
 - [Beat Plastic](https://soundcloud.com/beat-plastic/theres-something-about-us)
 - [ginla](https://www.youtube.com/@virtualginla/videos)
 - [vansire](https://www.youtube.com/@vansiretheband5497)
+- [flowtunes](https://www.flowtunes.app/)
 
 ## special thanks (in random order)
 
