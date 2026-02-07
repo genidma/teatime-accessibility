@@ -318,7 +318,32 @@ To manually uninstall:
 
 ## Development
 The application consists of:
-- `bin/teatime.py`: The main Python application script, which programmatically builds the GTK3 user interface.
+- `bin/teatime.py`: Thin wrapper that launches the modular application package.
+
+- `bin/teatime/`: Core application package (modularized in #95):
+
+- `bin/teatime/core.py`: Application constants, config paths, and shared helpers.
+
+- `bin/teatime/app.py`: Main GTK application logic and UI (photosensitive stats live here).
+
+- `bin/teatime/stats.py`: Placeholder (photosensitive keeps stats in app).
+
+- `bin/teatime/ui_utils.py`: UI helper utilities.
+
+### Architecture and Branch Flow
+
+```mermaid
+flowchart TD
+    A[Issue #95: Split bin/teatime.py into modules] --> B[Modular package: bin/teatime/]
+    B --> C[core.py]
+    B --> D[app.py]
+    B --> E[stats.py]
+    B --> F[ui_utils.py]
+
+    A --> H[Issue #109: photosensitive rollout]
+    H --> J[photosensitive-dev branch]
+    J --> K[photosensitive-version branch]
+```
 
 ## Credits
 * Originally inspired by the Tea Timer application from the Ubuntu snap store [link](https://snapcraft.io/install/teatime/ubuntu). But the code is very different and keeps evolving. 
