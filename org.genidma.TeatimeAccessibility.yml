@@ -1,0 +1,34 @@
+app-id: org.genidma.TeatimeAccessibility.Photosensitive
+runtime: org.gnome.Platform
+runtime-version: '48'
+sdk: org.gnome.Sdk
+command: /app/bin/teatime-accessibility
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --filesystem=home
+  # Allow network access for requests library
+  - --share=network
+
+modules:
+  - name: teatime-accessibility
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/genidma/teatime-accessibility
+        branch: photosensitive-version
+    build-commands:
+      - mkdir -p /app/bin
+      - cp bin/teatime.py /app/bin/teatime.py
+      - chmod +x /app/bin/teatime.py
+      - printf '#!/bin/bash\nexec /usr/bin/python3 /app/bin/teatime.py "$@"\n' > /app/bin/teatime-accessibility
+      - chmod +x /app/bin/teatime-accessibility
+      - mkdir -p /app/assets
+      - cp -r assets/* /app/assets/
+      # Install standard metadata for Flathub
+      - install -Dm644 org.genidma.TeatimeAccessibility.Photosensitive.desktop /app/share/applications/org.genidma.TeatimeAccessibility.Photosensitive.desktop
+      - install -Dm644 org.genidma.TeatimeAccessibility.Photosensitive.metainfo.xml /app/share/metainfo/org.genidma.TeatimeAccessibility.Photosensitive.metainfo.xml
+      - install -Dm644 assets/teatime-icon.png /app/share/icons/hicolor/128x128/apps/org.genidma.TeatimeAccessibility.Photosensitive.png
+      - install -Dm644 assets/teatime-icon.svg /app/share/icons/hicolor/scalable/apps/org.genidma.TeatimeAccessibility.Photosensitive.svg

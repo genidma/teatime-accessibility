@@ -163,6 +163,27 @@ flatpak install flathub org.genidma.TeatimeAccessibility
 flatpak install flathub org.genidma.TeatimeAccessibility.Photosensitive
 ```
 
+<<<<<<< HEAD
+### Running After Installation
+
+#### Running the Snap
+```bash
+# From command line
+teatime-accessibility
+
+# Or find "TeaTime Accessibility (Photosensitive)" in your desktop application menu
+```
+
+#### Running the Flatpak
+```bash
+# From command line
+flatpak run org.genidma.TeatimeAccessibility.Photosensitive
+
+# Or find "TeaTime Accessibility (Photosensitive)" in your desktop application menu
+```
+
+=======
+>>>>>>> photosensitive-dev
 ## Installation Locations
 
 When you run the install script, here's exactly where each component is installed:
@@ -309,3 +330,5 @@ The application consists of:
 
 ## Licensing Policy
 * To be determined by @shanaya-Gupta
+
+<!-- Test build trigger -->

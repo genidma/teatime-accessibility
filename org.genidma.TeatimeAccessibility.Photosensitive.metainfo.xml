@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.genidma.TeatimeAccessibility.Photosensitive</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>TeaTime Accessibility (Photosensitive)</name>
+  <summary>Photosensitive-safe tea timer with large buttons and statistics</summary>
+  <description>
+    <p>
+      A photosensitive-safe version of the TeaTime Accessibility timer. All visual effects that could potentially trigger seizures have been removed.
+    </p>
+    <ul>
+      <li>No flashing or color-changing effects</li>
+      <li>No animated visual transitions or sprites</li>
+      <li>Large, clear display with adjustable font size</li>
+      <li>Stable, consistent visual design</li>
+      <li>Sound notifications and statistics tracking</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">org.genidma.TeatimeAccessibility.Photosensitive.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>The main timer interface (Photosensitive Version)</caption>
+      <image>https://raw.githubusercontent.com/genidma/teatime-accessibility/main/screenshots_demo_clones/photosensitive-version/photosensitive-main-2025-10-18.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/genidma/teatime-accessibility</url>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.3.6" date="2026-02-05" />
+  </releases>
+</component>

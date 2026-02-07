@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=TeaTime Accessibility (Photosensitive)
+Comment=Photosensitive-safe tea timer
+Exec=teatime-accessibility
+Icon=org.genidma.TeatimeAccessibility.Photosensitive
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Keywords=timer;accessibility;tea;photosensitive;
+StartupWMClass=teatime.py
