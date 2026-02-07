@@ -421,7 +421,7 @@ class TeaTimerApp(Gtk.Application):
         
         # Add CSS to make the timer even more prominent (200% larger than current size)
         # Calculate a larger font size based on current font scale factor
-        timer_font_percentage = self.font_scale_factor * 4.0 * 100  # 4x = 200% larger than 2x
+        timer_font_percentage = self.font_scale_factor * 4.0 * 100 * 0.8  # 20% smaller in nano-mode
         
         # Get the current skin to preserve it in nano mode
         skin = getattr(self, 'preferred_skin', 'default')
