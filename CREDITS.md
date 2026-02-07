@@ -7,6 +7,7 @@
 - [Claude](https://claude.ai/) by Anthropic
 - [Chatgpt](https://openai.com/) by OpenAI
 - [genidma](https://github.com/genidma) on Github
+- [codex](https://openai.com/codex/) via #95,#108 and#109 to date
 
 ## notable contributors
 
