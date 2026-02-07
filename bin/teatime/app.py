@@ -400,8 +400,7 @@ class TeaTimerApp(Gtk.Application):
         print("DEBUG: Activating nano mode")
             
         # Apply nano-mode - ultra compact window size
-        self.window.set_default_size(150, 80)
-        self.window.resize(150, 80)
+        # Size is adjusted after CSS is applied to fit the time label
         
         # Hide the title bar in nano mode
         self.window.set_decorated(False)
@@ -490,6 +489,27 @@ class TeaTimerApp(Gtk.Application):
         if visual and self.window.get_screen().is_composited():
             self.window.set_visual(visual)
             self.window.set_app_paintable(True)
+
+        GLib.idle_add(self._resize_nano_window_to_label)
+
+    def _resize_nano_window_to_label(self):
+        if not self.window or not hasattr(self, 'time_label'):
+            return False
+
+        text = self.time_label.get_text() or self.time_label.get_label() or "00:00"
+        layout = self.time_label.create_pango_layout(text)
+        context = self.time_label.get_style_context()
+        font_desc = context.get_font(Gtk.StateFlags.NORMAL)
+        if font_desc:
+            layout.set_font_description(font_desc)
+        width, height = layout.get_pixel_size()
+
+        # Add a little padding so digits don't touch the window edge
+        target_w = max(120, width + 40)
+        target_h = max(60, height + 30)
+        self.window.set_default_size(target_w, target_h)
+        self.window.resize(target_w, target_h)
+        return False
 
     def _restore_pre_timer_mode(self):
         """Restore the mode that was active before the timer started."""
