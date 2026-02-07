@@ -21,8 +21,16 @@ VENV_DIR="teatime-venv"
 # Check if virtual environment already exists
 if [ -d "$VENV_DIR" ]; then
     echo "Virtual environment already exists: $VENV_DIR"
-    echo "Skipping virtual environment creation..."
-else
+    # Ensure the venv is isolated (no system-site-packages leakage)
+    if [ -f "$VENV_DIR/pyvenv.cfg" ] && grep -q "include-system-site-packages = true" "$VENV_DIR/pyvenv.cfg"; then
+        echo "Existing venv allows system site-packages; recreating for isolation..."
+        rm -rf "$VENV_DIR"
+    else
+        echo "Skipping virtual environment creation..."
+    fi
+fi
+
+if [ ! -d "$VENV_DIR" ]; then
     echo "Creating virtual environment..."
     
     # Check if Python 3 is available
@@ -31,9 +39,9 @@ else
         exit 1
     fi
     
-    # Create virtual environment
+    # Create virtual environment (isolated)
     if python3 -m venv --help &> /dev/null; then
-        python3 -m venv "$VENV_DIR" --system-site-packages
+        python3 -m venv "$VENV_DIR"
         echo "Virtual environment created successfully"
     else
         echo "Error: venv module is not available"
@@ -42,7 +50,6 @@ else
         exit 1
     fi
 fi
-
 # Activate virtual environment
 echo "Activating virtual environment..."
 source "$VENV_DIR/bin/activate"
@@ -73,42 +80,20 @@ if [ -f "requirements.txt" ]; then
         echo "Failed to install packages from requirements.txt"
         echo "Trying alternative installation method..."
         
-        # Try installing system-wide PyGObject and then creating a virtual environment that can access it
-        echo "Installing PyGObject system-wide..."
+        # Install system dependencies and retry in the isolated venv
+        echo "Installing PyGObject system dependencies..."
         sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
-        
-        echo "Creating virtual environment with system site packages..."
-        # Deactivate current venv
-        deactivate 2>/dev/null || true
-        
-        # Remove existing venv
-        rm -rf "$VENV_DIR"
-        
-        # Create new venv with access to system packages
-        python3 -m venv "$VENV_DIR" --system-site-packages
-        source "$VENV_DIR/bin/activate"
-        
-        echo "Virtual environment with system packages created"
+        echo "Retrying package install..."
+        pip install -r requirements.txt || true
     fi
 else
     echo "No requirements.txt found, installing PyGObject directly..."
     if ! pip install PyGObject; then
         echo "Failed to install PyGObject"
-        echo "Installing system-wide PyGObject..."
+        echo "Installing system dependencies..."
         sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
-        
-        echo "Creating virtual environment with system site packages..."
-        # Deactivate current venv
-        deactivate 2>/dev/null || true
-        
-        # Remove existing venv
-        rm -rf "$VENV_DIR"
-        
-        # Create new venv with access to system packages
-        python3 -m venv "$VENV_DIR" --system-site-packages
-        source "$VENV_DIR/bin/activate"
-        
-        echo "Virtual environment with system packages created"
+        echo "Retrying PyGObject install..."
+        pip install PyGObject || true
     fi
 fi
 
