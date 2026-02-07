@@ -1,0 +1,46 @@
+{
+  "rules": [
+    {
+      "paths": [
+        "bin/teatime/**",
+        "bin/teatime.py"
+      ],
+      "tests": [
+        "tests/test_compatibility.py"
+      ],
+      "note": "Core app changes"
+    },
+    {
+      "paths": [
+        "install.sh"
+      ],
+      "tests": [],
+      "note": "Installer changes (manual verification)"
+    },
+    {
+      "paths": [
+        "README.md",
+        "CREDITS.md"
+      ],
+      "tests": [],
+      "note": "Docs only"
+    },
+    {
+      "paths": [
+        "tests/**"
+      ],
+      "tests": [
+        "tests/test_compatibility.py"
+      ],
+      "note": "Tests changed"
+    }
+  ],
+  "default_tests": [
+    "tests/test_compatibility.py"
+  ],
+  "test_command": [
+    "python",
+    "-m",
+    "unittest"
+  ]
+}
