@@ -89,7 +89,7 @@ class TestUIDogtail(unittest.TestCase):
         stop_button = self.find_child_fuzzy(main_window, roleName='push button', name='Stop')
         
         if not start_button:
-            self.dump_children(main_window)
+            self.capture_ui_state(main_window)
         
         self.assertIsNotNone(start_button, "Start button not found.")
         self.assertIsNotNone(stop_button, "Stop button not found.")

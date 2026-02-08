@@ -13,13 +13,40 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)/bin
 # Create report directory if it doesn't exist
 mkdir -p tests/reports
 
-# Run tests with pytest
-# -v: verbose
-# --html: generate HTML report
-# --self-contained-html: embed CSS into the HTML file
-echo "Starting Dogtail UI Tests..."
+# Default values
+TRIAGE=""
+ESTIMATE=false
+PRIORITY=0
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --triage) TRIAGE="$2"; shift ;;
+        --estimate) ESTIMATE=true ;;
+        --nice) PRIORITY="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+# Estimation logic
+if [ "$ESTIMATE" = true ]; then
+    NUM_TESTS=$(grep -c "def test_" tests/test_ui_dogtail.py)
+    # Estimate ~15s per test + 10s overhead
+    TOTAL_ESTIMATE=$(($NUM_TESTS * 15 + 10))
+    echo "Estimated run time for $NUM_TESTS tests: ${TOTAL_ESTIMATE}s"
+    exit 0
+fi
+
+# Select tests to run
+PYTEST_ARGS="tests/test_ui_dogtail.py -v --html=tests/reports/dogtail_report.html --self-contained-html"
+if [ -n "$TRIAGE" ]; then
+    PYTEST_ARGS="$PYTEST_ARGS -k $TRIAGE"
+fi
+
+echo "Running tests with priority $PRIORITY..."
 source teatime-venv/bin/activate
-dbus-run-session -- pytest tests/test_ui_dogtail.py -v --html=tests/reports/dogtail_report.html --self-contained-html
+nice -n $PRIORITY dbus-run-session -- pytest $PYTEST_ARGS
 
 # Check exit status
 if [ $? -eq 0 ]; then

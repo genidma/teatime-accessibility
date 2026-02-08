@@ -4,7 +4,10 @@ This document describes the automated GUI testing infrastructure for TeaTime Acc
 
 ## Overview
 
-Automated tests ensure that the TeaTime interface remains accessible and functional. We use Dogtail for its deep integration with AT-SPI, allowing us to interact with GTK widgets directly.
+Automated tests ensure that the TeaTime interface remains accessible and functional. We use the **`dogtail` Python package** (available via `pip install dogtail`) for its deep integration with AT-SPI, allowing us to interact with GTK widgets directly.
+
+> [!NOTE]
+> This guide refers to the **Dogtail testing library**, not the dog tail wagging animation feature within the application!
 
 ## Dashboard-to-Doc Mapping
 
