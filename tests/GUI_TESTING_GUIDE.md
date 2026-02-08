@@ -14,7 +14,7 @@ Automated tests ensure that the TeaTime interface remains accessible and functio
 ### 1. Robust Element Selection (Fuzzy Matching)
 Implemented a `find_child_fuzzy` helper method in `tests/test_ui_dogtail.py` to overcome issues with exact name matching in the AT-SPI tree.
 
-- **Fuzzy Name Matching**: Correctly identifies elements even if labels have **tiny** variations.
+- **Fuzzy Name Matching**: Correctly identifies elements even if labels have minute variations.
 - **Role-Based Searching**: Prioritizes element roles (e.g., `check box`, `push button`) to ensure the correct widget type is found.
 - **Targeted Recursion**: Searches within relevant containers (e.g., `grid`, `box`) without stalling on deep, irrelevant UI branches.
 
@@ -55,6 +55,12 @@ Due to significant system performance constraints in the current environment, a 
 
 Ensure you are in the **usual location** (project root).
 
+### Time Estimation
+To estimate how long the full suite will take:
+```bash
+./tests/run_dogtail_tests.sh --estimate
+```
+
 ### Standard Run
 ```bash
 ./tests/run_dogtail_tests.sh
@@ -65,12 +71,6 @@ To prioritize system resources or debug a specific area:
 ```bash
 # Run only settings tests with lower priority
 nice -n 19 ./tests/run_dogtail_tests.sh --triage settings
-```
-
-### Time Estimation
-To estimate how long the full suite will take:
-```bash
-./tests/run_dogtail_tests.sh --estimate
 ```
 
 ## New: Dashboard Runner
