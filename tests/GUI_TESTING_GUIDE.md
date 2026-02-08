@@ -6,7 +6,7 @@ This guide explains how to run the Dogtail GUI tests for TeaTime Accessibility, 
 
 - Linux desktop session running X11 (not Wayland).
 
-To confirm you are on X11:
+To confirm you are on X11, run the following commands from a terminal inside of a GUI based session (not over ssh):
 ```bash
 echo $XDG_SESSION_TYPE
 ```
