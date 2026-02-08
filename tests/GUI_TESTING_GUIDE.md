@@ -5,15 +5,17 @@ This guide explains how to run the Dogtail GUI tests for TeaTime Accessibility, 
 ## Prerequisites
 
 - Linux desktop session running X11 (not Wayland).
-- `dbus-run-session` available.
-- Python 3 installed.
-- Project virtual environment created (see project setup docs).
-- `dogtail` installed in the active environment.
 
 To confirm you are on X11:
 ```bash
 echo $XDG_SESSION_TYPE
 ```
+- `dbus-run-session` available.
+- Python 3 installed.
+- Project virtual environment created (see project setup docs).
+- `dogtail` installed in the active environment.
+
+
 
 If it prints `wayland`, log out and choose an X11 session at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)`), then log back in and re-check.
 
