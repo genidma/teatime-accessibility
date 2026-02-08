@@ -10,6 +10,52 @@ import time
 import xml.etree.ElementTree as ET
 
 DEFAULT_ESTIMATE_SEC = 15.0
+LOCK_FILENAME = "dogtail_run.lock"
+
+
+def lock_path(report_dir):
+    return os.path.join(report_dir, LOCK_FILENAME)
+
+
+def pid_is_running(pid):
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def check_active_lock(report_dir):
+    path = lock_path(report_dir)
+    if not os.path.exists(path):
+        return False
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (json.JSONDecodeError, OSError):
+        return False
+    pid = int(data.get("pid", 0))
+    if pid and pid != os.getpid() and pid_is_running(pid):
+        return True
+    return False
+
+
+def write_lock(report_dir):
+    path = lock_path(report_dir)
+    payload = {
+        "pid": os.getpid(),
+        "start_utc": datetime.datetime.utcnow().isoformat() + "Z",
+    }
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle)
+
+
+def remove_lock(report_dir):
+    path = lock_path(report_dir)
+    if os.path.exists(path):
+        os.remove(path)
 
 
 def load_manifest(path):
@@ -199,6 +245,61 @@ def build_pytest_command(test_ids, report_base, html_enabled):
     return cmd
 
 
+def detect_active_pytest(repo_root):
+    if os.name != "posix":
+        return False
+    try:
+        output = subprocess.check_output(["ps", "-aef"], text=True)
+    except Exception:
+        return False
+    for line in output.splitlines():
+        if "pytest" in line and "tests/test_ui_dogtail.py" in line and repo_root in line:
+            return True
+    return False
+
+
+def find_stale_processes(repo_root):
+    if os.name != "posix":
+        return []
+    try:
+        output = subprocess.check_output(["ps", "-aef"], text=True)
+    except Exception:
+        return []
+    candidates = []
+    for line in output.splitlines():
+        if repo_root not in line:
+            continue
+        if "python3 bin/teatime.py" in line or "teatime-accessible.sh" in line:
+            parts = line.split()
+            if len(parts) < 2:
+                continue
+            try:
+                pid = int(parts[1])
+            except ValueError:
+                continue
+            candidates.append((pid, line.strip()))
+    return candidates
+
+
+def cleanup_processes(repo_root, dry_run):
+    if detect_active_pytest(repo_root):
+        print("Active pytest run detected. Skipping cleanup.")
+        return
+    candidates = find_stale_processes(repo_root)
+    if not candidates:
+        print("No stale TeaTime app instances found.")
+        return
+    for pid, cmdline in candidates:
+        if dry_run:
+            print(f"DRY RUN: would terminate pid={pid} cmd={cmdline}")
+            continue
+        try:
+            os.kill(pid, 15)
+            print(f"Terminated pid={pid} cmd={cmdline}")
+        except OSError as exc:
+            print(f"Failed to terminate pid={pid}: {exc}")
+
+
 def run_shards(shards, report_dir, nice_level, stagger_seconds, html_enabled):
     procs = []
     results = []
@@ -240,6 +341,8 @@ def main():
     parser.add_argument("--stagger-seconds", type=float, default=0.0)
     parser.add_argument("--nice", type=int, default=0)
     parser.add_argument("--no-dashboard", action="store_true")
+    parser.add_argument("--clean", action="store_true", help="Terminate stale TeaTime app instances before running.")
+    parser.add_argument("--dry-run", action="store_true", help="Print actions without running tests.")
     args = parser.parse_args()
 
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -268,6 +371,18 @@ def main():
     if args.max_procs < 1:
         raise ValueError("--max-procs must be >= 1")
 
+    if check_active_lock(report_dir):
+        print("Another Dogtail test run is already active (lock file present). Exiting.")
+        return 1
+
+    if args.clean:
+        cleanup_processes(repo_root, args.dry_run)
+
+    if args.dry_run:
+        print("DRY RUN: no tests will be executed.")
+        print(f"Selected tests: {len(test_ids)}")
+        return 0
+
     html_enabled = args.max_procs == 1
 
     shards = build_shards(test_ids, durations, args.max_procs)
@@ -279,7 +394,11 @@ def main():
     env["PYTHONPATH"] = env.get("PYTHONPATH", "") + os.pathsep + os.path.join(repo_root, "bin")
     os.environ.update(env)
 
-    results = run_shards(shards, report_dir, args.nice, args.stagger_seconds, html_enabled)
+    write_lock(report_dir)
+    try:
+        results = run_shards(shards, report_dir, args.nice, args.stagger_seconds, html_enabled)
+    finally:
+        remove_lock(report_dir)
     junit_paths = [path for _, path in results if os.path.exists(path)]
 
     exit_code = 0 if all(code == 0 for code, _ in results) else 1
@@ -298,6 +417,7 @@ def main():
                 "max_procs": args.max_procs,
                 "stagger_seconds": args.stagger_seconds,
                 "nice": args.nice,
+                "clean": args.clean,
             },
         }
         dashboard_path = os.path.join(report_dir, "dogtail_dashboard.json")

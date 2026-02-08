@@ -32,6 +32,13 @@ If you are unsure about Dogtail availability, run:
 python -c "import dogtail; print('dogtail ok')"
 ```
 
+Enable accessibility (required by Dogtail):
+```bash
+gsettings set org.gnome.desktop.interface toolkit-accessibility true
+```
+
+Log out and log back in after changing accessibility settings.
+
 ### Switching Between Wayland and X11 (Ubuntu)
 
 These steps apply to Ubuntu 25.10 with the default GDM login screen.
@@ -98,11 +105,17 @@ python tests/run_dogtail_suite.py --profile-machine
 # run full suite and update dashboard
 python tests/run_dogtail_suite.py
 
+# run full suite with pre-run cleanup of stale app instances
+python tests/run_dogtail_suite.py --clean
+
 # run a specific group
 python tests/run_dogtail_suite.py --group smoke
 
 # staggered run with priority (safe default is max-procs 1)
 python tests/run_dogtail_suite.py --max-procs 1 --stagger-seconds 2 --nice 10
+
+# dry run (prints actions, does not execute tests or update dashboard/history)
+python tests/run_dogtail_suite.py --dry-run
 ```
 
 ## Running the Legacy Runner
@@ -140,6 +153,19 @@ If you see issues in the dashboard or the HTML report, use the mapping below.
 - Dashboard summary: `tests/reports/dogtail_dashboard.json`
 - History: `tests/reports/dogtail_history.json`
 - Dogtail logs: `/tmp/dogtail-$USER/logs/`
+ - Active-run lock: `tests/reports/dogtail_run.lock`
+
+To open the HTML report in a browser:
+```bash
+xdg-open tests/reports/dogtail_report.html
+```
+
+## Cleanup and Locking
+
+- `--clean` terminates stale TeaTime app instances before a run.
+- Cleanup is skipped if a pytest run is already active.
+- A lock file is created during a run to prevent concurrent execution.
+- `--dry-run` never creates reports or updates history (estimates come from real runs only).
 
 ## Improvements Implemented (Background)
 
@@ -156,8 +182,29 @@ These changes make tests more resilient and easier to debug:
 - Flaky clicks: increase `DOGTAIL_SLEEP_DELAY` and re-run the specific test.
 - Timeouts: use `--triage` and run fewer tests per session.
 
+## Seeing UI Interactions
+
+Dogtail drives the accessibility tree, so you might not see the mouse move. Actions can also be too fast to notice. To make interactions visible:
+
+1. Run a single test with a delay:
+```bash
+DOGTAIL_SLEEP_DELAY=1.5 pytest tests/test_ui_dogtail.py::TestUIDogtail::test_start_stop_timer -v
+```
+2. Ensure the TeaTime window is visible and focused on the current workspace.
+3. If needed, avoid `dbus-run-session` by running pytest directly:
+```bash
+pytest tests/test_ui_dogtail.py::TestUIDogtail::test_start_stop_timer -v
+```
+
 ## Glossary
 
 - **AT-SPI**: Accessibility API used by Dogtail to introspect the UI.
 - **DBus**: IPC system used by accessibility services and test sessions.
 - **Shard**: A subset of tests run as a group for scheduling or parallelization.
+
+## Note on Estimates
+
+If you want a quick time estimate before running the full suite, run:
+```bash
+python tests/run_dogtail_suite.py --estimate
+```
