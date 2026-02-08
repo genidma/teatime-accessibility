@@ -3,20 +3,20 @@ import subprocess
 import time
 import os
 from dogtail.tree import *
+from dogtail.utils import *
 
 class TestUIDogtail(unittest.TestCase):
     def setUp(self):
         """Set up the test environment by launching the application."""
-        # Command to launch the application
-        # We assume the main script is in 'bin/teatime.py'
-        app_command = ["python3", "bin/teatime.py"]
+        # Command to launch the application using the launcher script
+        app_command = ["./teatime-accessible.sh"]
         
         # Start the application as a subprocess
         self.app_process = subprocess.Popen(app_command)
         
         # Wait for the application to open and be ready
-        # This is a simple delay, a more robust solution might be needed
-        time.sleep(5)
+        # Increased wait time to ensure the app is fully loaded
+        time.sleep(8)
 
     def tearDown(self):
         """Tear down the test environment by closing the application."""
@@ -25,16 +25,52 @@ class TestUIDogtail(unittest.TestCase):
         self.app_process.wait()
 
     def test_main_window_is_present(self):
-        """Test if the main application window is present."""
-        # The name 'Teatime' is a guess based on the project name.
-        # We might need to adjust this based on the actual window title
-        # or accessibility name.
-        app_node = root.application('Teatime')
-        self.assertIsNotNone(app_node, "Application window not found.")
+        """Test if the main application window is present and controls are visible."""
+        # The app name from core.py is "teatime kcresonance"
+        # However, Dogtail often uses the application-id or a simplified name.
+        # Based on app.py, application_id="org.genidma.KCResonance"
+        try:
+            app_node = root.application('teatime kcresonance')
+        except:
+            # Fallback to searching by ID or prefix if exact name fails
+            app_node = root.application('KCResonance')
+
+        self.assertIsNotNone(app_node, "Application 'teatime kcresonance' not found.")
         
-        # Example of finding a button in the window
-        # button = app_node.child(roleName='push button', name='Start')
-        # self.assertIsNotNone(button, "Start button not found.")
+        # Verify the main window exists
+        main_window = app_node.child(roleName='frame')
+        self.assertIsNotNone(main_window, "Main window not found.")
+
+        # Test finding buttons
+        start_button = main_window.child(roleName='push button', name='Start')
+        self.assertIsNotNone(start_button, "Start button not found.")
+        
+        stop_button = main_window.child(roleName='push button', name='Stop')
+        self.assertIsNotNone(stop_button, "Stop button not found.")
+
+    def test_start_stop_timer(self):
+        """Test starting and stopping the timer."""
+        app_node = root.application('teatime kcresonance')
+        main_window = app_node.child(roleName='frame')
+        
+        start_button = main_window.child(roleName='push button', name='Start')
+        stop_button = main_window.child(roleName='push button', name='Stop')
+        
+        # Start the timer
+        start_button.click()
+        time.sleep(1)
+        
+        # Verify Start is insensitive and Stop is sensitive
+        self.assertFalse(start_button.sensitive, "Start button should be insensitive when timer is running.")
+        self.assertTrue(stop_button.sensitive, "Stop button should be sensitive when timer is running.")
+        
+        # Stop the timer
+        stop_button.click()
+        time.sleep(1)
+        
+        # Verify Start is sensitive and Stop is insensitive
+        self.assertTrue(start_button.sensitive, "Start button should be sensitive when timer is stopped.")
+        self.assertFalse(stop_button.sensitive, "Stop button should be insensitive when timer is stopped.")
 
 if __name__ == "__main__":
     # It's recommended to run Dogtail tests with `dbus-run-session`
