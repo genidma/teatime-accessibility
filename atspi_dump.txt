@@ -1,296 +1,57 @@
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=22290 comm="python3 tests/dump_atspi_tree.py" label="unconfined")
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.gtk.vfs.Daemon'
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.2' (uid=1000 pid=22290 comm="python3 tests/dump_atspi_tree.py" label="unconfined")
-fusermount3: failed to access mountpoint /run/user/1000/gvfs: Permission denied
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.a11y.Bus'
-dbus-daemon[22313]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=22290 comm="python3 tests/dump_atspi_tree.py" label="unconfined")
-dbus-daemon[22313]: Successfully activated service 'org.a11y.atspi.Registry'
-SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
 Virtual environment already active
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.6' (uid=1000 pid=22323 comm="python3 bin/teatime.py" label="unconfined")
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.8' (uid=1000 pid=22329 comm="/usr/libexec/xdg-desktop-portal" label="unconfined")
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.freedesktop.portal.Documents' requested by ':1.8' (uid=1000 pid=22329 comm="/usr/libexec/xdg-desktop-portal" label="unconfined")
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.freedesktop.portal.Documents'
-fusermount3: failed to access mountpoint /run/user/1000/doc: Permission denied
-error: fuse init failed: Can't mount path /run/user/1000/doc
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:29.155: Document portal fuse mount point unknown: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name :1.10 was not provided by any .service files
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gnome' requested by ':1.8' (uid=1000 pid=22329 comm="/usr/libexec/xdg-desktop-portal" label="unconfined")
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.299: Theme parser error: gtk.css:123:137-163: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:129:143-169: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:155:615-641: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:157:663-689: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:167:356-382: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:169:380-406: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:173:702-728: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.300: Theme parser error: gtk.css:175:750-776: Expected a valid color.
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.301: Theme parser error: gtk.css:189:55-69: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.301: Theme parser error: gtk.css:190:26-40: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.301: Theme parser error: gtk.css:200:357-373: No property named "-gtk-icon-effect"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.301: Theme parser error: gtk.css:204:589-605: No property named "-gtk-icon-effect"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.304: Theme parser error: gtk.css:390:42-61: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.305: Theme parser error: gtk.css:430:814-833: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.305: Theme parser error: gtk.css:432:1242-1270: No property named "-gtk-outline-top-left-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.305: Theme parser error: gtk.css:432:1277-1308: No property named "-gtk-outline-bottom-left-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.305: Theme parser error: gtk.css:434:1237-1266: No property named "-gtk-outline-top-right-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.305: Theme parser error: gtk.css:434:1273-1305: No property named "-gtk-outline-bottom-right-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:436:1410-1429: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:438:391-410: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:440:1014-1042: No property named "-gtk-outline-top-left-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:440:1049-1078: No property named "-gtk-outline-top-right-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:442:1044-1075: No property named "-gtk-outline-bottom-left-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:442:1082-1114: No property named "-gtk-outline-bottom-right-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.306: Theme parser error: gtk.css:444:464-483: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.307: Theme parser error: gtk.css:577:64-90: No property named "-GtkWidget-window-dragging"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.308: Theme parser error: gtk.css:641:610-626: No property named "-gtk-icon-effect"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.310: Theme parser error: gtk.css:761:102-135: No property named "-GtkTreeView-horizontal-separator"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.311: Theme parser error: gtk.css:761:140-168: No property named "-GtkTreeView-grid-line-width"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.311: Theme parser error: gtk.css:761:173-203: No property named "-GtkTreeView-grid-line-pattern"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.311: Theme parser error: gtk.css:761:209-237: No property named "-GtkTreeView-tree-line-width"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.311: Theme parser error: gtk.css:761:242-272: No property named "-GtkTreeView-tree-line-pattern"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.311: Theme parser error: gtk.css:761:278-304: No property named "-GtkTreeView-expander-size"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.311: Theme parser error: gtk.css:838:21-47: No property named "-GtkWidget-window-dragging"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.312: Theme parser error: gtk.css:1051:102-136: No property named "-GtkScrollbar-has-backward-stepper"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.312: Theme parser error: gtk.css:1051:145-178: No property named "-GtkScrollbar-has-forward-stepper"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.314: Theme parser error: gtk.css:1315:95-114: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.315: Theme parser error: gtk.css:1317:51-70: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1517:50-64: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1519:59-73: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1521:53-67: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1523:62-76: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1525:51-65: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1527:60-74: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1529:52-66: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.316: Theme parser error: gtk.css:1531:61-75: Not a valid image
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.317: Theme parser error: gtk.css:1632:715-746: No property named "-gtk-outline-bottom-left-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.317: Theme parser error: gtk.css:1634:688-720: No property named "-gtk-outline-bottom-right-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.318: Theme parser error: gtk.css:1706:130-149: No property named "-gtk-outline-radius"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.319: Theme parser error: gtk.css:1864:23-39: No property named "-gtk-icon-effect"
-
-(xdg-desktop-portal-gnome:22350): Gtk-WARNING **: 04:59:29.320: Theme parser error: gtk.css:1934:42-61: No property named "-gtk-outline-radius"
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.gnome.Settings.GlobalShortcutsProvider' requested by ':1.11' (uid=1000 pid=22350 comm="/usr/libexec/xdg-desktop-portal-gnome" label="unconfined")
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.gnome.Settings.GlobalShortcutsProvider'
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.627: Theme parser error: gtk.css:123:137-163: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.627: Theme parser error: gtk.css:129:143-169: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.627: Theme parser error: gtk.css:155:615-641: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.627: Theme parser error: gtk.css:157:663-689: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:167:356-382: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:169:380-406: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:173:702-728: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:175:750-776: Expected a valid color.
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:189:55-69: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:190:26-40: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:200:357-373: No property named "-gtk-icon-effect"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.628: Theme parser error: gtk.css:204:589-605: No property named "-gtk-icon-effect"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.631: Theme parser error: gtk.css:390:42-61: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:430:814-833: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:432:1242-1270: No property named "-gtk-outline-top-left-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:432:1277-1308: No property named "-gtk-outline-bottom-left-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:434:1237-1266: No property named "-gtk-outline-top-right-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:434:1273-1305: No property named "-gtk-outline-bottom-right-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:436:1410-1429: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:438:391-410: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:440:1014-1042: No property named "-gtk-outline-top-left-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:440:1049-1078: No property named "-gtk-outline-top-right-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:442:1044-1075: No property named "-gtk-outline-bottom-left-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:442:1082-1114: No property named "-gtk-outline-bottom-right-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.632: Theme parser error: gtk.css:444:464-483: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.634: Theme parser error: gtk.css:577:64-90: No property named "-GtkWidget-window-dragging"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.634: Theme parser error: gtk.css:641:610-626: No property named "-gtk-icon-effect"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:761:102-135: No property named "-GtkTreeView-horizontal-separator"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:761:140-168: No property named "-GtkTreeView-grid-line-width"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:761:173-203: No property named "-GtkTreeView-grid-line-pattern"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:761:209-237: No property named "-GtkTreeView-tree-line-width"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:761:242-272: No property named "-GtkTreeView-tree-line-pattern"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:761:278-304: No property named "-GtkTreeView-expander-size"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.637: Theme parser error: gtk.css:838:21-47: No property named "-GtkWidget-window-dragging"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.638: Theme parser error: gtk.css:1051:102-136: No property named "-GtkScrollbar-has-backward-stepper"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.638: Theme parser error: gtk.css:1051:145-178: No property named "-GtkScrollbar-has-forward-stepper"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.640: Theme parser error: gtk.css:1315:95-114: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.640: Theme parser error: gtk.css:1317:51-70: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1517:50-64: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1519:59-73: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1521:53-67: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1523:62-76: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1525:51-65: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1527:60-74: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1529:52-66: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.641: Theme parser error: gtk.css:1531:61-75: Not a valid image
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.642: Theme parser error: gtk.css:1632:715-746: No property named "-gtk-outline-bottom-left-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.642: Theme parser error: gtk.css:1634:688-720: No property named "-gtk-outline-bottom-right-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.643: Theme parser error: gtk.css:1706:130-149: No property named "-gtk-outline-radius"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.644: Theme parser error: gtk.css:1864:23-39: No property named "-gtk-icon-effect"
-
-(gnome-control-center-global-shortcuts-provider:22381): Gtk-WARNING **: 04:59:29.645: Theme parser error: gtk.css:1934:42-61: No property named "-gtk-outline-radius"
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.desktop.gnome'
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.8' (uid=1000 pid=22329 comm="/usr/libexec/xdg-desktop-portal" label="unconfined")
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
-dbus-daemon[22289]: [session uid=1000 pid=22289 pidfd=5] Activating service name='org.freedesktop.secrets' requested by ':1.8' (uid=1000 pid=22329 comm="/usr/libexec/xdg-desktop-portal" label="unconfined")
-discover_other_daemon: 1GNOME_KEYRING_CONTROL=/run/user/1000/keyring
-Creating logfile at /tmp/dogtail-adeel/logs/dump_atspi_tree_20260208-045928_debug ...
-Warning: AT-SPI's desktop is visible but it has no children. Are you running any AT-SPI-aware applications?
-Application not found.
-Available applications:
- - xdg-desktop-portal-gtk
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.875: Failed to create secret proxy: Error calling StartServiceByName for org.freedesktop.secrets: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.875: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.875: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.875: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: Failed to create global_shortcuts proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.876: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.876: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: Failed to create dynamic_launcher proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.876: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.876: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: Failed to create screen cast proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.876: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.876: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: Failed to create remote desktop proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.876: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.886: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.886: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.886: Failed to create clipboard: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.886: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.886: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.886: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.886: Failed to create capture input proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.886: No skeleton to export
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.886: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): GLib-GIO-CRITICAL **: 04:59:38.886: Error while sending AddMatch() message: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.887: Failed to create USB proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gnome: The connection is closed
-
-(/usr/libexec/xdg-desktop-portal:22329): xdg-desktop-portal-WARNING **: 04:59:38.887: No skeleton to export
-A connection to the bus can't be made
+Dumping tree for application: teatime.py
+[application] name='teatime.py'
+  [frame] name='teatime kcresonance'
+    [panel] name=''
+      [filler] name=''
+        [separator] name=''
+        [button] name='Minimize'
+        [button] name='Maximize'
+        [button] name='Close'
+      [toggle button] name='Menu'
+        [menu item] name='Statistics'
+        [menu item] name='Settings'
+        [menu item] name='About'
+      [filler] name=''
+        [label] name='teatime kcresonance'
+        [label] name=''
+    [filler] name=''
+      [filler] name=''
+        [panel] name=''
+          [check box] name='Nano Mode (auto)'
+          [check box] name='Mini Mode'
+          [check box] name='Enable Sound'
+          [button] name='A+'
+          [button] name='A-'
+          [button] name='Stop'
+          [button] name='Start'
+          [panel] name='Categories'
+            [panel] name=''
+              [check box] name='breaks'
+              [check box] name='dw'
+              [check box] name='rf'
+              [check box] name='gotb'
+              [check box] name='we'
+              [check box] name='yss'
+              [check box] name='MWHH'
+              [check box] name='c'
+              [check box] name='t'
+              [check box] name='b'
+              [check box] name='r'
+              [check box] name='v'
+              [check box] name='sii'
+              [check box] name='m'
+              [check box] name='g'
+              [check box] name='fc'
+              [check box] name='rdp'
+            [label] name='Categories'
+          [spin button] name=''
+          [label] name='Minutes:'
+        [filler] name=''
+          [label] name='Presets'
+          [label] name='Presets'
+          [button] name='15m'
+          [button] name='30m'
+          [button] name='45m'
+          [button] name='1 Hour'
+      [label] name='00:00'
