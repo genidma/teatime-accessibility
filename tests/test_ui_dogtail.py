@@ -26,16 +26,22 @@ class TestUIDogtail(unittest.TestCase):
 
     def test_main_window_is_present(self):
         """Test if the main application window is present and controls are visible."""
-        # The app name from core.py is "teatime kcresonance"
-        # However, Dogtail often uses the application-id or a simplified name.
-        # Based on app.py, application_id="org.genidma.KCResonance"
-        try:
-            app_node = root.application('teatime kcresonance')
-        except:
-            # Fallback to searching by ID or prefix if exact name fails
-            app_node = root.application('KCResonance')
+        # The app name from AT-SPI listing is 'teatime.py'
+        # Using a more robust search by checking all applications if needed
+        app_node = None
+        for app in root.applications():
+            if 'teatime' in app.name.lower():
+                app_node = app
+                break
+        
+        if app_node is None:
+            # Fallback to direct name if search fails
+            try:
+                app_node = root.application('teatime.py')
+            except:
+                app_node = root.application('KCResonance')
 
-        self.assertIsNotNone(app_node, "Application 'teatime kcresonance' not found.")
+        self.assertIsNotNone(app_node, "Application 'teatime.py' or variant not found.")
         
         # Verify the main window exists
         main_window = app_node.child(roleName='frame')
@@ -50,7 +56,16 @@ class TestUIDogtail(unittest.TestCase):
 
     def test_start_stop_timer(self):
         """Test starting and stopping the timer."""
-        app_node = root.application('teatime kcresonance')
+        # Re-find app node for this test
+        app_node = None
+        for app in root.applications():
+            if 'teatime' in app.name.lower():
+                app_node = app
+                break
+        
+        if app_node is None:
+            app_node = root.application('teatime.py')
+
         main_window = app_node.child(roleName='frame')
         
         start_button = main_window.child(roleName='push button', name='Start')
