@@ -48,5 +48,32 @@ To estimate how long the full suite will take:
 ./tests/run_dogtail_tests.sh --estimate
 ```
 
+## New: Dashboard Runner
+
+The `tests/run_dogtail_suite.py` runner uses a manifest to ensure full coverage, profiles the machine, and writes a JSON dashboard summary. It also keeps a history file with per-test timings that improves future run estimates.
+
+### Machine Profiling
+```bash
+python tests/run_dogtail_suite.py --profile-machine
+```
+
+### Dashboard + Full Suite
+```bash
+python tests/run_dogtail_suite.py
+```
+
+### Grouped Runs
+```bash
+python tests/run_dogtail_suite.py --group smoke
+python tests/run_dogtail_suite.py --group settings
+```
+
+### Staggered Runs
+```bash
+python tests/run_dogtail_suite.py --max-procs 1 --stagger-seconds 2 --nice 10
+```
+
+> Note: Parallel Dogtail runs can conflict unless each shard is isolated (separate display/session). The runner defaults to `--max-procs 1` for safety.
+
 ## Logs
 Detailed search logs are available at `/tmp/dogtail-$USER/logs/`.

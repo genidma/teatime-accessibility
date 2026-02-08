@@ -1,0 +1,23 @@
+{
+  "suite": "dogtail-ui",
+  "version": 1,
+  "groups": {
+    "smoke": [
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_main_window_is_present",
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_start_stop_timer"
+    ],
+    "presets": [
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_presets"
+    ],
+    "categories": [
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_categories"
+    ],
+    "settings": [
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_settings_toggles",
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_font_scaling"
+    ],
+    "menu": [
+      "tests/test_ui_dogtail.py::TestUIDogtail::test_menu_navigation"
+    ]
+  }
+}
