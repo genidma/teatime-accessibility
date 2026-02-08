@@ -10,19 +10,37 @@ To confirm you are on X11, run the following commands from a terminal inside of 
 ```bash
 echo $XDG_SESSION_TYPE
 ```
+
+If it prints `wayland`, log out and choose an X11 session at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)` using the wheel at the login screen), then log back in and re-check.
+If it prints `tty`, you are not in a graphical session; start a desktop session first.
+
 - `dbus-run-session` available.
 - Python 3 installed.
 - Project virtual environment created (see project setup docs).
 - `dogtail` installed in the active environment.
 
-
-
-If it prints `wayland`, log out and choose an X11 session at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)`), then log back in and re-check.
-
 If you are unsure about Dogtail availability, run:
 ```bash
 python -c "import dogtail; print('dogtail ok')"
 ```
+
+### Switching Between Wayland and X11 (Ubuntu)
+
+These steps apply to Ubuntu 25.10 with the default GDM login screen.
+
+Switch to X11:
+1. Log out.
+2. On the login screen, select your user.
+3. Click the gear icon in the lower-right.
+4. Choose `Ubuntu on Xorg`.
+5. Log in and run `echo $XDG_SESSION_TYPE` (should print `x11`).
+
+Switch back to Wayland:
+1. Log out.
+2. On the login screen, select your user.
+3. Click the gear icon.
+4. Choose `Ubuntu` (Wayland).
+5. Log in and run `echo $XDG_SESSION_TYPE` (should print `wayland`).
 
 ## Quick Start (First Run)
 
