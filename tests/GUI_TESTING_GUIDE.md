@@ -20,7 +20,11 @@ if it's not install, install it via:
 `sudo apt install -y dbus-x11`
 
 - Python 3 installed.
-- Project virtual environment created (see project setup docs).
+- Project python virtual environment created (see project setup docs).
+- Project python virtual environment activated
+
+`source teatime-venv/bin/activate`
+
 - `dogtail` installed in the active environment.
 
 If you are unsure about Dogtail availability, run:
