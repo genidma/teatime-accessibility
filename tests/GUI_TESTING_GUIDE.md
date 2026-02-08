@@ -14,7 +14,11 @@ echo $XDG_SESSION_TYPE
 If it prints `wayland`, log out and choose an X11 session (note: for me this is xfce) at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)` using the wheel at the login screen), then log back in and re-check.
 If it prints `tty`, you are not in a graphical session; start a desktop session first.
 
-- `dbus-run-session` available.
+- `which dbus-run-session` available.
+
+if it's not install, install it via:
+`sudo apt install -y dbus-x11`
+
 - Python 3 installed.
 - Project virtual environment created (see project setup docs).
 - `dogtail` installed in the active environment.
