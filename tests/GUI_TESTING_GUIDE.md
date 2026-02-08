@@ -98,11 +98,17 @@ python tests/run_dogtail_suite.py --profile-machine
 # run full suite and update dashboard
 python tests/run_dogtail_suite.py
 
+# run full suite with pre-run cleanup of stale app instances
+python tests/run_dogtail_suite.py --clean
+
 # run a specific group
 python tests/run_dogtail_suite.py --group smoke
 
 # staggered run with priority (safe default is max-procs 1)
 python tests/run_dogtail_suite.py --max-procs 1 --stagger-seconds 2 --nice 10
+
+# dry run (prints actions, does not execute tests or update dashboard/history)
+python tests/run_dogtail_suite.py --dry-run
 ```
 
 ## Running the Legacy Runner
@@ -140,11 +146,19 @@ If you see issues in the dashboard or the HTML report, use the mapping below.
 - Dashboard summary: `tests/reports/dogtail_dashboard.json`
 - History: `tests/reports/dogtail_history.json`
 - Dogtail logs: `/tmp/dogtail-$USER/logs/`
+ - Active-run lock: `tests/reports/dogtail_run.lock`
 
 To open the HTML report in a browser:
 ```bash
 xdg-open tests/reports/dogtail_report.html
 ```
+
+## Cleanup and Locking
+
+- `--clean` terminates stale TeaTime app instances before a run.
+- Cleanup is skipped if a pytest run is already active.
+- A lock file is created during a run to prevent concurrent execution.
+- `--dry-run` never creates reports or updates history (estimates come from real runs only).
 
 ## Improvements Implemented (Background)
 
