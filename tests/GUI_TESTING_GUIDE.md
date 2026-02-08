@@ -175,6 +175,20 @@ These changes make tests more resilient and easier to debug:
 - Flaky clicks: increase `DOGTAIL_SLEEP_DELAY` and re-run the specific test.
 - Timeouts: use `--triage` and run fewer tests per session.
 
+## Seeing UI Interactions
+
+Dogtail drives the accessibility tree, so you might not see the mouse move. Actions can also be too fast to notice. To make interactions visible:
+
+1. Run a single test with a delay:
+```bash
+DOGTAIL_SLEEP_DELAY=1.5 pytest tests/test_ui_dogtail.py::TestUIDogtail::test_start_stop_timer -v
+```
+2. Ensure the TeaTime window is visible and focused on the current workspace.
+3. If needed, avoid `dbus-run-session` by running pytest directly:
+```bash
+pytest tests/test_ui_dogtail.py::TestUIDogtail::test_start_stop_timer -v
+```
+
 ## Glossary
 
 - **AT-SPI**: Accessibility API used by Dogtail to introspect the UI.
