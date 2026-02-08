@@ -32,6 +32,13 @@ If you are unsure about Dogtail availability, run:
 python -c "import dogtail; print('dogtail ok')"
 ```
 
+Enable accessibility (required by Dogtail):
+```bash
+gsettings set org.gnome.desktop.interface toolkit-accessibility true
+```
+
+Log out and log back in after changing accessibility settings.
+
 ### Switching Between Wayland and X11 (Ubuntu)
 
 These steps apply to Ubuntu 25.10 with the default GDM login screen.
