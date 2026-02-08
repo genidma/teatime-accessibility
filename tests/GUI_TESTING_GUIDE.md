@@ -54,12 +54,15 @@ Switch back to Wayland:
 
 1. Go to the folder where the repository was cloned and please ensure that you are in the project root (the folder that contains `tests/`).
 2. Confirm prerequisites above.
-3. Run the dashboard runner.
-4. Open the HTML report and check the dashboard JSON.
-
+3. Activate the project virtual environment:
+```bash
+source teatime-venv/bin/activate
+```
+4. Run the dashboard runner:
 ```bash
 python tests/run_dogtail_suite.py
 ```
+5. Open the HTML report and check the dashboard JSON.
 
 Expected outputs:
 - `tests/reports/dogtail_report_shard1.html` (HTML report, when running a single shard)
