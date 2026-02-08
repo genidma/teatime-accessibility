@@ -2,10 +2,30 @@
 
 This guide explains how to run the Dogtail GUI tests for TeaTime Accessibility, how to update the dashboard, and how to troubleshoot common failures. It is written for first-time test runners.
 
+## Prerequisites
+
+- Linux desktop session running X11 (not Wayland).
+- `dbus-run-session` available.
+- Python 3 installed.
+- Project virtual environment created (see project setup docs).
+- `dogtail` installed in the active environment.
+
+To confirm you are on X11:
+```bash
+echo $XDG_SESSION_TYPE
+```
+
+If it prints `wayland`, log out and choose an X11 session at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)`), then log back in and re-check.
+
+If you are unsure about Dogtail availability, run:
+```bash
+python -c "import dogtail; print('dogtail ok')"
+```
+
 ## Quick Start (First Run)
 
-1. Ensure you are in the project root (the folder that contains `tests/`).
-2. Confirm prerequisites below.
+1. Go to the folder where the repository was cloned and please ensure that you are in the project root (the folder that contains `tests/`).
+2. Confirm prerequisites above.
 3. Run the dashboard runner.
 4. Open the HTML report and check the dashboard JSON.
 
@@ -19,19 +39,6 @@ Expected outputs:
 - `tests/reports/dogtail_history.json` (run history and durations)
 
 > Note: The Dogtail tests are intended for Linux + X11. If you are on another OS, run them inside a Linux VM or container with X11 forwarding.
-
-## Prerequisites
-
-- Linux desktop session running X11 (not Wayland).
-- `dbus-run-session` available.
-- Python 3 installed.
-- Project virtual environment created (see project setup docs).
-- `dogtail` installed in the active environment.
-
-If you are unsure, run:
-```bash
-python -c "import dogtail; print('dogtail ok')"
-```
 
 ## Test Flow (Mermaid)
 
