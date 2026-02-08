@@ -141,6 +141,11 @@ If you see issues in the dashboard or the HTML report, use the mapping below.
 - History: `tests/reports/dogtail_history.json`
 - Dogtail logs: `/tmp/dogtail-$USER/logs/`
 
+To open the HTML report in a browser:
+```bash
+xdg-open tests/reports/dogtail_report.html
+```
+
 ## Improvements Implemented (Background)
 
 These changes make tests more resilient and easier to debug:
