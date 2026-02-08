@@ -150,8 +150,12 @@ class TestUIDogtail(unittest.TestCase):
         app_node = self.get_app_node()
         main_window = app_node.child(roleName='frame')
         
-        btn_plus = self.find_child_fuzzy(main_window, roleName='push button', name='A+')
-        btn_minus = self.find_child_fuzzy(main_window, roleName='push button', name='A-')
+        btn_plus = self.find_child_fuzzy(main_window, roleName='button', name='A+')
+        if not btn_plus:
+            btn_plus = self.find_child_fuzzy(main_window, roleName='push button', name='A+')
+        btn_minus = self.find_child_fuzzy(main_window, roleName='button', name='A-')
+        if not btn_minus:
+            btn_minus = self.find_child_fuzzy(main_window, roleName='push button', name='A-')
         
         if btn_plus: btn_plus.click()
         if btn_minus: btn_minus.click()
