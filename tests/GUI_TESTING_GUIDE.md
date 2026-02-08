@@ -11,7 +11,7 @@ To confirm you are on X11, run the following commands from a terminal inside of 
 echo $XDG_SESSION_TYPE
 ```
 
-If it prints `wayland`, log out and choose an X11 session at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)` using the wheel at the login screen), then log back in and re-check.
+If it prints `wayland`, log out and choose an X11 session (note: for me this is xfce) at the login screen (often labeled `GNOME on Xorg` or `Plasma (X11)` using the wheel at the login screen), then log back in and re-check.
 If it prints `tty`, you are not in a graphical session; start a desktop session first.
 
 - `dbus-run-session` available.
