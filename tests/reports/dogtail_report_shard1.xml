@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="5574.938" timestamp="2026-02-08T07:04:47.570966-05:00" hostname="mram-desktop"><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_main_window_is_present" time="12.063" /><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_start_stop_timer" time="300.463"><failure message="AttributeError: 'TestUIDogtail' object has no attribute 'capture_ui_state'">self = &lt;tests.test_ui_dogtail.TestUIDogtail testMethod=test_start_stop_timer&gt;
+
+    def test_start_stop_timer(self):
+        """Test starting and stopping the timer."""
+        app_node = self.get_app_node()
+        main_window = app_node.child(roleName='frame')
+    
+        start_button = self.find_child_fuzzy(main_window, roleName='push button', name='Start')
+        stop_button = self.find_child_fuzzy(main_window, roleName='push button', name='Stop')
+    
+        if not start_button:
+&gt;           self.capture_ui_state(main_window)
+            ^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'TestUIDogtail' object has no attribute 'capture_ui_state'
+
+tests/test_ui_dogtail.py:92: AttributeError</failure></testcase><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_presets" time="192.911" /><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_categories" time="30.857" /><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_settings_toggles" time="2523.721" /><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_font_scaling" time="2201.983" /><testcase classname="tests.test_ui_dogtail.TestUIDogtail" name="test_menu_navigation" time="312.604" /></testsuite></testsuites>
