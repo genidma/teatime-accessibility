@@ -194,3 +194,10 @@ pytest tests/test_ui_dogtail.py::TestUIDogtail::test_start_stop_timer -v
 - **AT-SPI**: Accessibility API used by Dogtail to introspect the UI.
 - **DBus**: IPC system used by accessibility services and test sessions.
 - **Shard**: A subset of tests run as a group for scheduling or parallelization.
+
+## Note on Estimates
+
+If you want a quick time estimate before running the full suite, run:
+```bash
+python tests/run_dogtail_suite.py --estimate
+```
