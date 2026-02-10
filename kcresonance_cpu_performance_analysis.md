@@ -15,17 +15,20 @@ The kcresonance branch exhibits elevated CPU usage, especially during UI animati
 
 ### Primary Performance Issues Identified
 1. **Rainbow Timer System**
-   - `_update_rainbow` runs every 1000ms to update UI colors.
-   - Reapplies CSS skin each tick, which can be expensive.
+   - `_update_rainbow` runs every 2000ms to update UI colors.
+   - Each tick calls `_apply_skin` which re-loads CSS via `_apply_font_size`.
+   - The timer starts on app launch and after timer completion.
    - Optimize to run less frequently or only when the window is focused.
 
 2. **Sprite Animation System**
-   - Fullscreen notifications trigger sprite animations every 100ms.
+   - Fullscreen notifications queue a redraw every 300ms.
+   - Each draw scales a pixbuf and selects a frame based on current time.
    - Image loading/rendering can be costly without frame caching.
 
 3. **Dynamic Skin System**
    - CSS gradients/animations cause frequent redraws.
-   - Lava lamp skin applies complex animations continuously.
+   - Lava lamp skin applies a continuous 20s CSS animation.
+   - Lava skin CSS is only applied when `preferred_skin == 'lava'` and not in nano mode.
 
 4. **UI Testing Infrastructure Bug**
    - Dogtail test file previously referenced a missing `capture_ui_state` method.
@@ -40,8 +43,8 @@ Dogtail tests do NOT run during normal app execution. They only run when explici
 ### Phase 1: Baseline Performance Measurement
 1. Run the app with minimal features enabled.
 2. Monitor CPU with `top` or `htop` while idle.
-3. Record baseline CPU usage without timer running.
-4. Record CPU usage with timer running.
+3. Record baseline CPU usage with the rainbow effect disabled (if possible).
+4. Record CPU usage with the rainbow effect enabled.
 
 ### Phase 2: Feature Isolation
 1. Disable rainbow effects; measure CPU.
