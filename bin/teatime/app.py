@@ -259,13 +259,33 @@ class TeaTimerApp(Gtk.Application):
             self.control_grid = Gtk.Grid(column_spacing=10, row_spacing=10, halign=Gtk.Align.CENTER)
             content_box.pack_start(self.control_grid, True, True, 0)
 
-            # Row 0: Duration
+            # Row 0: Duration (spin + slider)
             self.control_grid.attach(Gtk.Label(label="Minutes:"), 0, 0, 1, 1)
-            self.duration_spin = Gtk.SpinButton.new_with_range(1, 999, 1)
+            self.duration_spin = Gtk.SpinButton.new_with_range(1, 120, 1)
             self.duration_spin.set_value(self.last_duration)
             self.control_grid.attach(self.duration_spin, 1, 0, 1, 1)
 
-            # Row 1: CATEGORY GRID (REDESIGN)
+            self.duration_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 120, 1)
+            self.duration_scale.set_value(self.last_duration)
+            self.duration_scale.set_digits(0)
+            self.duration_scale.set_hexpand(True)
+            self.duration_scale.set_draw_value(False)
+            self.control_grid.attach(self.duration_scale, 0, 1, 2, 1)
+
+            def on_spin_changed(spin):
+                val = spin.get_value()
+                if abs(self.duration_scale.get_value() - val) > 0.5:
+                    self.duration_scale.set_value(val)
+
+            def on_scale_changed(scale):
+                val = int(scale.get_value())
+                if int(self.duration_spin.get_value()) != val:
+                    self.duration_spin.set_value(val)
+
+            self.duration_spin.connect("value-changed", on_spin_changed)
+            self.duration_scale.connect("value-changed", on_scale_changed)
+
+            # Row 2: CATEGORY GRID (REDESIGN)
             cat_frame = Gtk.Frame(label="Categories")
             cat_grid = Gtk.Grid(column_spacing=10, row_spacing=5, margin=10)
             self.category_checkboxes = {}
@@ -277,38 +297,38 @@ class TeaTimerApp(Gtk.Application):
                 self.category_checkboxes[cat] = cb
             cat_frame.add(cat_grid)
             self.category_ui = cat_frame
-            self.control_grid.attach(cat_frame, 0, 1, 2, 1)
+            self.control_grid.attach(cat_frame, 0, 2, 2, 1)
 
-            # Row 2: Controls
+            # Row 3: Controls
             self.start_button = Gtk.Button(label="_Start", use_underline=True)
             self.start_button.connect("clicked", self.on_start_clicked)
             self.stop_button = Gtk.Button(label="_Stop", use_underline=True, sensitive=False)
             self.stop_button.connect("clicked", self.on_stop_clicked)
-            self.control_grid.attach(self.start_button, 0, 2, 1, 1)
-            self.control_grid.attach(self.stop_button, 1, 2, 1, 1)
+            self.control_grid.attach(self.start_button, 0, 3, 1, 1)
+            self.control_grid.attach(self.stop_button, 1, 3, 1, 1)
 
-            # Row 3: Font
+            # Row 4: Font
             btn_minus = Gtk.Button(label="A-")
             btn_minus.connect("clicked", self.on_decrease_font_clicked)
             btn_plus = Gtk.Button(label="A+")
             btn_plus.connect("clicked", self.on_increase_font_clicked)
-            self.control_grid.attach(btn_minus, 0, 3, 1, 1)
-            self.control_grid.attach(btn_plus, 1, 3, 1, 1)
+            self.control_grid.attach(btn_minus, 0, 4, 1, 1)
+            self.control_grid.attach(btn_plus, 1, 4, 1, 1)
 
-            # Row 4: Sound Toggle
+            # Row 5: Sound Toggle
             self.sound_toggle = Gtk.CheckButton(label="_Enable Sound", use_underline=True, active=self.sound_enabled)
             self.sound_toggle.connect("toggled", self.on_sound_toggled)
-            self.control_grid.attach(self.sound_toggle, 0, 4, 2, 1)
+            self.control_grid.attach(self.sound_toggle, 0, 5, 2, 1)
 
-            # Row 5: Mini Mode Toggle (FIXED OVERLAP)
+            # Row 6: Mini Mode Toggle (FIXED OVERLAP)
             self.mini_mode_toggle = Gtk.CheckButton(label="_Mini Mode", use_underline=True, active=self.mini_mode)
             self.mini_mode_toggle.connect("toggled", self.on_mini_mode_toggled)
-            self.control_grid.attach(self.mini_mode_toggle, 0, 5, 2, 1)
+            self.control_grid.attach(self.mini_mode_toggle, 0, 6, 2, 1)
 
-            # Row 6: Nano Mode Toggle
+            # Row 7: Nano Mode Toggle
             self.nano_mode_toggle = Gtk.CheckButton(label="_Nano Mode (auto)", use_underline=True, active=self.nano_mode)
             self.nano_mode_toggle.connect("toggled", self.on_nano_mode_toggled)
-            self.control_grid.attach(self.nano_mode_toggle, 0, 6, 2, 1)
+            self.control_grid.attach(self.nano_mode_toggle, 0, 7, 2, 1)
 
             # Presets
             self.presets_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5, halign=Gtk.Align.CENTER)
