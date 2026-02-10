@@ -241,9 +241,8 @@ class TeaTimerApp(Gtk.Application):
         self.current_timer_duration = duration
         self._update_label()
         
-        # Update every second instead of every 5 seconds for smoother UI
-        # and use a more efficient interval to reduce CPU usage
-        self.timer_id = GLib.timeout_add_seconds(1, self.update_timer)
+        # Update every 5 seconds
+        self.timer_id = GLib.timeout_add_seconds(5, self.update_timer)
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
 
@@ -258,7 +257,7 @@ class TeaTimerApp(Gtk.Application):
         if self.timer_id: GLib.source_remove(self.timer_id); self.timer_id = None
 
     def update_timer(self):
-        self.time_left -= 1  # Decrement by 1 second instead of 5
+        self.time_left -= 5
         self._update_label()
         if self.time_left <= 0:
             self.on_timer_complete()
