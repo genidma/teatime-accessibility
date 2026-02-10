@@ -147,14 +147,11 @@ class TargetCheckButton(Gtk.CheckButton):
         t = self._pulse_progress
         alpha = max(0.0, 0.9 - t)
 
-        cr.set_source_rgba(0.2, 1.0, 0.2, alpha)
+        cr.set_source_rgba(1.0, 0.23, 0.19, alpha)
         cr.set_line_width(2.0)
         cr.arc(cx, cy, r * (0.85 + 0.15 * t), 0, 2 * math.pi)
         cr.stroke()
         cr.arc(cx, cy, r * 0.45, 0, 2 * math.pi)
-        cr.stroke()
-        cr.move_to(cx - r, cy); cr.line_to(cx + r, cy)
-        cr.move_to(cx, cy - r); cr.line_to(cx, cy + r)
         cr.stroke()
         return res
 
