@@ -34,6 +34,71 @@ from .core import (
 )
 from .stats import StatisticsWindow
 
+class FlipLabel(Gtk.Box):
+    def __init__(self, text=""):
+        super().__init__()
+        self._effects_enabled = False
+        self._stack = Gtk.Stack()
+        self._stack.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
+        self._stack.set_transition_duration(200)
+
+        self._label_a = Gtk.Label()
+        self._label_b = Gtk.Label()
+        self._label_a.set_use_markup(True)
+        self._label_b.set_use_markup(True)
+        self._label_a.get_style_context().add_class("time-display")
+        self._label_b.get_style_context().add_class("time-display")
+
+        self._stack.add_named(self._label_a, "a")
+        self._stack.add_named(self._label_b, "b")
+        self._current = "a"
+        self._stack.set_visible_child_name("a")
+
+        self.pack_start(self._stack, True, True, 0)
+        if text:
+            self.set_text(text)
+
+    def set_effects_enabled(self, enabled: bool):
+        self._effects_enabled = bool(enabled)
+        self._stack.set_transition_duration(200 if self._effects_enabled else 0)
+
+    def _set_label_value(self, label, value, markup: bool):
+        if markup:
+            label.set_markup(value)
+        else:
+            label.set_text(value)
+
+    def _set_value(self, value, markup: bool):
+        if not self._effects_enabled:
+            self._set_label_value(self._label_a, value, markup)
+            self._set_label_value(self._label_b, value, markup)
+            self._stack.set_visible_child_name("a")
+            self._current = "a"
+            return
+
+        next_name = "b" if self._current == "a" else "a"
+        next_label = self._label_b if next_name == "b" else self._label_a
+        self._set_label_value(next_label, value, markup)
+        self._stack.set_visible_child_name(next_name)
+        self._current = next_name
+
+    def set_markup(self, markup: str):
+        self._set_value(markup, True)
+
+    def set_text(self, text: str):
+        self._set_value(text, False)
+
+    def get_text(self):
+        active = self._label_a if self._current == "a" else self._label_b
+        return active.get_text()
+
+    def get_label(self):
+        active = self._label_a if self._current == "a" else self._label_b
+        return active.get_label()
+
+    def get_label_widget(self):
+        return self._label_a if self._current == "a" else self._label_b
+
 class TeaTimerApp(Gtk.Application):
     def __init__(self, duration=5, auto_start=False):
         super().__init__(application_id="org.genidma.KCResonance",
@@ -64,6 +129,7 @@ class TeaTimerApp(Gtk.Application):
         self.preferred_skin = "default"
         self.preferred_animation = "test_animation"
         self.wall_clock_mode = False
+        self.text_transition_effects = False
         self.rainbow_hue = 0
         self.rainbow_timer_id = None
         self._rainbow_deferred = False
@@ -129,8 +195,8 @@ class TeaTimerApp(Gtk.Application):
             self.main_box.pack_start(content_box, True, True, 0)
             self.content_box = content_box
 
-            self.time_label = Gtk.Label(label="00:00")
-            self.time_label.get_style_context().add_class("time-display")
+            self.time_label = FlipLabel("00:00")
+            self.time_label.set_effects_enabled(self.text_transition_effects)
             self.main_box.pack_start(self.time_label, False, False, 0)
 
             self.control_grid = Gtk.Grid(column_spacing=10, row_spacing=10, halign=Gtk.Align.CENTER)
@@ -289,7 +355,8 @@ class TeaTimerApp(Gtk.Application):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, valign=Gtk.Align.CENTER)
         win.add(box)
         
-        label = Gtk.Label()
+        label = FlipLabel()
+        label.set_effects_enabled(self.text_transition_effects)
         label.set_markup("<span font_desc='Sans Bold 60' foreground='white'>Session Complete</span>")
         box.pack_start(label, False, False, 0)
         
@@ -424,8 +491,9 @@ class TeaTimerApp(Gtk.Application):
             return False
 
         text = self.time_label.get_text() or self.time_label.get_label() or "00:00"
-        layout = self.time_label.create_pango_layout(text)
-        context = self.time_label.get_style_context()
+        label_widget = self.time_label.get_label_widget() if hasattr(self.time_label, "get_label_widget") else self.time_label
+        layout = label_widget.create_pango_layout(text)
+        context = label_widget.get_style_context()
         font_desc = context.get_font(Gtk.StateFlags.NORMAL)
         if font_desc:
             layout.set_font_description(font_desc)
@@ -556,7 +624,8 @@ class TeaTimerApp(Gtk.Application):
             "sound_enabled": self.sound_enabled,
             "wall_clock_mode": self.wall_clock_mode,
             "preferred_skin": self.preferred_skin,
-            "preferred_animation": self.preferred_animation
+            "preferred_animation": self.preferred_animation,
+            "text_transition_effects": self.text_transition_effects
         }
         with open(CONFIG_FILE, 'w') as f: json.dump(config, f, indent=2)
 
@@ -573,6 +642,7 @@ class TeaTimerApp(Gtk.Application):
                     self.wall_clock_mode = c.get("wall_clock_mode", False)
                     self.preferred_skin = c.get("preferred_skin", "default")
                     self.preferred_animation = c.get("preferred_animation", "test_animation")
+                    self.text_transition_effects = c.get("text_transition_effects", False)
             except: pass
 
     def on_preset_clicked(self, btn, mins):
@@ -615,12 +685,20 @@ class TeaTimerApp(Gtk.Application):
         wc_check = Gtk.CheckButton(label="Wall Clock Mode (active only during timer)")
         wc_check.set_active(self.wall_clock_mode)
         grid.attach(wc_check, 0, 2, 2, 1)
+
+        # Text Transition Effects
+        text_fx_check = Gtk.CheckButton(label="Text transition effects")
+        text_fx_check.set_active(self.text_transition_effects)
+        grid.attach(text_fx_check, 0, 3, 2, 1)
         
         dialog.show_all()
         if dialog.run() == Gtk.ResponseType.OK:
             self.preferred_skin = skin_combo.get_active_id()
             self.preferred_animation = anim_combo.get_active_id()
             self.wall_clock_mode = wc_check.get_active()
+            self.text_transition_effects = text_fx_check.get_active()
+            if hasattr(self, "time_label") and hasattr(self.time_label, "set_effects_enabled"):
+                self.time_label.set_effects_enabled(self.text_transition_effects)
             self._save_config()
             self._apply_skin()
         dialog.destroy()
