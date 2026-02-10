@@ -234,8 +234,9 @@ class TeaTimerApp(Gtk.Application):
         self.current_timer_duration = duration
         self._update_label()
         
-        # Use milliseconds for better reliability across platforms
-        self.timer_id = GLib.timeout_add(5000, self.update_timer)
+        # Update every second instead of every 5 seconds for smoother UI
+        # and use a more efficient interval to reduce CPU usage
+        self.timer_id = GLib.timeout_add_seconds(1, self.update_timer)
         self.start_button.set_sensitive(False)
         self.stop_button.set_sensitive(True)
 
@@ -250,7 +251,7 @@ class TeaTimerApp(Gtk.Application):
         if self.timer_id: GLib.source_remove(self.timer_id); self.timer_id = None
 
     def update_timer(self):
-        self.time_left -= 5
+        self.time_left -= 1  # Decrement by 1 second instead of 5
         self._update_label()
         if self.time_left <= 0:
             self.on_timer_complete()
@@ -289,7 +290,16 @@ class TeaTimerApp(Gtk.Application):
             da = Gtk.DrawingArea(); da.set_size_request(400, 400)
             da.connect("draw", self._on_sprite_draw, frames)
             box.pack_start(da, False, False, 0)
-            GLib.timeout_add(300, lambda: (da.queue_draw(), True)[1])
+            
+            # Store reference to animation timeout to cancel it later
+            animation_timeout_id = GLib.timeout_add(300, lambda: (da.queue_draw(), True)[1])
+            
+            # Clean up animation when window is destroyed
+            def cleanup_animation(*args):
+                if animation_timeout_id:
+                    GLib.source_remove(animation_timeout_id)
+                    
+            win.connect("destroy", cleanup_animation)
 
         win.get_style_context().add_provider(self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         win.connect("button-press-event", lambda w, e: win.destroy())
@@ -473,9 +483,9 @@ class TeaTimerApp(Gtk.Application):
                 100% {{ background-position: 0% 50%; }}
             }}
             """
-            provider = Gtk.CssProvider()
-            provider.load_from_data(css.encode())
-            self.window.get_style_context().add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
+            # Reuse the existing css_provider instead of creating a new one each time
+            self.css_provider.load_from_data(css.encode())
+            self.window.get_style_context().add_provider(self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
         else:
             # Default or reset
             self.window.get_style_context().remove_class("lava-skin") # Just in case
