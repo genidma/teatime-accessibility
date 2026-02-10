@@ -137,20 +137,13 @@ class TargetCheckButton(Gtk.CheckButton):
         if self._pulse_progress <= 0.0:
             return res
 
-        label = self.get_child()
-        if label:
-            alloc = label.get_allocation()
-            x0, y0 = alloc.x, alloc.y
-            w, h = alloc.width, alloc.height
-        else:
-            alloc = self.get_allocation()
-            x0, y0 = 0, 0
-            w, h = alloc.width, alloc.height
+        alloc = self.get_allocation()
+        w, h = alloc.width, alloc.height
         if w <= 0 or h <= 0:
             return res
 
         r = min(w, h) * 0.45
-        cx, cy = x0 + (w / 2), y0 + (h / 2)
+        cx, cy = w / 2, h / 2
         t = self._pulse_progress
         alpha = max(0.0, 0.9 - t)
 
@@ -158,9 +151,7 @@ class TargetCheckButton(Gtk.CheckButton):
         cr.set_line_width(2.0)
         cr.arc(cx, cy, r * (0.85 + 0.15 * t), 0, 2 * math.pi)
         cr.stroke()
-        cr.arc(cx, cy, r * (0.55 + 0.10 * t), 0, 2 * math.pi)
-        cr.stroke()
-        cr.arc(cx, cy, r * 0.30, 0, 2 * math.pi)
+        cr.arc(cx, cy, r * 0.45, 0, 2 * math.pi)
         cr.stroke()
         return res
 
