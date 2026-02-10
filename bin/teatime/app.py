@@ -363,7 +363,8 @@ class TeaTimerApp(Gtk.Application):
 
         cur = (int(time.time() * 10)) % len(scaled_frames)
         scaled = scaled_frames[cur]
-        
+
+        sw, sh = scaled.get_width(), scaled.get_height()
         Gdk.cairo_set_source_pixbuf(cr, scaled, (alloc.width - sw) // 2, (alloc.height - sh) // 2)
         cr.paint(); return False
 
