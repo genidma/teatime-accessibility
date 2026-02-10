@@ -456,7 +456,7 @@ class TeaTimerApp(Gtk.Application):
 
     def _apply_skin(self):
         if self.nano_mode: 
-            # Remove high-priority lava provider if exists
+            # Remove high-priority lava provider if exists when in nano mode
             return 
 
         skin = self.preferred_skin
@@ -487,8 +487,10 @@ class TeaTimerApp(Gtk.Application):
             self.css_provider.load_from_data(css.encode())
             self.window.get_style_context().add_provider(self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
         else:
-            # Default or reset
+            # Default or reset - remove the lava skin provider
             self.window.get_style_context().remove_class("lava-skin") # Just in case
+            # Clear the custom provider by loading an empty CSS
+            self.css_provider.load_from_data(b"")
 
     def _start_rainbow_timer(self):
         if self.rainbow_timer_id: GLib.source_remove(self.rainbow_timer_id)
