@@ -1,7 +1,7 @@
 # KCResonance Branch CPU Usage Analysis & Resolution Plan
 
 ## Overview
-This document outlines the analysis and resolution plan for addressing high CPU resource consumption in the kcresonance branch of the TeaTime Accessibility application.
+This document outlines the analysis and resolution plan for addressing high CPU resource consumption in the kcresonance branch of the TeaTime Accessibility application located at `<usual path>/teatime-accessibility`.
 
 ## Current State Analysis
 

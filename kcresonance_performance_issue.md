@@ -8,7 +8,7 @@ This issue addresses the high CPU resource consumption observed in the kcresonan
 ### Primary Performance Issues Identified:
 
 1. **Rainbow Timer System**:
-   - The [_update_rainbow](file:///vms_and_github/Github/teatime-accessibility/bin/teatime/app.py#L491-L494) function runs every 1000ms updating UI colors
+   - The `_update_rainbow` function runs every 1000ms updating UI colors
    - Constantly reapplies CSS skin which is computationally expensive
    - Could be optimized to run less frequently or only when window is focused
 
@@ -23,12 +23,12 @@ This issue addresses the high CPU resource consumption observed in the kcresonan
    - Needs optimization for performance
 
 4. **UI Testing Infrastructure Bug**:
-   - Dogtail test file had a missing [capture_ui_state](file:///vms_and_github/Github/teatime-accessibility/bin/teatime/app.py#L464-L466) method
+   - Dogtail test file had a missing `capture_ui_state` method
    - This caused test failures but not runtime performance issues
-   - Now fixed in [tests/test_ui_dogtail.py](file:///vms_and_github/Github/teatime-accessibility/tests/test_ui_dogtail.py)
+   - Now fixed in `<usual path>/tests/test_ui_dogtail.py`
 
 ### Important Clarification:
-The UI testing components (Dogtail tests) do NOT run when the main application runs normally. They are separate test suites that run independently. The Dogtail tests are only executed when specifically running the test suite (e.g., via `pytest tests/test_ui_dogtail.py`). However, the test infrastructure was incorrectly referencing a non-existent method.
+The UI testing components (Dogtail tests) do NOT run when the main application runs normally. They are separate test suites that run independently. The Dogtail tests are only executed when specifically running the test suite (e.g., via `pytest <usual path>/tests/test_ui_dogtail.py`). However, the test infrastructure was incorrectly referencing a non-existent method.
 
 ## Recommended Solutions
 
@@ -54,7 +54,7 @@ The UI testing components (Dogtail tests) do NOT run when the main application r
 ## Implementation Plan
 
 ### Phase 1: Immediate Fixes
-- Optimize the [_update_rainbow](file:///vms_and_github/Github/teatime-accessibility/bin/teatime/app.py#L491-L494) function to reduce frequency
+- Optimize the `_update_rainbow` function to reduce frequency
 - Implement frame caching for sprite animations
 
 ### Phase 2: Feature Improvements
@@ -66,8 +66,8 @@ The UI testing components (Dogtail tests) do NOT run when the main application r
 - Consider separating UI testing code from main application
 
 ## Files Modified
-- [tests/test_ui_dogtail.py](file:///vms_and_github/Github/teatime-accessibility/tests/test_ui_dogtail.py) - Fixed missing [capture_ui_state](file:///vms_and_github/Github/teatime-accessibility/bin/teatime/app.py#L464-L466) method
-- Created [kcresonance_performance_issue.md](file:///vms_and_github/Github/teatime-accessibility/kcresonance_performance_issue.md) - Complete analysis document
+- `<usual path>/tests/test_ui_dogtail.py` - Fixed missing `capture_ui_state` method
+- Created `<usual path>/kcresonance_performance_issue.md` - Complete analysis document
 
 ## Expected Outcomes
 - Reduced idle CPU usage from current levels to under 5%

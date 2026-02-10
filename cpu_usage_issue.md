@@ -12,7 +12,7 @@ Based on code review, potential causes of high CPU usage include:
 
 3. **Dynamic Skin System**: The CSS gradient animations and constant UI redraws may be causing performance bottlenecks.
 
-4. **Missing Method in Tests**: The Dogtail test file references a `capture_ui_state` method that doesn't exist, causing test failures.
+4. **Missing Method in Tests**: The Dogtail test file (e.g., `<usual path>/test_dogtail.py`) references a `capture_ui_state` method that doesn't exist, causing test failures.
 
 ## Expected Behavior
 - Idle CPU usage under 5%
