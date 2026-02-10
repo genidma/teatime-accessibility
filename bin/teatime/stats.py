@@ -55,6 +55,7 @@ class StatisticsWindow(Gtk.Window):
         types = [str] * (len(self.data_categories) + 2)
         self.store = Gtk.ListStore(*types)
         self.treeview = Gtk.TreeView(model=self.store)
+        self.treeview.set_headers_clickable(True)
 
         # Date Column
         renderer_text = Gtk.CellRendererText()
@@ -69,6 +70,7 @@ class StatisticsWindow(Gtk.Window):
             column = Gtk.TreeViewColumn(cat, renderer, text=i+1)
             column.set_resizable(True)
             if cat.lower() == "breaks":
+                column.set_clickable(True)
                 header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
                 header_title = Gtk.Label(label="Breaks")
                 self.flow_button = Gtk.Button(label="Flow")
