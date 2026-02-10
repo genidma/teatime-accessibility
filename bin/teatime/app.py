@@ -289,7 +289,7 @@ class TeaTimerApp(Gtk.Application):
             da = Gtk.DrawingArea(); da.set_size_request(400, 400)
             da.connect("draw", self._on_sprite_draw, frames)
             box.pack_start(da, False, False, 0)
-            GLib.timeout_add(100, lambda: (da.queue_draw(), True)[1])
+            GLib.timeout_add(300, lambda: (da.queue_draw(), True)[1])
 
         win.get_style_context().add_provider(self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         win.connect("button-press-event", lambda w, e: win.destroy())
@@ -482,7 +482,7 @@ class TeaTimerApp(Gtk.Application):
 
     def _start_rainbow_timer(self):
         if self.rainbow_timer_id: GLib.source_remove(self.rainbow_timer_id)
-        self.rainbow_timer_id = GLib.timeout_add(1000, self._update_rainbow)
+        self.rainbow_timer_id = GLib.timeout_add(2000, self._update_rainbow)
 
     def _stop_rainbow_timer(self):
         if self.rainbow_timer_id:
