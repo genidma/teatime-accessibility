@@ -281,8 +281,11 @@ class TeaTimerApp(Gtk.Application):
         self._start_rainbow_timer()
 
     def _show_fullscreen_notification(self):
-        win = Gtk.Window(type=Gtk.WindowType.POPUP)
-        win.set_keep_above(True); win.fullscreen()
+        win = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
+        win.set_decorated(False)
+        win.set_keep_above(True)
+        win.set_skip_taskbar_hint(True)
+        win.set_skip_pager_hint(True)
         
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, valign=Gtk.Align.CENTER)
         win.add(box)
@@ -312,6 +315,8 @@ class TeaTimerApp(Gtk.Application):
         win.connect("button-press-event", lambda w, e: win.destroy())
         GLib.timeout_add_seconds(10, win.destroy)
         win.show_all()
+        win.fullscreen()
+        win.present()
 
     def _load_sprite_frames(self):
         anim = getattr(self, 'preferred_animation', 'test_animation')
