@@ -7,6 +7,7 @@
 - [Claude](https://claude.ai/) by Anthropic
 - [Chatgpt](https://openai.com/) by OpenAI
 - [genidma](https://github.com/genidma) on Github
+- [codex](https://openai.com/codex/) via #95,#108 and#109 to date
 
 ## notable contributors
 
@@ -18,6 +19,7 @@
 ### ide (integrated development environment)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
+- [antigravity](https://antigravity.google/) by google
 
 ### programming languages
 #### mostly
@@ -59,7 +61,7 @@
 
 ### open-source software (in random order)
 
-#### timer app
+#### this app! timer app/productivity/deep work
 - [Accessibility Tea-Timer - This app itself](https://github.com/genidma/teatime-accessibility)
 
 #### vm (virtual machines)
@@ -109,11 +111,12 @@
 - [Beat Plastic](https://soundcloud.com/beat-plastic/theres-something-about-us)
 - [ginla](https://www.youtube.com/@virtualginla/videos)
 - [vansire](https://www.youtube.com/@vansiretheband5497)
+- [flowtunes](https://www.flowtunes.app/)
 
 ## special thanks (in random order)
 
 - To all the creators of open-source software: your passion and dedication form the foundation of our digital world
-    - This project stands on the shoulders of giants â€” those who came before us and those actively shaping our future through their generous contributions
+    - This project stands on the shoulders of giants — those who came before us and those actively shaping our future through their generous contributions
     - May we work towards creating a world where all meaningful contributions are cherished, celebrated, and supported in a manner that is intentional. :pray:
 - AI assistants (or intelligences independent of a substrate) who have helped throughout the development process and continue investing. What a time to be alive!
 - Many neighbors who provided me with computer parts. Often for a steep discount. The computer that I am using right now included
