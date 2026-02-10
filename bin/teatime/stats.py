@@ -67,6 +67,16 @@ class StatisticsWindow(Gtk.Window):
             renderer = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(cat, renderer, text=i+1)
             column.set_resizable(True)
+            if cat.lower() == "breaks":
+                header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+                header_title = Gtk.Label(label="Breaks")
+                self.breaks_today_label = Gtk.Label(label="Today: 0m")
+                header_title.set_halign(Gtk.Align.CENTER)
+                self.breaks_today_label.set_halign(Gtk.Align.CENTER)
+                header_box.pack_start(header_title, False, False, 0)
+                header_box.pack_start(self.breaks_today_label, False, False, 0)
+                header_box.show_all()
+                column.set_widget(header_box)
             self.treeview.append_column(column)
         
         # We don't show comments in the treeview to save space
@@ -182,6 +192,8 @@ class StatisticsWindow(Gtk.Window):
         self.total_sessions_label.set_text("Total Sessions: 0")
         self.total_time_label.set_text("Total Time: 0 minutes")
         self.avg_duration_label.set_text("Average Duration: 0 minutes")
+        if hasattr(self, "breaks_today_label") and self.breaks_today_label:
+            self.breaks_today_label.set_text("Today: 0m")
 
     def _load_stats(self):
         self.store.clear()
@@ -189,6 +201,16 @@ class StatisticsWindow(Gtk.Window):
         if not logs:
             self._reset_summary_labels()
             return
+
+        def _parse_minutes(val):
+            if isinstance(val, str) and "+" in val:
+                try:
+                    return sum(int(x) for x in val.split("+") if x.isdigit())
+                except:
+                    return 0
+            if str(val).isdigit():
+                return int(val)
+            return 0
 
         total_duration = 0
         total_sessions = 0
@@ -203,12 +225,7 @@ class StatisticsWindow(Gtk.Window):
                 val = entry.get(cat, 0)
                 row.append(str(val))
                 # Calculate numeric sum for this entry
-                if isinstance(val, str) and "+" in val:
-                    try:
-                        day_sum += sum(int(x) for x in val.split("+") if x.isdigit())
-                    except: pass
-                elif str(val).isdigit():
-                    day_sum += int(val)
+                day_sum += _parse_minutes(val)
             
             row.append(entry.get("comments", ""))
             self.store.append(row)
@@ -220,4 +237,10 @@ class StatisticsWindow(Gtk.Window):
         if sorted_logs:
             self.avg_duration_label.set_text(f"Avg Time/Day: {total_duration/len(sorted_logs):.1f} min")
 
+        if hasattr(self, "breaks_today_label") and self.breaks_today_label:
+            today = datetime.now().strftime("%Y-%m-%d")
+            today_entry = next((e for e in logs if e.get("date") == today), None)
+            breaks_val = today_entry.get("breaks", 0) if today_entry else 0
+            breaks_total = _parse_minutes(breaks_val)
+            self.breaks_today_label.set_text(f"Today: {breaks_total}m")
 
