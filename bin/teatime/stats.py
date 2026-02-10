@@ -183,7 +183,33 @@ class StatisticsWindow(Gtk.Window):
                     header = ["Date"] + self.data_categories + ["Comments"]
                     writer.writerow(header)
                     for row in self.store:
-                        writer.writerow([row[i] for i in range(len(row))])
+                        row_data = []
+                        for i, val in enumerate(row):
+                            # Indices: 0 is Date, last is Comments. Everything in between is data.
+                            # len(row) = 1 (Date) + len(self.data_categories) + 1 (Comments)
+                            is_data_category = 1 <= i <= len(self.data_categories)
+                            
+                            new_val = val
+                            if is_data_category:
+                                should_prepend = False
+                                # Check if it's a digit > 1
+                                if isinstance(val, str) and val.isdigit():
+                                    try:
+                                        if int(val) > 1:
+                                            should_prepend = True
+                                    except ValueError: pass
+                                elif isinstance(val, int) and val > 1:
+                                     should_prepend = True
+                                
+                                # Check if it contains '+' (formula)
+                                if isinstance(val, str) and '+' in val:
+                                    should_prepend = True
+                                
+                                if should_prepend:
+                                    new_val = "=" + str(val)
+                            
+                            row_data.append(new_val)
+                        writer.writerow(row_data)
                 print(f"Exported stats to {filename}")
         finally:
             dialog.destroy()
