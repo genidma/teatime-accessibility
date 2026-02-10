@@ -51,6 +51,9 @@ class TeaTimerApp(Gtk.Application):
         self.rainbow_hue = 0
         self.focus_hue = 0
         self.sprite_frames = []
+        self._sprite_frames_cache = {}
+        self._sprite_scaled_cache = {}
+        self._last_sprite_anim = None
         self.current_sprite_frame = 0
         self.sprite_timer_id = None
         self.auto_start = auto_start
@@ -63,6 +66,8 @@ class TeaTimerApp(Gtk.Application):
         self.wall_clock_mode = False
         self.rainbow_hue = 0
         self.rainbow_timer_id = None
+        self._rainbow_deferred = False
+        self._last_css = None
         
         self._load_config()
         self._setup_actions()
@@ -99,6 +104,8 @@ class TeaTimerApp(Gtk.Application):
             self.window.set_default_size(400, 300)
             self.window.connect("destroy", self._on_window_destroy)
             self.window.connect("set-focus-child", self._on_focus_changed)
+            self.window.connect("focus-in-event", self._on_window_focus_in)
+            self.window.connect("focus-out-event", self._on_window_focus_out)
 
             header_bar = Gtk.HeaderBar(show_close_button=True, title=APP_NAME)
             self.window.set_titlebar(header_bar)
@@ -307,8 +314,12 @@ class TeaTimerApp(Gtk.Application):
         win.show_all()
 
     def _load_sprite_frames(self):
-        frames = []
         anim = getattr(self, 'preferred_animation', 'test_animation')
+        if anim in self._sprite_frames_cache:
+            self._last_sprite_anim = anim
+            return self._sprite_frames_cache[anim]
+
+        frames = []
         path = Path(__file__).resolve().parents[2] / "assets" / "sprites" / anim
         if not path.exists():
             path = Path(__file__).resolve().parents[2] / "assets" / "sprites" / "test_animation"
@@ -325,18 +336,28 @@ class TeaTimerApp(Gtk.Application):
                     print(f"Error loading frame {f}: {e}")
         else:
             print(f"DEBUG: Animation path NOT found: {path}")
+        self._sprite_frames_cache[anim] = frames
+        self._last_sprite_anim = anim
         return frames
     def _on_sprite_draw(self, widget, cr, frames):
         if not frames: return False
-        cur = (int(time.time() * 10)) % len(frames)
-        pix = frames[cur]
-        
         alloc = widget.get_allocation()
-        pw, ph = pix.get_width(), pix.get_height()
-        scale = min(alloc.width / pw, alloc.height / ph)
-        
-        sw, sh = int(pw * scale), int(ph * scale)
-        scaled = pix.scale_simple(sw, sh, GdkPixbuf.InterpType.BILINEAR)
+        anim = self._last_sprite_anim or "unknown"
+        size_key = (alloc.width, alloc.height)
+        cache = self._sprite_scaled_cache.setdefault(anim, {})
+
+        scaled_frames = cache.get(size_key)
+        if scaled_frames is None:
+            scaled_frames = []
+            for pix in frames:
+                pw, ph = pix.get_width(), pix.get_height()
+                scale = min(alloc.width / pw, alloc.height / ph)
+                sw, sh = max(1, int(pw * scale)), max(1, int(ph * scale))
+                scaled_frames.append(pix.scale_simple(sw, sh, GdkPixbuf.InterpType.BILINEAR))
+            cache[size_key] = scaled_frames
+
+        cur = (int(time.time() * 10)) % len(scaled_frames)
+        scaled = scaled_frames[cur]
         
         Gdk.cairo_set_source_pixbuf(cr, scaled, (alloc.width - sw) // 2, (alloc.height - sh) // 2)
         cr.paint(); return False
@@ -479,7 +500,12 @@ class TeaTimerApp(Gtk.Application):
             combined_css = skin_css + self.font_css  # Combine both CSS styles
         # If not in lava mode, just use font CSS only
         
+        if combined_css == self._last_css:
+            if self.nano_mode:
+                GLib.idle_add(self._resize_nano_window_to_label)
+            return
         self.css_provider.load_from_data(combined_css.encode())
+        self._last_css = combined_css
         if self.nano_mode:
             GLib.idle_add(self._resize_nano_window_to_label)
 
@@ -490,6 +516,9 @@ class TeaTimerApp(Gtk.Application):
 
     def _start_rainbow_timer(self):
         if self.rainbow_timer_id: GLib.source_remove(self.rainbow_timer_id)
+        if self.window and not self.window.is_active():
+            self._rainbow_deferred = True
+            return
         self.rainbow_timer_id = GLib.timeout_add(2000, self._update_rainbow)
 
     def _stop_rainbow_timer(self):
@@ -498,6 +527,10 @@ class TeaTimerApp(Gtk.Application):
             self.rainbow_timer_id = None
 
     def _update_rainbow(self):
+        if self.window and not self.window.is_active():
+            self._stop_rainbow_timer()
+            self._rainbow_deferred = True
+            return False
         self.rainbow_hue = (self.rainbow_hue + 1) % 360
         self._apply_skin()
         return True
@@ -598,6 +631,17 @@ class TeaTimerApp(Gtk.Application):
 
     def _on_focus_changed(self, *args):
         pass
+
+    def _on_window_focus_in(self, *args):
+        if self._rainbow_deferred and not self.rainbow_timer_id:
+            self._rainbow_deferred = False
+            self._start_rainbow_timer()
+        return False
+
+    def _on_window_focus_out(self, *args):
+        self._stop_rainbow_timer()
+        self._rainbow_deferred = True
+        return False
 
 
 def main(argv=None):
