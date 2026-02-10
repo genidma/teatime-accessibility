@@ -268,9 +268,13 @@ class TeaTimerApp(Gtk.Application):
             self.duration_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 120, 1)
             self.duration_scale.set_value(self.last_duration)
             self.duration_scale.set_digits(0)
-            self.duration_scale.set_hexpand(True)
+            self.duration_scale.set_hexpand(False)
             self.duration_scale.set_draw_value(False)
-            self.control_grid.attach(self.duration_scale, 0, 1, 2, 1)
+            self.duration_scale.set_halign(Gtk.Align.END)
+            self.control_grid.attach(self.duration_scale, 1, 1, 1, 1)
+
+            def on_spin_size_allocate(widget, alloc):
+                self.duration_scale.set_size_request(alloc.width, -1)
 
             def on_spin_changed(spin):
                 val = spin.get_value()
@@ -284,6 +288,7 @@ class TeaTimerApp(Gtk.Application):
 
             self.duration_spin.connect("value-changed", on_spin_changed)
             self.duration_scale.connect("value-changed", on_scale_changed)
+            self.duration_spin.connect("size-allocate", on_spin_size_allocate)
 
             # Row 2: CATEGORY GRID (REDESIGN)
             cat_frame = Gtk.Frame(label="Categories")
