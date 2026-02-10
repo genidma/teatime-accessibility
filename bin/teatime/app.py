@@ -100,6 +100,65 @@ class FlipLabel(Gtk.Box):
     def get_label_widget(self):
         return self._label_a if self._current == "a" else self._label_b
 
+class TargetCheckButton(Gtk.CheckButton):
+    def __init__(self, label, pulse_ms=500):
+        super().__init__(label=label)
+        self._pulse_ms = pulse_ms
+        self._pulse_progress = 0.0
+        self._pulse_id = None
+        self.connect("toggled", self._on_toggled)
+
+    def _on_toggled(self, btn):
+        if btn.get_active():
+            self._start_pulse()
+
+    def _start_pulse(self):
+        if self._pulse_id:
+            GLib.source_remove(self._pulse_id)
+            self._pulse_id = None
+        self._pulse_progress = 0.0
+        steps = max(1, int(self._pulse_ms / 16))
+        step = 1.0 / steps
+
+        def tick():
+            self._pulse_progress += step
+            if self._pulse_progress >= 1.0:
+                self._pulse_progress = 0.0
+                self.queue_draw()
+                self._pulse_id = None
+                return False
+            self.queue_draw()
+            return True
+
+        self._pulse_id = GLib.timeout_add(16, tick)
+
+    def do_draw(self, cr):
+        res = Gtk.CheckButton.do_draw(self, cr)
+        if self._pulse_progress <= 0.0:
+            return res
+
+        alloc = self.get_allocation()
+        w, h = alloc.width, alloc.height
+        if w <= 0 or h <= 0:
+            return res
+
+        r = min(w, h) * 0.45
+        cx, cy = w / 2, h / 2
+        t = self._pulse_progress
+        alpha = max(0.0, 0.9 - t)
+
+        cr.set_source_rgba(0.2, 1.0, 0.2, alpha)
+        cr.set_line_width(2.0)
+        cr.arc(cx, cy, r * (0.85 + 0.15 * t), 0, 2 * math.pi)
+        cr.stroke()
+        cr.arc(cx, cy, r * 0.45, 0, 2 * math.pi)
+        cr.stroke()
+        cr.move_to(cx - r, cy); cr.line_to(cx + r, cy)
+        cr.move_to(cx, cy - r); cr.line_to(cx, cy + r)
+        cr.stroke()
+        return res
+
+
 class TeaTimerApp(Gtk.Application):
     def __init__(self, duration=5, auto_start=False):
         super().__init__(application_id="org.genidma.KCResonance",
@@ -138,66 +197,6 @@ class TeaTimerApp(Gtk.Application):
         
         self._load_config()
         self._setup_actions()
-
-    class _TargetPulse(Gtk.DrawingArea):
-        def __init__(self):
-            super().__init__()
-            self._progress = 0.0
-            self._timer_id = None
-            self.set_sensitive(False)
-            self.set_halign(Gtk.Align.FILL)
-            self.set_valign(Gtk.Align.FILL)
-
-        def start(self, duration_ms=500):
-            if self._timer_id:
-                GLib.source_remove(self._timer_id)
-                self._timer_id = None
-            self._progress = 0.0
-            steps = max(1, int(duration_ms / 16))
-            step = 1.0 / steps
-            self.set_visible(True)
-
-            def tick():
-                self._progress += step
-                if self._progress >= 1.0:
-                    self._progress = 1.0
-                    self.queue_draw()
-                    self.set_visible(False)
-                    self._timer_id = None
-                    return False
-                self.queue_draw()
-                return True
-
-            self._timer_id = GLib.timeout_add(16, tick)
-
-        def do_draw(self, cr):
-            alloc = self.get_allocation()
-            w, h = alloc.width, alloc.height
-            if w <= 0 or h <= 0:
-                return False
-
-            # Clamp to avoid overlapping nearby rows.
-            r = min(w, h) * 0.45
-            cx, cy = w / 2, h / 2
-            t = self._progress
-            alpha = max(0.0, 0.9 - t)
-
-            cr.set_source_rgba(0.2, 1.0, 0.2, alpha)
-            cr.set_line_width(2.0)
-
-            # Outer ring expanding slightly
-            cr.arc(cx, cy, r * (0.85 + 0.15 * t), 0, 2 * math.pi)
-            cr.stroke()
-
-            # Inner ring
-            cr.arc(cx, cy, r * 0.45, 0, 2 * math.pi)
-            cr.stroke()
-
-            # Crosshair
-            cr.move_to(cx - r, cy); cr.line_to(cx + r, cy)
-            cr.move_to(cx, cy - r); cr.line_to(cx, cy + r)
-            cr.stroke()
-            return False
             
     def _setup_actions(self):
         actions = [
@@ -276,26 +275,8 @@ class TeaTimerApp(Gtk.Application):
             for i, cat in enumerate(KC_CATEGORIES):
                 if cat.strip() == "":
                     continue
-                cb = Gtk.CheckButton(label=cat)
-                pulse = self._TargetPulse()
-                pulse.set_visible(False)
-
-                overlay = Gtk.Overlay()
-                overlay.add(cb)
-                overlay.add_overlay(pulse)
-                overlay.set_halign(Gtk.Align.FILL)
-                overlay.set_valign(Gtk.Align.FILL)
-                try:
-                    overlay.set_overlay_pass_through(pulse, True)
-                except Exception:
-                    pass
-
-                def on_cat_toggled(btn, pulse_widget=pulse):
-                    if btn.get_active():
-                        pulse_widget.start(500)
-
-                cb.connect("toggled", on_cat_toggled)
-                cat_grid.attach(overlay, i % 4, i // 4, 1, 1)
+                cb = TargetCheckButton(label=cat, pulse_ms=500)
+                cat_grid.attach(cb, i % 4, i // 4, 1, 1)
                 self.category_checkboxes[cat] = cb
             cat_frame.add(cat_grid)
             self.category_ui = cat_frame
