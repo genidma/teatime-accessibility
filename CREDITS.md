@@ -11,7 +11,7 @@
 
 ## notable contributors
 
-- [@vedag812 - Vedant Agarwal](https://github.com/Vedag812) for helping implement change via #107 -> pull request #113 
+- [@vedag812 - Vedant Agarwal](https://github.com/Vedag812) for helping implement change via [#107](https://github.com/genidma/teatime-accessibility/issues/107) -> pull request [#113](https://github.com/genidma/teatime-accessibility/pull/113/) 
     - to quote Vedant: 'The change updates the CSV export so spreadsheet tools auto-calculate values by prefixing an is equal to sign =' Thank you Vedant!
 - [@shanaya-gupta](https://github.com/shanaya-gupta) Main contributor for the original photosensitive version of the code. :low_brightness:
     - The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases) Thank you @shanaya-gupta !
