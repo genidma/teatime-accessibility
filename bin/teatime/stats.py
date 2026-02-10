@@ -303,9 +303,11 @@ class StatisticsWindow(Gtk.Window):
             return False
 
         popup.connect("button-press-event", close_popup)
-        popup.connect("focus-out-event", close_popup)
+        popup.connect("key-press-event", close_popup)
 
         popup.show_all()
+        popup.grab_add()
+        popup.grab_focus()
         popup.present()
         self._flow_popup = popup
 
@@ -324,13 +326,14 @@ class StatisticsWindow(Gtk.Window):
             return
 
         def _parse_minutes(val):
-            if isinstance(val, str) and "+" in val:
-                try:
-                    return sum(int(x) for x in val.split("+") if x.isdigit())
-                except:
-                    return 0
-            if str(val).isdigit():
-                return int(val)
+            try:
+                if isinstance(val, str):
+                    nums = [int(x) for x in __import__("re").findall(r"\d+", val)]
+                    return sum(nums) if nums else 0
+                if str(val).isdigit():
+                    return int(val)
+            except:
+                pass
             return 0
 
         total_duration = 0
@@ -361,6 +364,10 @@ class StatisticsWindow(Gtk.Window):
         if hasattr(self, "breaks_today_label") and self.breaks_today_label:
             today = datetime.now().strftime("%Y-%m-%d")
             today_entry = next((e for e in logs if e.get("date") == today), None)
-            breaks_val = today_entry.get("breaks", 0) if today_entry else 0
-            breaks_total = _parse_minutes(breaks_val)
+            breaks_total = 0
+            if today_entry:
+                for cat in self.data_categories:
+                    if cat.lower() == "breaks":
+                        breaks_total = _parse_minutes(today_entry.get(cat, 0))
+                        break
             self.breaks_today_label.set_text(f"Today: {breaks_total}m")
