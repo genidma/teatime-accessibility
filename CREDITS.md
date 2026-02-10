@@ -11,8 +11,11 @@
 
 ## notable contributors
 
+- [@vedag812 - Vedant Agarwal](https://github.com/Vedag812) for helping implement change via #107 -> pull request #113 
+    - to quote Vedant: 'The change updates the CSV export so spreadsheet tools auto-calculate values by prefixing an is equal to sign =' Thank you Vedant!
 - [@shanaya-gupta](https://github.com/shanaya-gupta) Main contributor for the original photosensitive version of the code. :low_brightness:
-    - The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases)
+    - The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases) Thank you @shanaya-gupta !
+
 
 ## tool use
 
@@ -116,7 +119,7 @@
 ## special thanks (in random order)
 
 - To all the creators of open-source software: your passion and dedication form the foundation of our digital world
-    - This project stands on the shoulders of giants — those who came before us and those actively shaping our future through their generous contributions
+    - This project stands on the shoulders of giants ï¿½ those who came before us and those actively shaping our future through their generous contributions
     - May we work towards creating a world where all meaningful contributions are cherished, celebrated, and supported in a manner that is intentional. :pray:
 - AI assistants (or intelligences independent of a substrate) who have helped throughout the development process and continue investing. What a time to be alive!
 - Many neighbors who provided me with computer parts. Often for a steep discount. The computer that I am using right now included
