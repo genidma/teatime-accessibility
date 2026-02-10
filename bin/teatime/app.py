@@ -7,7 +7,7 @@ import locale
 import subprocess
 import os
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 import colorsys
 import csv
 import threading
@@ -25,6 +25,7 @@ from .core import (
     APP_VERSION,
     CONFIG_FILE,
     STATS_LOG_FILE,
+    EVENT_LOG_FILE,
     DEFAULT_FONT_SCALE,
     FONT_SCALE_INCREMENT,
     MIN_FONT_SCALE,
@@ -546,6 +547,22 @@ class TeaTimerApp(Gtk.Application):
             
         with open(STATS_LOG_FILE, 'w') as f:
             json.dump(logs, f, indent=2)
+
+        # Append event log entry for cadence timeline
+        try:
+            end_ts = datetime.now()
+            start_ts = end_ts - timedelta(minutes=self.current_timer_duration)
+            event = {
+                "ts_start": start_ts.isoformat(timespec="seconds"),
+                "ts_end": end_ts.isoformat(timespec="seconds"),
+                "duration_min": int(self.current_timer_duration),
+                "categories": list(selected_data.keys()),
+            }
+            EVENT_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(EVENT_LOG_FILE, "a") as f:
+                f.write(json.dumps(event) + "\n")
+        except Exception as e:
+            print(f"Failed to write event log: {e}")
 
     def _play_notification_sound(self):
         if self.sound_enabled:

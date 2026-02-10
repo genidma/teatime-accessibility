@@ -1,13 +1,14 @@
 from datetime import datetime
 import csv
 import json
+from pathlib import Path
 
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 
-from .core import STATS_LOG_FILE, StatsManager, KC_CATEGORIES
+from .core import STATS_LOG_FILE, EVENT_LOG_FILE, StatsManager, KC_CATEGORIES
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
@@ -68,12 +69,17 @@ class StatisticsWindow(Gtk.Window):
             column = Gtk.TreeViewColumn(cat, renderer, text=i+1)
             column.set_resizable(True)
             if cat.lower() == "breaks":
-                header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+                header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
                 header_title = Gtk.Label(label="Breaks")
+                self.flow_button = Gtk.Button(label="Flow")
+                self.flow_button.set_tooltip_text("Show flow timeline")
+                self.flow_button.connect("clicked", self._on_flow_clicked)
                 self.breaks_today_label = Gtk.Label(label="Today: 0m")
                 header_title.set_halign(Gtk.Align.CENTER)
+                self.flow_button.set_halign(Gtk.Align.CENTER)
                 self.breaks_today_label.set_halign(Gtk.Align.CENTER)
                 header_box.pack_start(header_title, False, False, 0)
+                header_box.pack_start(self.flow_button, False, False, 0)
                 header_box.pack_start(self.breaks_today_label, False, False, 0)
                 header_box.show_all()
                 column.set_widget(header_box)
@@ -188,6 +194,119 @@ class StatisticsWindow(Gtk.Window):
             self._reset_summary_labels()
         dialog.destroy()
 
+    def _load_events(self):
+        if not EVENT_LOG_FILE.exists():
+            return []
+        events = []
+        try:
+            with open(EVENT_LOG_FILE, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        events.append(json.loads(line))
+                    except:
+                        pass
+        except:
+            return []
+        return events
+
+    def _on_flow_clicked(self, button):
+        if hasattr(self, "_flow_popup") and self._flow_popup:
+            self._flow_popup.destroy()
+            self._flow_popup = None
+
+        popup = Gtk.Window(type=Gtk.WindowType.POPUP)
+        popup.set_transient_for(self)
+        popup.set_decorated(False)
+        popup.set_skip_taskbar_hint(True)
+        popup.set_skip_pager_hint(True)
+        popup.set_border_width(8)
+
+        frame = Gtk.Frame(label="Flow Timeline (Today)")
+        da = Gtk.DrawingArea()
+        da.set_size_request(520, 140)
+        frame.add(da)
+        popup.add(frame)
+
+        events = self._load_events()
+        today = datetime.now().strftime("%Y-%m-%d")
+        todays = []
+        for e in events:
+            ts_end = e.get("ts_end")
+            if ts_end and ts_end.startswith(today):
+                todays.append(e)
+
+        def draw_timeline(widget, cr):
+            alloc = widget.get_allocation()
+            w, h = alloc.width, alloc.height
+            if w <= 0 or h <= 0:
+                return False
+
+            pad = 20
+            y = h / 2
+            cr.set_source_rgba(0.6, 0.6, 0.6, 0.5)
+            cr.set_line_width(2)
+            cr.move_to(pad, y)
+            cr.line_to(w - pad, y)
+            cr.stroke()
+
+            if not todays:
+                return False
+
+            def parse_ts(ts):
+                try:
+                    return datetime.fromisoformat(ts)
+                except:
+                    return None
+
+            day_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            day_end = day_start.replace(hour=23, minute=59, second=59)
+            span = (day_end - day_start).total_seconds()
+
+            for e in todays:
+                start = parse_ts(e.get("ts_start"))
+                end = parse_ts(e.get("ts_end"))
+                if not start or not end:
+                    continue
+                sx = pad + ((start - day_start).total_seconds() / span) * (w - pad * 2)
+                ex = pad + ((end - day_start).total_seconds() / span) * (w - pad * 2)
+                cats = e.get("categories", [])
+                is_break = any(str(c).lower() == "breaks" for c in cats)
+
+                cr.set_source_rgba(0.2, 0.7, 1.0, 0.9)
+                cr.set_line_width(6)
+                cr.move_to(sx, y)
+                cr.line_to(ex, y)
+                cr.stroke()
+
+                if is_break:
+                    cr.set_source_rgba(1.0, 0.6, 0.2, 0.95)
+                    cr.arc(ex, y, 6, 0, 2 * 3.14159)
+                    cr.fill()
+                    cr.set_source_rgba(1.0, 1.0, 1.0, 1.0)
+                    cr.select_font_face("Sans", 0, 0)
+                    cr.set_font_size(12)
+                    cr.move_to(ex + 8, y - 6)
+                    cr.show_text("☕")
+
+            return False
+
+        da.connect("draw", draw_timeline)
+
+        def close_popup(*args):
+            popup.destroy()
+            self._flow_popup = None
+            return False
+
+        popup.connect("button-press-event", close_popup)
+        popup.connect("focus-out-event", close_popup)
+
+        popup.show_all()
+        popup.present()
+        self._flow_popup = popup
+
     def _reset_summary_labels(self):
         self.total_sessions_label.set_text("Total Sessions: 0")
         self.total_time_label.set_text("Total Time: 0 minutes")
@@ -243,4 +362,3 @@ class StatisticsWindow(Gtk.Window):
             breaks_val = today_entry.get("breaks", 0) if today_entry else 0
             breaks_total = _parse_minutes(breaks_val)
             self.breaks_today_label.set_text(f"Today: {breaks_total}m")
-

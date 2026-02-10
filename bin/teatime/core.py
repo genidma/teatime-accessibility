@@ -8,6 +8,7 @@ APP_VERSION = "1.0.2"
 # Configuration file for font size persistence
 CONFIG_FILE = Path.home() / ".config" / "teatime_config.json"
 STATS_LOG_FILE = Path.home() / ".local/share/teatime_stats.json"
+EVENT_LOG_FILE = Path.home() / ".local/share/teatime_events.jsonl"
 DEFAULT_FONT_SCALE = 1.5
 FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
@@ -59,5 +60,4 @@ class StatsManager:
         except (json.JSONDecodeError, IOError) as e:
             print(f"Error loading stats file: {e}")
             return []
-
 
