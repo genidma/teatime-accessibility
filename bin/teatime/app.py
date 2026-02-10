@@ -283,6 +283,12 @@ class TeaTimerApp(Gtk.Application):
                 overlay = Gtk.Overlay()
                 overlay.add(cb)
                 overlay.add_overlay(pulse)
+                overlay.set_halign(Gtk.Align.FILL)
+                overlay.set_valign(Gtk.Align.FILL)
+                try:
+                    overlay.set_overlay_pass_through(pulse, True)
+                except Exception:
+                    pass
 
                 def on_cat_toggled(btn, pulse_widget=pulse):
                     if btn.get_active():
