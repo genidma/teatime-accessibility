@@ -116,7 +116,7 @@
 ## special thanks (in random order)
 
 - To all the creators of open-source software: your passion and dedication form the foundation of our digital world
-    - This project stands on the shoulders of giants â€” those who came before us and those actively shaping our future through their generous contributions
+    - This project stands on the shoulders of giants — those who came before us and those actively shaping our future through their generous contributions
     - May we work towards creating a world where all meaningful contributions are cherished, celebrated, and supported in a manner that is intentional. :pray:
 - AI assistants (or intelligences independent of a substrate) who have helped throughout the development process and continue investing. What a time to be alive!
 - Many neighbors who provided me with computer parts. Often for a steep discount. The computer that I am using right now included
