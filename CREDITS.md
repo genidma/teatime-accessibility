@@ -6,7 +6,7 @@
 - [Gemini](https://gemini.google.com/) by Google
 - [Claude](https://claude.ai/) by Anthropic
 - [Chatgpt](https://openai.com/) by OpenAI
-- [Codex](https://openai.com/codex/) 
+- [Codex](https://openai.com/codex/) by OpenAI
 - [genidma](https://github.com/genidma) on Github :crocodile:
 
 
