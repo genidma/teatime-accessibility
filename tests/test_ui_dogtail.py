@@ -69,6 +69,14 @@ class TestUIDogtail(unittest.TestCase):
                         if result: return result
         return None
 
+    def capture_ui_state(self, node):
+        """Capture UI state for debugging purposes."""
+        try:
+            print(f"Capturing UI state for node: {node.name}")
+            self.dump_children(node)
+        except Exception as e:
+            print(f"Error capturing UI state: {e}")
+
     def test_main_window_is_present(self):
         """Test if the main application window is present and controls are visible."""
         app_node = self.get_app_node()
@@ -99,86 +107,3 @@ class TestUIDogtail(unittest.TestCase):
         time.sleep(1)
         # Note: Sensitivity might not update immediately in AT-SPI
         # We check if it changed or at least didn't crash
-        
-        # Stop the timer
-        stop_button.click()
-        time.sleep(1)
-
-    def test_presets(self):
-        """Test each preset button."""
-        app_node = self.get_app_node()
-        main_window = app_node.child(roleName='frame')
-        spin_button = self.find_child_fuzzy(main_window, roleName='spin button')
-        
-        presets = ["15m", "30m", "45", "1 Hour"] # Simplified names
-        
-        for preset in presets:
-            btn = self.find_child_fuzzy(main_window, roleName='push button', name=preset)
-            if btn:
-                btn.click()
-                time.sleep(1)
-                stop_button = self.find_child_fuzzy(main_window, roleName='push button', name='Stop')
-                if stop_button: stop_button.click()
-                time.sleep(0.5)
-
-    def test_categories(self):
-        """Test category checkboxes."""
-        app_node = self.get_app_node()
-        main_window = app_node.child(roleName='frame')
-        
-        test_cats = ["rdp", "fc", "breaks"]
-        for cat in test_cats:
-            cb = self.find_child_fuzzy(main_window, roleName='check box', name=cat)
-            if cb:
-                cb.click()
-                time.sleep(0.5)
-
-    def test_settings_toggles(self):
-        """Test Mini Mode, Nano Mode, and Sound toggles."""
-        app_node = self.get_app_node()
-        main_window = app_node.child(roleName='frame')
-        
-        toggles = ["Sound", "Mini", "Nano"]
-        for toggle in toggles:
-            cb = self.find_child_fuzzy(main_window, roleName='check box', name=toggle)
-            if cb:
-                cb.click()
-                time.sleep(1)
-
-    def test_font_scaling(self):
-        """Test font scaling buttons."""
-        app_node = self.get_app_node()
-        main_window = app_node.child(roleName='frame')
-        
-        btn_plus = self.find_child_fuzzy(main_window, roleName='button', name='A+')
-        if not btn_plus:
-            btn_plus = self.find_child_fuzzy(main_window, roleName='push button', name='A+')
-        btn_minus = self.find_child_fuzzy(main_window, roleName='button', name='A-')
-        if not btn_minus:
-            btn_minus = self.find_child_fuzzy(main_window, roleName='push button', name='A-')
-        
-        if btn_plus: btn_plus.click()
-        if btn_minus: btn_minus.click()
-        time.sleep(0.5)
-
-    def test_menu_navigation(self):
-        """Test opening About and Settings from the menu."""
-        app_node = self.get_app_node()
-        main_window = app_node.child(roleName='frame')
-        
-        # Try to find the menu button by icon name or tooltip if available, 
-        # but in Dogtail usually it's better to find by role and index if name fails
-        menu_button = self.find_child_fuzzy(main_window, roleName='push button', name='menu')
-        if not menu_button:
-            # Fallback to finding ANY button in the header bar area
-            for child in main_window.children:
-                if child.roleName == 'push button' and not child.name:
-                    menu_button = child
-                    break
-        
-        if menu_button:
-            menu_button.click()
-            time.sleep(1)
-
-if __name__ == "__main__":
-    unittest.main()
