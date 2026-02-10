@@ -234,7 +234,7 @@ class TeaTimerApp(Gtk.Application):
         self.current_timer_duration = duration
         self._update_label()
         
-        # Update every second instead of every 5 seconds for smoother UI
+ [done]        # Update every second instead of every 5 seconds for smoother UI
         # and use a more efficient interval to reduce CPU usage
         self.timer_id = GLib.timeout_add_seconds(1, self.update_timer)
         self.start_button.set_sensitive(False)
@@ -449,18 +449,11 @@ class TeaTimerApp(Gtk.Application):
         time_scale = scale * 2
         if self.nano_mode:
             time_scale *= 0.8
-        css = f".time-display {{ font-size: {time_scale}%; }} label, button {{ font-size: {scale}%; }}"
-        self.css_provider.load_from_data(css.encode())
-        if self.nano_mode:
-            GLib.idle_add(self._resize_nano_window_to_label)
-
-    def _apply_skin(self):
-        if self.nano_mode: 
-            # Remove high-priority lava provider if exists when in nano mode
-            return 
-
-        skin = self.preferred_skin
-        if skin == 'lava':
+        self.font_css = f".time-display {{ font-size: {time_scale}%; }} label, button {{ font-size: {scale}%; }}"
+        
+        # Combine font CSS with skin CSS if applicable
+        combined_css = self.font_css
+        if not self.nano_mode and self.preferred_skin == 'lava':  # Only add skin CSS if in lava mode
             h1 = self.rainbow_hue
             h2 = (self.rainbow_hue + 120) % 360
             h3 = (self.rainbow_hue + 240) % 360
@@ -471,7 +464,7 @@ class TeaTimerApp(Gtk.Application):
             c2 = f"rgb({int(r2*255)}, {int(g2*255)}, {int(b2*255)})"
             c3 = f"rgb({int(r3*255)}, {int(g3*255)}, {int(b3*255)})"
             
-            css = f"""
+            skin_css = f"""
             window {{
                 background: linear-gradient(45deg, {c1}, {c2}, {c3});
                 background-size: 300% 300%;
@@ -483,14 +476,17 @@ class TeaTimerApp(Gtk.Application):
                 100% {{ background-position: 0% 50%; }}
             }}
             """
-            # Reuse the existing css_provider instead of creating a new one each time
-            self.css_provider.load_from_data(css.encode())
-            self.window.get_style_context().add_provider(self.css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
-        else:
-            # Default or reset - remove the lava skin provider
-            self.window.get_style_context().remove_class("lava-skin") # Just in case
-            # Clear the custom provider by loading an empty CSS
-            self.css_provider.load_from_data(b"")
+            combined_css = skin_css + self.font_css  # Combine both CSS styles
+        # If not in lava mode, just use font CSS only
+        
+        self.css_provider.load_from_data(combined_css.encode())
+        if self.nano_mode:
+            GLib.idle_add(self._resize_nano_window_to_label)
+
+    def _apply_skin(self):
+        # Just trigger a re-render which will pick up the correct CSS
+        # The actual CSS is now managed in _apply_font_size
+        self._apply_font_size()
 
     def _start_rainbow_timer(self):
         if self.rainbow_timer_id: GLib.source_remove(self.rainbow_timer_id)
