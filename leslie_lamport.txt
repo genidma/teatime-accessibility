@@ -1,0 +1,1 @@
+Yes, the person I mentioned earlier was Leslie Lamport. He's a computer scientist known for his work on distributed systems, particularly for creating the concept of logical clocks (Lamport timestamps) and developing the Paxos algorithm for achieving consensus in distributed systems. He won the Turing Award in 2013 for his contributions to the field.
