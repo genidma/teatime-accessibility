@@ -21,17 +21,18 @@ VENV_DIR="teatime-venv"
 # Check if virtual environment already exists
 if [ -d "$VENV_DIR" ]; then
     echo "Virtual environment already exists: $VENV_DIR"
-    # Ensure the venv is isolated (no system-site-packages leakage)
-    if [ -f "$VENV_DIR/pyvenv.cfg" ] && grep -q "include-system-site-packages = true" "$VENV_DIR/pyvenv.cfg"; then
-        echo "Existing venv allows system site-packages; recreating for isolation..."
+    # For PyGObject to work reliably, the venv needs access to system site packages.
+    # If the existing venv is isolated, we should recreate it.
+    if [ -f "$VENV_DIR/pyvenv.cfg" ] && grep -q "include-system-site-packages = false" "$VENV_DIR/pyvenv.cfg"; then
+        echo "Existing venv is isolated. Recreating with system site-packages access..."
         rm -rf "$VENV_DIR"
     else
-        echo "Skipping virtual environment creation..."
+        echo "Skipping virtual environment creation as it seems correctly configured."
     fi
 fi
 
 if [ ! -d "$VENV_DIR" ]; then
-    echo "Creating virtual environment..."
+    echo "Creating virtual environment with access to system site-packages..."
     
     # Check if Python 3 is available
     if ! command -v python3 &> /dev/null; then
@@ -39,9 +40,9 @@ if [ ! -d "$VENV_DIR" ]; then
         exit 1
     fi
     
-    # Create virtual environment (isolated)
+    # Create virtual environment with system-site-packages for PyGObject
     if python3 -m venv --help &> /dev/null; then
-        python3 -m venv "$VENV_DIR"
+        python3 -m venv --system-site-packages "$VENV_DIR"
         echo "Virtual environment created successfully"
     else
         echo "Error: venv module is not available"
@@ -58,53 +59,42 @@ source "$VENV_DIR/bin/activate"
 echo "Upgrading pip..."
 pip install --upgrade pip
 
-# Install system dependencies message
+# Install system dependencies for PyGObject
 echo ""
-echo "Before installing Python packages, you may need to install system dependencies."
-echo "Run the following command if you encounter installation errors:"
-echo "  sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0"
+echo "This application requires GTK bindings for Python (PyGObject)."
+echo "The recommended way to install this is through your system's package manager."
+echo "The following command will install the necessary packages:"
+echo "  sudo apt update && sudo apt install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0"
 echo ""
 
 # Ask user if they want to install system dependencies
-read -p "Do you want to install system dependencies now? (y/N): " -n 1 -r
+read -p "Do you want to run this command now? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing system dependencies..."
-    sudo apt install python3-dev libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-venv gir1.2-gtk-3.0
+    echo "Installing system dependencies for PyGObject..."
+    sudo apt update && sudo apt install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0
 fi
 
-# Try to install required packages
+# Install other Python packages from requirements.txt
 if [ -f "requirements.txt" ]; then
-    echo "Installing required packages from requirements.txt..."
-    if ! pip install -r requirements.txt; then
-        echo "Failed to install packages from requirements.txt"
-        echo "Trying alternative installation method..."
-        
-        # Install system dependencies and retry in the isolated venv
-        echo "Installing PyGObject system dependencies..."
-        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
-        echo "Retrying package install..."
-        pip install -r requirements.txt || true
-    fi
+    echo "Installing required Python packages from requirements.txt..."
+    pip install -r requirements.txt
 else
-    echo "No requirements.txt found, installing PyGObject directly..."
-    if ! pip install PyGObject; then
-        echo "Failed to install PyGObject"
-        echo "Installing system dependencies..."
-        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
-        echo "Retrying PyGObject install..."
-        pip install PyGObject || true
-    fi
+    echo "Warning: requirements.txt not found. Skipping pip installation."
 fi
 
-# Check if required packages are installed
-echo "Verifying installation..."
-if python3 -c "import gi; print('PyGObject is installed')" &> /dev/null; then
-    echo "PyGObject installation verified"
+# Check if PyGObject is correctly installed and accessible
+echo "Verifying PyGObject installation..."
+if python3 -c "import gi; gi.require_version('Gtk', '3.0'); from gi.repository import Gtk; print('Success')" &> /dev/null; then
+    echo "PyGObject installation verified successfully."
 else
-    echo "Warning: PyGObject verification failed"
-    echo "You might need to install system dependencies:"
+    echo "---"
+    echo "Warning: PyGObject verification failed."
+    echo "The application may not run correctly."
+    echo "Please ensure the following packages are installed on your system:"
     echo "  sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0"
+    echo "After installation, please re-run this script (./install.sh)."
+    echo "---"
 fi
 
 # Create icons directory if it doesn't exist
