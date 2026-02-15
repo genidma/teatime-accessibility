@@ -10,6 +10,19 @@ from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 
 from .core import STATS_LOG_FILE, EVENT_LOG_FILE, StatsManager, KC_CATEGORIES
 
+def _parse_iso_ts(ts):
+    try:
+        return datetime.fromisoformat(ts)
+    except:
+        return None
+
+def _clip_interval_to_day(start, end, day_start, day_end):
+    if not start or not end:
+        return None
+    if end < day_start or start > day_end:
+        return None
+    return max(start, day_start), min(end, day_end)
+
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
         super().__init__(title="Timer Statistics", application=application)
@@ -259,12 +272,15 @@ class StatisticsWindow(Gtk.Window):
         popup.add(frame)
 
         events = self._load_events()
-        today = datetime.now().strftime("%Y-%m-%d")
+        day_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        day_end = day_start.replace(hour=23, minute=59, second=59)
         todays = []
         for e in events:
-            ts_end = e.get("ts_end")
-            if ts_end and ts_end.startswith(today):
-                todays.append(e)
+            start = _parse_iso_ts(e.get("ts_start"))
+            end = _parse_iso_ts(e.get("ts_end"))
+            clipped = _clip_interval_to_day(start, end, day_start, day_end)
+            if clipped:
+                todays.append((e, clipped[0], clipped[1]))
 
         def draw_timeline(widget, cr):
             alloc = widget.get_allocation()
@@ -283,23 +299,13 @@ class StatisticsWindow(Gtk.Window):
             if not todays:
                 return False
 
-            def parse_ts(ts):
-                try:
-                    return datetime.fromisoformat(ts)
-                except:
-                    return None
-
-            day_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            day_end = day_start.replace(hour=23, minute=59, second=59)
             span = (day_end - day_start).total_seconds()
 
-            for e in todays:
-                start = parse_ts(e.get("ts_start"))
-                end = parse_ts(e.get("ts_end"))
-                if not start or not end:
-                    continue
+            for e, start, end in todays:
                 sx = pad + ((start - day_start).total_seconds() / span) * (w - pad * 2)
                 ex = pad + ((end - day_start).total_seconds() / span) * (w - pad * 2)
+                sx = max(pad, min(w - pad, sx))
+                ex = max(pad, min(w - pad, ex))
                 cats = e.get("categories", [])
                 is_break = any(str(c).lower() == "breaks" for c in cats)
 
@@ -317,7 +323,7 @@ class StatisticsWindow(Gtk.Window):
                     cr.select_font_face("Sans", 0, 0)
                     cr.set_font_size(12)
                     cr.move_to(ex + 8, y - 6)
-                    cr.show_text("☕")
+                    cr.show_text("\u2615")
 
             return False
 
