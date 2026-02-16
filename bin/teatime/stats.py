@@ -152,6 +152,16 @@ class StatisticsWindow(Gtk.Window):
         export_button.connect("clicked", self._on_export_clicked)
         button_box.pack_start(export_button, False, False, 0)
 
+        flow_quick_button = Gtk.Button(label="Flow")
+        flow_quick_button.set_tooltip_text("Show flow timeline")
+        flow_quick_button.connect("clicked", self._on_flow_clicked)
+        button_box.pack_start(flow_quick_button, False, False, 0)
+
+        rhythm_quick_button = Gtk.Button(label="Rhythm")
+        rhythm_quick_button.set_tooltip_text("Show daily rhythm graph")
+        rhythm_quick_button.connect("clicked", self._on_rhythm_clicked)
+        button_box.pack_start(rhythm_quick_button, False, False, 0)
+
         clear_button = Gtk.Button(label="_Clear History", use_underline=True)
         clear_button.get_style_context().add_class("destructive-action")
         clear_button.connect("clicked", self._on_clear_history_clicked)
@@ -294,11 +304,11 @@ class StatisticsWindow(Gtk.Window):
             self._flow_popup.destroy()
             self._flow_popup = None
 
-        popup = Gtk.Window(type=Gtk.WindowType.POPUP)
+        popup = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
         popup.set_transient_for(self)
-        popup.set_decorated(False)
-        popup.set_skip_taskbar_hint(True)
-        popup.set_skip_pager_hint(True)
+        popup.set_modal(False)
+        popup.set_title("Flow Timeline (Today)")
+        popup.set_default_size(560, 180)
         popup.set_border_width(8)
 
         frame = Gtk.Frame(label="Flow Timeline (Today)")
@@ -365,17 +375,9 @@ class StatisticsWindow(Gtk.Window):
 
         da.connect("draw", draw_timeline)
 
-        def close_popup(*args):
-            popup.destroy()
-            self._flow_popup = None
-            return False
-
-        popup.connect("button-press-event", close_popup)
-        popup.connect("key-press-event", close_popup)
+        popup.connect("delete-event", lambda *args: setattr(self, "_flow_popup", None) or False)
 
         popup.show_all()
-        popup.grab_add()
-        popup.grab_focus()
         popup.present()
         self._flow_popup = popup
 
