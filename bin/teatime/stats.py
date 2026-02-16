@@ -149,27 +149,32 @@ class StatisticsWindow(Gtk.Window):
 
         refresh_button = Gtk.Button(label="_Refresh", use_underline=True)
         refresh_button.connect("clicked", self._on_refresh_clicked)
+        refresh_button.connect_after("clicked", self._trace_button_clicked, "Refresh")
         button_box.pack_start(refresh_button, False, False, 0)
 
         export_button = Gtk.Button(label="_Export to CSV", use_underline=True)
         export_button.connect("clicked", self._on_export_clicked)
+        export_button.connect_after("clicked", self._trace_button_clicked, "Export")
         button_box.pack_start(export_button, False, False, 0)
 
         flow_quick_button = Gtk.Button(label="Flow")
         flow_quick_button.set_tooltip_text("Show flow timeline")
         flow_quick_button.connect("clicked", self._on_flow_signal)
         flow_quick_button.connect("button-release-event", self._on_flow_signal)
+        flow_quick_button.connect_after("clicked", self._trace_button_clicked, "FlowQuick")
         button_box.pack_start(flow_quick_button, False, False, 0)
 
         rhythm_quick_button = Gtk.Button(label="Rhythm")
         rhythm_quick_button.set_tooltip_text("Show daily rhythm graph")
         rhythm_quick_button.connect("clicked", self._on_rhythm_signal)
         rhythm_quick_button.connect("button-release-event", self._on_rhythm_signal)
+        rhythm_quick_button.connect_after("clicked", self._trace_button_clicked, "RhythmQuick")
         button_box.pack_start(rhythm_quick_button, False, False, 0)
 
         clear_button = Gtk.Button(label="_Clear History", use_underline=True)
         clear_button.get_style_context().add_class("destructive-action")
         clear_button.connect("clicked", self._on_clear_history_clicked)
+        clear_button.connect_after("clicked", self._trace_button_clicked, "Clear")
         button_box.pack_start(clear_button, False, False, 0)
 
         # Comments Editor
@@ -218,6 +223,9 @@ class StatisticsWindow(Gtk.Window):
     def _on_rhythm_signal(self, *args):
         self._debug_trace("Rhythm signal")
         return self._on_rhythm_clicked(args[0] if args else None)
+
+    def _trace_button_clicked(self, button, name):
+        self._debug_trace(f"Button clicked: {name}")
 
     def _on_delete_event(self, widget, event):
         self.hide()
