@@ -120,10 +120,12 @@ class StatisticsWindow(Gtk.Window):
                 header_title = Gtk.Label(label="Breaks")
                 self.flow_button = Gtk.Button(label="Flow")
                 self.flow_button.set_tooltip_text("Show flow timeline")
-                self.flow_button.connect("clicked", self._on_flow_clicked)
+                self.flow_button.connect("clicked", self._on_flow_signal)
+                self.flow_button.connect("button-release-event", self._on_flow_signal)
                 self.rhythm_button = Gtk.Button(label="Rhythm")
                 self.rhythm_button.set_tooltip_text("Show daily rhythm graph")
-                self.rhythm_button.connect("clicked", self._on_rhythm_clicked)
+                self.rhythm_button.connect("clicked", self._on_rhythm_signal)
+                self.rhythm_button.connect("button-release-event", self._on_rhythm_signal)
                 self.breaks_today_label = Gtk.Label(label="Today: 0m")
                 header_title.set_halign(Gtk.Align.CENTER)
                 self.flow_button.set_halign(Gtk.Align.CENTER)
@@ -155,12 +157,14 @@ class StatisticsWindow(Gtk.Window):
 
         flow_quick_button = Gtk.Button(label="Flow")
         flow_quick_button.set_tooltip_text("Show flow timeline")
-        flow_quick_button.connect("clicked", self._on_flow_clicked)
+        flow_quick_button.connect("clicked", self._on_flow_signal)
+        flow_quick_button.connect("button-release-event", self._on_flow_signal)
         button_box.pack_start(flow_quick_button, False, False, 0)
 
         rhythm_quick_button = Gtk.Button(label="Rhythm")
         rhythm_quick_button.set_tooltip_text("Show daily rhythm graph")
-        rhythm_quick_button.connect("clicked", self._on_rhythm_clicked)
+        rhythm_quick_button.connect("clicked", self._on_rhythm_signal)
+        rhythm_quick_button.connect("button-release-event", self._on_rhythm_signal)
         button_box.pack_start(rhythm_quick_button, False, False, 0)
 
         clear_button = Gtk.Button(label="_Clear History", use_underline=True)
@@ -188,6 +192,7 @@ class StatisticsWindow(Gtk.Window):
         self.treeview.get_selection().connect("changed", self._on_selection_changed)
         
         self._load_stats()
+        self._debug_trace("Stats window opened")
         self.show_all()
 
     def _debug_trace(self, message):
@@ -205,6 +210,14 @@ class StatisticsWindow(Gtk.Window):
             self.set_title(f"Timer Statistics - {message}")
         except Exception:
             pass
+
+    def _on_flow_signal(self, *args):
+        self._debug_trace("Flow signal")
+        return self._on_flow_clicked(args[0] if args else None)
+
+    def _on_rhythm_signal(self, *args):
+        self._debug_trace("Rhythm signal")
+        return self._on_rhythm_clicked(args[0] if args else None)
 
     def _on_delete_event(self, widget, event):
         self.hide()
