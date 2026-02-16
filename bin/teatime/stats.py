@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 import json
 from pathlib import Path
@@ -22,6 +22,37 @@ def _clip_interval_to_day(start, end, day_start, day_end):
     if end < day_start or start > day_end:
         return None
     return max(start, day_start), min(end, day_end)
+
+def _event_matches_category(event, category_filter):
+    if not category_filter or category_filter == "All":
+        return True
+    cats = event.get("categories", [])
+    return any(str(c).lower() == category_filter.lower() for c in cats)
+
+def _collect_rhythm_segments(events, start_window, end_window, category_filter="All"):
+    by_day = {}
+    for e in events:
+        if not _event_matches_category(e, category_filter):
+            continue
+        start = _parse_iso_ts(e.get("ts_start"))
+        end = _parse_iso_ts(e.get("ts_end"))
+        clipped = _clip_interval_to_day(start, end, start_window, end_window)
+        if not clipped:
+            continue
+
+        seg_start, seg_end = clipped
+        if seg_end <= seg_start:
+            continue
+
+        day_key = seg_start.strftime("%Y-%m-%d")
+        start_min = seg_start.hour * 60 + seg_start.minute + seg_start.second / 60.0
+        end_min = seg_end.hour * 60 + seg_end.minute + seg_end.second / 60.0
+        by_day.setdefault(day_key, []).append((start_min, end_min))
+
+    for day in by_day:
+        by_day[day].sort(key=lambda x: x[0])
+
+    return by_day
 
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
@@ -89,12 +120,17 @@ class StatisticsWindow(Gtk.Window):
                 self.flow_button = Gtk.Button(label="Flow")
                 self.flow_button.set_tooltip_text("Show flow timeline")
                 self.flow_button.connect("clicked", self._on_flow_clicked)
+                self.rhythm_button = Gtk.Button(label="Rhythm")
+                self.rhythm_button.set_tooltip_text("Show daily rhythm graph")
+                self.rhythm_button.connect("clicked", self._on_rhythm_clicked)
                 self.breaks_today_label = Gtk.Label(label="Today: 0m")
                 header_title.set_halign(Gtk.Align.CENTER)
                 self.flow_button.set_halign(Gtk.Align.CENTER)
+                self.rhythm_button.set_halign(Gtk.Align.CENTER)
                 self.breaks_today_label.set_halign(Gtk.Align.CENTER)
                 header_box.pack_start(header_title, False, False, 0)
                 header_box.pack_start(self.flow_button, False, False, 0)
+                header_box.pack_start(self.rhythm_button, False, False, 0)
                 header_box.pack_start(self.breaks_today_label, False, False, 0)
                 header_box.show_all()
                 column.set_widget(header_box)
@@ -342,6 +378,124 @@ class StatisticsWindow(Gtk.Window):
         popup.grab_focus()
         popup.present()
         self._flow_popup = popup
+
+    def _on_rhythm_clicked(self, button):
+        if hasattr(self, "_rhythm_popup") and self._rhythm_popup:
+            self._rhythm_popup.destroy()
+            self._rhythm_popup = None
+
+        popup = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
+        popup.set_transient_for(self)
+        popup.set_modal(False)
+        popup.set_default_size(820, 460)
+        popup.set_title("Rhythm Graph")
+        popup.set_border_width(10)
+
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        popup.add(root)
+
+        controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        root.pack_start(controls, False, False, 0)
+
+        category_label = Gtk.Label(label="Category")
+        category_label.set_halign(Gtk.Align.START)
+        controls.pack_start(category_label, False, False, 0)
+
+        category_combo = Gtk.ComboBoxText()
+        category_combo.append_text("All")
+        for cat in self.data_categories:
+            category_combo.append_text(cat)
+        category_combo.set_active(0)
+        controls.pack_start(category_combo, False, False, 0)
+
+        range_label = Gtk.Label(label="Range")
+        range_label.set_halign(Gtk.Align.START)
+        controls.pack_start(range_label, False, False, 0)
+
+        range_combo = Gtk.ComboBoxText()
+        range_combo.append_text("Today")
+        range_combo.append_text("Last 7 Days")
+        range_combo.set_active(0)
+        controls.pack_start(range_combo, False, False, 0)
+
+        chart_host = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        chart_host.set_hexpand(True)
+        chart_host.set_vexpand(True)
+        root.pack_start(chart_host, True, True, 0)
+
+        status = Gtk.Label(label="")
+        status.set_halign(Gtk.Align.START)
+        root.pack_start(status, False, False, 0)
+
+        fig = None
+        ax = None
+        canvas = None
+        try:
+            from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+            from matplotlib.figure import Figure
+            fig = Figure(figsize=(8, 4), dpi=100)
+            ax = fig.add_subplot(111)
+            canvas = FigureCanvas(fig)
+            chart_host.pack_start(canvas, True, True, 0)
+        except Exception:
+            status.set_text("matplotlib is not installed. Install it to enable rhythm charts.")
+
+        def update_chart(*args):
+            if not fig or not ax or not canvas:
+                return
+
+            events = self._load_events()
+            now = datetime.now()
+            today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            today_end = today_start.replace(hour=23, minute=59, second=59)
+
+            range_name = range_combo.get_active_text() or "Today"
+            if range_name == "Last 7 Days":
+                start_window = (today_start - timedelta(days=6))
+                end_window = today_end
+            else:
+                start_window = today_start
+                end_window = today_end
+
+            category_filter = category_combo.get_active_text() or "All"
+            by_day = _collect_rhythm_segments(events, start_window, end_window, category_filter)
+
+            ax.clear()
+            ax.set_xlim(0, 24 * 60)
+            ax.set_xlabel("Time of day")
+            ax.set_title(f"Daily Rhythm: {category_filter} ({range_name})")
+            ax.grid(axis="x", alpha=0.25)
+            ax.set_xticks([0, 240, 480, 720, 960, 1200, 1440])
+            ax.set_xticklabels(["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"])
+
+            if not by_day:
+                ax.set_yticks([])
+                ax.text(0.5, 0.5, "No sessions in selected range/category", ha="center", va="center", transform=ax.transAxes)
+                fig.tight_layout()
+                canvas.draw()
+                return
+
+            day_keys = sorted(by_day.keys())
+            y_positions = list(range(len(day_keys)))
+            for idx, day in enumerate(day_keys):
+                segments = by_day.get(day, [])
+                bars = [(start_min, max(0.5, end_min - start_min)) for start_min, end_min in segments]
+                if bars:
+                    ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors="#2d7ff9")
+
+            ax.set_yticks(y_positions)
+            ax.set_yticklabels(day_keys)
+            fig.tight_layout()
+            canvas.draw()
+
+        category_combo.connect("changed", update_chart)
+        range_combo.connect("changed", update_chart)
+        update_chart()
+
+        popup.connect("delete-event", lambda *args: setattr(self, "_rhythm_popup", None) or False)
+        popup.show_all()
+        popup.present()
+        self._rhythm_popup = popup
 
     def _reset_summary_labels(self):
         self.total_sessions_label.set_text("Total Sessions: 0")
