@@ -190,6 +190,22 @@ class StatisticsWindow(Gtk.Window):
         self._load_stats()
         self.show_all()
 
+    def _debug_trace(self, message):
+        # Runtime breadcrumb for Linux UI callback debugging.
+        try:
+            ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            trace_line = f"{ts} {message}\n"
+            log_path = Path.home() / ".local" / "share" / "teatime_debug.log"
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write(trace_line)
+        except Exception:
+            pass
+        try:
+            self.set_title(f"Timer Statistics - {message}")
+        except Exception:
+            pass
+
     def _on_delete_event(self, widget, event):
         self.hide()
         return True
@@ -315,6 +331,7 @@ class StatisticsWindow(Gtk.Window):
 
     def _on_flow_clicked(self, button):
         try:
+            self._debug_trace("Flow clicked")
             print("[stats] Flow clicked", flush=True)
             if hasattr(self, "_flow_popup") and self._flow_popup:
                 self._flow_popup.destroy()
@@ -396,12 +413,14 @@ class StatisticsWindow(Gtk.Window):
             popup.present()
             self._flow_popup = popup
         except Exception:
+            self._debug_trace("Flow error")
             self._show_error_dialog("Flow failed", traceback.format_exc())
             print("[stats] Flow error", traceback.format_exc(), flush=True)
 
 
     def _on_rhythm_clicked(self, button):
         try:
+            self._debug_trace("Rhythm clicked")
             print("[stats] Rhythm clicked", flush=True)
             if hasattr(self, "_rhythm_popup") and self._rhythm_popup:
                 self._rhythm_popup.destroy()
@@ -520,6 +539,7 @@ class StatisticsWindow(Gtk.Window):
             popup.present()
             self._rhythm_popup = popup
         except Exception:
+            self._debug_trace("Rhythm error")
             self._show_error_dialog("Rhythm failed", traceback.format_exc())
             print("[stats] Rhythm error", traceback.format_exc(), flush=True)
 
