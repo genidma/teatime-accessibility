@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 import csv
 import json
 import traceback
-from pathlib import Path
 
 import gi
 # Use GTK 3 for better compatibility
@@ -213,18 +212,15 @@ class StatisticsWindow(Gtk.Window):
 
         refresh_button = Gtk.Button(label="_Refresh", use_underline=True)
         refresh_button.connect("clicked", self._on_refresh_clicked)
-        refresh_button.connect_after("clicked", self._trace_button_clicked, "Refresh")
         button_box.pack_start(refresh_button, False, False, 0)
 
         export_button = Gtk.Button(label="_Export to CSV", use_underline=True)
         export_button.connect("clicked", self._on_export_clicked)
-        export_button.connect_after("clicked", self._trace_button_clicked, "Export")
         button_box.pack_start(export_button, False, False, 0)
 
         clear_button = Gtk.Button(label="_Clear History", use_underline=True)
         clear_button.get_style_context().add_class("destructive-action")
         clear_button.connect("clicked", self._on_clear_history_clicked)
-        clear_button.connect_after("clicked", self._trace_button_clicked, "Clear")
         button_box.pack_start(clear_button, False, False, 0)
 
         kcresonance_frame = Gtk.Frame(label="kcresonance")
@@ -239,14 +235,12 @@ class StatisticsWindow(Gtk.Window):
 
         flow_quick_button = Gtk.Button(label="Flow")
         flow_quick_button.set_tooltip_text("Show flow timeline")
-        flow_quick_button.connect("clicked", self._on_flow_signal)
-        flow_quick_button.connect_after("clicked", self._trace_button_clicked, "FlowQuick")
+        flow_quick_button.connect("clicked", self._on_flow_clicked)
         kcresonance_row.pack_start(flow_quick_button, False, False, 0)
 
         rhythm_quick_button = Gtk.Button(label="Rhythm")
         rhythm_quick_button.set_tooltip_text("Show daily rhythm graph")
-        rhythm_quick_button.connect("clicked", self._on_rhythm_signal)
-        rhythm_quick_button.connect_after("clicked", self._trace_button_clicked, "RhythmQuick")
+        rhythm_quick_button.connect("clicked", self._on_rhythm_clicked)
         kcresonance_row.pack_start(rhythm_quick_button, False, False, 0)
 
         # Comments Editor
@@ -269,35 +263,7 @@ class StatisticsWindow(Gtk.Window):
         self.treeview.get_selection().connect("changed", self._on_selection_changed)
         
         self._load_stats()
-        self._debug_trace("Stats window opened")
         self.show_all()
-
-    def _debug_trace(self, message):
-        # Runtime breadcrumb for Linux UI callback debugging.
-        try:
-            ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            trace_line = f"{ts} {message}\n"
-            log_path = Path.home() / ".local" / "share" / "teatime_debug.log"
-            log_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(log_path, "a", encoding="utf-8") as f:
-                f.write(trace_line)
-        except Exception:
-            pass
-        try:
-            self.set_title(f"Timer Statistics - {message}")
-        except Exception:
-            pass
-
-    def _on_flow_signal(self, *args):
-        self._debug_trace("Flow signal")
-        return self._on_flow_clicked(args[0] if args else None)
-
-    def _on_rhythm_signal(self, *args):
-        self._debug_trace("Rhythm signal")
-        return self._on_rhythm_clicked(args[0] if args else None)
-
-    def _trace_button_clicked(self, button, name):
-        self._debug_trace(f"Button clicked: {name}")
 
     def _on_delete_event(self, widget, event):
         self.hide()
@@ -548,7 +514,6 @@ class StatisticsWindow(Gtk.Window):
 
     def _on_flow_clicked(self, button):
         try:
-            self._debug_trace("Flow clicked")
             print("[stats] Flow clicked", flush=True)
             if hasattr(self, "_flow_popup") and self._flow_popup:
                 self._flow_popup.destroy()
@@ -640,14 +605,12 @@ class StatisticsWindow(Gtk.Window):
             popup.present()
             self._flow_popup = popup
         except Exception:
-            self._debug_trace("Flow error")
             self._show_error_dialog("Flow failed", traceback.format_exc())
             print("[stats] Flow error", traceback.format_exc(), flush=True)
 
 
     def _on_rhythm_clicked(self, button):
         try:
-            self._debug_trace("Rhythm clicked")
             print("[stats] Rhythm clicked", flush=True)
             if hasattr(self, "_rhythm_popup") and self._rhythm_popup:
                 self._rhythm_popup.destroy()
@@ -1022,7 +985,6 @@ class StatisticsWindow(Gtk.Window):
             popup.present()
             self._rhythm_popup = popup
         except Exception:
-            self._debug_trace("Rhythm error")
             self._show_error_dialog("Rhythm failed", traceback.format_exc())
             print("[stats] Rhythm error", traceback.format_exc(), flush=True)
 
