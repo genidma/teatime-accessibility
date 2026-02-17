@@ -982,11 +982,8 @@ class StatisticsWindow(Gtk.Window):
                     if y_cursor > 0:
                         ax.set_ylim(-0.8, y_cursor - 0.2)
                     now_dt = datetime.now()
-                    end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
                     hours = int(zoom_hours["value"])
-                    # In multi-day mode the chart compares time-of-day across days;
-                    # force full-day x-axis so switching ranges never hides data unexpectedly.
-                    if range_name in {
+                    day_based_ranges = {
                         "Today",
                         "Yesterday",
                         "Last 3 Days",
@@ -996,8 +993,13 @@ class StatisticsWindow(Gtk.Window):
                         "Last 6 Months",
                         "Last 1 Year",
                         "All Time",
-                    }:
-                        hours = 24
+                    }
+                    # For day-based ranges, anchor zoom to end-of-day (24:00).
+                    # For hour-based ranges, anchor to current time.
+                    if range_name in day_based_ranges:
+                        end_min = 24 * 60.0
+                    else:
+                        end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
                     if hours >= 24:
                         ax.set_xlim(0, 24 * 60)
                     else:
