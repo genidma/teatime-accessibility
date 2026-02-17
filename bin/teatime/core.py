@@ -14,7 +14,7 @@ FONT_SCALE_INCREMENT = 0.1
 MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
-KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "MWHH", "yss", "we", "gotb", "rf", "dw", " ", "breaks"]
+KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "rl", "MWHH", "yss", "we", "gotb", "rf", "dw", " ", "breaks"]
 
 class ConfigManager:
     def __init__(self, config_path=None):
@@ -60,4 +60,3 @@ class StatsManager:
         except (json.JSONDecodeError, IOError) as e:
             print(f"Error loading stats file: {e}")
             return []
-
