@@ -33,6 +33,24 @@ _New features are added regularly_. To request or suggest additional features an
 - **Custom Skins**: Personalize the appearance with different visual themes
 - **Preset Durations**: Quick access to 45 minute and 60 minute presets
 
+# Screenshot(s) - 2026-02-17
+
+## Main UI
+
+![Main UI](./screenshots_demo_clones/kcresonance/readme/2026-02-17/main.png)
+
+## Statistics
+
+![Statistics](./screenshots_demo_clones/kcresonance/readme/2026-02-17/statistics.png)
+
+## Rhythm
+
+![Rhythm](./screenshots_demo_clones/kcresonance/readme/2026-02-17/rhythm.png)
+
+## Flow
+
+![Flow](./screenshots_demo_clones/kcresonance/readme/2026-02-17/flow.png)
+
 # Demo(s) (in gif format)
 
 ### open app & start/stop the timer
