@@ -633,6 +633,17 @@ class StatisticsWindow(Gtk.Window):
             range_combo = Gtk.ComboBoxText()
             range_combo.append_text("Last 12 Hours")
             range_combo.append_text("Last 7 Days")
+            range_combo.append_text("Last 1 Hour")
+            range_combo.append_text("Last 4 Hours")
+            range_combo.append_text("Last 24 Hours")
+            range_combo.append_text("Today")
+            range_combo.append_text("Yesterday")
+            range_combo.append_text("Last 3 Days")
+            range_combo.append_text("Last 30 Days")
+            range_combo.append_text("Last 90 Days")
+            range_combo.append_text("Last 6 Months")
+            range_combo.append_text("Last 1 Year")
+            range_combo.append_text("All Time")
             range_combo.set_active(0)
             controls.pack_start(range_combo, False, False, 0)
 
@@ -772,9 +783,45 @@ class StatisticsWindow(Gtk.Window):
                 today_end = today_start.replace(hour=23, minute=59, second=59)
 
                 range_name = range_combo.get_active_text() or "Last 12 Hours"
-                if range_name == "Last 7 Days":
-                    start_window = (today_start - timedelta(days=6))
+                if range_name == "Last 1 Hour":
+                    start_window = now - timedelta(hours=1)
+                    end_window = now
+                elif range_name == "Last 4 Hours":
+                    start_window = now - timedelta(hours=4)
+                    end_window = now
+                elif range_name == "Last 12 Hours":
+                    start_window = now - timedelta(hours=12)
+                    end_window = now
+                elif range_name == "Last 24 Hours":
+                    start_window = now - timedelta(hours=24)
+                    end_window = now
+                elif range_name == "Today":
+                    start_window = today_start
                     end_window = today_end
+                elif range_name == "Yesterday":
+                    start_window = today_start - timedelta(days=1)
+                    end_window = today_start - timedelta(seconds=1)
+                elif range_name == "Last 3 Days":
+                    start_window = today_start - timedelta(days=2)
+                    end_window = today_end
+                elif range_name == "Last 7 Days":
+                    start_window = today_start - timedelta(days=6)
+                    end_window = today_end
+                elif range_name == "Last 30 Days":
+                    start_window = today_start - timedelta(days=29)
+                    end_window = today_end
+                elif range_name == "Last 90 Days":
+                    start_window = today_start - timedelta(days=89)
+                    end_window = today_end
+                elif range_name == "Last 6 Months":
+                    start_window = today_start - timedelta(days=182)
+                    end_window = today_end
+                elif range_name == "Last 1 Year":
+                    start_window = today_start - timedelta(days=365)
+                    end_window = today_end
+                elif range_name == "All Time":
+                    start_window = datetime.min
+                    end_window = datetime.max
                 else:
                     start_window = now - timedelta(hours=12)
                     end_window = now
@@ -937,9 +984,19 @@ class StatisticsWindow(Gtk.Window):
                     now_dt = datetime.now()
                     end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
                     hours = int(zoom_hours["value"])
-                    # In 7-day mode the chart compares time-of-day across days;
+                    # In multi-day mode the chart compares time-of-day across days;
                     # force full-day x-axis so switching ranges never hides data unexpectedly.
-                    if range_name == "Last 7 Days":
+                    if range_name in {
+                        "Today",
+                        "Yesterday",
+                        "Last 3 Days",
+                        "Last 7 Days",
+                        "Last 30 Days",
+                        "Last 90 Days",
+                        "Last 6 Months",
+                        "Last 1 Year",
+                        "All Time",
+                    }:
                         hours = 24
                     if hours >= 24:
                         ax.set_xlim(0, 24 * 60)
