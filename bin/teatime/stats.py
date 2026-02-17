@@ -1006,8 +1006,13 @@ class StatisticsWindow(Gtk.Window):
                         x_start = 0.0
                         x_end = 24 * 60.0
                     else:
-                        x_start = max(0.0, end_min - (hours * 60.0))
-                        x_end = max(x_start + 1.0, end_min)
+                        span_minutes = float(hours * 60.0)
+                        if end_min <= span_minutes:
+                            x_start = 0.0
+                            x_end = min(24 * 60.0, span_minutes)
+                        else:
+                            x_start = end_min - span_minutes
+                            x_end = end_min
                     ax.set_xlim(x_start, x_end)
 
                     # Dynamic ticks for zoomed windows so labels stay readable.
