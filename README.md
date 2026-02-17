@@ -107,16 +107,6 @@ here
 - fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
 - overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
 
-- below, two demos are shown. 
-- - 1. in this demo. The timer in started nano-mode. Then we use the meta key to move the timer on the screen. Then use the keyboard shortcuts to increase or decrease the timer, while it is in nano-mode. Finally we stop the timer, using the keyboard shortcut. 
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode1.gif)
-
-- - 2. in this second demo, with nano mode _engaged_. You will notice that the timer is about to conclude. Once, concluded the app displays a full-screen animation.  
-- - - once the timer has concluded, the app will return back to the main GUI and here you can simply uncheck the checkbox for nano mode
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/nanomode2.gif)
-
 ### Settings and customization options
 
 as of 2025-11-06, there are two options under the 'Settings' area from the dialog box and here is more information about each option.
