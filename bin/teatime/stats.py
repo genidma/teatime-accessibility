@@ -649,6 +649,66 @@ class StatisticsWindow(Gtk.Window):
                 btn.connect("clicked", _on_span_clicked, label, hours)
                 time_span_box.pack_start(btn, False, False, 0)
 
+            categories_frame = Gtk.Frame(label="Categories")
+            categories_box = Gtk.Box(
+                orientation=Gtk.Orientation.HORIZONTAL,
+                spacing=10,
+                margin=6,
+            )
+            categories_frame.add(categories_box)
+            root.pack_start(categories_frame, False, False, 0)
+
+            rhythm_category_checks = {}
+            all_check = Gtk.CheckButton(label="All")
+            all_label = all_check.get_child()
+            if isinstance(all_label, Gtk.Label):
+                all_label.set_use_markup(True)
+                all_label.set_markup("<b>All</b>")
+            all_check.set_active(True)
+            rhythm_category_checks["All"] = all_check
+            categories_box.pack_start(all_check, False, False, 0)
+
+            for cat in self.data_categories:
+                cb = Gtk.CheckButton()
+                _set_checkbutton_icon_label(cb, cat)
+                rhythm_category_checks[cat] = cb
+                categories_box.pack_start(cb, False, False, 0)
+
+            chart_host = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+            chart_host.set_hexpand(True)
+            chart_host.set_vexpand(True)
+            root.pack_start(chart_host, True, True, 0)
+
+            status = Gtk.Label(label="")
+            status.set_halign(Gtk.Align.START)
+            root.pack_start(status, False, False, 0)
+
+            fig = None
+            ax_micro = None
+            ax_short = None
+            ax_long = None
+            canvas = None
+            try:
+                from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+                from matplotlib.figure import Figure
+                fig = Figure(figsize=(8, 8), dpi=100)
+                ax_micro = fig.add_subplot(311)
+                ax_short = fig.add_subplot(312, sharex=ax_micro)
+                ax_long = fig.add_subplot(313, sharex=ax_micro)
+                canvas = FigureCanvas(fig)
+                chart_host.pack_start(canvas, True, True, 0)
+                try:
+                    from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
+                    toolbar = NavigationToolbar(canvas, popup)
+                    root.pack_start(toolbar, False, False, 0)
+                except Exception:
+                    pass
+            except Exception as e:
+                status.set_text(
+                    "Rhythm chart unavailable. Install/verify matplotlib GTK backend "
+                    f"(error: {e})."
+                )
+
             def get_rhythm_selected_categories():
                 if rhythm_category_checks["All"].get_active():
                     return []
