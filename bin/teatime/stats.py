@@ -713,15 +713,17 @@ class StatisticsWindow(Gtk.Window):
             root.pack_start(status, False, False, 0)
 
             fig = None
+            ax_micro = None
             ax_short = None
             ax_long = None
             canvas = None
             try:
                 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
                 from matplotlib.figure import Figure
-                fig = Figure(figsize=(8, 6), dpi=100)
-                ax_short = fig.add_subplot(211)
-                ax_long = fig.add_subplot(212, sharex=ax_short)
+                fig = Figure(figsize=(8, 8), dpi=100)
+                ax_micro = fig.add_subplot(311)
+                ax_short = fig.add_subplot(312, sharex=ax_micro)
+                ax_long = fig.add_subplot(313, sharex=ax_micro)
                 canvas = FigureCanvas(fig)
                 chart_host.pack_start(canvas, True, True, 0)
             except Exception:
@@ -760,7 +762,7 @@ class StatisticsWindow(Gtk.Window):
                 update_chart()
 
             def update_chart(*args):
-                if not fig or not ax_short or not ax_long or not canvas:
+                if not fig or not ax_micro or not ax_short or not ax_long or not canvas:
                     return
                 mpimg = None
                 OffsetImage = None
@@ -966,8 +968,9 @@ class StatisticsWindow(Gtk.Window):
                     else "All"
                 )
                 fig.suptitle(f"Daily Rhythm: {category_name} ({range_name})")
-                _render_axis(ax_short, "Graph #1: Sessions < 5 minutes", "#2d7ff9", lambda d: d < 5.0)
-                _render_axis(ax_long, "Graph #2: Sessions >= 5 minutes", "#f28c28", lambda d: d >= 5.0)
+                _render_axis(ax_micro, "Graph #1: Sessions <= 1 minute", "#0ea5e9", lambda d: d <= 1.0)
+                _render_axis(ax_short, "Graph #2: Sessions > 1 and < 5 minutes", "#2d7ff9", lambda d: d > 1.0 and d < 5.0)
+                _render_axis(ax_long, "Graph #3: Sessions >= 5 minutes", "#f28c28", lambda d: d >= 5.0)
                 ax_long.set_xlabel("Time of day")
                 fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
