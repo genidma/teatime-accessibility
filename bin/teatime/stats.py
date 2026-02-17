@@ -27,6 +27,12 @@ def _clip_interval_to_day(start, end, day_start, day_end):
 def _event_matches_category(event, category_filter):
     if not category_filter or category_filter == "All":
         return True
+    if isinstance(category_filter, (list, tuple, set)):
+        wanted = {str(c).strip().lower() for c in category_filter if str(c).strip()}
+        if not wanted:
+            return True
+        cats = event.get("categories", [])
+        return any(str(c).strip().lower() in wanted for c in cats)
     cats = event.get("categories", [])
     return any(str(c).lower() == category_filter.lower() for c in cats)
 
@@ -118,22 +124,10 @@ class StatisticsWindow(Gtk.Window):
                 column.set_clickable(True)
                 header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
                 header_title = Gtk.Label(label="Breaks")
-                self.flow_button = Gtk.Button(label="Flow")
-                self.flow_button.set_tooltip_text("Show flow timeline")
-                self.flow_button.connect("clicked", self._on_flow_signal)
-                self.flow_button.connect("button-release-event", self._on_flow_signal)
-                self.rhythm_button = Gtk.Button(label="Rhythm")
-                self.rhythm_button.set_tooltip_text("Show daily rhythm graph")
-                self.rhythm_button.connect("clicked", self._on_rhythm_signal)
-                self.rhythm_button.connect("button-release-event", self._on_rhythm_signal)
                 self.breaks_today_label = Gtk.Label(label="Today: 0m")
                 header_title.set_halign(Gtk.Align.CENTER)
-                self.flow_button.set_halign(Gtk.Align.CENTER)
-                self.rhythm_button.set_halign(Gtk.Align.CENTER)
                 self.breaks_today_label.set_halign(Gtk.Align.CENTER)
                 header_box.pack_start(header_title, False, False, 0)
-                header_box.pack_start(self.flow_button, False, False, 0)
-                header_box.pack_start(self.rhythm_button, False, False, 0)
                 header_box.pack_start(self.breaks_today_label, False, False, 0)
                 header_box.show_all()
                 column.set_widget(header_box)
@@ -157,25 +151,35 @@ class StatisticsWindow(Gtk.Window):
         export_button.connect_after("clicked", self._trace_button_clicked, "Export")
         button_box.pack_start(export_button, False, False, 0)
 
+        clear_button = Gtk.Button(label="_Clear History", use_underline=True)
+        clear_button.get_style_context().add_class("destructive-action")
+        clear_button.connect("clicked", self._on_clear_history_clicked)
+        clear_button.connect_after("clicked", self._trace_button_clicked, "Clear")
+        button_box.pack_start(clear_button, False, False, 0)
+
+        kcresonance_frame = Gtk.Frame(label="kcresonance")
+        kcresonance_row = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=10,
+            halign=Gtk.Align.CENTER,
+            margin=8,
+        )
+        kcresonance_frame.add(kcresonance_row)
+        main_box.pack_start(kcresonance_frame, False, False, 0)
+
         flow_quick_button = Gtk.Button(label="Flow")
         flow_quick_button.set_tooltip_text("Show flow timeline")
         flow_quick_button.connect("clicked", self._on_flow_signal)
         flow_quick_button.connect("button-release-event", self._on_flow_signal)
         flow_quick_button.connect_after("clicked", self._trace_button_clicked, "FlowQuick")
-        button_box.pack_start(flow_quick_button, False, False, 0)
+        kcresonance_row.pack_start(flow_quick_button, False, False, 0)
 
         rhythm_quick_button = Gtk.Button(label="Rhythm")
         rhythm_quick_button.set_tooltip_text("Show daily rhythm graph")
         rhythm_quick_button.connect("clicked", self._on_rhythm_signal)
         rhythm_quick_button.connect("button-release-event", self._on_rhythm_signal)
         rhythm_quick_button.connect_after("clicked", self._trace_button_clicked, "RhythmQuick")
-        button_box.pack_start(rhythm_quick_button, False, False, 0)
-
-        clear_button = Gtk.Button(label="_Clear History", use_underline=True)
-        clear_button.get_style_context().add_class("destructive-action")
-        clear_button.connect("clicked", self._on_clear_history_clicked)
-        clear_button.connect_after("clicked", self._trace_button_clicked, "Clear")
-        button_box.pack_start(clear_button, False, False, 0)
+        kcresonance_row.pack_start(rhythm_quick_button, False, False, 0)
 
         # Comments Editor
         comments_label = Gtk.Label(label="<b>Comments for Selected Date</b>")
@@ -349,6 +353,20 @@ class StatisticsWindow(Gtk.Window):
             return []
         return events
 
+    def _get_selected_categories_from_main(self):
+        app = self.get_application()
+        if not app:
+            return []
+        checkboxes = getattr(app, "category_checkboxes", {}) or {}
+        selected = []
+        for cat, cb in checkboxes.items():
+            try:
+                if cb.get_active():
+                    selected.append(cat)
+            except Exception:
+                continue
+        return selected
+
 
     def _on_flow_clicked(self, button):
         try:
@@ -374,8 +392,11 @@ class StatisticsWindow(Gtk.Window):
             events = self._load_events()
             day_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             day_end = day_start.replace(hour=23, minute=59, second=59)
+            selected_categories = self._get_selected_categories_from_main()
             todays = []
             for e in events:
+                if not _event_matches_category(e, selected_categories):
+                    continue
                 start = _parse_iso_ts(e.get("ts_start"))
                 end = _parse_iso_ts(e.get("ts_end"))
                 clipped = _clip_interval_to_day(start, end, day_start, day_end)
@@ -491,20 +512,22 @@ class StatisticsWindow(Gtk.Window):
             root.pack_start(status, False, False, 0)
 
             fig = None
-            ax = None
+            ax_short = None
+            ax_long = None
             canvas = None
             try:
                 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
                 from matplotlib.figure import Figure
-                fig = Figure(figsize=(8, 4), dpi=100)
-                ax = fig.add_subplot(111)
+                fig = Figure(figsize=(8, 6), dpi=100)
+                ax_short = fig.add_subplot(211)
+                ax_long = fig.add_subplot(212, sharex=ax_short)
                 canvas = FigureCanvas(fig)
                 chart_host.pack_start(canvas, True, True, 0)
             except Exception:
                 status.set_text("matplotlib is not installed. Install it to enable rhythm charts.")
 
             def update_chart(*args):
-                if not fig or not ax or not canvas:
+                if not fig or not ax_short or not ax_long or not canvas:
                     return
 
                 events = self._load_events()
@@ -520,35 +543,68 @@ class StatisticsWindow(Gtk.Window):
                     start_window = today_start
                     end_window = today_end
 
-                category_filter = category_combo.get_active_text() or "All"
+                selected_categories = self._get_selected_categories_from_main()
+                manual_filter = category_combo.get_active_text() or "All"
+                category_filter = selected_categories if selected_categories else manual_filter
                 by_day = _collect_rhythm_segments(events, start_window, end_window, category_filter)
 
-                ax.clear()
-                ax.set_xlim(0, 24 * 60)
-                ax.set_xlabel("Time of day")
-                ax.set_title(f"Daily Rhythm: {category_filter} ({range_name})")
-                ax.grid(axis="x", alpha=0.25)
-                ax.set_xticks([0, 240, 480, 720, 960, 1200, 1440])
-                ax.set_xticklabels(["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"])
-
-                if not by_day:
-                    ax.set_yticks([])
-                    ax.text(0.5, 0.5, "No sessions in selected range/category", ha="center", va="center", transform=ax.transAxes)
-                    fig.tight_layout()
-                    canvas.draw()
-                    return
+                if selected_categories:
+                    status.set_text(f"Using selected Categories filter: {', '.join(selected_categories)}")
+                else:
+                    status.set_text("")
 
                 day_keys = sorted(by_day.keys())
-                y_positions = list(range(len(day_keys)))
-                for idx, day in enumerate(day_keys):
-                    segments = by_day.get(day, [])
-                    bars = [(start_min, max(0.5, end_min - start_min)) for start_min, end_min in segments]
-                    if bars:
-                        ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors="#2d7ff9")
 
-                ax.set_yticks(y_positions)
-                ax.set_yticklabels(day_keys)
-                fig.tight_layout()
+                def _render_axis(ax, title, color, duration_predicate):
+                    ax.clear()
+                    ax.set_xlim(0, 24 * 60)
+                    ax.set_title(title)
+                    ax.grid(axis="x", alpha=0.25)
+                    ax.set_xticks([0, 240, 480, 720, 960, 1200, 1440])
+                    ax.set_xticklabels(["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"])
+
+                    if not day_keys:
+                        ax.set_yticks([])
+                        ax.text(
+                            0.5,
+                            0.5,
+                            "No sessions in selected range/category",
+                            ha="center",
+                            va="center",
+                            transform=ax.transAxes,
+                        )
+                        return
+
+                    has_bars = False
+                    y_positions = list(range(len(day_keys)))
+                    for idx, day in enumerate(day_keys):
+                        segments = by_day.get(day, [])
+                        bars = []
+                        for start_min, end_min in segments:
+                            dur_min = max(0.0, end_min - start_min)
+                            if duration_predicate(dur_min):
+                                bars.append((start_min, max(0.5, dur_min)))
+                        if bars:
+                            has_bars = True
+                            ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors=color)
+                    ax.set_yticks(y_positions)
+                    ax.set_yticklabels(day_keys)
+                    if not has_bars:
+                        ax.text(
+                            0.5,
+                            0.5,
+                            "No sessions in this duration bucket",
+                            ha="center",
+                            va="center",
+                            transform=ax.transAxes,
+                        )
+
+                category_name = ", ".join(selected_categories) if selected_categories else manual_filter
+                fig.suptitle(f"Daily Rhythm: {category_name} ({range_name})")
+                _render_axis(ax_short, "Graph #1: Sessions < 5 minutes", "#2d7ff9", lambda d: d < 5.0)
+                _render_axis(ax_long, "Graph #2: Sessions >= 5 minutes", "#f28c28", lambda d: d >= 5.0)
+                ax_long.set_xlabel("Time of day")
+                fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
 
             category_combo.connect("changed", update_chart)
