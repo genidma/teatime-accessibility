@@ -9,7 +9,14 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 
-from .core import STATS_LOG_FILE, EVENT_LOG_FILE, StatsManager, KC_CATEGORIES, format_category_label
+from .core import (
+    STATS_LOG_FILE,
+    EVENT_LOG_FILE,
+    StatsManager,
+    KC_CATEGORIES,
+    KC_CATEGORY_EMOJIS,
+    format_category_label,
+)
 
 def _parse_iso_ts(ts):
     try:
@@ -721,6 +728,11 @@ class StatisticsWindow(Gtk.Window):
                 by_day = self._collect_rhythm_segments_fallback(
                     events, start_window, end_window, category_filter
                 )
+                emoji_scope = (
+                    "".join(KC_CATEGORY_EMOJIS.get(c, "") for c in selected_categories)
+                    if selected_categories
+                    else ""
+                )
 
                 if selected_categories:
                     status.set_text(
@@ -769,7 +781,8 @@ class StatisticsWindow(Gtk.Window):
                             for bar_start, bar_width in bars:
                                 hh = int(bar_start // 60)
                                 mm = int(bar_start % 60)
-                                label_items.append(f"{day[5:]} {hh:02d}:{mm:02d}  {bar_width:.0f}m")
+                                prefix = f"{emoji_scope} " if emoji_scope else ""
+                                label_items.append(f"{prefix}{day[5:]} {hh:02d}:{mm:02d}  {bar_width:.0f}m")
                     ax.set_yticks(y_positions)
                     ax.set_yticklabels(day_keys)
                     if not has_bars:
