@@ -115,7 +115,7 @@ class FlipLabel(Gtk.Box):
         return self._label_a if self._current == "a" else self._label_b
 
 class TargetCheckButton(Gtk.CheckButton):
-    def __init__(self, label, pulse_ms=500):
+    def __init__(self, label=None, pulse_ms=500):
         super().__init__(label=label)
         self._pulse_ms = pulse_ms
         self._pulse_progress = 0.0
