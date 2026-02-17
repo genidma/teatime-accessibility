@@ -32,9 +32,21 @@ from .core import (
     MAX_FONT_SCALE,
     KC_CATEGORIES,
     format_category_label,
+    get_category_icon_path,
     ConfigManager,
     StatsManager,
 )
+
+def _set_checkbutton_icon_label(button, category):
+    row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+    icon_path = get_category_icon_path(category)
+    if icon_path:
+        img = Gtk.Image.new_from_file(icon_path)
+        row.pack_start(img, False, False, 0)
+    txt = Gtk.Label(label=format_category_label(category))
+    txt.set_xalign(0.0)
+    row.pack_start(txt, False, False, 0)
+    button.add(row)
 from .stats import StatisticsWindow
 
 class FlipLabel(Gtk.Box):
@@ -299,7 +311,8 @@ class TeaTimerApp(Gtk.Application):
             for i, cat in enumerate(KC_CATEGORIES):
                 if cat.strip() == "":
                     continue
-                cb = TargetCheckButton(label=format_category_label(cat), pulse_ms=500)
+                cb = TargetCheckButton(pulse_ms=500)
+                _set_checkbutton_icon_label(cb, cat)
                 cat_grid.attach(cb, i % 4, i // 4, 1, 1)
                 self.category_checkboxes[cat] = cb
             cat_frame.add(cat_grid)

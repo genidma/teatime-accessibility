@@ -14,9 +14,20 @@ from .core import (
     EVENT_LOG_FILE,
     StatsManager,
     KC_CATEGORIES,
-    KC_CATEGORY_EMOJIS,
     format_category_label,
+    get_category_icon_path,
 )
+
+def _set_checkbutton_icon_label(button, category):
+    row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+    icon_path = get_category_icon_path(category)
+    if icon_path:
+        img = Gtk.Image.new_from_file(icon_path)
+        row.pack_start(img, False, False, 0)
+    txt = Gtk.Label(label=format_category_label(category))
+    txt.set_xalign(0.0)
+    row.pack_start(txt, False, False, 0)
+    button.add(row)
 
 def _parse_iso_ts(ts):
     try:
@@ -687,7 +698,8 @@ class StatisticsWindow(Gtk.Window):
             categories_box.pack_start(all_check, False, False, 0)
 
             for cat in self.data_categories:
-                cb = Gtk.CheckButton(label=format_category_label(cat))
+                cb = Gtk.CheckButton()
+                _set_checkbutton_icon_label(cb, cat)
                 rhythm_category_checks[cat] = cb
                 categories_box.pack_start(cb, False, False, 0)
 
@@ -758,15 +770,18 @@ class StatisticsWindow(Gtk.Window):
             def update_chart(*args):
                 if not fig or not ax_short or not ax_long or not canvas:
                     return
-                emoji_font = None
+                mpimg = None
+                OffsetImage = None
+                AnnotationBbox = None
                 text_effects = None
                 try:
-                    from matplotlib import font_manager as fm
-                    emoji_font = fm.FontProperties(
-                        family=["Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "DejaVu Sans"]
-                    )
+                    import matplotlib.image as _mpimg
+                    from matplotlib.offsetbox import OffsetImage as _OffsetImage, AnnotationBbox as _AnnotationBbox
+                    mpimg = _mpimg
+                    OffsetImage = _OffsetImage
+                    AnnotationBbox = _AnnotationBbox
                 except Exception:
-                    emoji_font = None
+                    mpimg = None
                 try:
                     import matplotlib.patheffects as pe
                     text_effects = [pe.withStroke(linewidth=1.5, foreground="black")]
@@ -793,11 +808,6 @@ class StatisticsWindow(Gtk.Window):
                 )
                 by_day = self._collect_rhythm_segments_fallback(
                     events, start_window, end_window, category_filter
-                )
-                emoji_scope = (
-                    "".join(KC_CATEGORY_EMOJIS.get(c, "") for c in selected_categories)
-                    if selected_categories
-                    else ""
                 )
 
                 if selected_categories:
@@ -903,33 +913,40 @@ class StatisticsWindow(Gtk.Window):
                                 facecolors=color,
                             )
 
-                            unique_emojis = []
-                            for c in item["cats"]:
-                                em = KC_CATEGORY_EMOJIS.get(str(c), "")
-                                if em and em not in unique_emojis:
-                                    unique_emojis.append(em)
-                            if not unique_emojis and selected_categories:
-                                for c in selected_categories:
-                                    em = KC_CATEGORY_EMOJIS.get(str(c), "")
-                                    if em and em not in unique_emojis:
-                                        unique_emojis.append(em)
-                            emoji_text = unique_emojis[0] if unique_emojis else ""
-                            if emoji_text:
-                                marker_text = emoji_text
-                            elif item["cats"]:
-                                marker_text = str(item["cats"][0])
-                            else:
-                                marker_text = "*"
+                            marker_cat = None
+                            if item["cats"]:
+                                marker_cat = str(item["cats"][0])
+                            elif selected_categories:
+                                marker_cat = str(selected_categories[0])
 
+                            x_center = item["start"] + (item["width"] / 2.0)
+                            if marker_cat and mpimg and OffsetImage and AnnotationBbox:
+                                icon_path = get_category_icon_path(marker_cat)
+                                if icon_path:
+                                    try:
+                                        icon_arr = mpimg.imread(icon_path)
+                                        marker_img = OffsetImage(icon_arr, zoom=0.50)
+                                        marker_ab = AnnotationBbox(
+                                            marker_img,
+                                            (x_center, y),
+                                            frameon=False,
+                                            pad=0.0,
+                                            box_alignment=(0.5, 0.5),
+                                        )
+                                        ax.add_artist(marker_ab)
+                                    except Exception:
+                                        pass
+
+                            code_label = marker_cat if marker_cat else "*"
+                            label_x = min(24 * 60 - 5, x_center + 12)
                             txt = ax.text(
-                                item["start"] + (item["width"] / 2.0),
+                                label_x,
                                 y,
-                                marker_text,
-                                ha="center",
+                                code_label,
+                                ha="left",
                                 va="center",
-                                fontsize=max(marker_fontsize, 12),
+                                fontsize=max(marker_fontsize - 1, 9),
                                 color="white",
-                                fontproperties=emoji_font,
                             )
                             if text_effects:
                                 txt.set_path_effects(text_effects)

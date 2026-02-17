@@ -15,30 +15,19 @@ MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
 KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "rl", "MWHH", "yss", "we", "gotb", "rf", "dw", " ", "breaks"]
-KC_CATEGORY_EMOJIS = {
-    "rdp": "👁️",
-    "fc": "❤️",
-    "g": "🙏",
-    "m": "🧘",
-    "sii": "🪑",
-    "v": "👁️",
-    "r": "📚",
-    "b": "💨",
-    "t": "🤔",
-    "c": "💪",
-    "rl": "😌",
-    "MWHH": "🏋️",
-    "yss": "🧘",
-    "we": "✍️",
-    "gotb": "💬",
-    "rf": "🤝",
-    "dw": "🎯",
-    "breaks": "🍵",
-}
+CATEGORY_ICON_DIR = Path(__file__).resolve().parents[2] / "assets" / "category_icons"
+
 
 def format_category_label(category):
-    emoji = KC_CATEGORY_EMOJIS.get(category, "")
-    return f"{emoji} {category}" if emoji else category
+    return category
+
+
+def get_category_icon_path(category):
+    if not category or str(category).strip() == "":
+        return None
+    icon_path = CATEGORY_ICON_DIR / f"{category}.png"
+    return str(icon_path) if icon_path.exists() else None
+
 
 class ConfigManager:
     def __init__(self, config_path=None):
