@@ -17,6 +17,17 @@ def _parse_iso_ts(ts):
     except:
         return None
 
+def _parse_minutes_value(val):
+    try:
+        if isinstance(val, (int, float)):
+            return int(val)
+        if isinstance(val, str):
+            nums = [int(x) for x in __import__("re").findall(r"\d+", val)]
+            return sum(nums) if nums else 0
+    except Exception:
+        pass
+    return 0
+
 def _clip_interval_to_day(start, end, day_start, day_end):
     if not start or not end:
         return None
@@ -31,9 +42,9 @@ def _event_matches_category(event, category_filter):
         wanted = {str(c).strip().lower() for c in category_filter if str(c).strip()}
         if not wanted:
             return True
-        cats = event.get("categories", [])
+        cats = event.get("categories", []) or event.get("category", [])
         return any(str(c).strip().lower() in wanted for c in cats)
-    cats = event.get("categories", [])
+    cats = event.get("categories", []) or event.get("category", [])
     return any(str(c).lower() == category_filter.lower() for c in cats)
 
 def _collect_rhythm_segments(events, start_window, end_window, category_filter="All"):
@@ -336,22 +347,132 @@ class StatisticsWindow(Gtk.Window):
         dialog.destroy()
 
     def _load_events(self):
-        if not EVENT_LOG_FILE.exists():
-            return []
         events = []
+        event_paths = [
+            EVENT_LOG_FILE,
+            EVENT_LOG_FILE.with_suffix(".json"),
+            EVENT_LOG_FILE.with_name("teatime_events.json"),
+        ]
         try:
-            with open(EVENT_LOG_FILE, "r") as f:
-                for line in f:
+            for path in event_paths:
+                if not path.exists():
+                    continue
+                with open(path, "r") as f:
+                    raw = f.read().strip()
+                if not raw:
+                    continue
+                if raw.startswith("["):
+                    try:
+                        loaded = json.loads(raw)
+                        if isinstance(loaded, list):
+                            events.extend([e for e in loaded if isinstance(e, dict)])
+                            continue
+                    except Exception:
+                        pass
+                for line in raw.splitlines():
                     line = line.strip()
                     if not line:
                         continue
                     try:
-                        events.append(json.loads(line))
-                    except:
+                        row = json.loads(line)
+                        if isinstance(row, dict):
+                            events.append(row)
+                    except Exception:
                         pass
         except:
             return []
         return events
+
+    def _event_categories(self, event):
+        cats = event.get("categories", [])
+        if isinstance(cats, str):
+            return [cats]
+        if isinstance(cats, list):
+            return cats
+        cat = event.get("category")
+        if isinstance(cat, list):
+            return cat
+        if isinstance(cat, str):
+            return [cat]
+        return []
+
+    def _event_interval(self, event):
+        start = (
+            _parse_iso_ts(event.get("ts_start"))
+            or _parse_iso_ts(event.get("start"))
+            or _parse_iso_ts(event.get("start_ts"))
+        )
+        end = (
+            _parse_iso_ts(event.get("ts_end"))
+            or _parse_iso_ts(event.get("end"))
+            or _parse_iso_ts(event.get("end_ts"))
+        )
+        if start and end and end > start:
+            return start, end
+        duration = _parse_minutes_value(event.get("duration_min", 0))
+        if start and duration > 0:
+            return start, start + timedelta(minutes=duration)
+        return None
+
+    def _daily_minutes_from_stats(self, selected_categories):
+        logs = self.stats_manager.load() or []
+        if not logs:
+            return []
+        wanted = [str(c).strip().lower() for c in selected_categories if str(c).strip()]
+        out = []
+        for row in logs:
+            day = str(row.get("date", "")).strip()
+            if not day:
+                continue
+            if wanted:
+                cats = [c for c in self.data_categories if c.lower() in wanted]
+            else:
+                cats = list(self.data_categories)
+            total = sum(_parse_minutes_value(row.get(cat, 0)) for cat in cats)
+            if total > 0:
+                out.append((day, total))
+        out.sort(key=lambda x: x[0])
+        return out
+
+    def _daily_minutes_from_events(self, selected_categories):
+        wanted = {str(c).strip().lower() for c in selected_categories if str(c).strip()}
+        totals = {}
+        for e in self._load_events():
+            cats = [str(c).strip().lower() for c in self._event_categories(e)]
+            if wanted and not any(c in wanted for c in cats):
+                continue
+            interval = self._event_interval(e)
+            if not interval:
+                continue
+            start, end = interval
+            day = start.strftime("%Y-%m-%d")
+            mins = max(0.0, (end - start).total_seconds() / 60.0)
+            totals[day] = totals.get(day, 0.0) + mins
+        out = sorted([(d, int(round(v))) for d, v in totals.items() if v > 0], key=lambda x: x[0])
+        return out
+
+    def _collect_rhythm_segments_fallback(self, events, start_window, end_window, category_filter):
+        by_day = _collect_rhythm_segments(events, start_window, end_window, category_filter)
+        if by_day:
+            return by_day
+        if isinstance(category_filter, (list, tuple, set)):
+            selected_categories = list(category_filter)
+        elif isinstance(category_filter, str) and category_filter != "All":
+            selected_categories = [category_filter]
+        else:
+            selected_categories = []
+        daily = self._daily_minutes_from_stats(selected_categories)
+        for day, total_min in daily:
+            try:
+                day_start = datetime.fromisoformat(day).replace(hour=0, minute=0, second=0, microsecond=0)
+            except Exception:
+                continue
+            if day_start < start_window or day_start > end_window:
+                continue
+            start_min = 12 * 60
+            end_min = min(24 * 60, start_min + float(total_min))
+            by_day.setdefault(day, []).append((start_min, end_min))
+        return by_day
 
     def _get_selected_categories_from_main(self):
         app = self.get_application()
@@ -379,29 +500,21 @@ class StatisticsWindow(Gtk.Window):
             popup = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
             popup.set_transient_for(self)
             popup.set_modal(False)
-            popup.set_title("Flow Timeline (Today)")
+            popup.set_title("Flow Timeline")
             popup.set_default_size(560, 180)
             popup.set_border_width(8)
 
-            frame = Gtk.Frame(label="Flow Timeline (Today)")
+            frame = Gtk.Frame(label="Flow Timeline")
             da = Gtk.DrawingArea()
             da.set_size_request(520, 140)
             frame.add(da)
             popup.add(frame)
 
-            events = self._load_events()
-            day_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            day_end = day_start.replace(hour=23, minute=59, second=59)
             selected_categories = self._get_selected_categories_from_main()
-            todays = []
-            for e in events:
-                if not _event_matches_category(e, selected_categories):
-                    continue
-                start = _parse_iso_ts(e.get("ts_start"))
-                end = _parse_iso_ts(e.get("ts_end"))
-                clipped = _clip_interval_to_day(start, end, day_start, day_end)
-                if clipped:
-                    todays.append((e, clipped[0], clipped[1]))
+            points = self._daily_minutes_from_stats(selected_categories)
+            if not points:
+                points = self._daily_minutes_from_events(selected_categories)
+            points = points[-21:]
 
             def draw_timeline(widget, cr):
                 alloc = widget.get_allocation()
@@ -417,34 +530,43 @@ class StatisticsWindow(Gtk.Window):
                 cr.line_to(w - pad, y)
                 cr.stroke()
 
-                if not todays:
+                if not points:
+                    cr.set_source_rgba(0.9, 0.9, 0.9, 0.9)
+                    cr.select_font_face("Sans", 0, 0)
+                    cr.set_font_size(12)
+                    cr.move_to(pad + 6, y - 10)
+                    cr.show_text("No flow data for selected categories")
                     return False
 
-                span = (day_end - day_start).total_seconds()
+                max_minutes = max(m for _, m in points) if points else 1
+                span_x = max(1, len(points) - 1)
+                dot_positions = []
+                for idx, (day, mins) in enumerate(points):
+                    x = pad + (idx / span_x) * (w - pad * 2)
+                    y_off = (mins / max_minutes) * (h * 0.35)
+                    py = y - y_off
+                    dot_positions.append((x, py, day, mins))
 
-                for e, start, end in todays:
-                    sx = pad + ((start - day_start).total_seconds() / span) * (w - pad * 2)
-                    ex = pad + ((end - day_start).total_seconds() / span) * (w - pad * 2)
-                    sx = max(pad, min(w - pad, sx))
-                    ex = max(pad, min(w - pad, ex))
-                    cats = e.get("categories", [])
-                    is_break = any(str(c).lower() == "breaks" for c in cats)
+                cr.set_source_rgba(0.2, 0.7, 1.0, 0.9)
+                cr.set_line_width(2)
+                for idx, (x, py, _, _) in enumerate(dot_positions):
+                    if idx == 0:
+                        cr.move_to(x, py)
+                    else:
+                        cr.line_to(x, py)
+                cr.stroke()
 
-                    cr.set_source_rgba(0.2, 0.7, 1.0, 0.9)
-                    cr.set_line_width(6)
-                    cr.move_to(sx, y)
-                    cr.line_to(ex, y)
-                    cr.stroke()
-
-                    if is_break:
-                        cr.set_source_rgba(1.0, 0.6, 0.2, 0.95)
-                        cr.arc(ex, y, 6, 0, 2 * 3.14159)
-                        cr.fill()
-                        cr.set_source_rgba(1.0, 1.0, 1.0, 1.0)
-                        cr.select_font_face("Sans", 0, 0)
-                        cr.set_font_size(12)
-                        cr.move_to(ex + 8, y - 6)
-                        cr.show_text("\u2615")
+                for x, py, day, mins in dot_positions:
+                    cr.set_source_rgba(1.0, 0.6, 0.2, 0.95)
+                    cr.arc(x, py, 4, 0, 2 * 3.14159)
+                    cr.fill()
+                    cr.set_source_rgba(0.95, 0.95, 0.95, 0.95)
+                    cr.select_font_face("Sans", 0, 0)
+                    cr.set_font_size(10)
+                    cr.move_to(x + 5, py - 4)
+                    cr.show_text(f"{mins}m")
+                    cr.move_to(x + 5, py + 8)
+                    cr.show_text(day[5:])
 
                 return False
 
@@ -546,7 +668,9 @@ class StatisticsWindow(Gtk.Window):
                 selected_categories = self._get_selected_categories_from_main()
                 manual_filter = category_combo.get_active_text() or "All"
                 category_filter = selected_categories if selected_categories else manual_filter
-                by_day = _collect_rhythm_segments(events, start_window, end_window, category_filter)
+                by_day = self._collect_rhythm_segments_fallback(
+                    events, start_window, end_window, category_filter
+                )
 
                 if selected_categories:
                     status.set_text(f"Using selected Categories filter: {', '.join(selected_categories)}")
@@ -587,6 +711,17 @@ class StatisticsWindow(Gtk.Window):
                         if bars:
                             has_bars = True
                             ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors=color)
+                            for bar_start, bar_width in bars:
+                                x = bar_start + (bar_width / 2.0)
+                                ax.text(
+                                    x,
+                                    idx,
+                                    f"{bar_width:.0f}m",
+                                    ha="center",
+                                    va="center",
+                                    fontsize=8,
+                                    color="white",
+                                )
                     ax.set_yticks(y_positions)
                     ax.set_yticklabels(day_keys)
                     if not has_bars:
