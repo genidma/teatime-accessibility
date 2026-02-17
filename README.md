@@ -84,7 +84,7 @@ here
 - because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
 - in this demo, we also go into the Settings section to show you the section where you can select different animations
 
-![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/toggle_sound.gif)
+![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/toggle_sound_animation.gif)
 
 ### mini mode and nano mode
 
