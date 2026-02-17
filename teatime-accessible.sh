@@ -50,7 +50,5 @@ if [ -n "$AT_SPI_BUS_ADDRESS" ]; then
     fi
 fi
 
-# Run the application, filtering out known noisy/harmless AT-SPI warnings from stderr
-# We do not disable the bridge (NO_AT_BRIDGE is NOT set), so accessibility features remain active.
-# We just clean up the terminal output for a better user experience.
-python3 bin/teatime.py "$@" 2> >(grep -v -E "AT-SPI: Could not obtain desktop path|atk-bridge: get_device_events_reply|atk-bridge: GetRegisteredEvents" >&2)
+# Run the application
+python3 bin/teatime.py "$@"
