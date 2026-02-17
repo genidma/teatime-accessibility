@@ -267,6 +267,10 @@ following the naming pattern `*sprite_frame_*.png`.
 
 
 ## Demos on Youtube
+
+> [!NOTE]
+> these demos were recorded for the main branch. so the ui will look different.
+
 * [Shorter demo video on YT](https://youtu.be/gsrPCAagAtw?t=137)
 * [40 + minute demo " " ](https://youtu.be/cgc0qMRA638)
 
