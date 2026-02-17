@@ -764,7 +764,8 @@ class StatisticsWindow(Gtk.Window):
                     "Last 1 Year",
                     "All Time",
                 }
-                hours = int(zoom_hours["value"])
+                # hours = int(zoom_hours["value"]) # Removed
+                # hours is already calculated at the top of the function based on span_hours
                 all_end_max = None
                 for _day in day_keys:
                     for start_min, end_min in by_day.get(_day, []):
