@@ -114,9 +114,9 @@ here
 > as with every other file related to this app, all of the data sits on your machine and no data is ever sent anywhere. period!
 - coming back to the statistics (stats) section (invoked from the dialog box or keyboard shortcut option): each time a timer concludes it's full cycle, an entry is logged in the engine
 - - A full-cycle is a successful completion of the duration specified for timer. Meaning, that the cycle has not been stopped/interrupted by the user
-- as you will notice in the demo, the user has to refresh the ui in the  statistics section to see the updated data
 
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
+> [!NOTE]
+> you have to refresh the ui in the  statistics section to see the updated data
 
 #### Flow and Rhythm (kcresonance)
 - open **Statistics** via `Ctrl+I` (or menu), then use the **kcresonance** box:
@@ -137,6 +137,8 @@ here
 - - Matplotlib toolbar zoom/pan when available
 - category markers in Rhythm are rendered as **custom icon + category code** (not unicode emoji glyphs), sourced from:
 - - `assets/category_icons/`
+
+![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/stats_flow_rhythm.gif)
 
 #### Export to CSV
 - this feature allows the user to export the data stored in the Statistics view to a CSV file
