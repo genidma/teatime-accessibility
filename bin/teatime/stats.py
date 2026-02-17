@@ -192,6 +192,7 @@ class StatisticsWindow(Gtk.Window):
             if cat.lower() == "breaks":
                 column.set_clickable(True)
                 header_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+                header_box.set_can_focus(False)
                 header_title = Gtk.Label(label="Breaks")
                 self.breaks_today_label = Gtk.Label(label="Today: 0m")
                 header_title.set_halign(Gtk.Align.CENTER)
@@ -267,6 +268,7 @@ class StatisticsWindow(Gtk.Window):
         
         self._load_stats()
         self.show_all()
+        self.set_focus(self.treeview)
 
     def _on_delete_event(self, widget, event):
         self.hide()
@@ -274,11 +276,12 @@ class StatisticsWindow(Gtk.Window):
 
     def _on_comments_key_press(self, widget, event):
         # Allow Tab/Shift+Tab to navigate focus instead of inserting literal tabs
-        if event.keyval == Gdk.KEY_Tab:
+        if event.keyval == Gdk.keyval_from_name("Tab"):
+            toplevel = widget.get_toplevel()
             if event.state & Gdk.ModifierType.SHIFT_MASK:
-                self.child_focus(Gtk.DirectionType.TAB_BACKWARD)
+                toplevel.child_focus(Gtk.DirectionType.TAB_BACKWARD)
             else:
-                self.child_focus(Gtk.DirectionType.TAB_FORWARD)
+                toplevel.child_focus(Gtk.DirectionType.TAB_FORWARD)
             return True
         return False
 

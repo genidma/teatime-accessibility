@@ -259,9 +259,11 @@ class TeaTimerApp(Gtk.Application):
             header_bar.pack_end(menu_btn)
 
             self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10, margin=20)
+            self.main_box.set_can_focus(False)
             self.window.add(self.main_box)
 
             content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
+            content_box.set_can_focus(False)
             self.main_box.pack_start(content_box, True, True, 0)
             self.content_box = content_box
 
@@ -270,6 +272,7 @@ class TeaTimerApp(Gtk.Application):
             self.main_box.pack_start(self.time_label, False, False, 0)
 
             self.control_grid = Gtk.Grid(column_spacing=10, row_spacing=10, halign=Gtk.Align.CENTER)
+            self.control_grid.set_can_focus(False)
             content_box.pack_start(self.control_grid, True, True, 0)
 
             # Row 0: Duration (spin + slider)
@@ -374,6 +377,7 @@ class TeaTimerApp(Gtk.Application):
             self._apply_skin()
 
         self.window.show_all()
+        self.window.set_focus(self.duration_spin)
         self._apply_mini_mode()
         self._start_rainbow_timer()
         if self.auto_start: GLib.idle_add(self.on_start_clicked)
