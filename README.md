@@ -61,7 +61,7 @@ in the first demo:
 - the slider functionality is displayed and so are the buttons for decreasing or increasing the value for the 'Minutes' field
 - notice how the **timer increments in 5 seconds intervals** 
 - fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
-![Demo - gif format](./screenshots_demo_clones/kcresonance/demos/main_timer.gif)
+![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/main_timer.gif)
 
 ### session presets & manual durations
 
