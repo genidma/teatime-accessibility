@@ -107,25 +107,6 @@ here
 - fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
 - overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
 
-### Settings and customization options
-
-as of 2025-11-06, there are two options under the 'Settings' area from the dialog box and here is more information about each option.
-
-#### Animations
-- this is where you choose which animation you want to see, once the timer has concluded. Currently there are two options in there. You must have noticed one of the demo from one of the previous section (above), so no point in repeating this demo. Changing this setting is easy, just click on the dropdown menu and select the option you want
-
-#### Custom Skins
-
-> [!NOTE]
-> There is more information about the custom skins in one of the following sections. Here's the [link](#custom-skins)
-
-- there are currently two options under the _Settings_ for the **'Skins for Main UI (User Interface):**' section. **1. Default - No Skin** and **2. Lava Lamp** 
-- - note: a change in this (Settings) section requires that the app is closed and opened again  
-- in the demo below, the app will be opened in the 'Default - No Skin'. Next, the settings will be changed to 'Lava Lamp' and the app will be reopened.
-- - note: the 'Lava Lamp' skin feature makes use of css (cascading style sheets), in order to dynamically change the app's skin. 
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/skins.gif)
-
 #### Statistics
 - the statistics section (engine) is powered by a local database in the form of a .json file
 
