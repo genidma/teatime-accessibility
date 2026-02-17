@@ -174,6 +174,7 @@ class TeaTimerApp(Gtk.Application):
     def __init__(self, duration=5, auto_start=False):
         super().__init__(application_id="org.genidma.KCResonance",
                          flags=Gio.ApplicationFlags.NON_UNIQUE)
+        import random
         self.window = None
         self.timer_id = None
         self.time_left = 0
@@ -185,7 +186,7 @@ class TeaTimerApp(Gtk.Application):
         self.css_provider = Gtk.CssProvider()
         self._stats_window = None
         self.rainbow_hue = 0
-        self.focus_hue = 0
+        self.focus_hue = random.randint(0, 359)
         self.sprite_frames = []
         self._sprite_frames_cache = {}
         self._sprite_scaled_cache = {}
@@ -240,6 +241,7 @@ class TeaTimerApp(Gtk.Application):
             self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
             self.window.set_default_size(400, 300)
             self.window.connect("destroy", self._on_window_destroy)
+            self.window.connect("set-focus-child", self._on_focus_changed)
             self.window.connect("focus-in-event", self._on_window_focus_in)
             self.window.connect("focus-out-event", self._on_window_focus_out)
 
@@ -659,7 +661,25 @@ class TeaTimerApp(Gtk.Application):
         time_scale = scale * 2
         if self.nano_mode:
             time_scale *= 0.8
-        self.font_css = f".time-display {{ font-size: {time_scale}%; }} label, button {{ font-size: {scale}%; }}"
+            
+        # Calculate focus glow color
+        fr, fg, fb = colorsys.hsv_to_rgb(self.focus_hue / 360.0, 0.9, 1.0)
+        glow_rgba = f"rgba({int(fr*255)}, {int(fg*255)}, {int(fb*255)}, 0.8)"
+        border_rgb = f"rgb({int(fr*255)}, {int(fg*255)}, {int(fb*255)})"
+
+        self.font_css = f"""
+            .time-display {{ font-size: {time_scale}%; }} 
+            label, button {{ font-size: {scale}%; }}
+            
+            button, checkbutton, spinbutton {{
+                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            }}
+            button:focus, checkbutton:focus, spinbutton:focus {{
+                outline: none;
+                box-shadow: 0 0 8px 3px {glow_rgba};
+                border-color: {border_rgb};
+            }}
+        """
         
         # Combine font CSS with skin CSS if applicable
         combined_css = self.font_css
@@ -828,6 +848,10 @@ class TeaTimerApp(Gtk.Application):
     def on_toggle_nano_mode_activated(self, *args):
         self.nano_mode_toggle.set_active(not self.nano_mode_toggle.get_active())
 
+    def _on_focus_changed(self, container, widget):
+        """Cycles the focus glow color when the focused widget changes."""
+        self.focus_hue = (self.focus_hue + 40) % 360
+        self._apply_font_size()
 
     def _on_window_focus_in(self, *args):
         if self._rainbow_deferred and not self.rainbow_timer_id:

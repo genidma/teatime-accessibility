@@ -141,8 +141,9 @@ class StatisticsWindow(Gtk.Window):
         self.set_decorated(True)
         self.set_role("statistics-window")
         
-        # Handle window close properly
+        # Handle window close and focus changes
         self.connect("delete-event", self._on_delete_event)
+        self.connect("set-focus-child", self._on_focus_changed)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main_box.set_margin_top(10)
@@ -273,6 +274,12 @@ class StatisticsWindow(Gtk.Window):
     def _on_delete_event(self, widget, event):
         self.hide()
         return True
+
+    def _on_focus_changed(self, container, widget):
+        """Cycles the focus glow color when the focused widget changes."""
+        app = self.get_application()
+        if app and hasattr(app, "_on_focus_changed"):
+            app._on_focus_changed(container, widget)
 
     def _on_comments_key_press(self, widget, event):
         # Allow Tab/Shift+Tab to navigate focus instead of inserting literal tabs
