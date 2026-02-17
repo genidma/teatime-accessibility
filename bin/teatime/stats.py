@@ -79,6 +79,47 @@ def _collect_rhythm_segments(events, start_window, end_window, category_filter="
 
     return by_day
 
+def _collect_rhythm_segments_detailed(events, start_window, end_window, category_filter="All"):
+    by_day = {}
+    for e in events:
+        if not _event_matches_category(e, category_filter):
+            continue
+        start = _parse_iso_ts(e.get("ts_start")) or _parse_iso_ts(e.get("start")) or _parse_iso_ts(e.get("start_ts"))
+        end = _parse_iso_ts(e.get("ts_end")) or _parse_iso_ts(e.get("end")) or _parse_iso_ts(e.get("end_ts"))
+        if (not start or not end) and start:
+            duration = _parse_minutes_value(e.get("duration_min", 0))
+            if duration > 0:
+                end = start + timedelta(minutes=duration)
+        clipped = _clip_interval_to_day(start, end, start_window, end_window)
+        if not clipped:
+            continue
+
+        seg_start, seg_end = clipped
+        if seg_end <= seg_start:
+            continue
+
+        cats = e.get("categories", []) or e.get("category", [])
+        if isinstance(cats, str):
+            cats = [cats]
+        if not isinstance(cats, list):
+            cats = []
+
+        day_key = seg_start.strftime("%Y-%m-%d")
+        start_min = seg_start.hour * 60 + seg_start.minute + seg_start.second / 60.0
+        end_min = seg_end.hour * 60 + seg_end.minute + seg_end.second / 60.0
+        by_day.setdefault(day_key, []).append(
+            {
+                "start_min": start_min,
+                "end_min": end_min,
+                "cats": [str(c) for c in cats],
+            }
+        )
+
+    for day in by_day:
+        by_day[day].sort(key=lambda x: x["start_min"])
+
+    return by_day
+
 class StatisticsWindow(Gtk.Window):
     def __init__(self, application, parent):
         super().__init__(title="Timer Statistics", application=application)
@@ -725,6 +766,9 @@ class StatisticsWindow(Gtk.Window):
 
                 selected_categories = get_rhythm_selected_categories()
                 category_filter = selected_categories if selected_categories else "All"
+                by_day_detailed = _collect_rhythm_segments_detailed(
+                    events, start_window, end_window, category_filter
+                )
                 by_day = self._collect_rhythm_segments_fallback(
                     events, start_window, end_window, category_filter
                 )
@@ -770,19 +814,47 @@ class StatisticsWindow(Gtk.Window):
                     y_positions = list(range(len(day_keys)))
                     for idx, day in enumerate(day_keys):
                         segments = by_day.get(day, [])
+                        detailed_segments = by_day_detailed.get(day, [])
                         bars = []
+                        bar_cats = []
                         for start_min, end_min in segments:
                             dur_min = max(0.0, end_min - start_min)
                             if duration_predicate(dur_min):
                                 bars.append((start_min, max(0.5, dur_min)))
+                                matched = next(
+                                    (
+                                        d
+                                        for d in detailed_segments
+                                        if abs(float(d.get("start_min", -1)) - float(start_min)) < 0.01
+                                        and abs(float(d.get("end_min", -1)) - float(end_min)) < 0.01
+                                    ),
+                                    None,
+                                )
+                                bar_cats.append(matched.get("cats", []) if matched else [])
                         if bars:
                             has_bars = True
                             ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors=color)
-                            for bar_start, bar_width in bars:
+                            for bar_idx, (bar_start, bar_width) in enumerate(bars):
                                 hh = int(bar_start // 60)
                                 mm = int(bar_start % 60)
                                 prefix = f"{emoji_scope} " if emoji_scope else ""
                                 label_items.append(f"{prefix}{day[5:]} {hh:02d}:{mm:02d}  {bar_width:.0f}m")
+                                cats_for_bar = bar_cats[bar_idx] if bar_idx < len(bar_cats) else []
+                                emojis = "".join(
+                                    KC_CATEGORY_EMOJIS.get(str(c), "")
+                                    for c in cats_for_bar
+                                    if KC_CATEGORY_EMOJIS.get(str(c), "")
+                                )
+                                if emojis:
+                                    ax.text(
+                                        bar_start + (bar_width / 2.0),
+                                        idx,
+                                        emojis,
+                                        ha="center",
+                                        va="center",
+                                        fontsize=10,
+                                        color="black",
+                                    )
                     ax.set_yticks(y_positions)
                     ax.set_yticklabels(day_keys)
                     if not has_bars:
