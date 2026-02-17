@@ -56,12 +56,12 @@ _New features are added regularly_. To request or suggest additional features an
 ### open app & start/stop the timer
 
 in the first demo:
-- app is opened using the icon on the desktop
-- the timer is started using the buttons on the gui (graphical user interface)
+- app is opened
+- the timer is started and stopped using the buttons on the gui (graphical user interface)
+- the slider functionality is displayed and so are the buttons for decreasing or increasing the value for the 'Minutes' field
 - notice how the **timer increments in 5 seconds intervals** 
-- the timer is then stopped. As this is just a demo
 - fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/open_app_start_stop.gif)
+![Demo - gif format](./screenshots_demo_clones/kcresonance/demos/main_timer.gif)
 
 ### session presets & manual durations
 
