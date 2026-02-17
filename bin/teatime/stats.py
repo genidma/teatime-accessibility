@@ -240,14 +240,12 @@ class StatisticsWindow(Gtk.Window):
         flow_quick_button = Gtk.Button(label="Flow")
         flow_quick_button.set_tooltip_text("Show flow timeline")
         flow_quick_button.connect("clicked", self._on_flow_signal)
-        flow_quick_button.connect("button-release-event", self._on_flow_signal)
         flow_quick_button.connect_after("clicked", self._trace_button_clicked, "FlowQuick")
         kcresonance_row.pack_start(flow_quick_button, False, False, 0)
 
         rhythm_quick_button = Gtk.Button(label="Rhythm")
         rhythm_quick_button.set_tooltip_text("Show daily rhythm graph")
         rhythm_quick_button.connect("clicked", self._on_rhythm_signal)
-        rhythm_quick_button.connect("button-release-event", self._on_rhythm_signal)
         rhythm_quick_button.connect_after("clicked", self._trace_button_clicked, "RhythmQuick")
         kcresonance_row.pack_start(rhythm_quick_button, False, False, 0)
 
