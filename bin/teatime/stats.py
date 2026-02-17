@@ -698,8 +698,11 @@ class StatisticsWindow(Gtk.Window):
                     root.pack_start(toolbar, False, False, 0)
                 except Exception:
                     pass
-            except Exception:
-                status.set_text("matplotlib is not installed. Install it to enable rhythm charts.")
+            except Exception as e:
+                status.set_text(
+                    "Rhythm chart unavailable. Install/verify matplotlib GTK backend "
+                    f"(error: {e})."
+                )
 
             def _on_zoom_hours_clicked(_button, hours):
                 zoom_hours["value"] = hours
