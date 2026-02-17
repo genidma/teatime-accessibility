@@ -134,6 +134,26 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/statistics.gif)
 
+#### Flow and Rhythm (kcresonance)
+- open **Statistics** via `Ctrl+I` (or menu), then use the **kcresonance** box:
+- - **Flow**: opens the Flow timeline popup window.
+- - **Rhythm**: opens the Rhythm charts popup window.
+- in the Statistics window, the top-row actions remain:
+- - **Refresh**
+- - **Export to CSV**
+- - **Clear History**
+- Rhythm uses three duration buckets:
+- - **<= 1 minute**
+- - **> 1 minute and < 5 minutes**
+- - **>= 5 minutes**
+- Rhythm supports:
+- - Range switch: **Last 12 Hours** / **Last 7 Days**
+- - Category checkboxes (with **All** first)
+- - Quick zoom buttons: `1h`, `4h`, `8h`, `12h`, `24h`
+- - Matplotlib toolbar zoom/pan when available
+- category markers in Rhythm are rendered as **custom icon + category code** (not unicode emoji glyphs), sourced from:
+- - `assets/category_icons/`
+
 #### Export to CSV
 - this feature allows the user to export the data stored in the Statistics view to a CSV file
 - you can then load the data from the CSV file into an application of your choosing (that is designed to handle CSV files)
@@ -316,6 +336,11 @@ For better compatibility, we also recommend installing the system-wide PyGObject
 ```bash
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 ```
+
+For `kcresonance` Flow/Rhythm charts:
+- `matplotlib` with GTK backend (`FigureCanvasGTK3Agg`) is required.
+- `mplcairo` is not required in the current implementation.
+- custom category icon files are expected under `assets/category_icons/`.
 
 ### Automatic Installation (Recommended)
 First, clone the repository to a location of your choice, then run the install script:
@@ -598,6 +623,7 @@ The application consists of several scripts, each with a specific purpose:
 - `teatime-accessibility.desktop`: The desktop entry file that integrates the application with the system's application menu and desktop environment.
 
 - `requirements.txt`: Lists all Python package dependencies required for the application to run.
+- Rhythm chart backend note (kcresonance): uses matplotlib GTK3Agg (`FigureCanvasGTK3Agg`) with custom icon markers.
 
 - `test_short_timer.py`: Test script used during development to verify timer functionality.
 
