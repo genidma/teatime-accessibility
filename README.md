@@ -339,7 +339,6 @@ sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 
 For `kcresonance` Flow/Rhythm charts:
 - `matplotlib` with GTK backend (`FigureCanvasGTK3Agg`) is required.
-- `mplcairo` is not required in the current implementation.
 - custom category icon files are expected under `assets/category_icons/`.
 
 ### Automatic Installation (Recommended)
