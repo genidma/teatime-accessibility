@@ -626,103 +626,28 @@ class StatisticsWindow(Gtk.Window):
             controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
             root.pack_start(controls, False, False, 0)
 
-            range_label = Gtk.Label(label="Range")
-            range_label.set_halign(Gtk.Align.START)
-            controls.pack_start(range_label, False, False, 0)
-
-            range_combo = Gtk.ComboBoxText()
-            range_combo.append_text("Last 12 Hours")
-            range_combo.append_text("Last 7 Days")
-            range_combo.append_text("Last 1 Hour")
-            range_combo.append_text("Last 4 Hours")
-            range_combo.append_text("Last 24 Hours")
-            range_combo.append_text("Today")
-            range_combo.append_text("Yesterday")
-            range_combo.append_text("Last 3 Days")
-            range_combo.append_text("Last 30 Days")
-            range_combo.append_text("Last 90 Days")
-            range_combo.append_text("Last 6 Months")
-            range_combo.append_text("Last 1 Year")
-            range_combo.append_text("All Time")
-            range_combo.set_active(0)
-            controls.pack_start(range_combo, False, False, 0)
-
-            zoom_label = Gtk.Label(label="Zoom")
-            zoom_label.set_halign(Gtk.Align.START)
-            controls.pack_start(zoom_label, False, False, 0)
-
-            zoom_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-            controls.pack_start(zoom_box, False, False, 0)
-            zoom_hours = {"value": 24}
-
-            categories_frame = Gtk.Frame(label="Categories")
-            categories_box = Gtk.Box(
-                orientation=Gtk.Orientation.HORIZONTAL,
-                spacing=10,
-                margin=6,
-            )
-            categories_frame.add(categories_box)
-            root.pack_start(categories_frame, False, False, 0)
-
-            rhythm_category_checks = {}
-            all_check = Gtk.CheckButton(label="All")
-            all_label = all_check.get_child()
-            if isinstance(all_label, Gtk.Label):
-                all_label.set_use_markup(True)
-                all_label.set_markup("<b>All</b>")
-            all_check.set_active(True)
-            rhythm_category_checks["All"] = all_check
-            categories_box.pack_start(all_check, False, False, 0)
-
-            for cat in self.data_categories:
-                cb = Gtk.CheckButton()
-                _set_checkbutton_icon_label(cb, cat)
-                rhythm_category_checks[cat] = cb
-                categories_box.pack_start(cb, False, False, 0)
-
-            chart_host = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-            chart_host.set_hexpand(True)
-            chart_host.set_vexpand(True)
-            root.pack_start(chart_host, True, True, 0)
-
-            status = Gtk.Label(label="")
-            status.set_halign(Gtk.Align.START)
-            root.pack_start(status, False, False, 0)
-
-            fig = None
-            ax_micro = None
-            ax_short = None
-            ax_long = None
-            canvas = None
-            try:
-                from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
-                from matplotlib.figure import Figure
-                fig = Figure(figsize=(8, 8), dpi=100)
-                ax_micro = fig.add_subplot(311)
-                ax_short = fig.add_subplot(312, sharex=ax_micro)
-                ax_long = fig.add_subplot(313, sharex=ax_micro)
-                canvas = FigureCanvas(fig)
-                chart_host.pack_start(canvas, True, True, 0)
-                try:
-                    from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
-                    toolbar = NavigationToolbar(canvas, popup)
-                    root.pack_start(toolbar, False, False, 0)
-                except Exception:
-                    pass
-            except Exception as e:
-                status.set_text(
-                    "Rhythm chart unavailable. Install/verify matplotlib GTK backend "
-                    f"(error: {e})."
-                )
-
-            def _on_zoom_hours_clicked(_button, hours):
-                zoom_hours["value"] = hours
+            # Unified Time Span Buttons
+            time_span_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+            controls.pack_start(time_span_box, False, False, 0)
+            
+            # Store current state
+            current_state = {"duration": "12h", "hours": 12} 
+            
+            def _on_span_clicked(btn, label, duration_hours):
+                current_state["duration"] = label
+                current_state["hours"] = duration_hours
                 update_chart()
 
-            for hours in (1, 4, 8, 12, 24):
-                zbtn = Gtk.Button(label=f"{hours}h")
-                zbtn.connect("clicked", _on_zoom_hours_clicked, hours)
-                zoom_box.pack_start(zbtn, False, False, 0)
+            spans = [
+                ("4h", 4), ("12h", 12), ("24h", 24),
+                ("3d", 72), ("7d", 168), ("30d", 720),
+                ("90d", 2160), ("180d", 4320), ("All", -1)
+            ]
+            
+            for label, hours in spans:
+                btn = Gtk.Button(label=label)
+                btn.connect("clicked", _on_span_clicked, label, hours)
+                time_span_box.pack_start(btn, False, False, 0)
 
             def get_rhythm_selected_categories():
                 if rhythm_category_checks["All"].get_active():
@@ -781,50 +706,34 @@ class StatisticsWindow(Gtk.Window):
                 now = datetime.now()
                 today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
                 today_end = today_start.replace(hour=23, minute=59, second=59)
-
-                range_name = range_combo.get_active_text() or "Last 12 Hours"
-                if range_name == "Last 1 Hour":
-                    start_window = now - timedelta(hours=1)
-                    end_window = now
-                elif range_name == "Last 4 Hours":
-                    start_window = now - timedelta(hours=4)
-                    end_window = now
-                elif range_name == "Last 12 Hours":
-                    start_window = now - timedelta(hours=12)
-                    end_window = now
-                elif range_name == "Last 24 Hours":
-                    start_window = now - timedelta(hours=24)
-                    end_window = now
-                elif range_name == "Today":
-                    start_window = today_start
-                    end_window = today_end
-                elif range_name == "Yesterday":
-                    start_window = today_start - timedelta(days=1)
-                    end_window = today_start - timedelta(seconds=1)
-                elif range_name == "Last 3 Days":
-                    start_window = today_start - timedelta(days=2)
-                    end_window = today_end
-                elif range_name == "Last 7 Days":
-                    start_window = today_start - timedelta(days=6)
-                    end_window = today_end
-                elif range_name == "Last 30 Days":
-                    start_window = today_start - timedelta(days=29)
-                    end_window = today_end
-                elif range_name == "Last 90 Days":
-                    start_window = today_start - timedelta(days=89)
-                    end_window = today_end
-                elif range_name == "Last 6 Months":
-                    start_window = today_start - timedelta(days=182)
-                    end_window = today_end
-                elif range_name == "Last 1 Year":
-                    start_window = today_start - timedelta(days=365)
-                    end_window = today_end
-                elif range_name == "All Time":
+                
+                span_hours = current_state["hours"]
+                range_label = current_state["duration"]
+                
+                # Determine window based on unified span
+                if span_hours == -1: # All
                     start_window = datetime.min
                     end_window = datetime.max
-                else:
-                    start_window = now - timedelta(hours=12)
+                    hours = 24
+                elif span_hours >= 24: # Multiday View (3d, 7d, etc)
+                    # For consistency with "Last X Days", we anchor to end of today
+                    # But to keep it simple and matching "Last X Hours" logic:
+                    # Let's trust the "Last X Hours" approach for everything?
+                    # No, user expects "3d" to mean "Last 3 Days".
+                    # Let's use simple hours subtraction for now to match "Last 90d".
+                    # actually, for multiday, we want to see full days usually.
+                    # But the requirement is "Unified". Let's use exact hours for consistency?
+                    # "3d" -> 72h. 
+                    start_window = now - timedelta(hours=span_hours)
                     end_window = now
+                    hours = 24 # View is zoomed to day-level (0-24 axis)
+                else: # Intraday (4h, 12h)
+                    start_window = now - timedelta(hours=span_hours)
+                    end_window = now
+                    hours = span_hours
+
+                # Fallback for "Yesterday" or specific logic if we wanted (omitted for strictly unified simple logic)
+                range_name = range_label # for compatibility with existing variable usage below
 
                 selected_categories = get_rhythm_selected_categories()
                 category_filter = selected_categories if selected_categories else "All"
@@ -862,41 +771,30 @@ class StatisticsWindow(Gtk.Window):
                         seg_end = float(end_min)
                         if all_end_max is None or seg_end > all_end_max:
                             all_end_max = seg_end
-                # Unified logic based on User Feedback
-                # For fixed past ranges like "Yesterday", we anchor to 24:00 (or max data)
-                # For ongoing ranges ("Today", "Last 12 Hours", "Last 3 Days"...), we anchor to NOW.
-                # This prioritizes seeing the "current" time buffer (e.g. Morning) over "Yesterday Night" data 
-                # when zooming in on midnight-spanning periods.
-                if range_name == "Yesterday":
-                     end_min_global = min(24 * 60.0, all_end_max if all_end_max is not None else 24 * 60.0)
-                else:
+                # Unified Logic for Anchor
+                # Intraday (<24h spans) -> Anchor to Now (allows Shift/Wrap)
+                # Multiday (>=24h spans) -> Anchor to 24:00 (Full Day View)
+                if span_hours != -1 and span_hours < 24:
                      end_min_global = now.hour * 60 + now.minute + now.second / 60.0
-                
+                else:
+                     end_min_global = 24 * 60.0 # Full Day
+
                 # MIDNIGHT WRAP LOGIC
-                # If the selected range is short (< 24h) and spans across midnight (starts yesterday, ends today),
-                # we need to shift "Today's" data to be > 24 hours so it appears contiguously after "Yesterday's" data.
-                # Otherwise, 0-24h axis splits them.
+                # Only apply for intraday views (< 24h requested) that span midnight
                 range_spans_midnight = (end_window.date() > start_window.date())
-                range_is_short = (end_window - start_window).total_seconds() <= 86400
-                do_midnight_shift = range_spans_midnight and range_is_short and range_name != "Yesterday"
+                range_is_intraday = (span_hours != -1 and span_hours < 24)
+                do_midnight_shift = range_spans_midnight and range_is_intraday
 
                 if do_midnight_shift:
-                    # Shift the anchor point to > 24h
                     end_min_global += 24 * 60.0
-                    
-                    # Shift data points
                     for day in day_keys:
-                        # If day is "Today" (or the end day), shift its segments
                         try:
                             day_date = datetime.strptime(day, "%Y-%m-%d").date()
                             if day_date == end_window.date():
-                                # Shift segments list
                                 new_segments = []
                                 for start_min, end_min in by_day[day]:
                                     new_segments.append((start_min + 1440, end_min + 1440))
                                 by_day[day] = new_segments
-                                
-                                # Shift detailed segments list
                                 if day in by_day_detailed:
                                     for d in by_day_detailed[day]:
                                         d["start_min"] = float(d["start_min"]) + 1440
