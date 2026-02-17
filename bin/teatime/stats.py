@@ -862,9 +862,15 @@ class StatisticsWindow(Gtk.Window):
                         seg_end = float(end_min)
                         if all_end_max is None or seg_end > all_end_max:
                             all_end_max = seg_end
-                # day_based_ranges removed as we want unified logic
-                # Always prioritize the actual data end time for the chart boundary
-                end_min_global = min(24 * 60.0, all_end_max if all_end_max is not None else 24 * 60.0)
+                # Unified logic based on User Feedback
+                # For fixed past ranges like "Yesterday", we anchor to 24:00 (or max data)
+                # For ongoing ranges ("Today", "Last 12 Hours", "Last 3 Days"...), we anchor to NOW.
+                # This prioritizes seeing the "current" time buffer (e.g. Morning) over "Yesterday Night" data 
+                # when zooming in on midnight-spanning periods.
+                if range_name == "Yesterday":
+                     end_min_global = min(24 * 60.0, all_end_max if all_end_max is not None else 24 * 60.0)
+                else:
+                     end_min_global = now.hour * 60 + now.minute + now.second / 60.0
                 if hours >= 24:
                     x_start_global = 0.0
                     x_end_global = 24 * 60.0
