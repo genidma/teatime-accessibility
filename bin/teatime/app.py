@@ -240,7 +240,6 @@ class TeaTimerApp(Gtk.Application):
             self.window = Gtk.ApplicationWindow(application=self, title=APP_NAME)
             self.window.set_default_size(400, 300)
             self.window.connect("destroy", self._on_window_destroy)
-            self.window.connect("set-focus-child", self._on_focus_changed)
             self.window.connect("focus-in-event", self._on_window_focus_in)
             self.window.connect("focus-out-event", self._on_window_focus_out)
 
@@ -825,8 +824,6 @@ class TeaTimerApp(Gtk.Application):
     def on_toggle_nano_mode_activated(self, *args):
         self.nano_mode_toggle.set_active(not self.nano_mode_toggle.get_active())
 
-    def _on_focus_changed(self, *args):
-        pass
 
     def _on_window_focus_in(self, *args):
         if self._rainbow_deferred and not self.rainbow_timer_id:
