@@ -976,6 +976,10 @@ class StatisticsWindow(Gtk.Window):
                     now_dt = datetime.now()
                     end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
                     hours = int(zoom_hours["value"])
+                    # In 7-day mode the chart compares time-of-day across days;
+                    # force full-day x-axis so switching ranges never hides data unexpectedly.
+                    if range_name == "Last 7 Days":
+                        hours = 24
                     if hours >= 24:
                         ax.set_xlim(0, 24 * 60)
                     else:
@@ -1005,7 +1009,11 @@ class StatisticsWindow(Gtk.Window):
                 fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
 
-            range_combo.connect("changed", update_chart)
+            def _on_range_changed(_combo):
+                zoom_hours["value"] = 24
+                update_chart()
+
+            range_combo.connect("changed", _on_range_changed)
             rhythm_category_checks["All"].connect("toggled", on_all_toggled)
             for cat in self.data_categories:
                 rhythm_category_checks[cat].connect("toggled", on_category_toggled)
