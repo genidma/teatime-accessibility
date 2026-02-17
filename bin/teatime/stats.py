@@ -619,7 +619,7 @@ class StatisticsWindow(Gtk.Window):
             controls.pack_start(range_label, False, False, 0)
 
             range_combo = Gtk.ComboBoxText()
-            range_combo.append_text("Today")
+            range_combo.append_text("Last 12 Hours")
             range_combo.append_text("Last 7 Days")
             range_combo.set_active(0)
             controls.pack_start(range_combo, False, False, 0)
@@ -657,13 +657,13 @@ class StatisticsWindow(Gtk.Window):
                 today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
                 today_end = today_start.replace(hour=23, minute=59, second=59)
 
-                range_name = range_combo.get_active_text() or "Today"
+                range_name = range_combo.get_active_text() or "Last 12 Hours"
                 if range_name == "Last 7 Days":
                     start_window = (today_start - timedelta(days=6))
                     end_window = today_end
                 else:
-                    start_window = today_start
-                    end_window = today_end
+                    start_window = now - timedelta(hours=12)
+                    end_window = now
 
                 selected_categories = self._get_selected_categories_from_main()
                 manual_filter = category_combo.get_active_text() or "All"
