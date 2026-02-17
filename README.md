@@ -60,6 +60,7 @@ in the first demo:
 - the timer is started and stopped using the buttons on the gui (graphical user interface)
 - the slider functionality is displayed and so are the buttons for decreasing or increasing the value for the 'Minutes' field
 - notice how the **timer increments in 5 seconds intervals** 
+- note: you can also put a numerical value manually in the numbers field (in addition to the slider and the + and - buttons)
 - fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
 ![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/main_timer.gif)
 
