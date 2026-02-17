@@ -720,7 +720,13 @@ class StatisticsWindow(Gtk.Window):
                                     ha="center",
                                     va="center",
                                     fontsize=8,
-                                    color="white",
+                                    color="#111111",
+                                    bbox={
+                                        "facecolor": "white",
+                                        "alpha": 0.75,
+                                        "edgecolor": "none",
+                                        "pad": 0.2,
+                                    },
                                 )
                     ax.set_yticks(y_positions)
                     ax.set_yticklabels(day_keys)
