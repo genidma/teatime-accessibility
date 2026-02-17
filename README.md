@@ -82,7 +82,8 @@ here
 - if selected, a .wav file will be played automatically, upon the completion of the timer
 - _note_: if you uncheck this feature, then you will still get a visual (animation based) reminder, regardless of whether the 'Enable Sound' checkbox is checked or not
 - because this is a .gif format being displayed, unfortunately the sound is not going to come through in this demo. But it definitely works when you install the app!
-- in this demo, we also go into the Settings section to show you the section where you can select different animations
+- in this demo, we also go into the Settings section to show you the sections where a. enable or disable the lava-lamp skin feature and b. how to select different animations
+- _note_: the lava-lamp skin feature can be a bit computationally taxing on older computers (mostly for cpu. memory usage is stable for the app and tested)
 
 ![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/toggle_sound_animations.gif)
 
