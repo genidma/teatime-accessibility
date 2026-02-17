@@ -821,7 +821,9 @@ class StatisticsWindow(Gtk.Window):
                     ytick_positions = []
                     ytick_labels = []
                     y_cursor = 0.0
-                    day_gap = 0.8
+                    day_gap = 1.2
+                    bar_height = 0.62
+                    marker_fontsize = 11
 
                     for day in day_keys:
                         segments = by_day.get(day, [])
@@ -881,7 +883,11 @@ class StatisticsWindow(Gtk.Window):
                         for item in lane_entries:
                             has_bars = True
                             y = y_cursor + item["lane"]
-                            ax.broken_barh([(item["start"], item["width"])], (y - 0.35, 0.7), facecolors=color)
+                            ax.broken_barh(
+                                [(item["start"], item["width"])],
+                                (y - (bar_height / 2.0), bar_height),
+                                facecolors=color,
+                            )
 
                             unique_emojis = []
                             for c in item["cats"]:
@@ -902,7 +908,7 @@ class StatisticsWindow(Gtk.Window):
                                 marker_text,
                                 ha="center",
                                 va="center",
-                                fontsize=9,
+                                fontsize=marker_fontsize,
                                 color="black",
                                 fontproperties=emoji_font,
                             )
