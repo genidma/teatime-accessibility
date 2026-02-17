@@ -64,14 +64,6 @@ in the first demo:
 - fyi: If you are new to Github, then the .gif file below (and in subsequent demos) are looping through and they are typically of a shorter duration. 
 ![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/main_timer.gif)
 
-### session presets & manual durations
-
-in this next demo, let's:
-- invoke the timer using the 'Session Presets', currently located on the right-hand side of the gui
-- demo how the timer can be started by clicking on the 'Session Presets' buttons, or by manually entering a value in the 'Minutes' field and clicking 'Start' 
-- to stop the timer: Simply use the 'Stop' button or use the keyboard shortcuts (below in this Readme)
-- how to decrease or increase the values for the 'Minutes' field by clicking on the - or + buttons
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/session-presets_and_manual-durations.gif)
 
 ### resizing
 
