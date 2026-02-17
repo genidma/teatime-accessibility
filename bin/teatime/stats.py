@@ -849,8 +849,6 @@ class StatisticsWindow(Gtk.Window):
                     ax.clear()
                     ax.set_title(title)
                     ax.grid(axis="x", alpha=0.25)
-                    ax.set_xticks([0, 240, 480, 720, 960, 1200, 1440])
-                    ax.set_xticklabels(["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"])
 
                     if not day_keys:
                         ax.set_yticks([])
@@ -866,6 +864,7 @@ class StatisticsWindow(Gtk.Window):
                         return
 
                     has_bars = False
+                    plotted_end_max = None
                     ytick_positions = []
                     ytick_labels = []
                     y_cursor = 0.0
@@ -931,6 +930,9 @@ class StatisticsWindow(Gtk.Window):
                         for item in lane_entries:
                             has_bars = True
                             y = y_cursor + item["lane"]
+                            item_end = item["start"] + item["width"]
+                            if plotted_end_max is None or item_end > plotted_end_max:
+                                plotted_end_max = item_end
                             ax.broken_barh(
                                 [(item["start"], item["width"])],
                                 (y - (bar_height / 2.0), bar_height),
@@ -994,17 +996,43 @@ class StatisticsWindow(Gtk.Window):
                         "Last 1 Year",
                         "All Time",
                     }
-                    # For day-based ranges, anchor zoom to end-of-day (24:00).
+                    # For day-based ranges, anchor zoom to latest plotted activity when available.
                     # For hour-based ranges, anchor to current time.
                     if range_name in day_based_ranges:
-                        end_min = 24 * 60.0
+                        end_min = min(24 * 60.0, plotted_end_max if plotted_end_max is not None else 24 * 60.0)
                     else:
                         end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
                     if hours >= 24:
-                        ax.set_xlim(0, 24 * 60)
+                        x_start = 0.0
+                        x_end = 24 * 60.0
                     else:
-                        start_min = max(0.0, end_min - (hours * 60.0))
-                        ax.set_xlim(start_min, end_min)
+                        x_start = max(0.0, end_min - (hours * 60.0))
+                        x_end = max(x_start + 1.0, end_min)
+                    ax.set_xlim(x_start, x_end)
+
+                    # Dynamic ticks for zoomed windows so labels stay readable.
+                    span = x_end - x_start
+                    if span <= 60:
+                        step = 10
+                    elif span <= 240:
+                        step = 30
+                    elif span <= 480:
+                        step = 60
+                    elif span <= 720:
+                        step = 120
+                    else:
+                        step = 240
+                    tick_start = int((x_start // step) * step)
+                    ticks = []
+                    t = tick_start
+                    while t <= x_end + 0.1:
+                        if t >= x_start - 0.1:
+                            ticks.append(float(t))
+                        t += step
+                    if not ticks:
+                        ticks = [x_start, x_end]
+                    ax.set_xticks(ticks)
+                    ax.set_xticklabels([f"{int(v // 60):02d}:{int(v % 60):02d}" for v in ticks])
                     if not has_bars:
                         ax.text(
                             0.5,
