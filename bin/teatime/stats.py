@@ -705,13 +705,21 @@ class StatisticsWindow(Gtk.Window):
             ax_long = None
             canvas = None
             try:
-                from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+                backend_note = ""
+                try:
+                    # Preferred backend for better emoji/text rendering in GTK charts.
+                    from mplcairo.gtk import FigureCanvasGTK3Cairo as FigureCanvas
+                    backend_note = " (mplcairo)"
+                except Exception:
+                    from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+                    backend_note = " (gtk3agg fallback)"
                 from matplotlib.figure import Figure
                 fig = Figure(figsize=(8, 6), dpi=100)
                 ax_short = fig.add_subplot(211)
                 ax_long = fig.add_subplot(212, sharex=ax_short)
                 canvas = FigureCanvas(fig)
                 chart_host.pack_start(canvas, True, True, 0)
+                status.set_text(f"Rhythm renderer: {backend_note.strip()}")
             except Exception:
                 status.set_text("matplotlib is not installed. Install it to enable rhythm charts.")
 
