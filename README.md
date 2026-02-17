@@ -93,15 +93,16 @@ here
 > in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](#display-modes)
 
 - **mini mode**: hides the 'Session Presets' section and scales down the GUI
-- upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the GUI is scaled down
-- to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
-
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/minimode.gif)
+- to get out of this mode, you simply uncheck the dialog box for 'mini mode'
 
 - **nano mode**: this mode provides an absolute bare minimum timer. Once the timer is initiated in nano mode, it can only be controlled with keyboard shortcuts (see below)
 - this feature was developed for individuals who are doing [deep work](https://www.amazon.com/Deep-Work-Focused-Success-Distracted/dp/1455586692) (via [Cal Newport](https://calnewport.com/)). When in a deep-work focused flow state, individuals would only want to occasionally glance at the timer in nano mode.
-- all other features work and as expected in all modes. including the nano mode (animations after a session has concluded, sound and if you chose the option e.t.c)
-- to get out of this mode. You would either wait for the timer to complete or use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. next, closing and reopening the app will get you back in the mode selected
+
+
+![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/mini_nano_mode.gif)
+
+> [!NOTE]
+> to get out of this mode, you can use the keyboard shortcuts to stop the timer. next, you simply uncheck the dialog box for 'nano mode'. 
 - fyi: if for some reason, you choose the both mini-mode and nano-mode dialog box(es), here the nano-mode will be triggered
 - fyi: the color for the numbers in nano-mode is Vanta Black. In the situation that your Desktop Background also happens to be Vanta Black! 
 - overall, if you _do not_ select mini-mode or nano-mode, you will be in the normal mode.
