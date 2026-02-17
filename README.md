@@ -71,7 +71,7 @@ here
 - let's resize the gui and the buttons inside of it using the A- and A+ buttons
 - this function can also be performed leveraging the keyboard shortcuts (see in the correspondiong sections)
 
-![Demo - gif format](./screenshots_demo_clones/new_demos_49/resizing.gif)
+![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/resizing.gif)
 
 ### enable or disable sound and animations
 
