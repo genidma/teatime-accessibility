@@ -701,6 +701,7 @@ class StatisticsWindow(Gtk.Window):
                         return
 
                     has_bars = False
+                    label_items = []
                     y_positions = list(range(len(day_keys)))
                     for idx, day in enumerate(day_keys):
                         segments = by_day.get(day, [])
@@ -713,22 +714,9 @@ class StatisticsWindow(Gtk.Window):
                             has_bars = True
                             ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors=color)
                             for bar_start, bar_width in bars:
-                                x = bar_start + (bar_width / 2.0)
-                                ax.text(
-                                    x,
-                                    idx,
-                                    f"{bar_width:.0f}m",
-                                    ha="center",
-                                    va="center",
-                                    fontsize=8,
-                                    color="#111111",
-                                    bbox={
-                                        "facecolor": "white",
-                                        "alpha": 0.75,
-                                        "edgecolor": "none",
-                                        "pad": 0.2,
-                                    },
-                                )
+                                hh = int(bar_start // 60)
+                                mm = int(bar_start % 60)
+                                label_items.append(f"{day[5:]} {hh:02d}:{mm:02d}  {bar_width:.0f}m")
                     ax.set_yticks(y_positions)
                     ax.set_yticklabels(day_keys)
                     if not has_bars:
@@ -741,6 +729,46 @@ class StatisticsWindow(Gtk.Window):
                             color="black",
                             transform=ax.transAxes,
                         )
+                    else:
+                        # Waterfall labels: top->bottom, then wrap to the next column left->right.
+                        n_rows = max(6, min(14, len(day_keys) * 2 if day_keys else 8))
+                        max_cols = 5
+                        capacity = n_rows * max_cols
+                        shown = label_items[:capacity]
+                        row_step = 0.90 / max(1, n_rows - 1)
+                        col_step = 0.19
+                        for i, text in enumerate(shown):
+                            row = i % n_rows
+                            col = i // n_rows
+                            x_frac = 0.02 + (col * col_step)
+                            y_frac = 0.95 - (row * row_step)
+                            ax.text(
+                                x_frac,
+                                y_frac,
+                                text,
+                                transform=ax.transAxes,
+                                ha="left",
+                                va="top",
+                                fontsize=7,
+                                color="black",
+                                bbox={
+                                    "facecolor": "white",
+                                    "alpha": 0.75,
+                                    "edgecolor": "none",
+                                    "pad": 0.15,
+                                },
+                            )
+                        if len(label_items) > capacity:
+                            ax.text(
+                                0.98,
+                                0.02,
+                                f"+{len(label_items) - capacity} more",
+                                transform=ax.transAxes,
+                                ha="right",
+                                va="bottom",
+                                fontsize=7,
+                                color="black",
+                            )
 
                 category_name = ", ".join(selected_categories) if selected_categories else manual_filter
                 fig.suptitle(f"Daily Rhythm: {category_name} ({range_name})")
