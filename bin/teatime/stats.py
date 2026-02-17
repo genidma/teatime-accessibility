@@ -678,6 +678,14 @@ class StatisticsWindow(Gtk.Window):
             range_combo.set_active(0)
             controls.pack_start(range_combo, False, False, 0)
 
+            zoom_label = Gtk.Label(label="Zoom")
+            zoom_label.set_halign(Gtk.Align.START)
+            controls.pack_start(zoom_label, False, False, 0)
+
+            zoom_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+            controls.pack_start(zoom_box, False, False, 0)
+            zoom_hours = {"value": 24}
+
             categories_frame = Gtk.Frame(label="Categories")
             categories_box = Gtk.Box(
                 orientation=Gtk.Orientation.HORIZONTAL,
@@ -726,8 +734,23 @@ class StatisticsWindow(Gtk.Window):
                 ax_long = fig.add_subplot(313, sharex=ax_micro)
                 canvas = FigureCanvas(fig)
                 chart_host.pack_start(canvas, True, True, 0)
+                try:
+                    from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
+                    toolbar = NavigationToolbar(canvas, popup)
+                    root.pack_start(toolbar, False, False, 0)
+                except Exception:
+                    pass
             except Exception:
                 status.set_text("matplotlib is not installed. Install it to enable rhythm charts.")
+
+            def _on_zoom_hours_clicked(_button, hours):
+                zoom_hours["value"] = hours
+                update_chart()
+
+            for hours in (1, 4, 8, 12, 24):
+                zbtn = Gtk.Button(label=f"{hours}h")
+                zbtn.connect("clicked", _on_zoom_hours_clicked, hours)
+                zoom_box.pack_start(zbtn, False, False, 0)
 
             def get_rhythm_selected_categories():
                 if rhythm_category_checks["All"].get_active():
@@ -816,7 +839,6 @@ class StatisticsWindow(Gtk.Window):
 
                 def _render_axis(ax, title, color, duration_predicate):
                     ax.clear()
-                    ax.set_xlim(0, 24 * 60)
                     ax.set_title(title)
                     ax.grid(axis="x", alpha=0.25)
                     ax.set_xticks([0, 240, 480, 720, 960, 1200, 1440])
@@ -951,6 +973,14 @@ class StatisticsWindow(Gtk.Window):
                     ax.set_yticklabels(ytick_labels)
                     if y_cursor > 0:
                         ax.set_ylim(-0.8, y_cursor - 0.2)
+                    now_dt = datetime.now()
+                    end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
+                    hours = int(zoom_hours["value"])
+                    if hours >= 24:
+                        ax.set_xlim(0, 24 * 60)
+                    else:
+                        start_min = max(0.0, end_min - (hours * 60.0))
+                        ax.set_xlim(start_min, end_min)
                     if not has_bars:
                         ax.text(
                             0.5,
