@@ -750,6 +750,14 @@ class StatisticsWindow(Gtk.Window):
             def update_chart(*args):
                 if not fig or not ax_short or not ax_long or not canvas:
                     return
+                emoji_font = None
+                try:
+                    from matplotlib import font_manager as fm
+                    emoji_font = fm.FontProperties(
+                        family=["Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "DejaVu Sans"]
+                    )
+                except Exception:
+                    emoji_font = None
 
                 events = self._load_events()
                 now = datetime.now()
@@ -810,53 +818,101 @@ class StatisticsWindow(Gtk.Window):
                         return
 
                     has_bars = False
-                    label_items = []
-                    y_positions = list(range(len(day_keys)))
-                    for idx, day in enumerate(day_keys):
+                    ytick_positions = []
+                    ytick_labels = []
+                    y_cursor = 0.0
+                    day_gap = 0.8
+
+                    for day in day_keys:
                         segments = by_day.get(day, [])
                         detailed_segments = by_day_detailed.get(day, [])
-                        bars = []
-                        bar_cats = []
-                        for start_min, end_min in segments:
-                            dur_min = max(0.0, end_min - start_min)
-                            if duration_predicate(dur_min):
-                                bars.append((start_min, max(0.5, dur_min)))
-                                matched = next(
-                                    (
-                                        d
-                                        for d in detailed_segments
-                                        if abs(float(d.get("start_min", -1)) - float(start_min)) < 0.01
-                                        and abs(float(d.get("end_min", -1)) - float(end_min)) < 0.01
-                                    ),
-                                    None,
-                                )
-                                bar_cats.append(matched.get("cats", []) if matched else [])
-                        if bars:
-                            has_bars = True
-                            ax.broken_barh(bars, (idx - 0.35, 0.7), facecolors=color)
-                            for bar_idx, (bar_start, bar_width) in enumerate(bars):
-                                hh = int(bar_start // 60)
-                                mm = int(bar_start % 60)
-                                prefix = f"{emoji_scope} " if emoji_scope else ""
-                                label_items.append(f"{prefix}{day[5:]} {hh:02d}:{mm:02d}  {bar_width:.0f}m")
-                                cats_for_bar = bar_cats[bar_idx] if bar_idx < len(bar_cats) else []
-                                emojis = "".join(
-                                    KC_CATEGORY_EMOJIS.get(str(c), "")
-                                    for c in cats_for_bar
-                                    if KC_CATEGORY_EMOJIS.get(str(c), "")
-                                )
-                                if emojis:
-                                    ax.text(
-                                        bar_start + (bar_width / 2.0),
-                                        idx,
-                                        emojis,
-                                        ha="center",
-                                        va="center",
-                                        fontsize=10,
-                                        color="black",
+                        lane_entries = []
+
+                        # Prefer detailed event segments (with categories) for marker fidelity.
+                        if detailed_segments:
+                            for d in detailed_segments:
+                                start_min = float(d.get("start_min", 0.0))
+                                end_min = float(d.get("end_min", 0.0))
+                                dur_min = max(0.0, end_min - start_min)
+                                if duration_predicate(dur_min):
+                                    lane_entries.append(
+                                        {
+                                            "start": start_min,
+                                            "width": max(0.5, dur_min),
+                                            "cats": list(d.get("cats", [])),
+                                        }
                                     )
-                    ax.set_yticks(y_positions)
-                    ax.set_yticklabels(day_keys)
+                        else:
+                            for start_min, end_min in segments:
+                                dur_min = max(0.0, end_min - start_min)
+                                if duration_predicate(dur_min):
+                                    lane_entries.append(
+                                        {
+                                            "start": float(start_min),
+                                            "width": max(0.5, dur_min),
+                                            "cats": [],
+                                        }
+                                    )
+
+                        if not lane_entries:
+                            continue
+
+                        # Assign overlap-aware lanes so dense events do not collapse on one row.
+                        lane_entries.sort(key=lambda item: item["start"])
+                        lane_ends = []
+                        for item in lane_entries:
+                            lane_idx = None
+                            item_end = item["start"] + item["width"]
+                            for i, end_pos in enumerate(lane_ends):
+                                if item["start"] >= end_pos:
+                                    lane_idx = i
+                                    break
+                            if lane_idx is None:
+                                lane_idx = len(lane_ends)
+                                lane_ends.append(item_end)
+                            else:
+                                lane_ends[lane_idx] = item_end
+                            item["lane"] = lane_idx
+
+                        lane_count = max(1, len(lane_ends))
+                        ytick_positions.append(y_cursor + (lane_count - 1) / 2.0)
+                        ytick_labels.append(day)
+
+                        for item in lane_entries:
+                            has_bars = True
+                            y = y_cursor + item["lane"]
+                            ax.broken_barh([(item["start"], item["width"])], (y - 0.35, 0.7), facecolors=color)
+
+                            unique_emojis = []
+                            for c in item["cats"]:
+                                em = KC_CATEGORY_EMOJIS.get(str(c), "")
+                                if em and em not in unique_emojis:
+                                    unique_emojis.append(em)
+                            emoji_text = "".join(unique_emojis[:2])
+                            if emoji_text:
+                                marker_text = emoji_text
+                            elif item["cats"]:
+                                marker_text = str(item["cats"][0])
+                            else:
+                                marker_text = "•"
+
+                            ax.text(
+                                item["start"] + (item["width"] / 2.0),
+                                y,
+                                marker_text,
+                                ha="center",
+                                va="center",
+                                fontsize=9,
+                                color="black",
+                                fontproperties=emoji_font,
+                            )
+
+                        y_cursor += lane_count + day_gap
+
+                    ax.set_yticks(ytick_positions)
+                    ax.set_yticklabels(ytick_labels)
+                    if y_cursor > 0:
+                        ax.set_ylim(-0.8, y_cursor - 0.2)
                     if not has_bars:
                         ax.text(
                             0.5,
@@ -867,46 +923,6 @@ class StatisticsWindow(Gtk.Window):
                             color="black",
                             transform=ax.transAxes,
                         )
-                    else:
-                        # Waterfall labels: top->bottom, then wrap to the next column left->right.
-                        n_rows = max(6, min(14, len(day_keys) * 2 if day_keys else 8))
-                        max_cols = 5
-                        capacity = n_rows * max_cols
-                        shown = label_items[:capacity]
-                        row_step = 0.90 / max(1, n_rows - 1)
-                        col_step = 0.19
-                        for i, text in enumerate(shown):
-                            row = i % n_rows
-                            col = i // n_rows
-                            x_frac = 0.02 + (col * col_step)
-                            y_frac = 0.95 - (row * row_step)
-                            ax.text(
-                                x_frac,
-                                y_frac,
-                                text,
-                                transform=ax.transAxes,
-                                ha="left",
-                                va="top",
-                                fontsize=7,
-                                color="black",
-                                bbox={
-                                    "facecolor": "white",
-                                    "alpha": 0.75,
-                                    "edgecolor": "none",
-                                    "pad": 0.15,
-                                },
-                            )
-                        if len(label_items) > capacity:
-                            ax.text(
-                                0.98,
-                                0.02,
-                                f"+{len(label_items) - capacity} more",
-                                transform=ax.transAxes,
-                                ha="right",
-                                va="bottom",
-                                fontsize=7,
-                                color="black",
-                            )
 
                 category_name = (
                     ", ".join(format_category_label(c) for c in selected_categories)
