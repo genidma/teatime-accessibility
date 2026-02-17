@@ -92,7 +92,7 @@ here
 > [!NOTE]
 > in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](#display-modes)
 
-- **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
+- **mini mode**: hides the 'Session Presets' section and scales down the GUI
 - upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the GUI is scaled down
 - to get out of this mode, you simply uncheck the dialog box for 'mini mode'. Next you close the app and reopen it
 
