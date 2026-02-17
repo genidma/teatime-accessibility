@@ -844,6 +844,60 @@ class StatisticsWindow(Gtk.Window):
                     status.set_text("Using selected Categories filter: All")
 
                 day_keys = sorted(by_day.keys())
+                day_based_ranges = {
+                    "Today",
+                    "Yesterday",
+                    "Last 3 Days",
+                    "Last 7 Days",
+                    "Last 30 Days",
+                    "Last 90 Days",
+                    "Last 6 Months",
+                    "Last 1 Year",
+                    "All Time",
+                }
+                hours = int(zoom_hours["value"])
+                all_end_max = None
+                for _day in day_keys:
+                    for start_min, end_min in by_day.get(_day, []):
+                        seg_end = float(end_min)
+                        if all_end_max is None or seg_end > all_end_max:
+                            all_end_max = seg_end
+                if range_name in day_based_ranges:
+                    end_min_global = min(24 * 60.0, all_end_max if all_end_max is not None else 24 * 60.0)
+                else:
+                    end_min_global = now.hour * 60 + now.minute + now.second / 60.0
+                if hours >= 24:
+                    x_start_global = 0.0
+                    x_end_global = 24 * 60.0
+                else:
+                    span_minutes = float(hours * 60.0)
+                    if end_min_global <= span_minutes:
+                        x_start_global = 0.0
+                        x_end_global = min(24 * 60.0, span_minutes)
+                    else:
+                        x_start_global = end_min_global - span_minutes
+                        x_end_global = end_min_global
+                span_global = x_end_global - x_start_global
+                if span_global <= 60:
+                    step = 10
+                elif span_global <= 240:
+                    step = 30
+                elif span_global <= 480:
+                    step = 60
+                elif span_global <= 720:
+                    step = 120
+                else:
+                    step = 240
+                tick_start = int((x_start_global // step) * step)
+                ticks_global = []
+                t = tick_start
+                while t <= x_end_global + 0.1:
+                    if t >= x_start_global - 0.1:
+                        ticks_global.append(float(t))
+                    t += step
+                if not ticks_global:
+                    ticks_global = [x_start_global, x_end_global]
+                tick_labels_global = [f"{int(v // 60):02d}:{int(v % 60):02d}" for v in ticks_global]
 
                 def _render_axis(ax, title, color, duration_predicate):
                     ax.clear()
@@ -864,7 +918,6 @@ class StatisticsWindow(Gtk.Window):
                         return
 
                     has_bars = False
-                    plotted_end_max = None
                     ytick_positions = []
                     ytick_labels = []
                     y_cursor = 0.0
@@ -930,9 +983,6 @@ class StatisticsWindow(Gtk.Window):
                         for item in lane_entries:
                             has_bars = True
                             y = y_cursor + item["lane"]
-                            item_end = item["start"] + item["width"]
-                            if plotted_end_max is None or item_end > plotted_end_max:
-                                plotted_end_max = item_end
                             ax.broken_barh(
                                 [(item["start"], item["width"])],
                                 (y - (bar_height / 2.0), bar_height),
@@ -983,61 +1033,9 @@ class StatisticsWindow(Gtk.Window):
                     ax.set_yticklabels(ytick_labels)
                     if y_cursor > 0:
                         ax.set_ylim(-0.8, y_cursor - 0.2)
-                    now_dt = datetime.now()
-                    hours = int(zoom_hours["value"])
-                    day_based_ranges = {
-                        "Today",
-                        "Yesterday",
-                        "Last 3 Days",
-                        "Last 7 Days",
-                        "Last 30 Days",
-                        "Last 90 Days",
-                        "Last 6 Months",
-                        "Last 1 Year",
-                        "All Time",
-                    }
-                    # For day-based ranges, anchor zoom to latest plotted activity when available.
-                    # For hour-based ranges, anchor to current time.
-                    if range_name in day_based_ranges:
-                        end_min = min(24 * 60.0, plotted_end_max if plotted_end_max is not None else 24 * 60.0)
-                    else:
-                        end_min = now_dt.hour * 60 + now_dt.minute + now_dt.second / 60.0
-                    if hours >= 24:
-                        x_start = 0.0
-                        x_end = 24 * 60.0
-                    else:
-                        span_minutes = float(hours * 60.0)
-                        if end_min <= span_minutes:
-                            x_start = 0.0
-                            x_end = min(24 * 60.0, span_minutes)
-                        else:
-                            x_start = end_min - span_minutes
-                            x_end = end_min
-                    ax.set_xlim(x_start, x_end)
-
-                    # Dynamic ticks for zoomed windows so labels stay readable.
-                    span = x_end - x_start
-                    if span <= 60:
-                        step = 10
-                    elif span <= 240:
-                        step = 30
-                    elif span <= 480:
-                        step = 60
-                    elif span <= 720:
-                        step = 120
-                    else:
-                        step = 240
-                    tick_start = int((x_start // step) * step)
-                    ticks = []
-                    t = tick_start
-                    while t <= x_end + 0.1:
-                        if t >= x_start - 0.1:
-                            ticks.append(float(t))
-                        t += step
-                    if not ticks:
-                        ticks = [x_start, x_end]
-                    ax.set_xticks(ticks)
-                    ax.set_xticklabels([f"{int(v // 60):02d}:{int(v % 60):02d}" for v in ticks])
+                    ax.set_xlim(x_start_global, x_end_global)
+                    ax.set_xticks(ticks_global)
+                    ax.set_xticklabels(tick_labels_global)
                     if not has_bars:
                         ax.text(
                             0.5,
