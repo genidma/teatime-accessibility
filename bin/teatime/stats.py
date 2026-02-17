@@ -603,17 +603,6 @@ class StatisticsWindow(Gtk.Window):
             controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
             root.pack_start(controls, False, False, 0)
 
-            category_label = Gtk.Label(label="Category")
-            category_label.set_halign(Gtk.Align.START)
-            controls.pack_start(category_label, False, False, 0)
-
-            category_combo = Gtk.ComboBoxText()
-            category_combo.append_text("All")
-            for cat in self.data_categories:
-                category_combo.append_text(cat)
-            category_combo.set_active(0)
-            controls.pack_start(category_combo, False, False, 0)
-
             range_label = Gtk.Label(label="Range")
             range_label.set_halign(Gtk.Align.START)
             controls.pack_start(range_label, False, False, 0)
@@ -623,6 +612,30 @@ class StatisticsWindow(Gtk.Window):
             range_combo.append_text("Last 7 Days")
             range_combo.set_active(0)
             controls.pack_start(range_combo, False, False, 0)
+
+            categories_frame = Gtk.Frame(label="Categories")
+            categories_box = Gtk.Box(
+                orientation=Gtk.Orientation.HORIZONTAL,
+                spacing=10,
+                margin=6,
+            )
+            categories_frame.add(categories_box)
+            root.pack_start(categories_frame, False, False, 0)
+
+            rhythm_category_checks = {}
+            all_check = Gtk.CheckButton(label="All")
+            all_label = all_check.get_child()
+            if isinstance(all_label, Gtk.Label):
+                all_label.set_use_markup(True)
+                all_label.set_markup("<b>All</b>")
+            all_check.set_active(True)
+            rhythm_category_checks["All"] = all_check
+            categories_box.pack_start(all_check, False, False, 0)
+
+            for cat in self.data_categories:
+                cb = Gtk.CheckButton(label=cat)
+                rhythm_category_checks[cat] = cb
+                categories_box.pack_start(cb, False, False, 0)
 
             chart_host = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
             chart_host.set_hexpand(True)
@@ -648,6 +661,38 @@ class StatisticsWindow(Gtk.Window):
             except Exception:
                 status.set_text("matplotlib is not installed. Install it to enable rhythm charts.")
 
+            def get_rhythm_selected_categories():
+                if rhythm_category_checks["All"].get_active():
+                    return []
+                selected = []
+                for cat in self.data_categories:
+                    cb = rhythm_category_checks.get(cat)
+                    if cb and cb.get_active():
+                        selected.append(cat)
+                # If none are selected, default back to "All"
+                return selected
+
+            def on_all_toggled(btn):
+                if btn.get_active():
+                    for cat in self.data_categories:
+                        cb = rhythm_category_checks.get(cat)
+                        if cb and cb.get_active():
+                            cb.set_active(False)
+                update_chart()
+
+            def on_category_toggled(btn):
+                if btn.get_active() and rhythm_category_checks["All"].get_active():
+                    rhythm_category_checks["All"].set_active(False)
+                if not rhythm_category_checks["All"].get_active():
+                    any_selected = any(
+                        rhythm_category_checks.get(cat).get_active()
+                        for cat in self.data_categories
+                        if rhythm_category_checks.get(cat)
+                    )
+                    if not any_selected:
+                        rhythm_category_checks["All"].set_active(True)
+                update_chart()
+
             def update_chart(*args):
                 if not fig or not ax_short or not ax_long or not canvas:
                     return
@@ -665,9 +710,8 @@ class StatisticsWindow(Gtk.Window):
                     start_window = now - timedelta(hours=12)
                     end_window = now
 
-                selected_categories = self._get_selected_categories_from_main()
-                manual_filter = category_combo.get_active_text() or "All"
-                category_filter = selected_categories if selected_categories else manual_filter
+                selected_categories = get_rhythm_selected_categories()
+                category_filter = selected_categories if selected_categories else "All"
                 by_day = self._collect_rhythm_segments_fallback(
                     events, start_window, end_window, category_filter
                 )
@@ -675,7 +719,7 @@ class StatisticsWindow(Gtk.Window):
                 if selected_categories:
                     status.set_text(f"Using selected Categories filter: {', '.join(selected_categories)}")
                 else:
-                    status.set_text("")
+                    status.set_text("Using selected Categories filter: All")
 
                 day_keys = sorted(by_day.keys())
 
@@ -770,7 +814,7 @@ class StatisticsWindow(Gtk.Window):
                                 color="black",
                             )
 
-                category_name = ", ".join(selected_categories) if selected_categories else manual_filter
+                category_name = ", ".join(selected_categories) if selected_categories else "All"
                 fig.suptitle(f"Daily Rhythm: {category_name} ({range_name})")
                 _render_axis(ax_short, "Graph #1: Sessions < 5 minutes", "#2d7ff9", lambda d: d < 5.0)
                 _render_axis(ax_long, "Graph #2: Sessions >= 5 minutes", "#f28c28", lambda d: d >= 5.0)
@@ -778,8 +822,10 @@ class StatisticsWindow(Gtk.Window):
                 fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
 
-            category_combo.connect("changed", update_chart)
             range_combo.connect("changed", update_chart)
+            rhythm_category_checks["All"].connect("toggled", on_all_toggled)
+            for cat in self.data_categories:
+                rhythm_category_checks[cat].connect("toggled", on_category_toggled)
             update_chart()
 
             popup.connect("delete-event", lambda *args: setattr(self, "_rhythm_popup", None) or False)
