@@ -531,7 +531,7 @@ class StatisticsWindow(Gtk.Window):
                 cr.stroke()
 
                 if not points:
-                    cr.set_source_rgba(0.9, 0.9, 0.9, 0.9)
+                    cr.set_source_rgba(0.0, 0.0, 0.0, 1.0)
                     cr.select_font_face("Sans", 0, 0)
                     cr.set_font_size(12)
                     cr.move_to(pad + 6, y - 10)
@@ -560,7 +560,7 @@ class StatisticsWindow(Gtk.Window):
                     cr.set_source_rgba(1.0, 0.6, 0.2, 0.95)
                     cr.arc(x, py, 4, 0, 2 * 3.14159)
                     cr.fill()
-                    cr.set_source_rgba(0.95, 0.95, 0.95, 0.95)
+                    cr.set_source_rgba(0.0, 0.0, 0.0, 1.0)
                     cr.select_font_face("Sans", 0, 0)
                     cr.set_font_size(10)
                     cr.move_to(x + 5, py - 4)
@@ -695,6 +695,7 @@ class StatisticsWindow(Gtk.Window):
                             "No sessions in selected range/category",
                             ha="center",
                             va="center",
+                            color="black",
                             transform=ax.transAxes,
                         )
                         return
@@ -737,6 +738,7 @@ class StatisticsWindow(Gtk.Window):
                             "No sessions in this duration bucket",
                             ha="center",
                             va="center",
+                            color="black",
                             transform=ax.transAxes,
                         )
 
