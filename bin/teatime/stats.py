@@ -9,7 +9,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
 
-from .core import STATS_LOG_FILE, EVENT_LOG_FILE, StatsManager, KC_CATEGORIES
+from .core import STATS_LOG_FILE, EVENT_LOG_FILE, StatsManager, KC_CATEGORIES, format_category_label
 
 def _parse_iso_ts(ts):
     try:
@@ -129,7 +129,7 @@ class StatisticsWindow(Gtk.Window):
         # Category Columns
         for i, cat in enumerate(self.data_categories):
             renderer = Gtk.CellRendererText()
-            column = Gtk.TreeViewColumn(cat, renderer, text=i+1)
+            column = Gtk.TreeViewColumn(format_category_label(cat), renderer, text=i+1)
             column.set_resizable(True)
             if cat.lower() == "breaks":
                 column.set_clickable(True)
@@ -515,6 +515,12 @@ class StatisticsWindow(Gtk.Window):
             if not points:
                 points = self._daily_minutes_from_events(selected_categories)
             points = points[-21:]
+            flow_scope = (
+                ", ".join(format_category_label(c) for c in selected_categories)
+                if selected_categories
+                else "All"
+            )
+            frame.set_label(f"Flow Timeline ({flow_scope})")
 
             def draw_timeline(widget, cr):
                 alloc = widget.get_allocation()
@@ -633,7 +639,7 @@ class StatisticsWindow(Gtk.Window):
             categories_box.pack_start(all_check, False, False, 0)
 
             for cat in self.data_categories:
-                cb = Gtk.CheckButton(label=cat)
+                cb = Gtk.CheckButton(label=format_category_label(cat))
                 rhythm_category_checks[cat] = cb
                 categories_box.pack_start(cb, False, False, 0)
 
@@ -717,7 +723,10 @@ class StatisticsWindow(Gtk.Window):
                 )
 
                 if selected_categories:
-                    status.set_text(f"Using selected Categories filter: {', '.join(selected_categories)}")
+                    status.set_text(
+                        "Using selected Categories filter: "
+                        + ", ".join(format_category_label(c) for c in selected_categories)
+                    )
                 else:
                     status.set_text("Using selected Categories filter: All")
 
@@ -814,7 +823,11 @@ class StatisticsWindow(Gtk.Window):
                                 color="black",
                             )
 
-                category_name = ", ".join(selected_categories) if selected_categories else "All"
+                category_name = (
+                    ", ".join(format_category_label(c) for c in selected_categories)
+                    if selected_categories
+                    else "All"
+                )
                 fig.suptitle(f"Daily Rhythm: {category_name} ({range_name})")
                 _render_axis(ax_short, "Graph #1: Sessions < 5 minutes", "#2d7ff9", lambda d: d < 5.0)
                 _render_axis(ax_long, "Graph #2: Sessions >= 5 minutes", "#f28c28", lambda d: d >= 5.0)

@@ -15,6 +15,30 @@ MIN_FONT_SCALE = 0.8
 MAX_FONT_SCALE = 6.0
 
 KC_CATEGORIES = ["rdp", "fc", "g", "m", "sii", "v", "r", "b", "t", "c", "rl", "MWHH", "yss", "we", "gotb", "rf", "dw", " ", "breaks"]
+KC_CATEGORY_EMOJIS = {
+    "rdp": "👁️",
+    "fc": "❤️",
+    "g": "🙏",
+    "m": "🧘",
+    "sii": "🪑",
+    "v": "👁️",
+    "r": "📚",
+    "b": "💨",
+    "t": "🤔",
+    "c": "💪",
+    "rl": "😌",
+    "MWHH": "🏋️",
+    "yss": "🧘",
+    "we": "✍️",
+    "gotb": "💬",
+    "rf": "🤝",
+    "dw": "🎯",
+    "breaks": "🍵",
+}
+
+def format_category_label(category):
+    emoji = KC_CATEGORY_EMOJIS.get(category, "")
+    return f"{emoji} {category}" if emoji else category
 
 class ConfigManager:
     def __init__(self, config_path=None):

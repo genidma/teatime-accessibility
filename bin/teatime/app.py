@@ -31,6 +31,7 @@ from .core import (
     MIN_FONT_SCALE,
     MAX_FONT_SCALE,
     KC_CATEGORIES,
+    format_category_label,
     ConfigManager,
     StatsManager,
 )
@@ -298,7 +299,7 @@ class TeaTimerApp(Gtk.Application):
             for i, cat in enumerate(KC_CATEGORIES):
                 if cat.strip() == "":
                     continue
-                cb = TargetCheckButton(label=cat, pulse_ms=500)
+                cb = TargetCheckButton(label=format_category_label(cat), pulse_ms=500)
                 cat_grid.attach(cb, i % 4, i // 4, 1, 1)
                 self.category_checkboxes[cat] = cb
             cat_frame.add(cat_grid)
