@@ -73,7 +73,7 @@ here
 
 ![Demo - gif format](./screenshots_demo_clones/kcresonance/readme/2026-02-17/resizing.gif)
 
-### enable or disable sound and animations
+### toggle sound and animations
 
 > [!NOTE]
 > in addition to the demo directly below, there's more info about the customizable animations feature in one of the following sections, via: [link](#customizable-animations)
