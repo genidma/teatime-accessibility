@@ -54,8 +54,8 @@ class FlipLabel(Gtk.Box):
         super().__init__()
         self._effects_enabled = False
         self._stack = Gtk.Stack()
-        self._stack.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
-        self._stack.set_transition_duration(200)
+        self._stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        self._stack.set_transition_duration(1000)
 
         self._label_a = Gtk.Label()
         self._label_b = Gtk.Label()
@@ -75,7 +75,7 @@ class FlipLabel(Gtk.Box):
 
     def set_effects_enabled(self, enabled: bool):
         self._effects_enabled = bool(enabled)
-        self._stack.set_transition_duration(200 if self._effects_enabled else 0)
+        self._stack.set_transition_duration(1000 if self._effects_enabled else 0)
 
     def _set_label_value(self, label, value, markup: bool):
         if markup:
@@ -200,7 +200,7 @@ class TeaTimerApp(Gtk.Application):
         self.preferred_skin = "default"
         self.preferred_animation = "test_animation"
         self.wall_clock_mode = False
-        self.text_transition_effects = False
+        self.text_transition_effects = True
         self.rainbow_hue = 0
         self.rainbow_timer_id = None
         self._rainbow_deferred = False
