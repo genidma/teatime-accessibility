@@ -871,6 +871,38 @@ class StatisticsWindow(Gtk.Window):
                      end_min_global = min(24 * 60.0, all_end_max if all_end_max is not None else 24 * 60.0)
                 else:
                      end_min_global = now.hour * 60 + now.minute + now.second / 60.0
+                
+                # MIDNIGHT WRAP LOGIC
+                # If the selected range is short (< 24h) and spans across midnight (starts yesterday, ends today),
+                # we need to shift "Today's" data to be > 24 hours so it appears contiguously after "Yesterday's" data.
+                # Otherwise, 0-24h axis splits them.
+                range_spans_midnight = (end_window.date() > start_window.date())
+                range_is_short = (end_window - start_window).total_seconds() <= 86400
+                do_midnight_shift = range_spans_midnight and range_is_short and range_name != "Yesterday"
+
+                if do_midnight_shift:
+                    # Shift the anchor point to > 24h
+                    end_min_global += 24 * 60.0
+                    
+                    # Shift data points
+                    for day in day_keys:
+                        # If day is "Today" (or the end day), shift its segments
+                        try:
+                            day_date = datetime.strptime(day, "%Y-%m-%d").date()
+                            if day_date == end_window.date():
+                                # Shift segments list
+                                new_segments = []
+                                for start_min, end_min in by_day[day]:
+                                    new_segments.append((start_min + 1440, end_min + 1440))
+                                by_day[day] = new_segments
+                                
+                                # Shift detailed segments list
+                                if day in by_day_detailed:
+                                    for d in by_day_detailed[day]:
+                                        d["start_min"] = float(d["start_min"]) + 1440
+                                        d["end_min"] = float(d["end_min"]) + 1440
+                        except: pass
+
                 if hours >= 24:
                     x_start_global = 0.0
                     x_end_global = 24 * 60.0
@@ -902,7 +934,9 @@ class StatisticsWindow(Gtk.Window):
                     t += step
                 if not ticks_global:
                     ticks_global = [x_start_global, x_end_global]
-                tick_labels_global = [f"{int(v // 60):02d}:{int(v % 60):02d}" for v in ticks_global]
+                
+                # Modulo 24h for labels (handle > 24h shifted times)
+                tick_labels_global = [f"{int((v // 60) % 24):02d}:{int(v % 60):02d}" for v in ticks_global]
 
                 def _render_axis(ax, title, color, duration_predicate):
                     ax.clear()
@@ -930,6 +964,7 @@ class StatisticsWindow(Gtk.Window):
                     bar_height = 0.62
                     marker_fontsize = 11
 
+                    # Sort days reverse if shifting? No, standard order is fine.
                     for day in day_keys:
                         segments = by_day.get(day, [])
                         detailed_segments = by_day_detailed.get(day, [])
