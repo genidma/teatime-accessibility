@@ -6,10 +6,10 @@
 - visual effects (gifs): animations upon completion of a Session and dynamic skins
 
 > [!NOTE]
-> the main branch holds the code for the regular (non-photosensitive version). You can clone from the main page directly or from the releases page.
+> this README documents the `kcresonance` branch behavior and usage.
 
 > [!IMPORTANT]
-> separately, a **photosensitive version** of the app is also available from the releases section, please see below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#photosensitive-epilepsy-safe-version)
+> separately, a **photosensitive version** of the app is also available from the releases section, please see below [link](#photosensitive-epilepsy-safe-version)
 - - code submission for the initial photosensitive version by @shanaya-gupta
 
 
@@ -65,7 +65,7 @@ here
 ### enable or disable sound and animations
 
 > [!NOTE]
-> in addition to the demo directly below, there's more info about the customizable animations feature in one of the following sections, via: [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#customizable-animations)
+> in addition to the demo directly below, there's more info about the customizable animations feature in one of the following sections, via: [link](#customizable-animations)
 
 - the 'Enable Sound' _checkbox_ can be used to enable or disable sound
 - if selected, a .wav file will be played automatically, upon the completion of the timer
@@ -78,7 +78,7 @@ here
 ### mini mode and nano mode
 
 > [!NOTE]
-> in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#display-modes)
+> in addition to the demo (directly below), there is more information about these modes in one of the following sections below [link](#display-modes)
 
 - **mini mode**: suppose you only have one monitor and you don't want the app to take up the whole screen or most of the screen. this is where **mini mode** comes in handy
 - upon choosing this option, the 'Session Presets' are hidden from view (they are still there, just temporarily hidden) and the size for the GUI is scaled down
@@ -114,7 +114,7 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 #### Custom Skins
 
 > [!NOTE]
-> There is more information about the custom skins in one of the following sections. Here's the [link](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#custom-skins-1)
+> There is more information about the custom skins in one of the following sections. Here's the [link](#custom-skins)
 
 - there are currently two options under the _Settings_ for the **'Skins for Main UI (User Interface):**' section. **1. Default - No Skin** and **2. Lava Lamp** 
 - - note: a change in this (Settings) section requires that the app is closed and opened again  
@@ -171,7 +171,7 @@ as of 2025-11-06, there are two options under the 'Settings' area from the dialo
 - - in addition to: the user is presented with not one, but _two reminders_ that they are about to wipe out the data logged (to date)
 - this is like browser history. once you clean it and start using the browser again, your browser automatically starts recording the history again
 - the amount of rows populated inside of the .json file should have absolutely any bearing on the functioning of the app
-- - in the off situation where the .json file is populated with a large amount of rows (say a thousand rows or more) **and** this is leading to the app taking up more than 700 MB (Megabytes. I mean, it shouldn't take more than 500 MB of Memory Usage anyways [link](https://github.com/genidma/teatime-accessibility/issues/37)) of RAM (Random Access Memory or Physical Memory) on your machine. -> In such a situation, please look into creating a new issue by following the links from the 'Feedack' section [below](https://github.com/genidma/teatime-accessibility/tree/main-dev?tab=readme-ov-file#feedback)
+- - in the off situation where the .json file is populated with a large amount of rows (say a thousand rows or more) **and** this is leading to the app taking up more than 700 MB (Megabytes. I mean, it shouldn't take more than 500 MB of Memory Usage anyways [link](https://github.com/genidma/teatime-accessibility/issues/37)) of RAM (Random Access Memory or Physical Memory) on your machine. -> In such a situation, please look into creating a new issue by following the links from the 'Feedack' section [below](#feedback)
 - - - by the way, if you missed the url for the recorded session from the links directly above. the proof is definitive that memory_usage for this app is very stable. here's the link again [https://www.youtube.com/watch?v=m4BbTRmpyaA](https://www.youtube.com/watch?v=m4BbTRmpyaA)
 
 ![Demo - gif format](./screenshots_demo_clones/new_demos_49/chistory.gif)
@@ -386,12 +386,12 @@ If you prefer to install manually:
 ### Snap Installation
 TeaTime Accessibility is available as a Snap package for easy installation on Ubuntu and other Linux distributions.
 
-#### Standard Version (main branch)
+#### Standard Version
 ```bash
 sudo snap install teatime-accessibility --channel=latest/stable
 ```
 
-#### Photosensitive Version (photosensitive-version branch)
+#### Photosensitive Version
 ```bash
 sudo snap install teatime-accessibility --channel=photosensitive/stable
 ```
@@ -399,12 +399,12 @@ sudo snap install teatime-accessibility --channel=photosensitive/stable
 ### Flatpak Installation
 TeaTime Accessibility is also available as a Flatpak for sandboxed installation.
 
-#### Standard Version (main branch)
+#### Standard Version
 ```bash
 flatpak install flathub org.genidma.TeatimeAccessibility
 ```
 
-#### Photosensitive Version (photosensitive-version branch)
+#### Photosensitive Version
 ```bash
 flatpak install flathub org.genidma.TeatimeAccessibility.Photosensitive
 ```
@@ -650,7 +650,7 @@ Script designed to verify application functionality (without having to wait for 
 - Launches the app with a 1 second timer (see Usage below)
 - Automatically starts the timer without manual intervention
 
-**Usage:** git checkout main
+**Usage:** `git checkout kcresonance`
 
 ####  Run with duration in seconds instead of minutes
 ```
