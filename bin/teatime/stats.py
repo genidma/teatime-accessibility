@@ -759,6 +759,7 @@ class StatisticsWindow(Gtk.Window):
                 if not fig or not ax_short or not ax_long or not canvas:
                     return
                 emoji_font = None
+                text_effects = None
                 try:
                     from matplotlib import font_manager as fm
                     emoji_font = fm.FontProperties(
@@ -766,6 +767,11 @@ class StatisticsWindow(Gtk.Window):
                     )
                 except Exception:
                     emoji_font = None
+                try:
+                    import matplotlib.patheffects as pe
+                    text_effects = [pe.withStroke(linewidth=1.5, foreground="black")]
+                except Exception:
+                    text_effects = None
 
                 events = self._load_events()
                 now = datetime.now()
@@ -902,24 +908,31 @@ class StatisticsWindow(Gtk.Window):
                                 em = KC_CATEGORY_EMOJIS.get(str(c), "")
                                 if em and em not in unique_emojis:
                                     unique_emojis.append(em)
-                            emoji_text = "".join(unique_emojis[:2])
+                            if not unique_emojis and selected_categories:
+                                for c in selected_categories:
+                                    em = KC_CATEGORY_EMOJIS.get(str(c), "")
+                                    if em and em not in unique_emojis:
+                                        unique_emojis.append(em)
+                            emoji_text = unique_emojis[0] if unique_emojis else ""
                             if emoji_text:
                                 marker_text = emoji_text
                             elif item["cats"]:
                                 marker_text = str(item["cats"][0])
                             else:
-                                marker_text = "•"
+                                marker_text = "*"
 
-                            ax.text(
+                            txt = ax.text(
                                 item["start"] + (item["width"] / 2.0),
                                 y,
                                 marker_text,
                                 ha="center",
                                 va="center",
-                                fontsize=marker_fontsize,
-                                color="black",
+                                fontsize=max(marker_fontsize, 12),
+                                color="white",
                                 fontproperties=emoji_font,
                             )
+                            if text_effects:
+                                txt.set_path_effects(text_effects)
 
                         y_cursor += lane_count + day_gap
 
