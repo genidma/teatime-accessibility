@@ -999,11 +999,6 @@ class StatisticsWindow(Gtk.Window):
                 fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
 
-            def _on_range_changed(_combo):
-                zoom_hours["value"] = 24
-                update_chart()
-
-            range_combo.connect("changed", _on_range_changed)
             rhythm_category_checks["All"].connect("toggled", on_all_toggled)
             for cat in self.data_categories:
                 rhythm_category_checks[cat].connect("toggled", on_category_toggled)
