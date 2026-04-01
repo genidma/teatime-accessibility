@@ -52,17 +52,34 @@ def _clip_interval_to_day(start, end, day_start, day_end):
         return None
     return max(start, day_start), min(end, day_end)
 
+def _normalize_event_categories(raw_categories):
+    if raw_categories is None:
+        return []
+    if isinstance(raw_categories, str):
+        raw_categories = [raw_categories]
+    if isinstance(raw_categories, (list, tuple, set)):
+        normalized = [str(c).strip() for c in raw_categories if str(c).strip()]
+        return normalized
+    return []
+
+
 def _event_matches_category(event, category_filter):
     if not category_filter or category_filter == "All":
         return True
+
+    cats = _normalize_event_categories(event.get("categories") or event.get("category"))
+
     if isinstance(category_filter, (list, tuple, set)):
         wanted = {str(c).strip().lower() for c in category_filter if str(c).strip()}
         if not wanted:
             return True
-        cats = event.get("categories", []) or event.get("category", [])
-        return any(str(c).strip().lower() in wanted for c in cats)
-    cats = event.get("categories", []) or event.get("category", [])
-    return any(str(c).lower() == category_filter.lower() for c in cats)
+        return any(c.lower() in wanted for c in cats)
+
+    filter_str = str(category_filter).strip().lower()
+    if not filter_str:
+        return True
+    return any(c.lower() == filter_str for c in cats)
+
 
 def _collect_rhythm_segments(events, start_window, end_window, category_filter="All"):
     by_day = {}
@@ -71,6 +88,11 @@ def _collect_rhythm_segments(events, start_window, end_window, category_filter="
             continue
         start = _parse_iso_ts(e.get("ts_start"))
         end = _parse_iso_ts(e.get("ts_end"))
+        if start and not end:
+            duration = _parse_minutes_value(e.get("duration_min", 0))
+            if duration > 0:
+                end = start + timedelta(minutes=duration)
+
         clipped = _clip_interval_to_day(start, end, start_window, end_window)
         if not clipped:
             continue
@@ -108,11 +130,7 @@ def _collect_rhythm_segments_detailed(events, start_window, end_window, category
         if seg_end <= seg_start:
             continue
 
-        cats = e.get("categories", []) or e.get("category", [])
-        if isinstance(cats, str):
-            cats = [cats]
-        if not isinstance(cats, list):
-            cats = []
+        cats = _normalize_event_categories(e.get("categories") or e.get("category"))
 
         day_key = seg_start.strftime("%Y-%m-%d")
         start_min = seg_start.hour * 60 + seg_start.minute + seg_start.second / 60.0

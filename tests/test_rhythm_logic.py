@@ -55,6 +55,39 @@ class TestRhythmLogic(unittest.TestCase):
         self.assertIn("2026-02-16", by_day)
         self.assertEqual(len(by_day["2026-02-16"]), 1)
 
+    def test_collect_category_string_single_value(self):
+        events = [
+            {
+                "ts_start": "2026-02-16T09:00:00",
+                "ts_end": "2026-02-16T09:30:00",
+                "categories": "breaks",
+            },
+        ]
+        start_window = datetime(2026, 2, 16, 0, 0, 0)
+        end_window = datetime(2026, 2, 16, 23, 59, 59)
+
+        by_day = _collect_rhythm_segments(events, start_window, end_window, "breaks")
+
+        self.assertIn("2026-02-16", by_day)
+        self.assertEqual(len(by_day["2026-02-16"]), 1)
+
+    def test_collect_duration_min_fallback(self):
+        events = [
+            {
+                "ts_start": "2026-02-16T10:00:00",
+                "duration_min": 20,
+                "categories": ["breaks"],
+            },
+        ]
+        start_window = datetime(2026, 2, 16, 0, 0, 0)
+        end_window = datetime(2026, 2, 16, 23, 59, 59)
+
+        by_day = _collect_rhythm_segments(events, start_window, end_window, "breaks")
+
+        self.assertIn("2026-02-16", by_day)
+        self.assertAlmostEqual(by_day["2026-02-16"][0][0], 10 * 60)
+        self.assertAlmostEqual(by_day["2026-02-16"][0][1], 10 * 60 + 20)
+
     def test_collect_clips_cross_midnight(self):
         events = [
             {
