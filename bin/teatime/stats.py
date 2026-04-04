@@ -81,6 +81,28 @@ def _event_matches_category(event, category_filter):
     return any(c.lower() == filter_str for c in cats)
 
 
+def _rhythm_y_tick_indices(n, max_ticks):
+    """Evenly spaced indices in [0, n-1] for Y tick labels (avoid label pile-up)."""
+    if n <= 0:
+        return []
+    if n <= max_ticks:
+        return list(range(n))
+    if max_ticks <= 1:
+        return [0]
+    idx = set()
+    for k in range(max_ticks):
+        i = int(round(k * (n - 1) / (max_ticks - 1)))
+        idx.add(max(0, min(n - 1, i)))
+    return sorted(idx)
+
+
+def _rhythm_short_day_label(day_str):
+    try:
+        return datetime.strptime(day_str, "%Y-%m-%d").strftime("%b %d")
+    except Exception:
+        return day_str
+
+
 def _collect_rhythm_segments(events, start_window, end_window, category_filter="All"):
     by_day = {}
     for e in events:
@@ -854,6 +876,13 @@ class StatisticsWindow(Gtk.Window):
                     status.set_text("Using selected Categories filter: All")
 
                 day_keys = sorted(by_day.keys())
+                long_rhythm_range = span_hours < 0 or span_hours >= 2160
+                if fig:
+                    if long_rhythm_range and len(day_keys) > 24:
+                        fig.set_size_inches(8, min(22, 7 + 0.065 * len(day_keys)))
+                    elif not long_rhythm_range:
+                        fig.set_size_inches(8, 8)
+
                 day_based_ranges = {
                     "Today",
                     "Yesterday",
@@ -1068,6 +1097,13 @@ class StatisticsWindow(Gtk.Window):
                                 txt.set_path_effects(text_effects)
 
                         y_cursor += lane_count + day_gap
+
+                    if long_rhythm_range and len(ytick_positions) > 14:
+                        pick = _rhythm_y_tick_indices(len(ytick_positions), 14)
+                        ytick_positions = [ytick_positions[i] for i in pick]
+                        ytick_labels = [ytick_labels[i] for i in pick]
+                    if long_rhythm_range:
+                        ytick_labels = [_rhythm_short_day_label(l) for l in ytick_labels]
 
                     ax.set_yticks(ytick_positions)
                     ax.set_yticklabels(ytick_labels)
