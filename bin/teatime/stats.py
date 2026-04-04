@@ -805,8 +805,13 @@ class StatisticsWindow(Gtk.Window):
                 update_chart()
 
             def update_chart(*args):
-                if not fig or not ax_micro or not ax_short or not ax_long or not canvas:
+                nonlocal ax_micro, ax_short, ax_long
+                if not fig or not canvas:
                     return
+                fig.clf()
+                ax_micro = fig.add_subplot(311)
+                ax_short = fig.add_subplot(312, sharex=ax_micro)
+                ax_long = fig.add_subplot(313, sharex=ax_micro)
                 mpimg = None
                 OffsetImage = None
                 AnnotationBbox = None
@@ -877,11 +882,6 @@ class StatisticsWindow(Gtk.Window):
 
                 day_keys = sorted(by_day.keys())
                 long_rhythm_range = span_hours < 0 or span_hours >= 2160
-                if fig:
-                    if long_rhythm_range and len(day_keys) > 24:
-                        fig.set_size_inches(8, min(22, 7 + 0.065 * len(day_keys)))
-                    elif not long_rhythm_range:
-                        fig.set_size_inches(8, 8)
 
                 day_based_ranges = {
                     "Today",
@@ -1135,6 +1135,8 @@ class StatisticsWindow(Gtk.Window):
                 ax_long.set_xlabel("Time of day")
                 fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
+                if hasattr(canvas, "queue_draw"):
+                    canvas.queue_draw()
 
             rhythm_category_checks["All"].connect("toggled", on_all_toggled)
             for cat in self.data_categories:
