@@ -885,9 +885,11 @@ class StatisticsWindow(Gtk.Window):
                 from matplotlib.figure import Figure
                 fig = Figure(figsize=(10, 7.2), dpi=100)
                 canvas = FigureCanvas(fig)
-                canvas.set_hexpand(True)
-                canvas.set_vexpand(True)
-                chart_host.pack_start(canvas, True, True, 0)
+                # Do not expand: stretching the widget skews the GTK3Agg bitmap when
+                # allocation does not match the figure's pixel size exactly.
+                canvas.set_hexpand(False)
+                canvas.set_vexpand(False)
+                chart_host.pack_start(canvas, False, False, 0)
                 try:
                     from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
                     toolbar = NavigationToolbar(canvas, popup)
@@ -932,10 +934,21 @@ class StatisticsWindow(Gtk.Window):
                         rhythm_category_checks["All"].set_active(True)
                 update_chart()
 
+            chart_resize_state = {"pending": False, "last_size": (0, 0)}
+            rhythm_chart_busy = {"active": False}
+
             def update_chart(*args):
                 nonlocal ax_micro, ax_short, ax_long
                 if not fig or not canvas:
                     return
+                rhythm_chart_busy["active"] = True
+                try:
+                    _update_rhythm_chart_core()
+                finally:
+                    rhythm_chart_busy["active"] = False
+
+            def _update_rhythm_chart_core():
+                nonlocal ax_micro, ax_short, ax_long
                 mpimg = None
                 OffsetImage = None
                 AnnotationBbox = None
@@ -1010,7 +1023,6 @@ class StatisticsWindow(Gtk.Window):
                     geometry["height_in"],
                     forward=True,
                 )
-                canvas.set_size_request(geometry["width_px"], geometry["height_px"])
                 fig.clf()
                 grid = fig.add_gridspec(3, 1, height_ratios=geometry["height_ratios"])
                 ax_micro = fig.add_subplot(grid[0, 0])
@@ -1269,6 +1281,10 @@ class StatisticsWindow(Gtk.Window):
                 ax_long.set_xlabel("Time of day")
                 fig.tight_layout(rect=[0, 0, 1, 0.95])
                 canvas.draw()
+                canvas.set_size_request(
+                    geometry["width_px"],
+                    geometry["height_px"],
+                )
                 if hasattr(canvas, "queue_draw"):
                     canvas.queue_draw()
                 if fit_to_window:
@@ -1276,9 +1292,9 @@ class StatisticsWindow(Gtk.Window):
                     if vadj:
                         vadj.set_value(vadj.get_lower())
 
-            chart_resize_state = {"pending": False, "last_size": (0, 0)}
-
             def on_chart_scroller_size_allocate(widget, allocation):
+                if rhythm_chart_busy.get("active"):
+                    return
                 if not fit_check.get_active():
                     return
                 width = getattr(allocation, "width", 0)
@@ -1286,7 +1302,9 @@ class StatisticsWindow(Gtk.Window):
                 if width <= 0 or height <= 0:
                     return
                 last_width, last_height = chart_resize_state["last_size"]
-                if abs(width - last_width) < 24 and abs(height - last_height) < 24:
+                # Larger threshold avoids scrollbar show/hide (~20px) re-entering
+                # update_chart and fighting the matplotlib canvas size.
+                if abs(width - last_width) < 64 and abs(height - last_height) < 64:
                     return
                 chart_resize_state["last_size"] = (width, height)
                 if chart_resize_state["pending"]:
@@ -1295,7 +1313,7 @@ class StatisticsWindow(Gtk.Window):
 
                 def _refresh_after_resize():
                     chart_resize_state["pending"] = False
-                    if fit_check.get_active():
+                    if fit_check.get_active() and not rhythm_chart_busy.get("active"):
                         update_chart()
                     return False
 
