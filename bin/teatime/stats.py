@@ -199,6 +199,15 @@ def _rhythm_canvas_geometry(
     }
 
 
+def _flow_label_x(point_x, label_width, canvas_width, pad=20, gap=5, edge_margin=4):
+    desired_x = float(point_x) + float(gap)
+    max_x = float(canvas_width) - float(pad) - float(edge_margin) - float(label_width)
+    if desired_x <= max_x:
+        return max(float(pad) + float(edge_margin), desired_x)
+    flipped_x = float(point_x) - float(gap) - float(label_width)
+    return max(float(pad) + float(edge_margin), min(max_x, flipped_x))
+
+
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
     for day, total_min in daily_minutes:
@@ -722,7 +731,7 @@ class StatisticsWindow(Gtk.Window):
                 if w <= 0 or h <= 0:
                     return False
 
-                pad = 20
+                pad = 24
                 y = h / 2
                 cr.set_source_rgba(0.6, 0.6, 0.6, 0.5)
                 cr.set_line_width(2)
@@ -763,10 +772,16 @@ class StatisticsWindow(Gtk.Window):
                     cr.set_source_rgba(0.0, 0.0, 0.0, 1.0)
                     cr.select_font_face("Sans", 0, 0)
                     cr.set_font_size(10)
-                    cr.move_to(x + 5, py - 4)
-                    cr.show_text(f"{mins}m")
-                    cr.move_to(x + 5, py + 8)
-                    cr.show_text(day[5:])
+                    mins_text = f"{mins}m"
+                    mins_ext = cr.text_extents(mins_text)
+                    mins_x = _flow_label_x(x, mins_ext.width, w, pad=pad, gap=6)
+                    cr.move_to(mins_x, py - 4)
+                    cr.show_text(mins_text)
+                    day_text = day[5:]
+                    day_ext = cr.text_extents(day_text)
+                    day_x = _flow_label_x(x, day_ext.width, w, pad=pad, gap=6)
+                    cr.move_to(day_x, py + 8)
+                    cr.show_text(day_text)
 
                 return False
 
