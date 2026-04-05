@@ -14,12 +14,18 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+# The 'lib' directory seems to be for vendored dependencies, which is not a good practice.
+# Using a venv and requirements.txt is preferred.
+# Keeping this for now as it was in the original file, but it's generally not recommended.
 lib/
 lib64/
 
 # exported csv files
 *.csv
 
+# =============== #
+# Application-specific user data (not typically in repo, but good to ignore if it appears)
+teatime_stats.json
 # =============== #
 # Unity generated #
 # =============== #
