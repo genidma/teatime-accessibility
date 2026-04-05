@@ -17,6 +17,7 @@ from teatime.stats import (
     _flow_available_weeks,
     _flow_available_years,
     _flow_canvas_geometry,
+    _flow_deep_work_status_text,
     _flow_filter_points,
     _flow_is_deep_work_day,
     _flow_label_x,
@@ -142,6 +143,12 @@ class TestFlowLogic(unittest.TestCase):
         self.assertFalse(_flow_is_deep_work_day(239))
         self.assertTrue(_flow_is_deep_work_day(240))
         self.assertTrue(_flow_is_deep_work_day(300))
+
+    def test_flow_deep_work_status_text_explains_badge(self):
+        self.assertEqual(
+            _flow_deep_work_status_text(240),
+            "Orange marker = deep-work full days: 240m+ (dw-fd)",
+        )
 
 
 if __name__ == "__main__":

@@ -346,6 +346,14 @@ def _flow_is_deep_work_day(total_minutes, threshold_minutes=240):
     return minutes >= float(threshold_minutes)
 
 
+def _flow_deep_work_badge_text():
+    return "dw-fd"
+
+
+def _flow_deep_work_status_text(threshold_minutes=240):
+    return f"Orange marker = deep-work full days: {int(threshold_minutes)}m+ ({_flow_deep_work_badge_text()})"
+
+
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
     for day, total_min in daily_minutes:
@@ -907,6 +915,18 @@ class StatisticsWindow(Gtk.Window):
             current_points = []
             combo_state = {"updating": False}
             deep_work_threshold = 240
+            deep_work_icon = None
+            deep_work_icon_path = get_category_icon_path("dw")
+            if deep_work_icon_path:
+                try:
+                    deep_work_icon = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        deep_work_icon_path,
+                        18,
+                        18,
+                        True,
+                    )
+                except Exception:
+                    deep_work_icon = None
 
             def _append_combo_items(combo, all_label, entries, preferred_id=None):
                 combo.remove_all()
@@ -1020,7 +1040,7 @@ class StatisticsWindow(Gtk.Window):
                 frame.set_label(f"Flow Timeline ({flow_scope} | {scope_label})")
                 fit_text = "Fit to window" if fit_check.get_active() else "Scrollable"
                 status.set_text(
-                    f"Scope: {scope_label} | Categories: {flow_scope} | View: {fit_text} | Orange marker: {deep_work_threshold}m+"
+                    f"Scope: {scope_label} | Categories: {flow_scope} | View: {fit_text} | {_flow_deep_work_status_text(deep_work_threshold)}"
                 )
                 viewport_width = flow_scroller.get_allocated_width()
                 if viewport_width <= 0:
@@ -1112,6 +1132,39 @@ class StatisticsWindow(Gtk.Window):
                     cr.move_to(x, pad)
                     cr.line_to(x, h - pad)
                     cr.stroke()
+
+                    badge_text = _flow_deep_work_badge_text()
+                    cr.select_font_face("Sans", 0, 0)
+                    cr.set_font_size(9)
+                    badge_text_ext = cr.text_extents(badge_text)
+                    icon_width = deep_work_icon.get_width() if deep_work_icon else 0
+                    icon_gap = 4 if icon_width else 0
+                    badge_padding_x = 4
+                    badge_height = 14
+                    badge_rect_width = int(round(badge_text_ext.width + badge_padding_x * 2))
+                    badge_total_width = icon_width + icon_gap + badge_rect_width
+                    badge_block_x = _flow_label_x(
+                        x, badge_total_width, w, pad=pad, gap=8
+                    )
+                    badge_top_y = pad + 4
+
+                    if deep_work_icon:
+                        Gdk.cairo_set_source_pixbuf(
+                            cr, deep_work_icon, badge_block_x, badge_top_y
+                        )
+                        cr.paint()
+
+                    rect_x = badge_block_x + icon_width + icon_gap
+                    rect_y = badge_top_y + 2
+                    cr.set_source_rgba(0.43, 0.20, 0.67, 0.96)
+                    cr.rectangle(rect_x, rect_y, badge_rect_width, badge_height)
+                    cr.fill()
+
+                    cr.set_source_rgba(1.0, 1.0, 1.0, 1.0)
+                    text_x = rect_x + badge_padding_x
+                    text_y = rect_y + badge_height - 4
+                    cr.move_to(text_x, text_y)
+                    cr.show_text(badge_text)
 
                 for x, py, day, mins, _ in dot_positions:
                     cr.set_source_rgba(1.0, 0.6, 0.2, 0.95)
