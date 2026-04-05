@@ -82,7 +82,7 @@ class TestFlowLogic(unittest.TestCase):
         weeks_2026_march = _flow_available_weeks(points, 2026, 3)
         self.assertEqual(weeks_2026_march, [date(2026, 3, 2)])
 
-    def test_flow_filter_points_prefers_calendar_filters_over_ranges(self):
+    def test_flow_filter_points_combines_range_and_calendar_filters(self):
         points = [
             ("2025-03-10", 10),
             ("2026-02-25", 20),
@@ -98,27 +98,36 @@ class TestFlowLogic(unittest.TestCase):
         )
         self.assertEqual(
             _flow_filter_points(points, now, range_days=30, selected_year=2025),
-            [("2025-03-10", 10)],
+            [],
+        )
+        self.assertEqual(
+            _flow_filter_points(points, now, range_days=30, selected_year=2026),
+            [("2026-03-25", 35), ("2026-04-14", 40)],
         )
         self.assertEqual(
             _flow_filter_points(points, now, range_days=30, selected_year=2026, selected_month=3),
-            [("2026-03-06", 30), ("2026-03-25", 35)],
+            [("2026-03-25", 35)],
         )
         self.assertEqual(
-            _flow_filter_points(points, now, range_days=30, selected_week_start="2026-03-02"),
-            [("2026-03-06", 30)],
+            _flow_filter_points(points, now, range_days=30, selected_week_start="2026-04-13"),
+            [("2026-04-14", 40)],
+        )
+        self.assertEqual(
+            _flow_filter_points(points, now, range_days=-1, selected_year=2025),
+            [("2025-03-10", 10)],
         )
 
     def test_flow_scope_label_formats_calendar_scope(self):
         self.assertEqual(_flow_scope_label("30d"), "30d")
-        self.assertEqual(_flow_scope_label("30d", selected_year=2026), "2026")
+        self.assertEqual(_flow_scope_label("All"), "All Time")
+        self.assertEqual(_flow_scope_label("30d", selected_year=2026), "30d + 2026")
         self.assertEqual(
             _flow_scope_label("30d", selected_year=2026, selected_month=3),
-            "Mar 2026",
+            "30d + Mar 2026",
         )
         self.assertEqual(
             _flow_scope_label("30d", selected_week_start="2026-03-02"),
-            "Week of 2026-03-02",
+            "30d + Week of 2026-03-02",
         )
 
     def test_flow_canvas_geometry_switches_between_fit_and_scroll(self):

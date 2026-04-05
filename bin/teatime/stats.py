@@ -274,6 +274,19 @@ def _flow_filter_points(
     selected_week_start=None,
 ):
     filtered = _normalize_flow_points(points)
+    if range_days and range_days > 0:
+        end_date = now.date() if isinstance(now, datetime) else now
+        start_date = end_date - timedelta(days=range_days - 1)
+        filtered = [
+            item for item in filtered if start_date <= item["date"] <= end_date
+        ]
+
+    if selected_year is not None:
+        filtered = [item for item in filtered if item["date"].year == selected_year]
+
+    if selected_month is not None:
+        filtered = [item for item in filtered if item["date"].month == selected_month]
+
     if selected_week_start:
         week_start = (
             selected_week_start
@@ -284,25 +297,13 @@ def _flow_filter_points(
             filtered = [
                 item for item in filtered if _flow_week_start(item["date"]) == week_start
             ]
-    elif selected_month is not None:
-        filtered = [
-            item
-            for item in filtered
-            if item["date"].month == selected_month
-            and (selected_year is None or item["date"].year == selected_year)
-        ]
-    elif selected_year is not None:
-        filtered = [item for item in filtered if item["date"].year == selected_year]
-    elif range_days and range_days > 0:
-        end_date = now.date() if isinstance(now, datetime) else now
-        start_date = end_date - timedelta(days=range_days - 1)
-        filtered = [
-            item for item in filtered if start_date <= item["date"] <= end_date
-        ]
     return [(item["day"], item["minutes"]) for item in filtered]
 
 
 def _flow_scope_label(range_label, selected_year=None, selected_month=None, selected_week_start=None):
+    parts = []
+    if range_label and range_label != "All":
+        parts.append(range_label)
     if selected_week_start:
         week_start = (
             selected_week_start
@@ -310,14 +311,16 @@ def _flow_scope_label(range_label, selected_year=None, selected_month=None, sele
             else _flow_parse_day(selected_week_start)
         )
         if week_start:
-            return f"Week of {week_start.strftime('%Y-%m-%d')}"
-    if selected_month is not None and selected_year is not None:
-        return f"{datetime(selected_year, selected_month, 1).strftime('%b %Y')}"
-    if selected_month is not None:
-        return datetime(2000, selected_month, 1).strftime("%b")
-    if selected_year is not None:
-        return str(selected_year)
-    return range_label
+            parts.append(f"Week of {week_start.strftime('%Y-%m-%d')}")
+    elif selected_month is not None and selected_year is not None:
+        parts.append(datetime(selected_year, selected_month, 1).strftime("%b %Y"))
+    elif selected_month is not None:
+        parts.append(datetime(2000, selected_month, 1).strftime("%b"))
+    elif selected_year is not None:
+        parts.append(str(selected_year))
+    if not parts:
+        return "All Time"
+    return " + ".join(parts)
 
 
 def _flow_canvas_geometry(fit_to_window, point_count, viewport_width=None, viewport_height=None):
