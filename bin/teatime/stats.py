@@ -208,6 +208,133 @@ def _flow_label_x(point_x, label_width, canvas_width, pad=20, gap=5, edge_margin
     return max(float(pad) + float(edge_margin), min(max_x, flipped_x))
 
 
+def _flow_parse_day(day_str):
+    try:
+        return datetime.strptime(str(day_str), "%Y-%m-%d").date()
+    except Exception:
+        return None
+
+
+def _flow_week_start(day):
+    return day - timedelta(days=day.weekday())
+
+
+def _normalize_flow_points(points):
+    normalized = []
+    for day, mins in points or []:
+        day_date = _flow_parse_day(day)
+        if not day_date:
+            continue
+        try:
+            minutes = int(round(float(mins)))
+        except Exception:
+            minutes = _parse_minutes_value(mins)
+        normalized.append(
+            {
+                "day": day_date.strftime("%Y-%m-%d"),
+                "date": day_date,
+                "minutes": minutes,
+            }
+        )
+    normalized.sort(key=lambda item: item["date"])
+    return normalized
+
+
+def _flow_available_years(points):
+    return sorted({item["date"].year for item in _normalize_flow_points(points)})
+
+
+def _flow_available_months(points, selected_year=None):
+    out = []
+    for item in _normalize_flow_points(points):
+        if selected_year is not None and item["date"].year != selected_year:
+            continue
+        out.append(item["date"].month)
+    return sorted(set(out))
+
+
+def _flow_available_weeks(points, selected_year=None, selected_month=None):
+    week_starts = []
+    for item in _normalize_flow_points(points):
+        day = item["date"]
+        if selected_year is not None and day.year != selected_year:
+            continue
+        if selected_month is not None and day.month != selected_month:
+            continue
+        week_starts.append(_flow_week_start(day))
+    return sorted(set(week_starts))
+
+
+def _flow_filter_points(
+    points,
+    now,
+    range_days=None,
+    selected_year=None,
+    selected_month=None,
+    selected_week_start=None,
+):
+    filtered = _normalize_flow_points(points)
+    if selected_week_start:
+        week_start = (
+            selected_week_start
+            if hasattr(selected_week_start, "year")
+            else _flow_parse_day(selected_week_start)
+        )
+        if week_start:
+            filtered = [
+                item for item in filtered if _flow_week_start(item["date"]) == week_start
+            ]
+    elif selected_month is not None:
+        filtered = [
+            item
+            for item in filtered
+            if item["date"].month == selected_month
+            and (selected_year is None or item["date"].year == selected_year)
+        ]
+    elif selected_year is not None:
+        filtered = [item for item in filtered if item["date"].year == selected_year]
+    elif range_days and range_days > 0:
+        end_date = now.date() if isinstance(now, datetime) else now
+        start_date = end_date - timedelta(days=range_days - 1)
+        filtered = [
+            item for item in filtered if start_date <= item["date"] <= end_date
+        ]
+    return [(item["day"], item["minutes"]) for item in filtered]
+
+
+def _flow_scope_label(range_label, selected_year=None, selected_month=None, selected_week_start=None):
+    if selected_week_start:
+        week_start = (
+            selected_week_start
+            if hasattr(selected_week_start, "year")
+            else _flow_parse_day(selected_week_start)
+        )
+        if week_start:
+            return f"Week of {week_start.strftime('%Y-%m-%d')}"
+    if selected_month is not None and selected_year is not None:
+        return f"{datetime(selected_year, selected_month, 1).strftime('%b %Y')}"
+    if selected_month is not None:
+        return datetime(2000, selected_month, 1).strftime("%b")
+    if selected_year is not None:
+        return str(selected_year)
+    return range_label
+
+
+def _flow_canvas_geometry(fit_to_window, point_count, viewport_width=None, viewport_height=None):
+    width_px = int(viewport_width) if viewport_width and viewport_width > 0 else 820
+    height_px = int(viewport_height) if viewport_height and viewport_height > 0 else 220
+    width_px = max(560, min(1800, width_px))
+    height_px = max(180, min(520, height_px))
+
+    if fit_to_window:
+        return {"width_px": width_px, "height_px": height_px}
+
+    expanded_width = max(width_px, 160 + max(0, point_count - 1) * 44)
+    expanded_width = min(6000, expanded_width)
+    expanded_height = max(height_px, 220)
+    return {"width_px": expanded_width, "height_px": expanded_height}
+
+
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
     for day, total_min in daily_minutes:
@@ -701,29 +828,221 @@ class StatisticsWindow(Gtk.Window):
                 self._flow_popup = None
 
             popup = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-            popup.set_transient_for(self)
             popup.set_modal(False)
             popup.set_title("Flow Timeline")
-            popup.set_default_size(560, 180)
+            popup.set_resizable(True)
+            popup.set_type_hint(Gdk.WindowTypeHint.NORMAL)
+            popup.set_role("flow-timeline-window")
+            popup.set_default_size(960, 360)
             popup.set_border_width(8)
 
+            root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            popup.add(root)
+
+            controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+            root.pack_start(controls, False, False, 0)
+
+            time_span_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+            controls.pack_start(time_span_box, False, False, 0)
+
+            fit_check = Gtk.CheckButton(label="Fit data in window")
+            fit_check.set_active(True)
+            controls.pack_start(fit_check, False, False, 0)
+
+            filters_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+            root.pack_start(filters_row, False, False, 0)
+
+            def _add_labeled_combo(parent, label_text):
+                box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+                label = Gtk.Label(label=label_text)
+                box.pack_start(label, False, False, 0)
+                combo = Gtk.ComboBoxText()
+                box.pack_start(combo, False, False, 0)
+                parent.pack_start(box, False, False, 0)
+                return combo
+
+            year_combo = _add_labeled_combo(filters_row, "Year")
+            month_combo = _add_labeled_combo(filters_row, "Month")
+            week_combo = _add_labeled_combo(filters_row, "Week")
+
             frame = Gtk.Frame(label="Flow Timeline")
+            root.pack_start(frame, True, True, 0)
+
+            flow_scroller = Gtk.ScrolledWindow()
+            flow_scroller.set_hexpand(True)
+            flow_scroller.set_vexpand(True)
+            flow_scroller.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+
             da = Gtk.DrawingArea()
-            da.set_size_request(520, 140)
-            frame.add(da)
-            popup.add(frame)
+            da.set_hexpand(True)
+            da.set_vexpand(True)
+            flow_scroller.add(da)
+            frame.add(flow_scroller)
+
+            status = Gtk.Label(label="")
+            status.set_halign(Gtk.Align.START)
+            root.pack_start(status, False, False, 0)
 
             selected_categories = self._get_selected_categories_from_main()
-            points = self._daily_minutes_from_stats(selected_categories)
-            if not points:
-                points = self._daily_minutes_from_events(selected_categories)
-            points = points[-21:]
+            source_points = self._daily_minutes_from_stats(selected_categories)
+            if not source_points:
+                source_points = self._daily_minutes_from_events(selected_categories)
             flow_scope = (
                 ", ".join(format_category_label(c) for c in selected_categories)
                 if selected_categories
                 else "All"
             )
-            frame.set_label(f"Flow Timeline ({flow_scope})")
+            current_state = {"range_label": "30d", "range_days": 30}
+            current_points = []
+            combo_state = {"updating": False}
+
+            def _append_combo_items(combo, all_label, entries, preferred_id=None):
+                combo.remove_all()
+                combo.append("all", all_label)
+                for item_id, item_label in entries:
+                    combo.append(str(item_id), item_label)
+                valid_ids = {"all"} | {str(item_id) for item_id, _ in entries}
+                target_id = preferred_id if preferred_id in valid_ids else "all"
+                combo.set_active_id(target_id)
+
+            def _populate_flow_filters():
+                combo_state["updating"] = True
+                try:
+                    current_year_id = year_combo.get_active_id() or "all"
+                    selected_year = (
+                        int(current_year_id)
+                        if current_year_id not in (None, "", "all")
+                        else None
+                    )
+                    current_month_id = month_combo.get_active_id() or "all"
+                    current_month = (
+                        int(current_month_id)
+                        if current_month_id not in (None, "", "all")
+                        else None
+                    )
+                    current_week_id = week_combo.get_active_id() or "all"
+
+                    year_entries = [
+                        (str(year), str(year))
+                        for year in _flow_available_years(source_points)
+                    ]
+                    _append_combo_items(
+                        year_combo, "All Years", year_entries, preferred_id=current_year_id
+                    )
+
+                    selected_year = (
+                        int(year_combo.get_active_id())
+                        if year_combo.get_active_id() not in (None, "", "all")
+                        else None
+                    )
+                    month_entries = [
+                        (str(month), datetime(2000, month, 1).strftime("%b"))
+                        for month in _flow_available_months(source_points, selected_year)
+                    ]
+                    _append_combo_items(
+                        month_combo,
+                        "All Months",
+                        month_entries,
+                        preferred_id=current_month_id,
+                    )
+
+                    selected_month = (
+                        int(month_combo.get_active_id())
+                        if month_combo.get_active_id() not in (None, "", "all")
+                        else None
+                    )
+                    week_entries = [
+                        (
+                            week_start.strftime("%Y-%m-%d"),
+                            f"Week of {week_start.strftime('%Y-%m-%d')}",
+                        )
+                        for week_start in _flow_available_weeks(
+                            source_points, selected_year, selected_month
+                        )
+                    ]
+                    _append_combo_items(
+                        week_combo,
+                        "All Weeks",
+                        week_entries,
+                        preferred_id=current_week_id,
+                    )
+                finally:
+                    combo_state["updating"] = False
+
+            def _reset_flow_calendar_filters():
+                combo_state["updating"] = True
+                try:
+                    year_combo.set_active_id("all")
+                    month_combo.set_active_id("all")
+                    week_combo.set_active_id("all")
+                finally:
+                    combo_state["updating"] = False
+
+            def _selected_flow_filters():
+                year_id = year_combo.get_active_id()
+                month_id = month_combo.get_active_id()
+                week_id = week_combo.get_active_id()
+                return {
+                    "year": int(year_id) if year_id not in (None, "", "all") else None,
+                    "month": int(month_id) if month_id not in (None, "", "all") else None,
+                    "week": week_id if week_id not in (None, "", "all") else None,
+                }
+
+            def _refresh_flow_points():
+                nonlocal current_points
+                filters = _selected_flow_filters()
+                current_points = _flow_filter_points(
+                    source_points,
+                    datetime.now(),
+                    range_days=current_state["range_days"],
+                    selected_year=filters["year"],
+                    selected_month=filters["month"],
+                    selected_week_start=filters["week"],
+                )
+                scope_label = _flow_scope_label(
+                    current_state["range_label"],
+                    selected_year=filters["year"],
+                    selected_month=filters["month"],
+                    selected_week_start=filters["week"],
+                )
+                frame.set_label(f"Flow Timeline ({flow_scope} | {scope_label})")
+                fit_text = "Fit to window" if fit_check.get_active() else "Scrollable"
+                status.set_text(
+                    f"Scope: {scope_label} | Categories: {flow_scope} | View: {fit_text}"
+                )
+                viewport_width = flow_scroller.get_allocated_width()
+                if viewport_width <= 0:
+                    viewport_width = max(820, popup.get_allocated_width() - 40)
+                viewport_height = flow_scroller.get_allocated_height()
+                if viewport_height <= 0:
+                    viewport_height = max(180, popup.get_allocated_height() - 140)
+                geometry = _flow_canvas_geometry(
+                    fit_check.get_active(),
+                    len(current_points),
+                    viewport_width=viewport_width,
+                    viewport_height=viewport_height,
+                )
+                da.set_size_request(geometry["width_px"], geometry["height_px"])
+                da.queue_draw()
+
+            range_buttons = [
+                ("7d", 7),
+                ("30d", 30),
+                ("90d", 90),
+                ("All", -1),
+            ]
+
+            def _on_range_clicked(btn, label, days):
+                current_state["range_label"] = label
+                current_state["range_days"] = days
+                _reset_flow_calendar_filters()
+                _populate_flow_filters()
+                _refresh_flow_points()
+
+            for label, days in range_buttons:
+                btn = Gtk.Button(label=label)
+                btn.connect("clicked", _on_range_clicked, label, days)
+                time_span_box.pack_start(btn, False, False, 0)
 
             def draw_timeline(widget, cr):
                 alloc = widget.get_allocation()
@@ -739,18 +1058,18 @@ class StatisticsWindow(Gtk.Window):
                 cr.line_to(w - pad, y)
                 cr.stroke()
 
-                if not points:
+                if not current_points:
                     cr.set_source_rgba(0.0, 0.0, 0.0, 1.0)
                     cr.select_font_face("Sans", 0, 0)
                     cr.set_font_size(12)
                     cr.move_to(pad + 6, y - 10)
-                    cr.show_text("No flow data for selected categories")
+                    cr.show_text("No flow data for the selected filters")
                     return False
 
-                max_minutes = max(m for _, m in points) if points else 1
-                span_x = max(1, len(points) - 1)
+                max_minutes = max(m for _, m in current_points) if current_points else 1
+                span_x = max(1, len(current_points) - 1)
                 dot_positions = []
-                for idx, (day, mins) in enumerate(points):
+                for idx, (day, mins) in enumerate(current_points):
                     x = pad + (idx / span_x) * (w - pad * 2)
                     y_off = (mins / max_minutes) * (h * 0.35)
                     py = y - y_off
@@ -786,6 +1105,45 @@ class StatisticsWindow(Gtk.Window):
                 return False
 
             da.connect("draw", draw_timeline)
+
+            def _on_flow_combo_changed(combo):
+                if combo_state["updating"]:
+                    return
+                _populate_flow_filters()
+                _refresh_flow_points()
+
+            flow_resize_state = {"pending": False, "last_size": (0, 0)}
+
+            def _on_flow_scroller_size_allocate(widget, allocation):
+                if not fit_check.get_active():
+                    return
+                width = getattr(allocation, "width", 0)
+                height = getattr(allocation, "height", 0)
+                if width <= 0 or height <= 0:
+                    return
+                last_width, last_height = flow_resize_state["last_size"]
+                if abs(width - last_width) < 24 and abs(height - last_height) < 24:
+                    return
+                flow_resize_state["last_size"] = (width, height)
+                if flow_resize_state["pending"]:
+                    return
+                flow_resize_state["pending"] = True
+
+                def _refresh_after_resize():
+                    flow_resize_state["pending"] = False
+                    if fit_check.get_active():
+                        _refresh_flow_points()
+                    return False
+
+                GLib.idle_add(_refresh_after_resize)
+
+            year_combo.connect("changed", _on_flow_combo_changed)
+            month_combo.connect("changed", _on_flow_combo_changed)
+            week_combo.connect("changed", _on_flow_combo_changed)
+            fit_check.connect("toggled", lambda *args: _refresh_flow_points())
+            flow_scroller.connect("size-allocate", _on_flow_scroller_size_allocate)
+            _populate_flow_filters()
+            _refresh_flow_points()
 
             popup.connect("delete-event", lambda *args: setattr(self, "_flow_popup", None) or False)
             popup.show_all()
