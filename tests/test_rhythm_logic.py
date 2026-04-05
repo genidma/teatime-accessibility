@@ -14,6 +14,7 @@ from teatime.stats import (
     _collect_rhythm_plot_data,
     _collect_rhythm_segments,
     _merge_missing_rhythm_days,
+    _rhythm_popup_default_size,
     _resolve_rhythm_window,
 )
 
@@ -154,6 +155,16 @@ class TestRhythmLogic(unittest.TestCase):
         self.assertEqual(start_window, datetime.min)
         self.assertEqual(end_window, datetime.max)
         self.assertEqual(hours, 24)
+
+    def test_rhythm_popup_default_size_uses_reasonable_fallback(self):
+        self.assertEqual(_rhythm_popup_default_size(), (1100, 820))
+
+    def test_rhythm_popup_default_size_respects_small_screens(self):
+        width, height = _rhythm_popup_default_size(1024, 600)
+        self.assertEqual((width, height), (921, 520))
+
+        width, height = _rhythm_popup_default_size(1920, 1080)
+        self.assertEqual((width, height), (1500, 918))
 
     def test_stats_fallback_includes_days_that_overlap_window(self):
         daily_minutes = [

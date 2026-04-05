@@ -132,6 +132,19 @@ def _resolve_rhythm_window(now, span_hours):
     return start_window, end_window, hours
 
 
+def _rhythm_popup_default_size(screen_width=None, screen_height=None):
+    default_width = 1100
+    default_height = 820
+    if not screen_width or not screen_height:
+        return default_width, default_height
+
+    max_width = max(640, int(screen_width) - 80)
+    max_height = max(520, int(screen_height) - 80)
+    width = min(1500, max(900, int(screen_width * 0.90)))
+    height = min(1000, max(700, int(screen_height * 0.85)))
+    return min(width, max_width), min(height, max_height)
+
+
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
     for day, total_min in daily_minutes:
@@ -720,11 +733,21 @@ class StatisticsWindow(Gtk.Window):
                 self._rhythm_popup = None
 
             popup = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-            popup.set_transient_for(self)
             popup.set_modal(False)
-            popup.set_default_size(820, 460)
             popup.set_title("Rhythm Graph")
+            popup.set_resizable(True)
+            popup.set_type_hint(Gdk.WindowTypeHint.NORMAL)
             popup.set_border_width(10)
+            popup.set_role("rhythm-graph-window")
+
+            screen = popup.get_screen() or Gdk.Screen.get_default()
+            if screen:
+                popup_w, popup_h = _rhythm_popup_default_size(
+                    screen.get_width(), screen.get_height()
+                )
+            else:
+                popup_w, popup_h = _rhythm_popup_default_size()
+            popup.set_default_size(popup_w, popup_h)
 
             root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
             popup.add(root)
@@ -783,7 +806,12 @@ class StatisticsWindow(Gtk.Window):
             chart_host = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
             chart_host.set_hexpand(True)
             chart_host.set_vexpand(True)
-            root.pack_start(chart_host, True, True, 0)
+            chart_scroller = Gtk.ScrolledWindow()
+            chart_scroller.set_hexpand(True)
+            chart_scroller.set_vexpand(True)
+            chart_scroller.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+            chart_scroller.add(chart_host)
+            root.pack_start(chart_scroller, True, True, 0)
 
             status = Gtk.Label(label="")
             status.set_halign(Gtk.Align.START)
@@ -797,11 +825,13 @@ class StatisticsWindow(Gtk.Window):
             try:
                 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
                 from matplotlib.figure import Figure
-                fig = Figure(figsize=(8, 8), dpi=100)
+                fig = Figure(figsize=(10, 7.2), dpi=100)
                 ax_micro = fig.add_subplot(311)
                 ax_short = fig.add_subplot(312, sharex=ax_micro)
                 ax_long = fig.add_subplot(313, sharex=ax_micro)
                 canvas = FigureCanvas(fig)
+                canvas.set_hexpand(True)
+                canvas.set_vexpand(True)
                 chart_host.pack_start(canvas, True, True, 0)
                 try:
                     from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
