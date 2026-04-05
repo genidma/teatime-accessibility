@@ -103,18 +103,88 @@ def _rhythm_short_day_label(day_str):
         return day_str
 
 
+def _event_interval_from_log_entry(event):
+    start = (
+        _parse_iso_ts(event.get("ts_start"))
+        or _parse_iso_ts(event.get("start"))
+        or _parse_iso_ts(event.get("start_ts"))
+    )
+    end = (
+        _parse_iso_ts(event.get("ts_end"))
+        or _parse_iso_ts(event.get("end"))
+        or _parse_iso_ts(event.get("end_ts"))
+    )
+    if start and not end:
+        duration = _parse_minutes_value(event.get("duration_min", 0))
+        if duration > 0:
+            end = start + timedelta(minutes=duration)
+    if start and end and end > start:
+        return start, end
+    return None
+
+
+def _resolve_rhythm_window(now, span_hours):
+    if span_hours == -1:
+        return datetime.min, datetime.max, 24
+    start_window = now - timedelta(hours=span_hours)
+    end_window = now
+    hours = 24 if span_hours >= 24 else span_hours
+    return start_window, end_window, hours
+
+
+def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
+    by_day = {}
+    for day, total_min in daily_minutes:
+        try:
+            day_start = datetime.fromisoformat(day).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+        except Exception:
+            continue
+        day_end = day_start.replace(hour=23, minute=59, second=59)
+        if day_end < start_window or day_start > end_window:
+            continue
+        start_min = 12 * 60
+        end_min = min(24 * 60, start_min + float(total_min))
+        if end_min <= start_min:
+            continue
+        by_day.setdefault(day, []).append((start_min, end_min))
+    return by_day
+
+
+def _merge_missing_rhythm_days(primary_by_day, fallback_by_day):
+    merged = {day: list(segments) for day, segments in (primary_by_day or {}).items()}
+    for day, segments in (fallback_by_day or {}).items():
+        if day not in merged:
+            merged[day] = list(segments)
+    return merged
+
+
+def _collect_rhythm_plot_data(
+    events, daily_minutes, start_window, end_window, category_filter="All"
+):
+    by_day_detailed = _collect_rhythm_segments_detailed(
+        events, start_window, end_window, category_filter
+    )
+    primary_by_day = _collect_rhythm_segments(
+        events, start_window, end_window, category_filter
+    )
+    fallback_by_day = _build_stats_fallback_rhythm_segments(
+        daily_minutes, start_window, end_window
+    )
+    by_day = _merge_missing_rhythm_days(primary_by_day, fallback_by_day)
+    return by_day_detailed, by_day
+
+
 def _collect_rhythm_segments(events, start_window, end_window, category_filter="All"):
     by_day = {}
     for e in events:
         if not _event_matches_category(e, category_filter):
             continue
-        start = _parse_iso_ts(e.get("ts_start"))
-        end = _parse_iso_ts(e.get("ts_end"))
-        if start and not end:
-            duration = _parse_minutes_value(e.get("duration_min", 0))
-            if duration > 0:
-                end = start + timedelta(minutes=duration)
-
+        interval = _event_interval_from_log_entry(e)
+        if not interval:
+            continue
+        start, end = interval
         clipped = _clip_interval_to_day(start, end, start_window, end_window)
         if not clipped:
             continue
@@ -138,12 +208,10 @@ def _collect_rhythm_segments_detailed(events, start_window, end_window, category
     for e in events:
         if not _event_matches_category(e, category_filter):
             continue
-        start = _parse_iso_ts(e.get("ts_start")) or _parse_iso_ts(e.get("start")) or _parse_iso_ts(e.get("start_ts"))
-        end = _parse_iso_ts(e.get("ts_end")) or _parse_iso_ts(e.get("end")) or _parse_iso_ts(e.get("end_ts"))
-        if (not start or not end) and start:
-            duration = _parse_minutes_value(e.get("duration_min", 0))
-            if duration > 0:
-                end = start + timedelta(minutes=duration)
+        interval = _event_interval_from_log_entry(e)
+        if not interval:
+            continue
+        start, end = interval
         clipped = _clip_interval_to_day(start, end, start_window, end_window)
         if not clipped:
             continue
@@ -483,22 +551,7 @@ class StatisticsWindow(Gtk.Window):
         return []
 
     def _event_interval(self, event):
-        start = (
-            _parse_iso_ts(event.get("ts_start"))
-            or _parse_iso_ts(event.get("start"))
-            or _parse_iso_ts(event.get("start_ts"))
-        )
-        end = (
-            _parse_iso_ts(event.get("ts_end"))
-            or _parse_iso_ts(event.get("end"))
-            or _parse_iso_ts(event.get("end_ts"))
-        )
-        if start and end and end > start:
-            return start, end
-        duration = _parse_minutes_value(event.get("duration_min", 0))
-        if start and duration > 0:
-            return start, start + timedelta(minutes=duration)
-        return None
+        return _event_interval_from_log_entry(event)
 
     def _daily_minutes_from_stats(self, selected_categories):
         logs = self.stats_manager.load() or []
@@ -538,26 +591,16 @@ class StatisticsWindow(Gtk.Window):
         return out
 
     def _collect_rhythm_segments_fallback(self, events, start_window, end_window, category_filter):
-        by_day = _collect_rhythm_segments(events, start_window, end_window, category_filter)
-        if by_day:
-            return by_day
         if isinstance(category_filter, (list, tuple, set)):
             selected_categories = list(category_filter)
         elif isinstance(category_filter, str) and category_filter != "All":
             selected_categories = [category_filter]
         else:
             selected_categories = []
-        daily = self._daily_minutes_from_stats(selected_categories)
-        for day, total_min in daily:
-            try:
-                day_start = datetime.fromisoformat(day).replace(hour=0, minute=0, second=0, microsecond=0)
-            except Exception:
-                continue
-            if day_start < start_window or day_start > end_window:
-                continue
-            start_min = 12 * 60
-            end_min = min(24 * 60, start_min + float(total_min))
-            by_day.setdefault(day, []).append((start_min, end_min))
+        daily_minutes = self._daily_minutes_from_stats(selected_categories)
+        _, by_day = _collect_rhythm_plot_data(
+            events, daily_minutes, start_window, end_window, category_filter
+        )
         return by_day
 
     def _get_selected_categories_from_main(self):
@@ -839,37 +882,20 @@ class StatisticsWindow(Gtk.Window):
                 range_label = current_state["duration"]
                 
                 # Determine window based on unified span
-                if span_hours == -1: # All
-                    start_window = datetime.min
-                    end_window = datetime.max
-                    hours = 24
-                elif span_hours >= 24: # Multiday View (3d, 7d, etc)
-                    # For consistency with "Last X Days", we anchor to end of today
-                    # But to keep it simple and matching "Last X Hours" logic:
-                    # Let's trust the "Last X Hours" approach for everything?
-                    # No, user expects "3d" to mean "Last 3 Days".
-                    # Let's use simple hours subtraction for now to match "Last 90d".
-                    # actually, for multiday, we want to see full days usually.
-                    # But the requirement is "Unified". Let's use exact hours for consistency?
-                    # "3d" -> 72h. 
-                    start_window = now - timedelta(hours=span_hours)
-                    end_window = now
-                    hours = 24 # View is zoomed to day-level (0-24 axis)
-                else: # Intraday (4h, 12h)
-                    start_window = now - timedelta(hours=span_hours)
-                    end_window = now
-                    hours = span_hours
+                start_window, end_window, hours = _resolve_rhythm_window(now, span_hours)
 
                 # Fallback for "Yesterday" or specific logic if we wanted (omitted for strictly unified simple logic)
                 range_name = range_label # for compatibility with existing variable usage below
 
                 selected_categories = get_rhythm_selected_categories()
                 category_filter = selected_categories if selected_categories else "All"
-                by_day_detailed = _collect_rhythm_segments_detailed(
-                    events, start_window, end_window, category_filter
-                )
-                by_day = self._collect_rhythm_segments_fallback(
-                    events, start_window, end_window, category_filter
+                daily_minutes = self._daily_minutes_from_stats(selected_categories)
+                by_day_detailed, by_day = _collect_rhythm_plot_data(
+                    events,
+                    daily_minutes,
+                    start_window,
+                    end_window,
+                    category_filter,
                 )
 
                 if selected_categories:
