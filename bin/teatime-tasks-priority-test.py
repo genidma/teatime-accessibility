@@ -495,13 +495,13 @@ def main():
                                     cmd.append('--no-sandbox')
                                 # Create a dedicated directory in /tmp with proper permissions
                                 tmp_dir = '/tmp/tt-gantt'
-                                os.makedirs(tmp_dir, mode=0o755, exist_ok=True)
+                                os.makedirs(tmp_dir, mode=0o700, exist_ok=True)
                                 tmp_copy_path = os.path.join(tmp_dir, 'gantt-chart.html')
                                 try:
                                     # Copy file and ensure the temp dir and file have reasonable permissions.
                                     shutil.copy2(file_path, tmp_copy_path)
-                                    os.chmod(tmp_copy_path, 0o644)
-                                    os.chmod(tmp_dir, 0o755)
+                                    os.chmod(tmp_copy_path, 0o600)
+                                    os.chmod(tmp_dir, 0o700)
                                     # Do NOT attempt to chmod '/tmp' (not permitted for unprivileged users).
                                     print(f"Copied gantt file to temporary path: {tmp_copy_path}")
                                     try:
