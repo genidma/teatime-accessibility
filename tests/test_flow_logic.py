@@ -18,6 +18,7 @@ from teatime.stats import (
     _flow_available_years,
     _flow_canvas_geometry,
     _flow_filter_points,
+    _flow_is_deep_work_day,
     _flow_label_x,
     _flow_scope_label,
     _parse_iso_ts,
@@ -136,6 +137,11 @@ class TestFlowLogic(unittest.TestCase):
 
         scroll_geometry = _flow_canvas_geometry(False, 40, viewport_width=900, viewport_height=240)
         self.assertEqual(scroll_geometry, {"width_px": 1876, "height_px": 240})
+
+    def test_flow_is_deep_work_day_uses_240_minute_threshold(self):
+        self.assertFalse(_flow_is_deep_work_day(239))
+        self.assertTrue(_flow_is_deep_work_day(240))
+        self.assertTrue(_flow_is_deep_work_day(300))
 
 
 if __name__ == "__main__":

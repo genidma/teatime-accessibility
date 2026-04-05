@@ -338,6 +338,14 @@ def _flow_canvas_geometry(fit_to_window, point_count, viewport_width=None, viewp
     return {"width_px": expanded_width, "height_px": expanded_height}
 
 
+def _flow_is_deep_work_day(total_minutes, threshold_minutes=240):
+    try:
+        minutes = float(total_minutes)
+    except Exception:
+        minutes = float(_parse_minutes_value(total_minutes))
+    return minutes >= float(threshold_minutes)
+
+
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
     for day, total_min in daily_minutes:
@@ -898,6 +906,7 @@ class StatisticsWindow(Gtk.Window):
             current_state = {"range_label": "30d", "range_days": 30}
             current_points = []
             combo_state = {"updating": False}
+            deep_work_threshold = 240
 
             def _append_combo_items(combo, all_label, entries, preferred_id=None):
                 combo.remove_all()
@@ -1011,7 +1020,7 @@ class StatisticsWindow(Gtk.Window):
                 frame.set_label(f"Flow Timeline ({flow_scope} | {scope_label})")
                 fit_text = "Fit to window" if fit_check.get_active() else "Scrollable"
                 status.set_text(
-                    f"Scope: {scope_label} | Categories: {flow_scope} | View: {fit_text}"
+                    f"Scope: {scope_label} | Categories: {flow_scope} | View: {fit_text} | Orange marker: {deep_work_threshold}m+"
                 )
                 viewport_width = flow_scroller.get_allocated_width()
                 if viewport_width <= 0:
@@ -1076,18 +1085,35 @@ class StatisticsWindow(Gtk.Window):
                     x = pad + (idx / span_x) * (w - pad * 2)
                     y_off = (mins / max_minutes) * (h * 0.35)
                     py = y - y_off
-                    dot_positions.append((x, py, day, mins))
+                    dot_positions.append(
+                        (
+                            x,
+                            py,
+                            day,
+                            mins,
+                            _flow_is_deep_work_day(mins, deep_work_threshold),
+                        )
+                    )
 
                 cr.set_source_rgba(0.2, 0.7, 1.0, 0.9)
                 cr.set_line_width(2)
-                for idx, (x, py, _, _) in enumerate(dot_positions):
+                for idx, (x, py, _, _, _) in enumerate(dot_positions):
                     if idx == 0:
                         cr.move_to(x, py)
                     else:
                         cr.line_to(x, py)
                 cr.stroke()
 
-                for x, py, day, mins in dot_positions:
+                for x, py, _, _, is_deep_work_day in dot_positions:
+                    if not is_deep_work_day:
+                        continue
+                    cr.set_source_rgba(0.95, 0.55, 0.15, 0.90)
+                    cr.set_line_width(2)
+                    cr.move_to(x, pad)
+                    cr.line_to(x, h - pad)
+                    cr.stroke()
+
+                for x, py, day, mins, _ in dot_positions:
                     cr.set_source_rgba(1.0, 0.6, 0.2, 0.95)
                     cr.arc(x, py, 4, 0, 2 * 3.14159)
                     cr.fill()
