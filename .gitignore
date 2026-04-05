@@ -118,3 +118,8 @@ npm-debug.log*
 .npm/
 package-lock.json
 yarn.lock
+
+# ====================== #
+# Test-generated output  #
+# ====================== #
+tests/atspi_dump.txt
