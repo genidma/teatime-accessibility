@@ -351,8 +351,7 @@ def _flow_deep_work_badge_text():
 
 
 def _flow_deep_work_status_text(threshold_minutes=240):
-    return f"Orange marker = deep-work full days: {int(threshold_minutes)}m+ ({_flow_deep_work_badge_text()})"
-
+    return f"Orange marker = deep-work full days ({_flow_deep_work_badge_text()}): {int(threshold_minutes)}m+"
 
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
