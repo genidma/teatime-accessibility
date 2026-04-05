@@ -9,14 +9,15 @@ __pycache__/
 *.pyc
 
 # Distribution / packaging
-# The 'lib' directory seems to be for vendored dependencies, which is not a good practice.
-# Using a venv and requirements.txt is preferred.
 build/
 dist/
 *.egg-info/
-# The 'lib' directory seems to be for vendored dependencies, which is not a good practice.
-# Using a venv and requirements.txt is preferred.
-# Keeping this for now as it was in the original file, but it's generally not recommended.
+# TODO: Migrate legacy vendored dependencies to virtual environment.
+# Tracked in GitHub Issue: [Link to Issue Here]
+# Action Items:
+# 1. Audit 'lib/' for unique patches or libraries not yet in requirements.txt.
+# 2. Add any missing dependencies to requirements.txt.
+# 3. Delete 'lib/' and 'lib64/' directories once the venv is verified.
 lib/
 lib64/
 
