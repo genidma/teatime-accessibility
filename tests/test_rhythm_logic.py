@@ -10,11 +10,14 @@ sys.modules['gi'] = MagicMock()
 sys.modules['gi.repository'] = MagicMock()
 
 from teatime.stats import (
+    _rhythm_canvas_geometry,
     _build_stats_fallback_rhythm_segments,
     _collect_rhythm_plot_data,
     _collect_rhythm_segments,
     _merge_missing_rhythm_days,
     _rhythm_popup_default_size,
+    _rhythm_subplot_height_ratios,
+    _rhythm_uses_expanded_layout,
     _resolve_rhythm_window,
 )
 
@@ -165,6 +168,35 @@ class TestRhythmLogic(unittest.TestCase):
 
         width, height = _rhythm_popup_default_size(1920, 1080)
         self.assertEqual((width, height), (1500, 918))
+
+    def test_rhythm_long_ranges_use_expanded_layout(self):
+        self.assertFalse(_rhythm_uses_expanded_layout(24))
+        self.assertFalse(_rhythm_uses_expanded_layout(168))
+        self.assertTrue(_rhythm_uses_expanded_layout(720))
+        self.assertTrue(_rhythm_uses_expanded_layout(2160))
+        self.assertTrue(_rhythm_uses_expanded_layout(-1))
+
+        self.assertEqual(_rhythm_subplot_height_ratios(12), (1.0, 1.0, 1.15))
+        self.assertEqual(_rhythm_subplot_height_ratios(72), (0.85, 1.0, 1.9))
+        self.assertEqual(_rhythm_subplot_height_ratios(720), (0.55, 0.80, 3.15))
+
+    def test_rhythm_canvas_geometry_fits_viewport_by_default(self):
+        geometry = _rhythm_canvas_geometry(
+            720, True, 40, viewport_width=1024, viewport_height=640, dpi=100
+        )
+
+        self.assertEqual(geometry["width_px"], 1024)
+        self.assertEqual(geometry["height_px"], 640)
+        self.assertEqual(geometry["height_ratios"], (0.55, 0.80, 3.15))
+
+    def test_rhythm_canvas_geometry_expands_when_fit_disabled(self):
+        geometry = _rhythm_canvas_geometry(
+            2160, False, 120, viewport_width=1024, viewport_height=640, dpi=100
+        )
+
+        self.assertEqual(geometry["width_px"], 1024)
+        self.assertEqual(geometry["height_px"], 4200)
+        self.assertEqual(geometry["height_ratios"], (0.55, 0.80, 3.15))
 
     def test_stats_fallback_includes_days_that_overlap_window(self):
         daily_minutes = [

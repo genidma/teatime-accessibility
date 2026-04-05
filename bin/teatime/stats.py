@@ -145,6 +145,60 @@ def _rhythm_popup_default_size(screen_width=None, screen_height=None):
     return min(width, max_width), min(height, max_height)
 
 
+def _rhythm_uses_expanded_layout(span_hours):
+    return span_hours == -1 or span_hours >= 720
+
+
+def _rhythm_subplot_height_ratios(span_hours):
+    if _rhythm_uses_expanded_layout(span_hours):
+        return (0.55, 0.80, 3.15)
+    if span_hours >= 24:
+        return (0.85, 1.0, 1.9)
+    return (1.0, 1.0, 1.15)
+
+
+def _rhythm_canvas_geometry(
+    span_hours,
+    fit_to_window,
+    day_count,
+    viewport_width=None,
+    viewport_height=None,
+    dpi=100,
+):
+    width_px = int(viewport_width) if viewport_width and viewport_width > 0 else 1000
+    width_px = max(900, min(1500, width_px))
+
+    if fit_to_window:
+        default_height = 860 if _rhythm_uses_expanded_layout(span_hours) else 720
+        height_px = (
+            int(viewport_height) if viewport_height and viewport_height > 0 else default_height
+        )
+        height_px = max(560, min(1100, height_px))
+    else:
+        if _rhythm_uses_expanded_layout(span_hours):
+            base_height = 900
+            per_day = 28
+            cap_height = 4200
+        elif span_hours >= 24:
+            base_height = 780
+            per_day = 14
+            cap_height = 2400
+        else:
+            base_height = 680
+            per_day = 6
+            cap_height = 1600
+        height_px = base_height + per_day * max(0, int(day_count) - 1)
+        height_px = min(cap_height, height_px)
+
+    return {
+        "width_px": width_px,
+        "height_px": height_px,
+        "width_in": width_px / float(dpi),
+        "height_in": height_px / float(dpi),
+        "height_ratios": _rhythm_subplot_height_ratios(span_hours),
+    }
+
+
 def _build_stats_fallback_rhythm_segments(daily_minutes, start_window, end_window):
     by_day = {}
     for day, total_min in daily_minutes:
@@ -758,6 +812,10 @@ class StatisticsWindow(Gtk.Window):
             # Unified Time Span Buttons
             time_span_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
             controls.pack_start(time_span_box, False, False, 0)
+
+            fit_check = Gtk.CheckButton(label="Fit data in window")
+            fit_check.set_active(True)
+            controls.pack_start(fit_check, False, False, 0)
             
             # Store current state
             current_state = {"duration": "12h", "hours": 12} 
@@ -826,9 +884,6 @@ class StatisticsWindow(Gtk.Window):
                 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
                 from matplotlib.figure import Figure
                 fig = Figure(figsize=(10, 7.2), dpi=100)
-                ax_micro = fig.add_subplot(311)
-                ax_short = fig.add_subplot(312, sharex=ax_micro)
-                ax_long = fig.add_subplot(313, sharex=ax_micro)
                 canvas = FigureCanvas(fig)
                 canvas.set_hexpand(True)
                 canvas.set_vexpand(True)
@@ -881,10 +936,6 @@ class StatisticsWindow(Gtk.Window):
                 nonlocal ax_micro, ax_short, ax_long
                 if not fig or not canvas:
                     return
-                fig.clf()
-                ax_micro = fig.add_subplot(311)
-                ax_short = fig.add_subplot(312, sharex=ax_micro)
-                ax_long = fig.add_subplot(313, sharex=ax_micro)
                 mpimg = None
                 OffsetImage = None
                 AnnotationBbox = None
@@ -919,6 +970,7 @@ class StatisticsWindow(Gtk.Window):
 
                 selected_categories = get_rhythm_selected_categories()
                 category_filter = selected_categories if selected_categories else "All"
+                fit_to_window = fit_check.get_active()
                 daily_minutes = self._daily_minutes_from_stats(selected_categories)
                 by_day_detailed, by_day = _collect_rhythm_plot_data(
                     events,
@@ -938,6 +990,32 @@ class StatisticsWindow(Gtk.Window):
 
                 day_keys = sorted(by_day.keys())
                 long_rhythm_range = span_hours < 0 or span_hours >= 2160
+                viewport_width = chart_scroller.get_allocated_width()
+                if viewport_width <= 0:
+                    viewport_width = max(900, popup.get_allocated_width() - 40, popup_w - 40)
+                viewport_height = chart_scroller.get_allocated_height()
+                if viewport_height <= 0:
+                    viewport_height = max(560, popup.get_allocated_height() - 220, popup_h - 220)
+
+                geometry = _rhythm_canvas_geometry(
+                    span_hours,
+                    fit_to_window,
+                    len(day_keys),
+                    viewport_width=viewport_width,
+                    viewport_height=viewport_height,
+                    dpi=fig.dpi,
+                )
+                fig.set_size_inches(
+                    geometry["width_in"],
+                    geometry["height_in"],
+                    forward=True,
+                )
+                canvas.set_size_request(geometry["width_px"], geometry["height_px"])
+                fig.clf()
+                grid = fig.add_gridspec(3, 1, height_ratios=geometry["height_ratios"])
+                ax_micro = fig.add_subplot(grid[0, 0])
+                ax_short = fig.add_subplot(grid[1, 0], sharex=ax_micro)
+                ax_long = fig.add_subplot(grid[2, 0], sharex=ax_micro)
 
                 day_based_ranges = {
                     "Today",
@@ -1193,10 +1271,41 @@ class StatisticsWindow(Gtk.Window):
                 canvas.draw()
                 if hasattr(canvas, "queue_draw"):
                     canvas.queue_draw()
+                if fit_to_window:
+                    vadj = chart_scroller.get_vadjustment()
+                    if vadj:
+                        vadj.set_value(vadj.get_lower())
+
+            chart_resize_state = {"pending": False, "last_size": (0, 0)}
+
+            def on_chart_scroller_size_allocate(widget, allocation):
+                if not fit_check.get_active():
+                    return
+                width = getattr(allocation, "width", 0)
+                height = getattr(allocation, "height", 0)
+                if width <= 0 or height <= 0:
+                    return
+                last_width, last_height = chart_resize_state["last_size"]
+                if abs(width - last_width) < 24 and abs(height - last_height) < 24:
+                    return
+                chart_resize_state["last_size"] = (width, height)
+                if chart_resize_state["pending"]:
+                    return
+                chart_resize_state["pending"] = True
+
+                def _refresh_after_resize():
+                    chart_resize_state["pending"] = False
+                    if fit_check.get_active():
+                        update_chart()
+                    return False
+
+                GLib.idle_add(_refresh_after_resize)
 
             rhythm_category_checks["All"].connect("toggled", on_all_toggled)
             for cat in self.data_categories:
                 rhythm_category_checks[cat].connect("toggled", on_category_toggled)
+            fit_check.connect("toggled", update_chart)
+            chart_scroller.connect("size-allocate", on_chart_scroller_size_allocate)
             update_chart()
 
             popup.connect("delete-event", lambda *args: setattr(self, "_rhythm_popup", None) or False)
