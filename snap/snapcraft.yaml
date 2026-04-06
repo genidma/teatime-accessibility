@@ -45,4 +45,3 @@ parts:
       - gir1.2-pango-1.0
     override-build: |
       snapcraftctl build
-      chmod +x bin/teatime.py
