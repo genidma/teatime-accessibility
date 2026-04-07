@@ -13,10 +13,18 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadFile('index.html');
+    // Use the dev server URL in development
+    const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+    if (isDev) {
+        mainWindow.loadURL('http://localhost:3000');
+    } else {
+        mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
+    }
 
     // Open DevTools in development mode
-    // mainWindow.webContents.openDevTools();
+    if (isDev) {
+        mainWindow.webContents.openDevTools();
+    }
 }
 
 // Enable hot reload in development
