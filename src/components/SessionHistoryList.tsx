@@ -1,55 +1,7 @@
-import { useState, type ReactNode } from 'react';
-import { 
-  ArrowLeft, 
-  Settings, 
-  Zap, 
-  Timer, 
-  Brain, 
-  Sparkles, 
-  Heart,
-  TrendingUp,
-  Flame,
-  Target,
-  ChevronRight,
-  Plus
-} from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Settings, Zap, Flame, Target } from 'lucide-react';
 import { motion } from 'motion/react';
-
-export type SessionCategory = {
-  id: string;
-  name: string;
-  icon: ReactNode;
-  color: string;
-  bgColor: string;
-  label: string;
-};
-
-export const CATEGORY_STYLES: Record<string, SessionCategory> = {
-  'meditation': {
-    id: 'meditation',
-    name: 'Meditation',
-    icon: <Sparkles className="w-6 h-6" />,
-    color: 'text-[#0a6148]',
-    bgColor: 'bg-[#2e7a5f]',
-    label: 'M',
-  },
-  'gratitude': {
-    id: 'gratitude',
-    name: 'Gratitude',
-    icon: <Heart className="w-6 h-6" />,
-    color: 'text-[#9b4500]',
-    bgColor: 'bg-[#fd8a42]',
-    label: 'G',
-  },
-  'deep-work': {
-    id: 'deep-work',
-    name: 'Deep Work',
-    icon: <Brain className="w-6 h-6" />,
-    color: 'text-[#0051ae]',
-    bgColor: 'bg-[#0969da]',
-    label: 'DW',
-  },
-};
+import { getCategoryStyle, type CategoryStyle } from './categories';
 
 export type Session = {
   id: string;
@@ -57,7 +9,7 @@ export type Session = {
   title: string;
   date: string;
   time: string;
-  duration: number; // in minutes
+  duration: number;
   notes?: string;
 };
 
@@ -124,7 +76,7 @@ type SessionCardProps = {
 };
 
 function SessionCard({ session, onClick }: SessionCardProps) {
-  const category = CATEGORY_STYLES[session.categoryId] || CATEGORY_STYLES['deep-work'];
+  const category = getCategoryStyle(session.categoryId);
 
   return (
     <motion.div 
@@ -134,7 +86,7 @@ function SessionCard({ session, onClick }: SessionCardProps) {
       className="group bg-white p-6 rounded-xl flex items-center justify-between transition-all duration-300 hover:bg-[#f0f4fc] active:scale-[0.98] cursor-pointer"
     >
       <div className="flex items-center gap-6">
-        <div className={`w-16 h-16 ${category.bgColor} rounded-xl flex items-center justify-center text-white shadow-lg`}>
+        <div className={`w-16 h-16 ${category.bgColor} rounded-2xl flex items-center justify-center text-white shadow-lg`}>
           {category.icon}
         </div>
         <div>
@@ -168,14 +120,17 @@ function SessionCard({ session, onClick }: SessionCardProps) {
   );
 }
 
-type WeeklySummaryCardProps = {
-  label: string;
-  value: string;
-  icon: ReactNode;
+function WeeklySummaryCard({ 
+  label, 
+  value, 
+  icon, 
+  colorClass 
+}: { 
+  label: string; 
+  value: string; 
+  icon: React.ReactNode; 
   colorClass: string;
-};
-
-function WeeklySummaryCard({ label, value, icon, colorClass }: WeeklySummaryCardProps) {
+}) {
   return (
     <div className="bg-[#f0f4fc] p-6 rounded-xl flex flex-col justify-between aspect-square md:aspect-auto">
       <div className={`${colorClass} font-bold uppercase tracking-widest text-xs mb-4`}>
@@ -198,7 +153,6 @@ type SessionHistoryListProps = {
 export default function SessionHistoryList({ onBack }: SessionHistoryListProps) {
   const [sessions] = useState<Session[]>(MOCK_SESSIONS);
 
-  // Group sessions by date
   const groupedSessions = sessions.reduce((acc, session) => {
     if (!acc[session.date]) {
       acc[session.date] = [];
@@ -208,15 +162,12 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
   }, {} as Record<string, Session[]>);
 
   const dates = Object.keys(groupedSessions);
-
-  // Calculate totals
   const totalMinutes = sessions.reduce((sum, s) => sum + s.duration, 0);
   const hours = Math.floor(totalMinutes / 60);
   const mins = totalMinutes % 60;
 
   return (
     <div className="min-h-screen bg-[#f7f9ff] text-[#171c22] font-sans pb-32">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-[#f7f9ff]/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {onBack ? (
@@ -238,11 +189,9 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
         </button>
       </header>
 
-      {/* Divider */}
       <div className="h-1 w-full bg-[#f0f4fc]"></div>
 
       <main className="pt-8 px-6 max-w-4xl mx-auto">
-        {/* Page Header */}
         <div className="mb-12">
           <h2 className="text-5xl font-extrabold tracking-tight text-[#171c22] mb-2">
             Your Steeps
@@ -252,12 +201,11 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
           </p>
         </div>
 
-        {/* Weekly Summary Bento Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <WeeklySummaryCard 
             label="Total Time"
             value={`${hours}h ${mins}m`}
-            icon={<Timer className="w-8 h-8 text-[#0051ae]" />}
+            icon={<Zap className="w-8 h-8 text-[#0051ae]" />}
             colorClass="text-[#0051ae]"
           />
           <WeeklySummaryCard 
@@ -274,7 +222,6 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
           />
         </section>
 
-        {/* Session History List */}
         <div className="space-y-8">
           {dates.map((date) => (
             <div key={date} className="space-y-4">
@@ -286,19 +233,12 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
                   <SessionCard 
                     key={session.id} 
                     session={session}
-                    onClick={() => console.log('View session:', session.id)}
                   />
                 ))}
               </div>
             </div>
           ))}
         </div>
-
-        {/* Add Session Button */}
-        <button className="w-full mt-8 py-4 border-2 border-dashed border-[#e4e8f0] rounded-xl text-[#424753] font-bold hover:border-[#0051ae] hover:text-[#0051ae] transition-all flex items-center justify-center gap-2">
-          <Plus className="w-5 h-5" />
-          Add Session
-        </button>
       </main>
     </div>
   );

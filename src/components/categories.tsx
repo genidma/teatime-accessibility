@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Brain, Sparkles, Heart, BookOpen, Zap, Timer, Activity, Coffee, Dumbbell, WalkieTalkie } from 'lucide-react';
+import { Brain, Sparkles, Heart, BookOpen, Zap, Timer, Activity, Coffee, Dumbbell, Footprints } from 'lucide-react';
 
 export type CategoryStyle = {
   id: string;
@@ -55,7 +55,7 @@ export const CATEGORY_STYLES: Record<string, CategoryStyle> = {
   'walk': {
     id: 'walk',
     name: 'Walk',
-    icon: <WalkieTalkie className="w-6 h-6" />,
+    icon: <Footprints className="w-6 h-6" />,
     color: 'text-[#424753]',
     bgColor: 'bg-[#dee3eb]',
     label: 'WK',
