@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TeaTime - Rhythm &amp; Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#0a6148",
+                    "on-error": "#ffffff",
+                    "background": "#f7f9ff",
+                    "surface-variant": "#dee3eb",
+                    "on-primary-fixed-variant": "#004493",
+                    "outline": "#727785",
+                    "primary-container": "#0969da",
+                    "on-surface": "#171c22",
+                    "inverse-surface": "#2c3137",
+                    "tertiary-container": "#2e7a5f",
+                    "on-tertiary-fixed-variant": "#00513b",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#c2c6d6",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#002116",
+                    "on-secondary-fixed-variant": "#763300",
+                    "tertiary-fixed": "#a6f2d1",
+                    "secondary-container": "#fd8a42",
+                    "on-secondary-fixed": "#331200",
+                    "on-surface-variant": "#424753",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f0f4fc",
+                    "on-secondary-container": "#682c00",
+                    "on-primary-fixed": "#001a41",
+                    "error": "#ba1a1a",
+                    "surface-container": "#eaeef6",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-dim": "#d6dae2",
+                    "surface-bright": "#f7f9ff",
+                    "inverse-on-surface": "#edf1f9",
+                    "inverse-primary": "#adc6ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#ffb68e",
+                    "secondary": "#9b4500",
+                    "surface-container-highest": "#dee3eb",
+                    "primary": "#0051ae",
+                    "surface": "#f7f9ff",
+                    "surface-tint": "#005bc0",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffdbca",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#baffe0",
+                    "tertiary-fixed-dim": "#8bd6b6",
+                    "on-primary-container": "#ecefff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-container-high": "#e4e8f0",
+                    "on-background": "#171c22"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.75rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f7f9ff] dark:bg-slate-950 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#0051ae] dark:text-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors scale-95 active:duration-100 p-2 rounded-full">menu</button>
+<h1 class="text-2xl font-black tracking-tighter text-[#171c22] dark:text-white">TeaTime</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="hidden md:flex gap-8 font-['Inter'] font-bold tracking-tight text-xl">
+<a class="text-[#0051ae] dark:text-blue-400" href="#">Dashboard</a>
+<a class="text-[#424753] dark:text-slate-400 hover:text-[#0051ae]" href="#">Timer</a>
+<a class="text-[#424753] dark:text-slate-400 hover:text-[#0051ae]" href="#">Results</a>
+</span>
+<button class="material-symbols-outlined text-[#0051ae] dark:text-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors scale-95 active:duration-100 p-2 rounded-full">settings</button>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-24 pb-12">
+<!-- Header Section -->
+<section class="mb-12">
+<h2 class="text-5xl md:text-7xl font-black text-on-surface tracking-tighter mb-4">Rhythm &amp; Flow</h2>
+<p class="text-xl text-on-surface-variant font-medium max-w-2xl">Your cognitive pulse for today. High intentionality, measured deep work, and restorative pauses.</p>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Daily Rhythm: Visual Representation -->
+<div class="md:col-span-8 bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between min-h-[400px]">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-3xl font-bold tracking-tight text-on-surface">Daily Rhythm</h3>
+<p class="text-on-surface-variant font-semibold">Pulse of Work vs. Rest</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+<!-- Large Custom Visualization -->
+<div class="flex-grow flex items-end gap-2 h-48 mb-8">
+<div class="w-full bg-primary h-4/5 rounded-t-2xl opacity-90 transition-all hover:opacity-100" title="Deep Work: 9am"></div>
+<div class="w-full bg-tertiary h-1/5 rounded-t-2xl opacity-90" title="Meditation: 10:30am"></div>
+<div class="w-full bg-primary h-full rounded-t-2xl opacity-90" title="Deep Work: 11am"></div>
+<div class="w-full bg-secondary h-2/5 rounded-t-2xl opacity-90" title="Gratitude: 1pm"></div>
+<div class="w-full bg-primary h-3/5 rounded-t-2xl opacity-90" title="Deep Work: 2pm"></div>
+<div class="w-full bg-outline-variant h-1/6 rounded-t-2xl opacity-40" title="Upcoming"></div>
+<div class="w-full bg-outline-variant h-1/6 rounded-t-2xl opacity-40" title="Upcoming"></div>
+</div>
+<div class="flex flex-wrap gap-6 border-t border-outline-variant/15 pt-6">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-primary"></span>
+<span class="font-bold uppercase tracking-widest text-xs">Deep Work</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-tertiary"></span>
+<span class="font-bold uppercase tracking-widest text-xs">Meditation</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-secondary"></span>
+<span class="font-bold uppercase tracking-widest text-xs">Gratitude</span>
+</div>
+</div>
+</div>
+<!-- Deep Work Streak -->
+<div class="md:col-span-4 bg-primary text-on-primary rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden group">
+<div class="z-10">
+<h3 class="text-xl font-bold uppercase tracking-widest opacity-80 mb-2">Deep Work Streak</h3>
+<div class="text-[8rem] font-black leading-none tracking-tighter">12</div>
+<p class="text-2xl font-bold">Days in Flow</p>
+</div>
+<div class="z-10 mt-8 flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-semibold text-lg">Top 5% of all focusers</span>
+</div>
+<!-- Abstract Pattern Decoration -->
+<div class="absolute -right-16 -bottom-16 w-64 h-64 bg-primary-container rounded-full opacity-50 group-hover:scale-110 transition-transform duration-700"></div>
+</div>
+<!-- Today's Steeps Breakdown -->
+<div class="md:col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-3xl p-8 shadow-[0px_24px_48px_rgba(23,28,34,0.04)]">
+<h3 class="text-3xl font-bold tracking-tight text-on-surface mb-8">Today's Steeps</h3>
+<div class="space-y-6">
+<!-- Deep Work Item -->
+<div class="flex items-center justify-between p-6 bg-surface-container-low rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<p class="text-2xl font-black text-on-surface">4 Sessions</p>
+<p class="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Deep Work</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-bold text-primary">3h 20m</p>
+</div>
+</div>
+<!-- Meditation Item -->
+<div class="flex items-center justify-between p-6 bg-surface-container-low rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">self_improvement</span>
+</div>
+<div>
+<p class="text-2xl font-black text-on-surface">2 Sessions</p>
+<p class="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Meditation</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-bold text-tertiary">30m</p>
+</div>
+</div>
+<!-- Gratitude Item -->
+<div class="flex items-center justify-between p-6 bg-surface-container-low rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+</div>
+<div>
+<p class="text-2xl font-black text-on-surface">1 Session</p>
+<p class="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Gratitude</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-bold text-secondary">15m</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Focus Intensity Graph (Large & Simple) -->
+<div class="md:col-span-12 lg:col-span-6 bg-surface-container-low rounded-3xl p-8 overflow-hidden flex flex-col">
+<div class="mb-8">
+<h3 class="text-3xl font-bold tracking-tight text-on-surface">Focus Intensity</h3>
+<p class="text-on-surface-variant font-semibold">Weekly Cognitive Load</p>
+</div>
+<div class="flex-grow flex items-end justify-between h-64 px-4 gap-4">
+<div class="flex flex-col items-center flex-1 gap-4">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full relative">
+<div class="absolute bottom-0 w-full bg-primary h-3/4 rounded-full"></div>
+</div>
+<span class="font-bold text-sm">M</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-4">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full relative">
+<div class="absolute bottom-0 w-full bg-primary h-full rounded-full"></div>
+</div>
+<span class="font-bold text-sm">T</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-4">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full relative">
+<div class="absolute bottom-0 w-full bg-primary h-2/5 rounded-full"></div>
+</div>
+<span class="font-bold text-sm">W</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-4">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full relative">
+<div class="absolute bottom-0 w-full bg-primary h-4/5 rounded-full"></div>
+</div>
+<span class="font-bold text-sm">T</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-4">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full relative">
+<div class="absolute bottom-0 w-full bg-primary h-1/2 rounded-full"></div>
+</div>
+<span class="font-bold text-sm">F</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-4 opacity-30">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full"></div>
+<span class="font-bold text-sm">S</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-4 opacity-30">
+<div class="w-full bg-outline-variant/30 h-1/2 rounded-full"></div>
+<span class="font-bold text-sm">S</span>
+</div>
+</div>
+</div>
+<!-- Wide Progress Horizon -->
+<div class="md:col-span-12 bg-surface-container-low rounded-3xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-2xl font-bold tracking-tight">Today's Horizon</h3>
+<span class="font-black text-2xl text-primary">75%</span>
+</div>
+<div class="w-full h-4 bg-outline-variant/20 rounded-full overflow-hidden">
+<div class="h-full w-[75%] bg-gradient-to-r from-primary via-tertiary to-secondary rounded-full"></div>
+</div>
+<div class="mt-4 flex justify-between font-bold text-xs uppercase tracking-widest text-on-surface-variant">
+<span>Dawn</span>
+<span>Noon</span>
+<span>Dusk</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only Layout) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#f7f9ff]/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-[2rem]">
+<a class="flex flex-col items-center justify-center bg-[#0051ae] text-white rounded-xl px-6 py-2 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest mt-1">Timer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest mt-1">Results</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest mt-1">Toolkit</span>
+</a>
+</nav>
+<!-- Desktop Persistent Sidebar (Conceptual for Web) -->
+<div class="hidden md:block">
+<!-- Floating FAB suppressed for Dashboard screen as per mandate unless perfectly aligned -->
+<button class="fixed bottom-12 right-12 w-20 h-20 bg-primary text-on-primary rounded-full shadow-[0px_24px_48px_rgba(23,28,34,0.12)] flex items-center justify-center transition-transform hover:scale-105 active:scale-95 z-50">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</body></html>

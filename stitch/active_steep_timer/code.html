@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TeaTime - Active Steep</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#0a6148",
+                    "on-error": "#ffffff",
+                    "background": "#f7f9ff",
+                    "surface-variant": "#dee3eb",
+                    "on-primary-fixed-variant": "#004493",
+                    "outline": "#727785",
+                    "primary-container": "#0969da",
+                    "on-surface": "#171c22",
+                    "inverse-surface": "#2c3137",
+                    "tertiary-container": "#2e7a5f",
+                    "on-tertiary-fixed-variant": "#00513b",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#c2c6d6",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#002116",
+                    "on-secondary-fixed-variant": "#763300",
+                    "tertiary-fixed": "#a6f2d1",
+                    "secondary-container": "#fd8a42",
+                    "on-secondary-fixed": "#331200",
+                    "on-surface-variant": "#424753",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f0f4fc",
+                    "on-secondary-container": "#682c00",
+                    "on-primary-fixed": "#001a41",
+                    "error": "#ba1a1a",
+                    "surface-container": "#eaeef6",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-dim": "#d6dae2",
+                    "surface-bright": "#f7f9ff",
+                    "inverse-on-surface": "#edf1f9",
+                    "inverse-primary": "#adc6ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#ffb68e",
+                    "secondary": "#9b4500",
+                    "surface-container-highest": "#dee3eb",
+                    "primary": "#0051ae",
+                    "surface": "#f7f9ff",
+                    "surface-tint": "#005bc0",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffdbca",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#baffe0",
+                    "tertiary-fixed-dim": "#8bd6b6",
+                    "on-primary-container": "#ecefff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-container-high": "#e4e8f0",
+                    "on-background": "#171c22"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.75rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .timer-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .glass-panel { backdrop-filter: blur(20px); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#f7f9ff] dark:bg-slate-950 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#0051ae] dark:text-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full scale-95 active:duration-100" data-icon="menu">menu</button>
+<span class="text-2xl font-black tracking-tighter text-[#171c22] dark:text-white">TeaTime</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-['Inter'] font-bold tracking-tight text-xl text-[#424753] dark:text-slate-400 hover:bg-slate-200/50 transition-colors px-3 py-1 rounded-lg" href="#">Dashboard</a>
+<a class="font-['Inter'] font-bold tracking-tight text-xl text-[#0051ae] dark:text-blue-400" href="#">Timer</a>
+<a class="font-['Inter'] font-bold tracking-tight text-xl text-[#424753] dark:text-slate-400 hover:bg-slate-200/50 transition-colors px-3 py-1 rounded-lg" href="#">Results</a>
+<a class="font-['Inter'] font-bold tracking-tight text-xl text-[#424753] dark:text-slate-400 hover:bg-slate-200/50 transition-colors px-3 py-1 rounded-lg" href="#">Toolkit</a>
+</div>
+<button class="material-symbols-outlined text-[#0051ae] dark:text-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full scale-95 active:duration-100" data-icon="settings">settings</button>
+</nav>
+<main class="pt-24 pb-32 px-6 max-w-4xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<h1 class="text-4xl md:text-5xl font-black tracking-tight text-on-surface mb-2">Active Steep</h1>
+<p class="text-on-surface-variant font-medium text-lg">Maintaining your daily rhythm.</p>
+</header>
+<!-- Main Timer Block: The Brutalist Sanctuary approach -->
+<section class="bg-surface-container-low rounded-[2rem] p-8 md:p-16 mb-8 text-center relative overflow-hidden">
+<!-- Background Texture Decal -->
+<div class="absolute top-0 right-0 p-8 opacity-[0.03] select-none">
+<span class="material-symbols-outlined text-[12rem]" data-icon="timer">timer</span>
+</div>
+<!-- Focus Mode Indicator -->
+<div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-8">
+<span class="material-symbols-outlined text-sm" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-bold tracking-widest text-xs uppercase">Deep Work Mode</span>
+</div>
+<!-- The Hero Countdown -->
+<div class="timer-font text-[6rem] md:text-[10rem] font-black leading-none tracking-tighter text-on-surface mb-8">
+                25:00
+            </div>
+<!-- Primary Controls -->
+<div class="flex flex-col md:flex-row justify-center gap-4 max-w-xl mx-auto">
+<button class="flex-1 h-20 bg-primary text-on-primary rounded-xl font-black text-2xl flex items-center justify-center gap-3 transition-transform active:scale-95 shadow-[0px_24px_48px_rgba(0,81,174,0.15)]">
+<span class="material-symbols-outlined text-3xl" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    START
+                </button>
+<button class="flex-1 h-20 bg-surface-container-high text-on-surface rounded-xl font-black text-2xl flex items-center justify-center gap-3 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl" data-icon="stop">stop</span>
+                    STOP
+                </button>
+</div>
+</section>
+<!-- Progress Horizon -->
+<section class="mb-12">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-black text-xl tracking-tight uppercase">Rhythm and Flow</h3>
+<span class="font-bold text-primary">3 / 8 Sessions</span>
+</div>
+<div class="w-full h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary w-[37.5%] rounded-full"></div>
+</div>
+</section>
+<!-- Mode Selector: Asymmetric Bento Style -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Meditation Card -->
+<button class="group p-8 bg-tertiary-container/10 hover:bg-tertiary-container/20 border-2 border-transparent hover:border-tertiary/20 rounded-[1.5rem] text-left transition-all duration-300">
+<div class="w-12 h-12 bg-tertiary text-white rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-tertiary/20">
+<span class="material-symbols-outlined text-2xl" data-icon="self_improvement">self_improvement</span>
+</div>
+<div class="text-xs font-black text-tertiary uppercase tracking-[0.2em] mb-1">Session Mode</div>
+<h4 class="text-2xl font-black text-on-surface tracking-tight group-hover:translate-x-1 transition-transform">Meditation</h4>
+<p class="text-on-surface-variant text-sm mt-2 opacity-70">Focus on breath and presence.</p>
+</button>
+<!-- Gratitude Card -->
+<button class="group p-8 bg-secondary-container/10 hover:bg-secondary-container/20 border-2 border-transparent hover:border-secondary/20 rounded-[1.5rem] text-left transition-all duration-300">
+<div class="w-12 h-12 bg-secondary text-white rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-secondary/20">
+<span class="material-symbols-outlined text-2xl" data-icon="favorite">favorite</span>
+</div>
+<div class="text-xs font-black text-secondary uppercase tracking-[0.2em] mb-1">Session Mode</div>
+<h4 class="text-2xl font-black text-on-surface tracking-tight group-hover:translate-x-1 transition-transform">Gratitude</h4>
+<p class="text-on-surface-variant text-sm mt-2 opacity-70">Acknowledge the positive now.</p>
+</button>
+<!-- Deep Work Card -->
+<button class="group p-8 bg-primary/10 border-2 border-primary/40 rounded-[1.5rem] text-left transition-all duration-300 relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[6rem]" data-icon="psychology">psychology</span>
+</div>
+<div class="w-12 h-12 bg-primary text-white rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-2xl" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="text-xs font-black text-primary uppercase tracking-[0.2em] mb-1">Active Mode</div>
+<h4 class="text-2xl font-black text-on-surface tracking-tight group-hover:translate-x-1 transition-transform">Deep Work</h4>
+<p class="text-on-surface-variant text-sm mt-2 opacity-70">Uninterrupted focus session.</p>
+</button>
+</section>
+<!-- Decorative Mood Image -->
+<section class="mt-12 rounded-[2rem] overflow-hidden h-48 relative">
+<img alt="Minimalist tea aesthetic" class="w-full h-full object-cover grayscale contrast-125 mix-blend-multiply opacity-20" data-alt="Close up of high quality green tea leaves in a ceramic bowl with minimalist lighting and textured ceramic background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkxPHZqHn7ZXpujKIRrFhmHuvw9aQ2kh3XtFNzrjf0XGZStKgziaIz_a5ioH6zVVww3LwGB1uwZiUrs4jDr3RhxlSCeYXwd7ZFn0EfkoK5xKpXirDzbD43RzLhruxdC-A1BV3a_iuA0OdqPV3aUQGVLL_Hrn8uXGlnchb1sNfqpyy-TKrGIvkZaT8IhckGLR1_tO-dmeEgg4Y8qlNxkq1_O-P86JvRjcbPvKjObJli4Cu4Co1DgC3COxkdca9nYrTo7uAT5pgjwqU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#f7f9ff]/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-[2rem] shadow-[0px_-10px_40px_rgba(23,28,34,0.04)]">
+<button class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] transition-all duration-300 ease-out">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-[#0051ae] text-white rounded-xl px-6 py-2 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined mb-1" data-icon="timer" style="font-variation-settings: 'FILL' 1;">timer</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest">Timer</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] transition-all duration-300 ease-out">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest">Results</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] transition-all duration-300 ease-out">
+<span class="material-symbols-outlined mb-1" data-icon="handyman">handyman</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-widest">Toolkit</span>
+</button>
+</nav>
+</body></html>
