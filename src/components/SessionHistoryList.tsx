@@ -1,17 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Settings, Zap, Flame, Target } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getCategoryStyle, type CategoryStyle } from './categories';
-
-export type Session = {
-  id: string;
-  categoryId: string;
-  title: string;
-  date: string;
-  time: string;
-  duration: number;
-  notes?: string;
-};
+import { initDatabase, getAllSessions, type Session } from '../lib/database';
 
 const MOCK_SESSIONS: Session[] = [
   {
@@ -151,7 +142,23 @@ type SessionHistoryListProps = {
 };
 
 export default function SessionHistoryList({ onBack }: SessionHistoryListProps) {
-  const [sessions] = useState<Session[]>(MOCK_SESSIONS);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadSessions() {
+      try {
+        await initDatabase();
+        const dbSessions = getAllSessions();
+        setSessions(dbSessions.length > 0 ? dbSessions : MOCK_SESSIONS);
+      } catch (e) {
+        setSessions(MOCK_SESSIONS);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSessions();
+  }, []);
 
   const groupedSessions = sessions.reduce((acc, session) => {
     if (!acc[session.date]) {

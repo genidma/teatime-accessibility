@@ -1,17 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Settings, Zap, Flame, Target, TrendingUp, Brain, Sparkles, Heart, Clock, Calendar, BarChart3 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getCategoryStyle } from './categories';
-
-export type Session = {
-  id: string;
-  categoryId: string;
-  title: string;
-  date: string;
-  time: string;
-  duration: number;
-  notes?: string;
-};
+import { initDatabase, getAllSessions, type Session } from '../lib/database';
 
 const MOCK_SESSIONS: Session[] = [
   { id: '1', categoryId: 'deep-work', title: 'Deep Work', date: 'Today', time: '10:30 AM', duration: 60 },
@@ -130,7 +121,20 @@ function DailyRhythmBar({ sessions }: { sessions: Session[] }) {
 }
 
 export default function StatsView() {
-  const [sessions] = useState<Session[]>(MOCK_SESSIONS);
+  const [sessions, setSessions] = useState<Session[]>([]);
+
+  useEffect(() => {
+    async function loadSessions() {
+      try {
+        await initDatabase();
+        const dbSessions = getAllSessions();
+        setSessions(dbSessions.length > 0 ? dbSessions : MOCK_SESSIONS);
+      } catch (e) {
+        setSessions(MOCK_SESSIONS);
+      }
+    }
+    loadSessions();
+  }, []);
   
   const todaySessions = sessions.filter(s => s.date === 'Today');
   const totalMinutes = sessions.reduce((sum, s) => sum + s.duration, 0);

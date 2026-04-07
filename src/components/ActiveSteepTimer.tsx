@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import { 
   ArrowLeft, 
   Settings, 
@@ -16,6 +16,7 @@ import {
   Edit2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { initDatabase, saveSession } from '../lib/database';
 
 export type SessionCategory = {
   id: string;
@@ -73,6 +74,25 @@ export default function ActiveSteepTimer({
   const progressPercent = (sessionsCompleted / totalSessions) * 100;
 
   useEffect(() => {
+    initDatabase().catch(console.error);
+  }, []);
+
+  const handleTimerComplete = useCallback(() => {
+    const now = new Date();
+    const session = {
+      id: `session-${Date.now()}`,
+      categoryId: selectedCategory.id,
+      title: selectedCategory.name,
+      date: 'Today',
+      time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      duration: Math.floor((25 * 60 - timeLeft) / 60),
+      notes: ''
+    };
+    saveSession(session);
+    handleReset();
+  }, [selectedCategory, timeLeft]);
+
+  useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRunning && timeLeft > 0) {
       interval = setInterval(() => {
@@ -80,9 +100,10 @@ export default function ActiveSteepTimer({
       }, 1000);
     } else if (timeLeft === 0) {
       setIsRunning(false);
+      handleTimerComplete();
     }
     return () => clearInterval(interval);
-  }, [isRunning, timeLeft]);
+  }, [isRunning, timeLeft, handleTimerComplete]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
