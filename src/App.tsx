@@ -3,6 +3,7 @@ import { Timer, BarChart3, TrendingUp, User, Clock } from 'lucide-react';
 import ActiveSteepTimer from './components/ActiveSteepTimer';
 import SessionHistoryList from './components/SessionHistoryList';
 import StatsView from './components/StatsView';
+import ProfileView from './components/ProfileView';
 
 type View = 'timer' | 'sessions' | 'stats' | 'trends' | 'profile';
 
@@ -42,19 +43,6 @@ function TrendsView() {
       </header>
       <main className="px-6 pt-8">
         <p className="text-[#424753]">Trends coming soon...</p>
-      </main>
-    </div>
-  );
-}
-
-function ProfileView() {
-  return (
-    <div className="min-h-screen bg-[#f7f9ff] text-[#171c22] font-sans pb-32">
-      <header className="sticky top-0 z-50 bg-[#f7f9ff]/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-black tracking-tight">Profile</h1>
-      </header>
-      <main className="px-6 pt-8">
-        <p className="text-[#424753]">Profile coming soon...</p>
       </main>
     </div>
   );
