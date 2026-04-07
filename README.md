@@ -15,6 +15,11 @@ npm install
 npm run dev
 ```
 
+To run as Electron app:
+```bash
+npm run electron-dev
+```
+
 Access at: http://localhost:3000
 
 ---
@@ -26,44 +31,35 @@ The timer features an interactive **circular dial** for setting session duration
 - **Drag to set**: Click and drag around the dial to set any duration (1-60 minutes)
 - **Quick select**: Tap numbers 1-5 for instant short sessions (1-5 minutes)
 - **Visual feedback**: Progress ring shows selected duration
-- **Tactile feel**: Clean, minimal interface that feels responsive
-
-### How It Works
-
-1. **Circular Dial** - Drag around the ring to set duration
-2. **Quick Time Buttons** - Tap 1-5 for instant 1-5 minute sessions
-3. **Mode Selector** - Choose category (Meditation, Gratitude, Deep Work, or custom)
 
 ---
 
 ## SQLite Database Integration
 
-This branch uses **sql.js** (SQLite compiled to WebAssembly) for in-browser database functionality.
+This branch uses **sql.js** (SQLite compiled to WebAssembly) with file-based persistence via Electron IPC.
 
 ### How It Works
 
 1. **Database Initialization** (`src/lib/database.ts`)
    - Uses `sql.js` loaded from CDN (`https://sql.js.org/dist/`)
-   - Creates an in-memory SQLite database
-   - Schema: `sessions` table with columns: `id`, `categoryId`, `title`, `date`, `time`, `duration`, `notes`, `createdAt`
+   - Creates SQLite database
+   - Schema: `sessions` table
 
-2. **Session Auto-Save**
-   - When the timer completes (reaches 0:00), a session is automatically saved
-   - The session captures: category, title, duration, date, and time
-   - Saved via `saveSession()` function in `database.ts`
+2. **File Persistence** (Electron only)
+   - Database file saved to user's data directory: `~/Library/Application Support/TeaTime/teatime-sessions.db` (macOS) or `%APPDATA%/TeaTime/teatime-sessions.db` (Windows)
+   - Uses Electron IPC to read/write file
+   - Falls back to localStorage if not running in Electron
 
-3. **Data Persistence**
-   - Sessions are backed up to `localStorage` key: `teatime_sessions`
-   - On app load, data is restored from localStorage to SQLite
-   - This ensures data survives page refreshes
+3. **Session Auto-Save**
+   - When timer completes, session is saved to both file and localStorage
 
-### Note on File Persistence
+### Database File Location
 
-Currently, data is stored in-browser using:
-- **SQLite (sql.js)**: In-memory database for queries
-- **localStorage**: Backup storage for persistence across sessions
-
-To write to a file on the user's home directory, Electron IPC would be required. This is a future enhancement.
+| Platform | Path |
+|----------|------|
+| macOS | `~/Library/Application Support/TeaTime/teatime-sessions.db` |
+| Windows | `%APPDATA%/TeaTime/teatime-sessions.db` |
+| Linux | `~/.config/TeaTime/teatime-sessions.db` |
 
 ### Database Schema
 
@@ -84,45 +80,17 @@ CREATE TABLE sessions (
 
 | Function | Description |
 |----------|-------------|
-| `initDatabase()` | Initialize SQLite, create schema, load from localStorage |
-| `saveSession(session)` | Save a completed session to the database |
-| `getAllSessions()` | Retrieve all sessions ordered by date |
-| `getTodaySessions()` | Get only today's sessions |
-| `getSessionsByDate(date)` | Get sessions for a specific date |
-
-### File Structure
-
-```
-src/
-├── lib/
-│   └── database.ts       # SQLite operations
-├── components/
-│   ├── ActiveSteepTimer.tsx   # Timer with circular dial
-│   ├── SessionHistoryList.tsx # Loads sessions from DB
-│   ├── StatsView.tsx          # Displays session analytics
-│   ├── ProfileView.tsx        # User settings
-│   └── categories.tsx          # Centralized category definitions
-└── App.tsx               # Main app with navigation
-```
-
-### Categories (Centralized)
-
-All session categories are defined in `src/components/categories.tsx`:
-
-- **Deep Work** (DW) - Blue (#0969da)
-- **Meditation** (M) - Green (#2e7a5f)
-- **Gratitude** (G) - Orange (#fd8a42)
-- **Break** (BR) - Grey (#e4e8f0)
-- **Exercise** (EX) - Red (#ffdad6)
-- **Walk** (WK) - Grey (#dee3eb)
-
-To add a new category, edit the `CATEGORY_STYLES` object in `categories.tsx`.
+| `initDatabase()` | Initialize SQLite, load from file or localStorage |
+| `saveSession(session)` | Save completed session to database |
+| `getAllSessions()` | Retrieve all sessions |
+| `getTodaySessions()` | Get today's sessions |
+| `getSessionsByDate(date)` | Get sessions for specific date |
 
 ---
 
 ## App Navigation
 
-The app has 5 main views accessible via the bottom navigation:
+The app has 5 main views:
 
 1. **Sessions** - Your Steeps (session history)
 2. **Timer** - Active Steep Timer (with circular dial)
@@ -146,6 +114,7 @@ Output will be in the `dist/` folder.
 
 - **React 19** - UI Framework
 - **Vite** - Build tool
+- **Electron** - Desktop app shell
 - **TailwindCSS 4** - Styling
 - **Motion** - Animations
 - **Lucide React** - Icons
@@ -157,4 +126,4 @@ Output will be in the `dist/` folder.
 
 > "Discipline equals freedom"
 
-TeaTime is designed to help you build daily discipline through structured breaks between deep work sessions. Each session logged is proof of your commitment to intentional living.
+TeaTime helps you build daily discipline through structured breaks between deep work sessions.

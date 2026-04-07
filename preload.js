@@ -1,6 +1,7 @@
-// Preload script: Securely expose Electron APIs to the renderer
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    // We will add IPC methods here later (e.g., startTimer, logSession)
+    saveDatabase: (data) => ipcRenderer.invoke('db:save', data),
+    loadDatabase: () => ipcRenderer.invoke('db:load'),
+    getDbPath: () => ipcRenderer.invoke('db:getPath'),
 });
