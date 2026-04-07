@@ -197,7 +197,7 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
             Your Steeps
           </h2>
           <p className="text-[#424753] font-medium">
-            Tracking your intentional moments guiding your destiny.
+            intentional moments to structure.
           </p>
         </div>
 
