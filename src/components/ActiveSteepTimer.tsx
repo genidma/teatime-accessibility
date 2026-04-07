@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { 
   ArrowLeft, 
   Settings, 
@@ -11,9 +11,7 @@ import {
   BookOpen,
   Sparkles,
   Brain,
-  MoreVertical,
-  Trash2,
-  Edit2
+  Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { initDatabase, saveSession } from '../lib/database';
@@ -51,6 +49,155 @@ export const DEFAULT_CATEGORIES: SessionCategory[] = [
   },
 ];
 
+const QUICK_TIMES = [1, 2, 3, 4, 5];
+
+type CircularDialProps = {
+  value: number;
+  onChange: (value: number) => void;
+  maxValue?: number;
+};
+
+function CircularDial({ value, onChange, maxValue = 60 }: CircularDialProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const dialRef = useRef<SVGSVGElement>(null);
+
+  const radius = 120;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (value / maxValue) * circumference;
+
+  const handleInteraction = (clientX: number, clientY: number) => {
+    if (!dialRef.current) return;
+    
+    const rect = dialRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const angle = Math.atan2(clientY - centerY, clientX - centerX);
+    let degrees = (angle * 180 / Math.PI) + 90;
+    
+    if (degrees < 0) degrees += 360;
+    
+    const newValue = Math.round((degrees / 360) * maxValue);
+    onChange(Math.max(1, Math.min(maxValue, newValue)));
+  };
+
+  return (
+    <div className="relative w-64 h-64 mx-auto mb-8">
+      <svg 
+        ref={dialRef}
+        viewBox="0 0 280 280" 
+        className="w-full h-full cursor-pointer"
+        onMouseDown={(e) => {
+          setIsDragging(true);
+          handleInteraction(e.clientX, e.clientY);
+        }}
+        onMouseMove={(e) => {
+          if (isDragging) handleInteraction(e.clientX, e.clientY);
+        }}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseLeave={() => setIsDragging(false)}
+        onTouchStart={(e) => {
+          setIsDragging(true);
+          handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
+        }}
+        onTouchMove={(e) => {
+          if (isDragging) handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
+        }}
+        onTouchEnd={() => setIsDragging(false)}
+      >
+        <defs>
+          <linearGradient id="dialGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0051ae" />
+            <stop offset="100%" stopColor="#0969da" />
+          </linearGradient>
+        </defs>
+        
+        <circle 
+          cx="140" 
+          cy="140" 
+          r={radius} 
+          fill="none" 
+          stroke="#e4e8f0" 
+          strokeWidth="12"
+        />
+        
+        <circle 
+          cx="140" 
+          cy="140" 
+          r={radius} 
+          fill="none" 
+          stroke="url(#dialGradient)" 
+          strokeWidth="12"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - progress}
+          transform="rotate(-90 140 140)"
+          className="transition-all duration-150"
+        />
+        
+        {Array.from({ length: maxValue }).map((_, i) => {
+          const angle = (i / maxValue) * 360;
+          const rad = angle * Math.PI / 180;
+          const x1 = 140 + (radius - 20) * Math.cos(rad);
+          const y1 = 140 + (radius - 20) * Math.sin(rad);
+          const x2 = 140 + (radius - 10) * Math.cos(rad);
+          const y2 = 140 + (radius - 10) * Math.sin(rad);
+          
+          if (i % 5 === 0) {
+            return (
+              <line 
+                key={i}
+                x1={x1} y1={y1} x2={x2} y2={y2}
+                stroke="#0051ae"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            );
+          }
+          return null;
+        })}
+        
+        <circle cx="140" cy="140" r="30" fill="#f7f9ff" stroke="#0051ae" strokeWidth="3" />
+      </svg>
+      
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="text-center">
+          <div className="font-mono text-5xl font-black text-[#171c22]">
+            {value}
+          </div>
+          <div className="text-sm font-bold text-[#424753] uppercase tracking-wider">
+            min
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type QuickTimeButtonProps = {
+  minutes: number;
+  selected: boolean;
+  onClick: () => void;
+};
+
+function QuickTimeButton({ minutes, selected, onClick }: QuickTimeButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        w-14 h-14 rounded-full flex items-center justify-center font-black text-lg
+        transition-all duration-200
+        ${selected 
+          ? 'bg-[#0051ae] text-white shadow-lg scale-110' 
+          : 'bg-[#e4e8f0] text-[#424753] hover:bg-[#dee3eb]'
+        }
+      `}
+    >
+      {minutes}
+    </button>
+  );
+}
+
 type ActiveSteepTimerProps = {
   onBack?: () => void;
   sessionsCompleted?: number;
@@ -65,10 +212,12 @@ export default function ActiveSteepTimer({
   const [selectedCategory, setSelectedCategory] = useState<SessionCategory>(DEFAULT_CATEGORIES[2]);
   const [customCategories, setCustomCategories] = useState<SessionCategory[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
+  const [dialMinutes, setDialMinutes] = useState(25);
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [useQuickTime, setUseQuickTime] = useState(false);
 
   const allCategories = [...DEFAULT_CATEGORIES, ...customCategories];
   const progressPercent = (sessionsCompleted / totalSessions) * 100;
@@ -85,12 +234,12 @@ export default function ActiveSteepTimer({
       title: selectedCategory.name,
       date: 'Today',
       time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-      duration: Math.floor((25 * 60 - timeLeft) / 60),
+      duration: dialMinutes,
       notes: ''
     };
     saveSession(session);
     handleReset();
-  }, [selectedCategory, timeLeft]);
+  }, [selectedCategory, dialMinutes]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -111,11 +260,30 @@ export default function ActiveSteepTimer({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleStart = () => setIsRunning(true);
+  const handleStart = () => {
+    if (useQuickTime) {
+      setTimeLeft(dialMinutes * 60);
+    }
+    setIsRunning(true);
+  };
+
   const handleStop = () => setIsRunning(false);
+  
   const handleReset = () => {
     setIsRunning(false);
-    setTimeLeft(25 * 60);
+    setTimeLeft(dialMinutes * 60);
+  };
+
+  const handleQuickTimeSelect = (minutes: number) => {
+    setDialMinutes(minutes);
+    setTimeLeft(minutes * 60);
+    setUseQuickTime(true);
+  };
+
+  const handleDialChange = (minutes: number) => {
+    setDialMinutes(minutes);
+    setTimeLeft(minutes * 60);
+    setUseQuickTime(false);
   };
 
   const addCustomCategory = () => {
@@ -144,7 +312,6 @@ export default function ActiveSteepTimer({
 
   return (
     <div className="min-h-screen bg-[#f7f9ff] text-[#171c22] font-sans pb-32">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-[#f7f9ff]/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {onBack ? (
@@ -168,61 +335,78 @@ export default function ActiveSteepTimer({
         </button>
       </header>
 
-      {/* Divider */}
       <div className="h-1 w-full bg-[#f0f4fc]"></div>
 
       <main className="pt-8 pb-32 px-6 max-w-4xl mx-auto">
-        {/* Header Section */}
-        <header className="mb-12">
+        <header className="mb-8">
           <h1 className="text-4xl md:text-5xl font-black tracking-tight text-[#171c22] mb-2">
             Active Steep
           </h1>
           <p className="text-[#424753] font-medium text-lg">
-            Maintaining your daily rhythm.
+            Set your intention.
           </p>
         </header>
 
-        {/* Main Timer Block */}
-        <section className="bg-[#f0f4fc] rounded-[2rem] p-8 md:p-16 mb-8 text-center relative overflow-hidden">
-          {/* Background Texture Decal */}
-          <div className="absolute top-0 right-0 p-8 opacity-[0.03] select-none pointer-events-none">
+        <section className="bg-[#f0f4fc] rounded-[2rem] p-8 mb-8 text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
             <Timer className="w-48 h-48 text-[#171c22]" />
           </div>
 
-          {/* Focus Mode Indicator */}
-          <div className="inline-flex items-center gap-2 bg-[#0051ae]/10 text-[#0051ae] px-4 py-2 rounded-full mb-8">
+          <div className="inline-flex items-center gap-2 bg-[#0051ae]/10 text-[#0051ae] px-4 py-2 rounded-full mb-6">
             <Zap className="w-4 h-4" />
             <span className="font-bold tracking-widest text-xs uppercase">
               {selectedCategory.name} Mode
             </span>
           </div>
 
-          {/* The Hero Countdown */}
-          <div className="font-mono text-[6rem] md:text-[10rem] font-black leading-none tracking-tighter text-[#171c22] mb-8">
-            {formatTime(timeLeft)}
+          <CircularDial 
+            value={dialMinutes} 
+            onChange={handleDialChange}
+            maxValue={60}
+          />
+
+          <div className="mb-6">
+            <p className="text-sm font-bold text-[#424753] mb-3">Quick Select (1-5 min)</p>
+            <div className="flex justify-center gap-3">
+              {QUICK_TIMES.map((mins) => (
+                <QuickTimeButton
+                  key={mins}
+                  minutes={mins}
+                  selected={useQuickTime && dialMinutes === mins}
+                  onClick={() => handleQuickTimeSelect(mins)}
+                />
+              ))}
+            </div>
           </div>
 
-          {/* Primary Controls */}
+          {isRunning && (
+            <div className="font-mono text-5xl font-black leading-none tracking-tighter text-[#171c22] mb-6">
+              {formatTime(timeLeft)}
+            </div>
+          )}
+
           <div className="flex flex-col md:flex-row justify-center gap-4 max-w-xl mx-auto">
-            <button 
-              onClick={handleStart}
-              className="flex-1 h-20 bg-[#0051ae] text-white rounded-xl font-black text-2xl flex items-center justify-center gap-3 transition-transform active:scale-95 shadow-lg"
-            >
-              <Play className="w-8 h-8" />
-              START
-            </button>
-            <button 
-              onClick={handleStop}
-              className="flex-1 h-20 bg-[#e4e8f0] text-[#171c22] rounded-xl font-black text-2xl flex items-center justify-center gap-3 transition-transform active:scale-95"
-            >
-              <Square className="w-8 h-8" />
-              STOP
-            </button>
+            {!isRunning ? (
+              <button 
+                onClick={handleStart}
+                className="flex-1 h-20 bg-[#0051ae] text-white rounded-xl font-black text-2xl flex items-center justify-center gap-3 transition-transform active:scale-95 shadow-lg"
+              >
+                <Play className="w-8 h-8" />
+                START
+              </button>
+            ) : (
+              <button 
+                onClick={handleStop}
+                className="flex-1 h-20 bg-[#e4e8f0] text-[#171c22] rounded-xl font-black text-2xl flex items-center justify-center gap-3 transition-transform active:scale-95"
+              >
+                <Square className="w-8 h-8" />
+                STOP
+              </button>
+            )}
           </div>
         </section>
 
-        {/* Progress Horizon */}
-        <section className="mb-12">
+        <section className="mb-8">
           <div className="flex justify-between items-end mb-4">
             <h3 className="font-black text-xl tracking-tight uppercase">
               Rhythm and Flow
@@ -239,7 +423,6 @@ export default function ActiveSteepTimer({
           </div>
         </section>
 
-        {/* Mode Selector: Category Cards */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {allCategories.slice(0, 3).map((category) => (
             <button 
@@ -249,34 +432,28 @@ export default function ActiveSteepTimer({
                 setShowCategoryPicker(false);
               }}
               className={`
-                group p-8 rounded-[1.5rem] text-left transition-all duration-300
+                group p-6 rounded-[1.5rem] text-left transition-all duration-300
                 ${selectedCategory.id === category.id 
-                  ? `border-2 ${category.bgColor}/40` 
-                  : 'hover:bg-[#e4e8f0]'
+                  ? `border-2 ${category.bgColor.replace('bg-', 'border-')}/40 ${category.bgColor}/10` 
+                  : 'hover:bg-[#e4e8f0] border-2 border-transparent'
                 }
               `}
             >
               <div className={`
                 w-12 h-12 ${category.bgColor} text-white rounded-lg 
-                flex items-center justify-center mb-6 shadow-lg
+                flex items-center justify-center mb-4
               `}>
                 {category.icon}
               </div>
-              <div className={`
-                text-xs font-black ${category.color} uppercase tracking-[0.2em] mb-1
-              `}>
-                Session Mode
-              </div>
-              <h4 className="text-2xl font-black text-[#171c22] tracking-tight group-hover:translate-x-1 transition-transform">
+              <h4 className="text-xl font-black text-[#171c22]">
                 {category.name}
               </h4>
             </button>
           ))}
           
-          {/* Add Category Button */}
           <button 
             onClick={() => setShowCategoryPicker(!showCategoryPicker)}
-            className="group p-8 border-2 border-dashed border-[#e4e8f0] hover:border-[#0051ae]/40 rounded-[1.5rem] text-left transition-all duration-300 flex flex-col items-center justify-center"
+            className="group p-6 border-2 border-dashed border-[#e4e8f0] hover:border-[#0051ae]/40 rounded-[1.5rem] text-left transition-all duration-300 flex flex-col items-center justify-center"
           >
             <div className="w-12 h-12 bg-[#e4e8f0] text-[#424753] rounded-lg flex items-center justify-center mb-4">
               <Plus className="w-6 h-6" />
@@ -287,7 +464,6 @@ export default function ActiveSteepTimer({
           </button>
         </section>
 
-        {/* Category Picker Dropdown */}
         <AnimatePresence>
           {showCategoryPicker && (
             <motion.div 
@@ -299,7 +475,6 @@ export default function ActiveSteepTimer({
               <div className="bg-[#f0f4fc] rounded-[1.5rem] p-6">
                 <h3 className="font-black text-lg mb-4">Choose a Category</h3>
                 
-                {/* Existing Categories */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                   {allCategories.map((category) => (
                     <div key={category.id} className="relative">
@@ -336,7 +511,6 @@ export default function ActiveSteepTimer({
                   ))}
                 </div>
 
-                {/* Add New Category */}
                 {showAddCategory ? (
                   <div className="flex gap-3">
                     <input
@@ -376,11 +550,6 @@ export default function ActiveSteepTimer({
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Decorative Mood Image Placeholder */}
-        <section className="mt-12 rounded-[2rem] overflow-hidden h-48 relative bg-gradient-to-br from-[#f0f4fc] to-[#e4e8f0]">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#f7f9ff] to-transparent" />
-        </section>
       </main>
     </div>
   );
