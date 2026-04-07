@@ -218,6 +218,7 @@ export default function ActiveSteepTimer({
   const [newCategoryName, setNewCategoryName] = useState('');
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [useQuickTime, setUseQuickTime] = useState(false);
+  const [sessionSaved, setSessionSaved] = useState(false);
 
   const allCategories = [...DEFAULT_CATEGORIES, ...customCategories];
   const progressPercent = (sessionsCompleted / totalSessions) * 100;
@@ -227,6 +228,7 @@ export default function ActiveSteepTimer({
   }, []);
 
   const handleTimerComplete = useCallback(() => {
+    console.log('Timer complete! Saving session...', selectedCategory, dialMinutes);
     const now = new Date();
     const session = {
       id: `session-${Date.now()}`,
@@ -238,6 +240,8 @@ export default function ActiveSteepTimer({
       notes: ''
     };
     saveSession(session);
+    setSessionSaved(true);
+    setTimeout(() => setSessionSaved(false), 3000);
     handleReset();
   }, [selectedCategory, dialMinutes]);
 
@@ -382,6 +386,12 @@ export default function ActiveSteepTimer({
           {isRunning && (
             <div className="font-mono text-5xl font-black leading-none tracking-tighter text-[#171c22] mb-6">
               {formatTime(timeLeft)}
+            </div>
+          )}
+
+          {sessionSaved && (
+            <div className="mb-4 px-4 py-2 bg-[#0a6148] text-white rounded-full font-bold text-sm">
+              Session saved!
             </div>
           )}
 
