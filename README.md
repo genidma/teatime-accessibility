@@ -19,6 +19,23 @@ Access at: http://localhost:3000
 
 ---
 
+## Circular Dial Timer
+
+The timer features an interactive **circular dial** for setting session duration:
+
+- **Drag to set**: Click and drag around the dial to set any duration (1-60 minutes)
+- **Quick select**: Tap numbers 1-5 for instant short sessions (1-5 minutes)
+- **Visual feedback**: Progress ring shows selected duration
+- **Tactile feel**: Clean, minimal interface that feels responsive
+
+### How It Works
+
+1. **Circular Dial** - Drag around the ring to set duration
+2. **Quick Time Buttons** - Tap 1-5 for instant 1-5 minute sessions
+3. **Mode Selector** - Choose category (Meditation, Gratitude, Deep Work, or custom)
+
+---
+
 ## SQLite Database Integration
 
 This branch uses **sql.js** (SQLite compiled to WebAssembly) for in-browser database functionality.
@@ -39,6 +56,14 @@ This branch uses **sql.js** (SQLite compiled to WebAssembly) for in-browser data
    - Sessions are backed up to `localStorage` key: `teatime_sessions`
    - On app load, data is restored from localStorage to SQLite
    - This ensures data survives page refreshes
+
+### Note on File Persistence
+
+Currently, data is stored in-browser using:
+- **SQLite (sql.js)**: In-memory database for queries
+- **localStorage**: Backup storage for persistence across sessions
+
+To write to a file on the user's home directory, Electron IPC would be required. This is a future enhancement.
 
 ### Database Schema
 
@@ -72,9 +97,10 @@ src/
 ├── lib/
 │   └── database.ts       # SQLite operations
 ├── components/
-│   ├── ActiveSteepTimer.tsx   # Timer that saves sessions
+│   ├── ActiveSteepTimer.tsx   # Timer with circular dial
 │   ├── SessionHistoryList.tsx # Loads sessions from DB
 │   ├── StatsView.tsx          # Displays session analytics
+│   ├── ProfileView.tsx        # User settings
 │   └── categories.tsx          # Centralized category definitions
 └── App.tsx               # Main app with navigation
 ```
@@ -83,12 +109,12 @@ src/
 
 All session categories are defined in `src/components/categories.tsx`:
 
-- **Deep Work** (DW) - Blue
-- **Meditation** (M) - Green
-- **Gratitude** (G) - Orange
-- **Break** (BR) - Grey
-- **Exercise** (EX) - Red
-- **Walk** (WK) - Grey
+- **Deep Work** (DW) - Blue (#0969da)
+- **Meditation** (M) - Green (#2e7a5f)
+- **Gratitude** (G) - Orange (#fd8a42)
+- **Break** (BR) - Grey (#e4e8f0)
+- **Exercise** (EX) - Red (#ffdad6)
+- **Walk** (WK) - Grey (#dee3eb)
 
 To add a new category, edit the `CATEGORY_STYLES` object in `categories.tsx`.
 
@@ -99,7 +125,7 @@ To add a new category, edit the `CATEGORY_STYLES` object in `categories.tsx`.
 The app has 5 main views accessible via the bottom navigation:
 
 1. **Sessions** - Your Steeps (session history)
-2. **Timer** - Active Steep Timer
+2. **Timer** - Active Steep Timer (with circular dial)
 3. **Stats** - Statistics & Analytics
 4. **Trends** - (Coming soon)
 5. **Profile** - User settings & preferences
