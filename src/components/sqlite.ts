@@ -209,3 +209,74 @@ export function getCategoryStats(): { categoryId: string; sessions: number; dura
     duration: row[2]
   }));
 }
+
+export function getProductiveRange(): string {
+  if (!db) return "No data";
+  
+  const results = db.exec(`
+    SELECT strftime('%H', createdAt) as hourStr, SUM(duration) as duration
+    FROM sessions
+    GROUP BY hourStr
+    ORDER BY duration DESC
+    LIMIT 1
+  `);
+  
+  if (results.length === 0 || results[0].values.length === 0) return "Not enough data";
+  
+  const peakHourStr = results[0].values[0][0] as string;
+  const peakHour = parseInt(peakHourStr, 10);
+  
+  if (isNaN(peakHour)) return "Not enough data";
+  
+  // Cal Newport / George Miller (7) inspired ranges
+  let startHour = peakHour - 1;
+  let endHour = peakHour + 1; // 2 hour block centered on peak
+  if (startHour < 0) startHour = 0;
+  if (endHour > 23) endHour = 23;
+  
+  const formatHour = (h: number) => {
+    const period = h >= 12 ? 'PM' : 'AM';
+    const displayHour = h % 12 === 0 ? 12 : h % 12;
+    return `${displayHour}:00 ${period}`;
+  };
+  
+  return `${formatHour(startHour)} - ${formatHour(endHour)}`;
+}
+
+export function getWeeklyActivity(): { date: string; duration: number }[] {
+  if (!db) return [];
+  
+  const results = db.exec(`
+    SELECT date(createdAt) as dateStr, SUM(duration) as duration
+    FROM sessions
+    GROUP BY dateStr
+    ORDER BY dateStr DESC
+    LIMIT 7
+  `);
+  
+  if (results.length === 0) return [];
+  
+  return results[0].values.map((row: any[]) => ({
+    date: row[0] as string,
+    duration: row[1] as number
+  })).reverse();
+}
+
+export function getHeatmapData(): { date: string; count: number }[] {
+  if (!db) return [];
+  
+  const results = db.exec(`
+    SELECT date(createdAt) as dateStr, COUNT(*) as count
+    FROM sessions
+    GROUP BY dateStr
+    ORDER BY dateStr DESC
+    LIMIT 90
+  `);
+  
+  if (results.length === 0) return [];
+  
+  return results[0].values.map((row: any[]) => ({
+    date: row[0] as string,
+    count: row[1] as number
+  }));
+}
