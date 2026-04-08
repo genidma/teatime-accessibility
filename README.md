@@ -2,58 +2,118 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# TeaTime Accessibility - Electron Main Dev Branch
+# TeaTime Accessibility
 
-This is the **electron-main-dev** branch - a complete Electron app overhaul with React, Vite, and SQLite for session persistence.
+> "Discipline equals freedom"
 
-## Run Locally
+A productivity app that helps you build daily discipline through structured breaks between deep work sessions.
+
+## Quick Start
 
 **Prerequisites:** Node.js
 
 ```bash
+# Clone the repo
+git clone https://github.com/genidma/teatime-accessibility.git
+cd teatime-accessibility
+
+# Install dependencies
 npm install
+
+# Run in development
 npm run dev
 ```
 
-To run as Electron app:
+Open http://localhost:3000 in your browser.
+
+---
+
+## How to Use
+
+### 1. Start a Session
+- Select a category (Meditation, Gratitude, Deep Work)
+- Use the **circular dial** to set duration (drag around the ring)
+- Or tap **1-5** for quick 1-5 minute sessions
+- Click **START**
+
+### 2. Timer Completes
+- When timer hits 0:00, session is automatically saved
+- Check the **Sessions** tab to see your history
+- Check the **Stats** tab for analytics
+
+### 3. Track Your Progress
+- View session history with date grouping
+- See total time, streaks, and daily goals
+- Monitor your rhythm and flow
+
+---
+
+## App Navigation
+
+| Tab | Description |
+|-----|-------------|
+| Sessions | Your Steeps - session history |
+| Timer | Active Steep Timer with circular dial |
+| Stats | Statistics & Analytics |
+| Profile | User settings & preferences |
+
+---
+
+## Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Run in development mode |
+| `npm run build` | Build for production |
+| `npm run test` | Run automated tests |
+| `npm run test:ui` | Run tests with UI |
+
+---
+
+## Running Tests
+
 ```bash
-npm run electron-dev
+npm run test
 ```
 
-Access at: http://localhost:3000
+This runs Playwright tests:
+- ✓ App loads correctly
+- ✓ Timer displays properly
+- ✓ Category selection works
+- ✓ Quick time buttons work
+- ✓ All navigation tabs work
 
 ---
 
-## Circular Dial Timer
+## Building for Distribution
 
-The timer features an interactive **circular dial** for setting session duration:
+### Linux (AppImage)
+```bash
+npm run build
+npx electron-builder --linux
+```
 
-- **Drag to set**: Click and drag around the dial to set any duration (1-60 minutes)
-- **Quick select**: Tap numbers 1-5 for instant short sessions (1-5 minutes)
-- **Visual feedback**: Progress ring shows selected duration
+Output: `release/TeaTime-1.0.0.AppImage`
+
+### Windows (unpacked)
+```bash
+npm run build
+npx electron-builder --win --dir
+```
+
+Output: `release/win-unpacked/TeaTime.exe`
+
+### macOS
+```bash
+npm run build
+npx electron-builder --mac
+```
 
 ---
 
-## SQLite Database Integration
+## SQLite Database
 
-This branch uses **sql.js** (SQLite compiled to WebAssembly) with file-based persistence via Electron IPC.
-
-### How It Works
-
-1. **Database Initialization** (`src/lib/database.ts`)
-   - Uses `sql.js` loaded from CDN (`https://sql.js.org/dist/`)
-   - Creates SQLite database
-   - Schema: `sessions` table
-
-2. **File Persistence** (Electron only)
-   - Database file saved to user's data directory: `~/Library/Application Support/TeaTime/teatime-sessions.db` (macOS) or `%APPDATA%/TeaTime/teatime-sessions.db` (Windows)
-   - Uses Electron IPC to read/write file
-   - Falls back to localStorage if not running in Electron
-
-3. **Session Auto-Save**
-   - When timer completes, session is saved to both file and localStorage
-
-### Database File Location
+Sessions are stored locally in SQLite:
 
 | Platform | Path |
 |----------|------|
@@ -61,69 +121,41 @@ This branch uses **sql.js** (SQLite compiled to WebAssembly) with file-based per
 | Windows | `%APPDATA%/TeaTime/teatime-sessions.db` |
 | Linux | `~/.config/TeaTime/teatime-sessions.db` |
 
-### Database Schema
-
-```sql
-CREATE TABLE sessions (
-  id TEXT PRIMARY KEY,
-  categoryId TEXT NOT NULL,
-  title TEXT NOT NULL,
-  date TEXT NOT NULL,
-  time TEXT NOT NULL,
-  duration INTEGER NOT NULL,
-  notes TEXT,
-  createdAt TEXT DEFAULT CURRENT_TIMESTAMP
-)
-```
-
-### Key Functions
-
-| Function | Description |
-|----------|-------------|
-| `initDatabase()` | Initialize SQLite, load from file or localStorage |
-| `saveSession(session)` | Save completed session to database |
-| `getAllSessions()` | Retrieve all sessions |
-| `getTodaySessions()` | Get today's sessions |
-| `getSessionsByDate(date)` | Get sessions for specific date |
+Data also backs up to browser localStorage.
 
 ---
 
-## App Navigation
+## Features
 
-The app has 5 main views:
-
-1. **Sessions** - Your Steeps (session history)
-2. **Timer** - Active Steep Timer (with circular dial)
-3. **Stats** - Statistics & Analytics
-4. **Trends** - (Coming soon)
-5. **Profile** - User settings & preferences
-
----
-
-## Building for Production
-
-```bash
-npm run build
-```
-
-Output will be in the `dist/` folder.
+- **Circular Dial Timer** - Drag to set any duration 1-60 min
+- **Quick Select** - Tap 1-5 for instant short sessions
+- **Categories** - Meditation, Gratitude, Deep Work + custom
+- **Session History** - Track your daily resume
+- **Statistics** - Analytics with daily rhythm charts
+- **SQLite Persistence** - Data saved to disk
 
 ---
 
 ## Tech Stack
 
-- **React 19** - UI Framework
-- **Vite** - Build tool
-- **Electron** - Desktop app shell
-- **TailwindCSS 4** - Styling
-- **Motion** - Animations
-- **Lucide React** - Icons
-- **sql.js** - SQLite in WebAssembly
+- React 19 + Vite
+- Electron
+- TailwindCSS 4
+- Motion (animations)
+- sql.js (SQLite in WebAssembly)
+- Playwright (testing)
 
 ---
 
-## Philosophy
+## Troubleshooting
 
-> "Discipline equals freedom"
+**"vite not found" error?**
+```bash
+npm install
+```
 
-TeaTime helps you build daily discipline through structured breaks between deep work sessions.
+**Want to test timer is saving?**
+1. Open DevTools (F12) → Console tab
+2. Run a 1-minute timer
+3. Look for "saveSession called" in console
+4. Check Sessions tab for new entry
