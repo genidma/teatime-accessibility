@@ -18,7 +18,8 @@ export default defineConfig(({mode}) => {
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: {
-        ignored: ['**/var/run/**', '**/sys/**', '**/proc/**'],
+        followSymlinks: false,
+        ignored: ['**/var/**', '**/sys/**', '**/proc/**', '**/build-dir/**', '**/node_modules/**'],
         usePolling: true,
         interval: 1000,
       },
