@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Session Log - TeaTime</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#0a6148",
+                    "on-error": "#ffffff",
+                    "background": "#f7f9ff",
+                    "surface-variant": "#dee3eb",
+                    "on-primary-fixed-variant": "#004493",
+                    "outline": "#727785",
+                    "primary-container": "#0969da",
+                    "on-surface": "#171c22",
+                    "inverse-surface": "#2c3137",
+                    "tertiary-container": "#2e7a5f",
+                    "on-tertiary-fixed-variant": "#00513b",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#c2c6d6",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#002116",
+                    "on-secondary-fixed-variant": "#763300",
+                    "tertiary-fixed": "#a6f2d1",
+                    "secondary-container": "#fd8a42",
+                    "on-secondary-fixed": "#331200",
+                    "on-surface-variant": "#424753",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f0f4fc",
+                    "on-secondary-container": "#682c00",
+                    "on-primary-fixed": "#001a41",
+                    "error": "#ba1a1a",
+                    "surface-container": "#eaeef6",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-dim": "#d6dae2",
+                    "surface-bright": "#f7f9ff",
+                    "inverse-on-surface": "#edf1f9",
+                    "inverse-primary": "#adc6ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#ffb68e",
+                    "secondary": "#9b4500",
+                    "surface-container-highest": "#dee3eb",
+                    "primary": "#0051ae",
+                    "surface": "#f7f9ff",
+                    "surface-tint": "#005bc0",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffdbca",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#baffe0",
+                    "tertiary-fixed-dim": "#8bd6b6",
+                    "on-primary-container": "#ecefff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-container-high": "#e4e8f0",
+                    "on-background": "#171c22"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.75rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(247, 249, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f7f9ff] dark:bg-slate-950 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#424753] dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full scale-95 active:duration-100">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-2xl font-black tracking-tighter text-[#171c22] dark:text-white">TeaTime</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex gap-6 items-center">
+<a class="text-[#424753] dark:text-slate-400 font-['Inter'] font-bold tracking-tight text-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors px-2 py-1 rounded" href="#">Dashboard</a>
+<a class="text-[#424753] dark:text-slate-400 font-['Inter'] font-bold tracking-tight text-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors px-2 py-1 rounded" href="#">Timer</a>
+<a class="text-[#0051ae] dark:text-blue-400 font-['Inter'] font-bold tracking-tight text-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors px-2 py-1 rounded" href="#">Results</a>
+<a class="text-[#424753] dark:text-slate-400 font-['Inter'] font-bold tracking-tight text-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors px-2 py-1 rounded" href="#">Toolkit</a>
+</nav>
+</div>
+<button class="text-[#424753] dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full scale-95 active:duration-100">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</header>
+<main class="pt-24 px-6 max-w-4xl mx-auto space-y-8">
+<!-- Confirmation Hero Section -->
+<section class="bg-surface-container-low rounded-[2rem] p-8 md:p-12 text-center overflow-hidden relative">
+<div class="absolute top-0 right-0 p-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="task_alt">task_alt</span>
+</div>
+<div class="relative z-10">
+<span class="text-primary font-label text-sm font-bold tracking-widest uppercase mb-4 block">Session Log</span>
+<h2 class="text-5xl md:text-7xl font-black text-on-surface tracking-tighter mb-6 leading-tight">Session Complete</h2>
+<div class="inline-flex items-center gap-3 bg-surface-container-lowest px-6 py-3 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="timer">timer</span>
+<span class="text-2xl font-bold tracking-tight text-on-surface">Deep Work - 45:00</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Rhythm Bonus Card -->
+<div class="md:col-span-5 bg-tertiary-container text-on-tertiary-container p-8 rounded-[2rem] flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-bold tracking-widest uppercase text-xs">Achievement</span>
+</div>
+<h3 class="text-3xl font-black tracking-tight leading-tight mb-2">Rhythm Bonus</h3>
+<p class="text-lg opacity-90 font-medium">Earned 1 bonus point for a 5-min break after Deep Work.</p>
+</div>
+<div class="mt-8 flex items-baseline gap-2">
+<span class="text-5xl font-black">+1</span>
+<span class="text-sm font-bold uppercase tracking-widest opacity-70">Focus Point</span>
+</div>
+</div>
+<!-- Notes Input Area -->
+<div class="md:col-span-7 bg-surface-container-low p-8 rounded-[2rem] flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="edit_note">edit_note</span>
+<h4 class="text-lg font-bold text-on-surface">Session Notes</h4>
+</div>
+</div>
+<div class="flex-grow">
+<textarea class="w-full bg-surface-container-highest/50 border-none rounded-xl p-6 text-xl font-medium focus:ring-2 focus:ring-primary h-48 placeholder:text-outline-variant resize-none" placeholder="What did you achieve? (e.g., Focused on Issue #127)"></textarea>
+</div>
+</div>
+</div>
+<!-- Meta Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-6 rounded-[1.5rem]">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1 block">Start</span>
+<span class="text-xl font-bold">14:00</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-[1.5rem]">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1 block">End</span>
+<span class="text-xl font-bold">14:45</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-[1.5rem]">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1 block">Efficiency</span>
+<span class="text-xl font-bold">98%</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-[1.5rem]">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1 block">Breaks</span>
+<span class="text-xl font-bold">0</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="pt-4">
+<button class="w-full bg-primary text-white h-[64dp] py-6 rounded-xl flex items-center justify-center gap-3 text-2xl font-black tracking-tight hover:bg-primary-container transition-all active:scale-95 shadow-xl">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                Save Session
+            </button>
+<button class="w-full mt-4 py-4 text-on-surface-variant font-bold hover:text-primary transition-colors">
+                Discard Session
+            </button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#f7f9ff]/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-[2rem]">
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] dark:hover:text-blue-300 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] dark:hover:text-blue-300 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Timer</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#0051ae] text-white rounded-xl px-6 py-2 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Results</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] dark:hover:text-blue-300 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="handyman">handyman</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Toolkit</span>
+</a>
+</nav>
+<!-- Visual Texture Image (Subtle Background Detail) -->
+<div class="fixed bottom-0 right-0 -z-10 opacity-20 pointer-events-none">
+<img class="w-[400px]" data-alt="abstract soft geometric shapes in shades of blue and teal on white background minimalist clean aesthetic with smooth gradients" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIA-PFa-514S8is1IIvhQTw7NwcQQUKt7_faBMSr5r2EHrCGxBVV8TFUemr-eYe58-jlzBsBvykFiTcInERFGOLFF7lyHp21f9krkj6QBflyVNTpu_ziHz0k_X0xn8aZa6awE4Ref5u9sFZ5QGwRMd65y3BtgFLXNWzdPwSqPHaLf2NaA6AYnyjCgYX3MczSFzf5_-32bdKHfLtf9ycOAsZ8OqOqBSmivh8seCdm3MlUW7GTSJ-N-CHX4lhPfSt4KFwNDXGfUFt1Y"/>
+</div>
+</body></html>

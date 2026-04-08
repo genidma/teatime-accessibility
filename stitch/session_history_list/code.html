@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TeaTime - Your Steeps</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#0a6148",
+                        "on-error": "#ffffff",
+                        "background": "#f7f9ff",
+                        "surface-variant": "#dee3eb",
+                        "on-primary-fixed-variant": "#004493",
+                        "outline": "#727785",
+                        "primary-container": "#0969da",
+                        "on-surface": "#171c22",
+                        "inverse-surface": "#2c3137",
+                        "tertiary-container": "#2e7a5f",
+                        "on-tertiary-fixed-variant": "#00513b",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c2c6d6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#002116",
+                        "on-secondary-fixed-variant": "#763300",
+                        "tertiary-fixed": "#a6f2d1",
+                        "secondary-container": "#fd8a42",
+                        "on-secondary-fixed": "#331200",
+                        "on-surface-variant": "#424753",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f0f4fc",
+                        "on-secondary-container": "#682c00",
+                        "on-primary-fixed": "#001a41",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eaeef6",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-dim": "#d6dae2",
+                        "surface-bright": "#f7f9ff",
+                        "inverse-on-surface": "#edf1f9",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#ffb68e",
+                        "secondary": "#9b4500",
+                        "surface-container-highest": "#dee3eb",
+                        "primary": "#0051ae",
+                        "surface": "#f7f9ff",
+                        "surface-tint": "#005bc0",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#ffdbca",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#baffe0",
+                        "tertiary-fixed-dim": "#8bd6b6",
+                        "on-primary-container": "#ecefff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-container-high": "#e4e8f0",
+                        "on-background": "#171c22"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.75rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9ff;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f7f9ff] dark:bg-slate-950 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#0051ae] dark:text-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full scale-95 active:duration-100">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-2xl font-black tracking-tighter text-[#171c22] dark:text-white">TeaTime</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#0051ae] dark:text-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full scale-95 active:duration-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-4xl mx-auto">
+<!-- Page Header -->
+<div class="mb-12">
+<h2 class="text-5xl font-extrabold tracking-tight text-on-surface mb-2">Your Steeps</h2>
+<p class="text-on-surface-variant font-medium">Tracking your intentional moments.</p>
+</div>
+<!-- Weekly Summary Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="bg-surface-container-low p-8 rounded-xl flex flex-col justify-between aspect-square md:aspect-auto">
+<span class="text-primary font-bold uppercase tracking-widest text-xs mb-4">Total Time</span>
+<div class="text-4xl font-black tracking-tighter text-on-surface">24h 15m</div>
+</div>
+<div class="bg-surface-container-low p-8 rounded-xl flex flex-col justify-between aspect-square md:aspect-auto">
+<span class="text-tertiary font-bold uppercase tracking-widest text-xs mb-4">Streaks</span>
+<div class="text-4xl font-black tracking-tighter text-on-surface">12 Days</div>
+</div>
+<div class="bg-surface-container-low p-8 rounded-xl flex flex-col justify-between aspect-square md:aspect-auto">
+<span class="text-secondary font-bold uppercase tracking-widest text-xs mb-4">Daily Goal</span>
+<div class="text-4xl font-black tracking-tighter text-on-surface">85%</div>
+</div>
+</section>
+<!-- Session History List -->
+<div class="space-y-6">
+<!-- Deep Work Item -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between transition-all duration-300 hover:bg-surface-container-low active:scale-[0.98] cursor-pointer shadow-[0px_4px_12px_rgba(23,28,34,0.02)]">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface leading-none">Deep Work</h3>
+<span class="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">DW</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Today • 10:30 AM — 11:30 AM</p>
+<p class="text-on-surface-variant text-sm mt-2 italic max-w-md line-clamp-1">Focused on UI architecture and design system implementation.</p>
+</div>
+</div>
+<div class="hidden md:block text-right">
+<span class="text-xl font-black text-on-surface">60 min</span>
+<p class="text-xs font-bold text-outline uppercase tracking-widest">Duration</p>
+</div>
+</div>
+<!-- Meditation Item -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between transition-all duration-300 hover:bg-surface-container-low active:scale-[0.98] cursor-pointer shadow-[0px_4px_12px_rgba(23,28,34,0.02)]">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-xl bg-tertiary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">self_improvement</span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface leading-none">Mindfulness</h3>
+<span class="bg-tertiary/10 text-tertiary text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">M</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Yesterday • 8:00 AM</p>
+<p class="text-on-surface-variant text-sm mt-2 italic max-w-md line-clamp-1">Deep breathing and body scan for morning grounding.</p>
+</div>
+</div>
+<div class="hidden md:block text-right">
+<span class="text-xl font-black text-on-surface">15 min</span>
+<p class="text-xs font-bold text-outline uppercase tracking-widest">Duration</p>
+</div>
+</div>
+<!-- Gratitude Item -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between transition-all duration-300 hover:bg-surface-container-low active:scale-[0.98] cursor-pointer shadow-[0px_4px_12px_rgba(23,28,34,0.02)]">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-xl bg-secondary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface leading-none">Gratitude Journal</h3>
+<span class="bg-secondary/10 text-secondary text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">G</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Oct 24 • 9:15 PM</p>
+<p class="text-on-surface-variant text-sm mt-2 italic max-w-md line-clamp-1">Reflected on team progress and community feedback.</p>
+</div>
+</div>
+<div class="hidden md:block text-right">
+<span class="text-xl font-black text-on-surface">10 min</span>
+<p class="text-xs font-bold text-outline uppercase tracking-widest">Duration</p>
+</div>
+</div>
+<!-- Deep Work Item 2 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between transition-all duration-300 hover:bg-surface-container-low active:scale-[0.98] cursor-pointer shadow-[0px_4px_12px_rgba(23,28,34,0.02)]">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">work</span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface leading-none">Strategy Sprint</h3>
+<span class="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">DW</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Oct 23 • 2:00 PM</p>
+<p class="text-on-surface-variant text-sm mt-2 italic max-w-md line-clamp-1">Q4 Roadmap planning and resource allocation review.</p>
+</div>
+</div>
+<div class="hidden md:block text-right">
+<span class="text-xl font-black text-on-surface">120 min</span>
+<p class="text-xs font-bold text-outline uppercase tracking-widest">Duration</p>
+</div>
+</div>
+</div>
+<!-- Pagination / Load More -->
+<div class="mt-12 flex justify-center">
+<button class="px-8 py-4 bg-surface-container-high text-on-surface font-bold rounded-xl hover:bg-surface-container-highest transition-colors">
+                Load More History
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#f7f9ff]/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-[2rem] shadow-[0px_24px_48px_rgba(23,28,34,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] dark:hover:text-blue-300 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] dark:hover:text-blue-300 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Timer</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#0051ae] text-white rounded-xl px-6 py-2 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Results</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 px-6 py-2 hover:text-[#0051ae] dark:hover:text-blue-300 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-['Inter'] text-[12px] font-bold uppercase tracking-widest mt-1">Toolkit</span>
+</a>
+</nav>
+</body></html>
