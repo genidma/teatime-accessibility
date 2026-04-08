@@ -1,6 +1,0 @@
-# This file lists the Python packages required by the TeaTime application.
-requests
-pandas
-plotly
-setuptools>=80.9.0
-wheel

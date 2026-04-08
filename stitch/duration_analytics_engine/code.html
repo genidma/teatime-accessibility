@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#0969da",
+                    "surface-variant": "#dee3eb",
+                    "surface-bright": "#f7f9ff",
+                    "outline-variant": "#c2c6d6",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2c3137",
+                    "inverse-primary": "#adc6ff",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#002116",
+                    "secondary": "#9b4500",
+                    "on-secondary-fixed": "#331200",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed": "#001a41",
+                    "primary": "#0051ae",
+                    "on-surface-variant": "#424753",
+                    "tertiary-container": "#2e7a5f",
+                    "surface-container-low": "#f0f4fc",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#682c00",
+                    "background": "#f7f9ff",
+                    "surface-dim": "#d6dae2",
+                    "secondary-container": "#fd8a42",
+                    "on-surface": "#171c22",
+                    "tertiary-fixed": "#a6f2d1",
+                    "surface-tint": "#005bc0",
+                    "on-error": "#ffffff",
+                    "on-background": "#171c22",
+                    "surface-container-high": "#e4e8f0",
+                    "secondary-fixed-dim": "#ffb68e",
+                    "tertiary-fixed-dim": "#8bd6b6",
+                    "tertiary": "#0a6148",
+                    "surface-container-highest": "#dee3eb",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-container": "#eaeef6",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-tertiary-fixed-variant": "#00513b",
+                    "on-tertiary-container": "#baffe0",
+                    "outline": "#727785",
+                    "surface": "#f7f9ff",
+                    "on-primary-container": "#ecefff",
+                    "secondary-fixed": "#ffdbca",
+                    "on-secondary-fixed-variant": "#763300",
+                    "inverse-on-surface": "#edf1f9",
+                    "primary-fixed": "#d8e2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono-timer {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body antialiased">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-[#f7f9ff] dark:bg-slate-950 flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#e4e8f0] dark:hover:bg-slate-800 transition-colors p-2 rounded-full scale-95 active:opacity-80 transition-all">
+<span class="material-symbols-outlined text-[#0051ae] dark:text-[#0969da]">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] font-bold text-xl tracking-tight text-[#0051ae] dark:text-[#0969da]">Duration Analysis</h1>
+</div>
+<button class="hover:bg-[#e4e8f0] dark:hover:bg-slate-800 transition-colors p-2 rounded-full scale-95 active:opacity-80 transition-all">
+<span class="material-symbols-outlined text-[#424753] dark:text-slate-400">settings</span>
+</button>
+</header>
+<main class="pb-32">
+<!-- Hero Section: The "Stats Engine" Chart -->
+<section class="px-6 pt-4 pb-8">
+<div class="bg-surface-container-low rounded-xl p-6 mb-8 overflow-hidden">
+<div class="flex justify-between items-end mb-8">
+<div>
+<span class="font-label text-[12px] font-semibold tracking-wide uppercase text-on-surface-variant">Weekly Volume</span>
+<h2 class="text-3xl font-black tracking-tighter text-on-surface mt-1">Sessions by Length</h2>
+</div>
+<div class="text-right">
+<span class="block text-4xl font-black text-primary leading-none tracking-tighter">42</span>
+<span class="font-label text-[12px] font-semibold uppercase text-on-surface-variant">Total Units</span>
+</div>
+</div>
+<!-- Brutalist Bar Chart -->
+<div class="flex items-end justify-between h-48 gap-3 relative">
+<!-- Grid Lines (Subtle tonal shift) -->
+<div class="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
+<div class="border-b border-on-surface w-full"></div>
+<div class="border-b border-on-surface w-full"></div>
+<div class="border-b border-on-surface w-full"></div>
+</div>
+<!-- Short Range -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-tertiary-container rounded-t-lg transition-all duration-300 group-hover:opacity-80 h-[35%] relative">
+<span class="absolute -top-7 left-1/2 -translate-x-1/2 font-black text-tertiary text-sm">8</span>
+</div>
+<span class="mt-3 font-label text-[10px] font-bold text-on-surface-variant uppercase">Short</span>
+</div>
+<!-- Medium Range -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all duration-300 group-hover:opacity-80 h-[85%] relative">
+<span class="absolute -top-7 left-1/2 -translate-x-1/2 font-black text-secondary text-sm">24</span>
+</div>
+<span class="mt-3 font-label text-[10px] font-bold text-on-surface-variant uppercase">Medium</span>
+</div>
+<!-- Long Range -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary-container rounded-t-lg transition-all duration-300 group-hover:opacity-80 h-[45%] relative">
+<span class="absolute -top-7 left-1/2 -translate-x-1/2 font-black text-primary text-sm">10</span>
+</div>
+<span class="mt-3 font-label text-[10px] font-bold text-on-surface-variant uppercase">Long</span>
+</div>
+</div>
+</div>
+<!-- "Steep" Widgets / Interactive Breakdown -->
+<div class="space-y-6">
+<!-- Short Range Widget -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-8 border-tertiary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-xl font-extrabold text-on-surface uppercase tracking-tight">Short Focus</h3>
+<p class="text-on-surface-variant font-medium text-sm mt-1">15 - 30 minutes</p>
+</div>
+<span class="material-symbols-outlined text-tertiary text-3xl">bolt</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Avg Time</p>
+<p class="text-2xl font-black text-tertiary mono-timer">22:04</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Frequency</p>
+<p class="text-2xl font-black text-tertiary">1.2/day</p>
+</div>
+</div>
+<button class="w-full mt-6 py-4 bg-tertiary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span>View All Sessions</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Medium Range Widget -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-8 border-secondary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-xl font-extrabold text-on-surface uppercase tracking-tight">Standard Deep</h3>
+<p class="text-on-surface-variant font-medium text-sm mt-1">45 - 90 minutes</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-3xl">psychology</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Avg Time</p>
+<p class="text-2xl font-black text-secondary mono-timer">54:12</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Efficiency</p>
+<p class="text-2xl font-black text-secondary">88%</p>
+</div>
+</div>
+<button class="w-full mt-6 py-4 bg-secondary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span>Analysis Report</span>
+<span class="material-symbols-outlined text-sm">query_stats</span>
+</button>
+</div>
+<!-- Long Range Widget -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-8 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-xl font-extrabold text-on-surface uppercase tracking-tight">Ultra Endurance</h3>
+<p class="text-on-surface-variant font-medium text-sm mt-1">120+ minutes</p>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl">altitude</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Total Count</p>
+<p class="text-2xl font-black text-primary">10</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Focus Level</p>
+<p class="text-2xl font-black text-primary">Max</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Insights Section: Editorial Approach -->
+<div class="mt-12 bg-inverse-surface rounded-xl p-8 relative overflow-hidden">
+<div class="relative z-10">
+<span class="text-inverse-primary font-bold text-sm tracking-widest uppercase">Engine Insight</span>
+<h3 class="text-white text-2xl font-black leading-tight mt-2 mb-4">Your "Medium" sessions drive 68% of total weekly progress.</h3>
+<p class="text-surface-variant text-base leading-relaxed opacity-80">Consider increasing your morning blocks to 55 minutes to hit the optimal flow state threshold identified in your data.</p>
+</div>
+<div class="absolute -right-12 -bottom-12 opacity-10">
+<span class="material-symbols-outlined text-[180px] text-white">analytics</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#f7f9ff]/80 dark:bg-slate-950/80 backdrop-blur-xl rounded-t-[0.75rem]">
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 p-2 hover:bg-[#f0f4fc] dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">timer</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase">Sessions</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#0969da] text-white rounded-[0.75rem] px-5 py-2.5 active:scale-95 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">bar_chart_4_bars</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 p-2 hover:bg-[#f0f4fc] dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">query_stats</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase">Trends</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 p-2 hover:bg-[#f0f4fc] dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase">Profile</span>
+</a>
+</nav>
+<!-- Contextual FAB (Suppressed based on screen context - Analysis is task focused, but we allow a global start if needed elsewhere, here we omit per rules for Detail/Transactional focus) -->
+</body></html>

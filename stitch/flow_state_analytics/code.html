@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flow State - TeaTime</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-primary-fixed": "#001a41",
+                    "tertiary": "#0a6148",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#dee3eb",
+                    "surface-container-low": "#f0f4fc",
+                    "surface-container-highest": "#dee3eb",
+                    "surface-bright": "#f7f9ff",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#d6dae2",
+                    "secondary-fixed": "#ffdbca",
+                    "on-secondary-fixed": "#331200",
+                    "surface-tint": "#005bc0",
+                    "outline-variant": "#c2c6d6",
+                    "on-secondary-container": "#682c00",
+                    "on-surface-variant": "#424753",
+                    "background": "#f7f9ff",
+                    "on-secondary-fixed-variant": "#763300",
+                    "inverse-primary": "#adc6ff",
+                    "secondary": "#9b4500",
+                    "surface": "#f7f9ff",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-primary-container": "#ecefff",
+                    "tertiary-fixed-dim": "#8bd6b6",
+                    "primary": "#0051ae",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#baffe0",
+                    "secondary-container": "#fd8a42",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#0969da",
+                    "on-background": "#171c22",
+                    "surface-container": "#eaeef6",
+                    "inverse-surface": "#2c3137",
+                    "tertiary-fixed": "#a6f2d1",
+                    "surface-container-high": "#e4e8f0",
+                    "outline": "#727785",
+                    "tertiary-container": "#2e7a5f",
+                    "on-surface": "#171c22",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#002116",
+                    "secondary-fixed-dim": "#ffb68e",
+                    "primary-fixed": "#d8e2ff",
+                    "on-tertiary-fixed-variant": "#00513b",
+                    "inverse-on-surface": "#edf1f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(247, 249, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f7f9ff] dark:bg-[#171c22] flex justify-between items-center w-full px-6 h-20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface scale-95 transition-transform duration-200">menu</span>
+<h1 class="font-['Inter'] font-black uppercase tracking-tighter text-2xl text-[#171c22] dark:text-[#f7f9ff]">FLOW</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#424753] dark:text-[#c2c6d6] scale-95 transition-transform duration-200">account_circle</span>
+</div>
+</header>
+<main class="pt-24 px-6 space-y-8 max-w-2xl mx-auto">
+<!-- Flow Intensity Indicator (Bento Style) -->
+<section class="grid grid-cols-2 gap-4">
+<div class="col-span-2 bg-surface-container-low p-8 rounded-xl flex flex-col justify-between min-h-[180px] relative overflow-hidden">
+<div class="z-10">
+<p class="text-on-surface-variant font-bold uppercase tracking-widest text-xs mb-2">Current Intensity</p>
+<h2 class="text-5xl font-black text-primary tracking-tighter">HIGH FLOW</h2>
+</div>
+<div class="z-10 flex items-center gap-2 mt-4">
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[82%]"></div>
+</div>
+<span class="font-black text-primary italic">82%</span>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-10 -bottom-10 opacity-10">
+<span class="material-symbols-outlined !text-[160px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+</div>
+</section>
+<!-- Flow Timeline Visualization -->
+<section class="bg-surface-container-low p-6 rounded-xl space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Analysis</h3>
+<p class="text-2xl font-black text-on-surface">Flow Timeline</p>
+</div>
+<div class="flex bg-surface-container-high rounded-lg p-1">
+<button class="px-3 py-1 text-[10px] font-black uppercase tracking-tighter text-on-surface-variant">7d</button>
+<button class="px-3 py-1 text-[10px] font-black uppercase tracking-tighter bg-surface-container-lowest text-primary rounded shadow-sm">30d</button>
+<button class="px-3 py-1 text-[10px] font-black uppercase tracking-tighter text-on-surface-variant">90d</button>
+</div>
+</div>
+<!-- Custom Data Chart Visualization -->
+<div class="h-48 flex items-end justify-between gap-1 group">
+<div class="w-full bg-tertiary-container rounded-t-lg h-[40%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-tertiary">M</span>
+</div>
+<div class="w-full bg-primary-container rounded-t-lg h-[80%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-primary">DW</span>
+</div>
+<div class="w-full bg-secondary-container rounded-t-lg h-[25%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-secondary">G</span>
+</div>
+<div class="w-full bg-primary-container rounded-t-lg h-[95%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-primary">DW</span>
+</div>
+<div class="w-full bg-tertiary-container rounded-t-lg h-[60%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-tertiary">M</span>
+</div>
+<div class="w-full bg-primary-container rounded-t-lg h-[70%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-primary">DW</span>
+</div>
+<div class="w-full bg-secondary-container rounded-t-lg h-[45%] hover:scale-105 transition-transform cursor-pointer relative">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-secondary">G</span>
+</div>
+</div>
+<!-- Chart Legend -->
+<div class="flex justify-around pt-2 border-t border-outline-variant/15">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Deep Work</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Meditation</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Gratitude</span>
+</div>
+</div>
+</section>
+<!-- Session Categories Quick Access -->
+<section class="space-y-4">
+<h3 class="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Categories</h3>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/15 flex flex-col items-center gap-3 active:scale-95 transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">self_improvement</span>
+</div>
+<span class="text-[11px] font-black uppercase tracking-widest text-on-surface">Meditation</span>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/15 flex flex-col items-center gap-3 active:scale-95 transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<span class="text-[11px] font-black uppercase tracking-widest text-on-surface">Gratitude</span>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/15 flex flex-col items-center gap-3 active:scale-95 transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<span class="text-[11px] font-black uppercase tracking-widest text-on-surface">Deep Work</span>
+</div>
+</div>
+</section>
+<!-- Recent Milestones (Asymmetric Editorial Style) -->
+<section class="space-y-6">
+<h3 class="text-on-surface-variant font-bold uppercase tracking-widest text-xs">Milestones</h3>
+<!-- Milestone Card 1 -->
+<div class="flex gap-6 items-center">
+<div class="shrink-0 w-24 h-24 bg-primary text-on-primary rounded-2xl flex flex-col items-center justify-center">
+<span class="text-3xl font-black">04</span>
+<span class="text-[10px] font-black uppercase tracking-widest">Hrs Today</span>
+</div>
+<div class="flex-1 space-y-1">
+<h4 class="text-xl font-black text-on-surface">Hyper-Focus Peak</h4>
+<p class="text-on-surface-variant text-sm leading-tight">You maintained a continuous state for 120 minutes without interruption.</p>
+</div>
+</div>
+<!-- Milestone Card 2 -->
+<div class="flex gap-6 items-center flex-row-reverse text-right">
+<div class="shrink-0 w-24 h-24 bg-tertiary text-on-tertiary rounded-2xl flex flex-col items-center justify-center">
+<span class="text-3xl font-black">7</span>
+<span class="text-[10px] font-black uppercase tracking-widest">Day Streak</span>
+</div>
+<div class="flex-1 space-y-1">
+<h4 class="text-xl font-black text-on-surface">Zen Master</h4>
+<p class="text-on-surface-variant text-sm leading-tight">Morning meditation completed every day this week before 8:00 AM.</p>
+</div>
+</div>
+<!-- Visual Graphic Card -->
+<div class="relative w-full h-48 rounded-2xl overflow-hidden group cursor-pointer">
+<img alt="Abstract architecture" class="w-full h-full object-cover grayscale brightness-50 group-hover:scale-105 transition-transform duration-700" data-alt="Monochromatic brutalist concrete architecture with sharp shadows and blue sky highlighting geometric patterns and minimal design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFEJgY7-k8tbRm9oMMOfvrjpGCsZ3oHkA3FnHsiSVqJnB-T96c08lNxjQQeM1Gu3jBdsBjqQxLFNBdJD5osb3Fncv0x6Wnv0GN7j6RD6_z8sqM1rzbfa23pWOvwfiCnZph-G7tREwFy46XEeva5Ms3t1VsWlEyuSlhqk-cXRFhYc48V7aMbNTGLp_1KkyTLDJt1c5JdVAGu_Cs1IG_ziyLV5rgx5cJ00WfpMJEVBrqfChADyOMY4m9MVfxcZkhWQzPQKthHwHjBzo"/>
+<div class="absolute inset-0 p-8 flex flex-col justify-end">
+<span class="text-on-primary text-[10px] font-black uppercase tracking-[0.2em] mb-2">Exclusive Insight</span>
+<h4 class="text-3xl font-black text-on-primary leading-none tracking-tighter">Your optimal flow time is 10:15 AM</h4>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#f7f9ff]/80 dark:bg-[#171c22]/80 backdrop-blur-xl z-50 rounded-t-3xl border-t border-[#c2c6d6]/15 shadow-[0px_-24px_48px_rgba(23,28,34,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-[#c2c6d6] p-2 hover:text-[#171c22] dark:hover:text-[#f7f9ff] active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-['Inter'] font-bold text-[11px] uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#0051ae] text-[#ffffff] rounded-xl px-5 py-2 active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-['Inter'] font-bold text-[11px] uppercase tracking-widest mt-1">Timer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-[#c2c6d6] p-2 hover:text-[#171c22] dark:hover:text-[#f7f9ff] active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] font-bold text-[11px] uppercase tracking-widest mt-1">Results</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#424753] dark:text-[#c2c6d6] p-2 hover:text-[#171c22] dark:hover:text-[#f7f9ff] active:scale-90 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">construction</span>
+<span class="font-['Inter'] font-bold text-[11px] uppercase tracking-widest mt-1">Toolkit</span>
+</a>
+</nav>
+</body></html>

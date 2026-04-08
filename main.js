@@ -1,7 +1,14 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
-// Basic window management boilerplate
+const DB_FILE = 'teatime-sessions.db';
+
+function getDbPath() {
+    const userDataPath = app.getPath('userData');
+    return path.join(userDataPath, DB_FILE);
+}
+
 function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 800,
@@ -9,20 +16,54 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js') // We'll create this next
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
-    mainWindow.loadFile('index.html');
+    const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+    if (isDev) {
+        mainWindow.loadURL('http://localhost:3000');
+    } else {
+        mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
+    }
 
-    // Open DevTools in development mode
-    // mainWindow.webContents.openDevTools();
+    if (isDev) {
+        mainWindow.webContents.openDevTools();
+    }
 }
 
-// Enable hot reload in development
 try {
     require('electron-reloader')(module);
 } catch (_) { }
+
+ipcMain.handle('db:save', async (event, data) => {
+    try {
+        const dbPath = getDbPath();
+        fs.writeFileSync(dbPath, Buffer.from(data));
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to save database:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('db:load', async () => {
+    try {
+        const dbPath = getDbPath();
+        if (fs.existsSync(dbPath)) {
+            const data = fs.readFileSync(dbPath);
+            return { success: true, data: Array.from(data) };
+        }
+        return { success: true, data: null };
+    } catch (error) {
+        console.error('Failed to load database:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('db:getPath', async () => {
+    return getDbPath();
+});
 
 app.whenReady().then(() => {
     createWindow();

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Mona+Sans:wght@200..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#0969da",
+                        "surface-variant": "#dee3eb",
+                        "surface-bright": "#f7f9ff",
+                        "outline-variant": "#c2c6d6",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2c3137",
+                        "inverse-primary": "#adc6ff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#002116",
+                        "secondary": "#9b4500",
+                        "on-secondary-fixed": "#331200",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001a41",
+                        "primary": "#0051ae",
+                        "on-surface-variant": "#424753",
+                        "tertiary-container": "#2e7a5f",
+                        "surface-container-low": "#f0f4fc",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#682c00",
+                        "background": "#f7f9ff",
+                        "surface-dim": "#d6dae2",
+                        "secondary-container": "#fd8a42",
+                        "on-surface": "#171c22",
+                        "tertiary-fixed": "#a6f2d1",
+                        "surface-tint": "#005bc0",
+                        "on-error": "#ffffff",
+                        "on-background": "#171c22",
+                        "surface-container-high": "#e4e8f0",
+                        "secondary-fixed-dim": "#ffb68e",
+                        "tertiary-fixed-dim": "#8bd6b6",
+                        "tertiary": "#0a6148",
+                        "surface-container-highest": "#dee3eb",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-container": "#eaeef6",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#00513b",
+                        "on-tertiary-container": "#baffe0",
+                        "outline": "#727785",
+                        "surface": "#f7f9ff",
+                        "on-primary-container": "#ecefff",
+                        "secondary-fixed": "#ffdbca",
+                        "on-secondary-fixed-variant": "#763300",
+                        "inverse-on-surface": "#edf1f9",
+                        "primary-fixed": "#d8e2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.75rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "display": ["Mona Sans", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .timer-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-[#f7f9ff] dark:bg-slate-950 flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#0051ae] dark:text-[#0969da] cursor-pointer hover:bg-[#e4e8f0] p-2 rounded-full transition-all" data-icon="arrow_back">arrow_back</span>
+<h1 class="font-['Inter'] font-bold text-xl tracking-tight text-[#0051ae] dark:text-[#0969da]">Duration Analysis</h1>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[#424753] dark:text-slate-400 cursor-pointer hover:bg-[#e4e8f0] p-2 rounded-full transition-all" data-icon="settings">settings</span>
+</div>
+</header>
+<main class="px-6 max-w-4xl mx-auto space-y-8 mt-6">
+<!-- Health Score / Rhythm Summary Section (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low p-8 rounded-xl flex flex-col justify-between">
+<div>
+<h2 class="font-headline font-bold text-on-surface-variant uppercase tracking-widest text-sm mb-2">Focus Rhythm Score</h2>
+<div class="flex items-baseline gap-4">
+<span class="text-7xl font-display font-black tracking-tighter text-primary">84</span>
+<span class="text-xl font-bold text-tertiary">Optimal</span>
+</div>
+</div>
+<p class="mt-6 text-on-surface-variant text-lg leading-relaxed max-w-md">
+                    Your focus sessions are increasingly stable. Deep work segments are 15% longer than your weekly average.
+                </p>
+</div>
+<div class="bg-primary p-8 rounded-xl flex flex-col justify-center items-center text-on-primary text-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-10">
+<img alt="" class="w-full h-full object-cover" data-alt="abstract geometric pattern of lightning bolts and energy waves in high contrast blue and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9N5AgmocYwOHoRYLvQeuvISi2JuuL3bzXBc_lzylnXu-DhkQlwOhLoO2Qf8UAWnwFhPgnRF3urDVyTl-XPqVS7JmSQBxEQ86-kDSPYe7sKgmpivWjm7gum9j1ZTlsJvfug6vOshp0M5gBjhhdEQ1b4nSNeSQZPDZbiQjHxjcI2Op7Ed684NEskd8E46mQfdYLl1Wy1j_W3lxEaE6Pw31Xw0ypCNpcvFEfvK_I_PsVpviszJowP3E2wnFxiHpHcPQmGRCRC8zD8Lo"/>
+</div>
+<span class="material-symbols-outlined text-4xl mb-4" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<h3 class="font-headline font-bold text-2xl">Peak Flow</h3>
+<p class="mt-2 text-primary-fixed opacity-90">10:15 AM - 11:45 AM</p>
+</div>
+</section>
+<!-- Duration Breakdown Cards -->
+<section class="space-y-8">
+<h3 class="font-headline font-extrabold text-3xl tracking-tight">Daily Breakdown</h3>
+<div class="grid grid-cols-1 gap-6">
+<!-- Short Bursts -->
+<div class="bg-surface-container-low group flex flex-col md:flex-row justify-between p-8 rounded-xl transition-all hover:bg-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary" data-icon="timer_3">timer_3</span>
+<span class="font-headline font-bold text-secondary uppercase tracking-widest text-xs">Short Bursts (&lt; 1m)</span>
+</div>
+<h4 class="text-4xl font-display font-black">12m 40s</h4>
+<p class="text-on-surface-variant font-medium">18 individual sessions today</p>
+</div>
+<div class="mt-6 md:mt-0 flex items-center gap-4">
+<div class="h-2 w-32 bg-outline-variant/30 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[15%]"></div>
+</div>
+<span class="timer-font font-bold text-on-surface-variant">15%</span>
+</div>
+</div>
+<!-- Focused Transitions -->
+<div class="bg-surface-container-low group flex flex-col md:flex-row justify-between p-8 rounded-xl transition-all hover:bg-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="near_me">near_me</span>
+<span class="font-headline font-bold text-tertiary uppercase tracking-widest text-xs">Focused Transitions (1m - 5m)</span>
+</div>
+<h4 class="text-4xl font-display font-black">45m 12s</h4>
+<p class="text-on-surface-variant font-medium">12 transition tasks recorded</p>
+</div>
+<div class="mt-6 md:mt-0 flex items-center gap-4">
+<div class="h-2 w-32 bg-outline-variant/30 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[35%]"></div>
+</div>
+<span class="timer-font font-bold text-on-surface-variant">35%</span>
+</div>
+</div>
+<!-- Deep Work -->
+<div class="bg-surface-container-low group flex flex-col md:flex-row justify-between p-8 rounded-xl transition-all hover:bg-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary" data-icon="psychology">psychology</span>
+<span class="font-headline font-bold text-primary uppercase tracking-widest text-xs">Deep Work (5m+)</span>
+</div>
+<h4 class="text-4xl font-display font-black">3h 15m</h4>
+<p class="text-on-surface-variant font-medium">4 sustained flow blocks</p>
+</div>
+<div class="mt-6 md:mt-0 flex items-center gap-4">
+<div class="h-2 w-32 bg-outline-variant/30 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[50%]"></div>
+</div>
+<span class="timer-font font-bold text-on-surface-variant">50%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="pt-8 pb-12 flex flex-col items-center">
+<button class="w-full h-16 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold text-xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="call_split">call_split</span>
+                Split Activity
+            </button>
+<p class="mt-4 text-on-surface-variant text-sm font-medium">Last synced: 2 minutes ago</p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#f7f9ff]/80 dark:bg-slate-950/80 backdrop-blur-xl rounded-t-[0.75rem]" style="box-shadow: 0px 24px 48px rgba(23, 28, 34, 0.06);">
+<div class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 p-2 hover:bg-[#f0f4fc] dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase mt-1">Sessions</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#0969da] text-white rounded-[0.75rem] px-5 py-2.5 shadow-md scale-105">
+<span class="material-symbols-outlined" data-icon="bar_chart_4_bars">bar_chart_4_bars</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase mt-1">Stats</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 p-2 hover:bg-[#f0f4fc] dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase mt-1">Trends</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424753] dark:text-slate-400 p-2 hover:bg-[#f0f4fc] dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[12px] font-semibold tracking-wide uppercase mt-1">Profile</span>
+</div>
+</nav>
+</body></html>
