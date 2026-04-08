@@ -76,17 +76,25 @@ function saveDbToStorage(): void {
 }
 
 export async function saveSession(session: Session): Promise<void> {
+  console.log("[database] saveSession called with:", session);
   if (!db) {
+    console.log("[database] db not initialized, calling initDatabase");
     await initDatabase();
   }
 
   try {
+    console.log("[database] Running INSERT with:", session);
     db!.run(
       `INSERT OR REPLACE INTO sessions (id, categoryId, title, date, time, duration) VALUES (?, ?, ?, ?, ?, ?)`,
       [session.id, session.categoryId, session.title, session.date, session.time, session.duration]
     );
+    console.log("[database] Insert completed");
     saveDbToStorage();
     console.log("[database] Session saved:", session.id);
+    
+    // Verify the save worked
+    const verify = await getAllSessions();
+    console.log("[database] Verified sessions count:", verify.length);
   } catch (error) {
     console.error("[database] Failed to save session:", error);
     throw error;

@@ -160,7 +160,7 @@ function CircularDial({ value, onChange, maxValue = 60 }: CircularDialProps) {
         <circle cx="140" cy="140" r="30" fill="#f7f9ff" stroke="#0051ae" strokeWidth="3" />
       </svg>
       
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="absolute inset-0 flex items-start justify-center pointer-events-none pt-14">
         <div className="text-center">
           <div className="font-mono text-5xl font-black text-[#171c22]">
             {value}
