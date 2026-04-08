@@ -433,16 +433,15 @@ export default function ActiveSteepTimer({
 
           <div className="mb-6">
             <p className="text-sm font-bold text-[#424753] mb-3">Quick Select (1-5 min)</p>
-            <div className="flex justify-center gap-3">
-              {QUICK_TIMES.map((mins) => (
-                <QuickTimeButton
-                  key={mins}
-                  minutes={mins}
-                  selected={useQuickTime && dialMinutes === mins}
-                  onClick={() => handleQuickTimeSelect(mins)}
-                />
-              ))}
-            </div>
+             <div className="flex justify-center gap-3">
+               {QUICK_TIMES.map((mins) => (
+                 <QuickTimeButton
+                   minutes={mins}
+                   selected={useQuickTime && dialMinutes === mins}
+                   onClick={() => handleQuickTimeSelect(mins)}
+                 />
+               ))}
+             </div>
           </div>
 
           {isRunning && (
@@ -451,11 +450,35 @@ export default function ActiveSteepTimer({
             </div>
           )}
 
-          {sessionSaved && (
-            <div className="mb-4 px-4 py-2 bg-[#0a6148] text-white rounded-full font-bold text-sm">
-              Session saved!
-            </div>
-          )}
+           {sessionSaved && (
+             <div className="mb-4 px-4 py-2 bg-[#0a6148] text-white rounded-full font-bold text-sm">
+               Session saved!
+             </div>
+           )}
+           
+           <div className="mb-4">
+             <button 
+               onClick={() => {
+                 const testSession = {
+                   id: `test-${Date.now()}`,
+                   categoryId: selectedCategory.id,
+                   title: selectedCategory.name,
+                   date: 'Today',
+                   time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+                   duration: 1,
+                   notes: 'Test session'
+                 };
+                 saveSession(testSession).then(() => {
+                   console.log('[test] Manual test session saved');
+                   setSessionSaved(true);
+                   setTimeout(() => setSessionSaved(false), 3000);
+                 });
+               }}
+               className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+             >
+               Test Save Session (1 min)
+             </button>
+           </div>
 
           <div className="flex flex-col md:flex-row justify-center gap-4 max-w-xl mx-auto">
             {!isRunning ? (

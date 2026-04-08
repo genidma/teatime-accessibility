@@ -33,7 +33,13 @@ export async function initDatabase(): Promise<void> {
 
   try {
     const SQL = await initSqlJs({
-      locateFile: (file) => `https://sql.js.org/dist/${file}`,
+      locateFile: (file) => {
+        // In development, use local path; in production (built), use the bundled file
+        if (typeof window !== 'undefined' && window.location.origin.includes('localhost')) {
+          return `/node_modules/sql.js/dist/sql-wasm.wasm`;
+        }
+        return `sql-wasm.wasm`; // Will be copied to dist by electron-builder
+      },
     });
 
     // Try to load existing database from localStorage
