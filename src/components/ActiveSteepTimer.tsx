@@ -55,15 +55,15 @@ type CircularDialProps = {
   value: number;
   onChange: (value: number) => void;
   maxValue?: number;
+  size?: 'short' | 'long';
 };
 
-function CircularDial({ value, onChange, maxValue = 60 }: CircularDialProps) {
+function CircularDial({ value, onChange, maxValue = 60, size = 'long' }: CircularDialProps) {
   const [isDragging, setIsDragging] = useState(false);
   const dialRef = useRef<SVGSVGElement>(null);
 
-  const radius = 120;
+  const radius = size === 'short' ? 35 : 120;
   const circumference = 2 * Math.PI * radius;
-  const progress = (value / maxValue) * circumference;
 
   const handleInteraction = (clientX: number, clientY: number) => {
     if (!dialRef.current) return;
@@ -81,11 +81,14 @@ function CircularDial({ value, onChange, maxValue = 60 }: CircularDialProps) {
     onChange(Math.max(1, Math.min(maxValue, newValue)));
   };
 
+  const svgSize = size === 'short' ? 100 : 280;
+  const center = svgSize / 2;
+
   return (
-    <div className="relative w-64 h-64 mx-auto mb-8">
+    <div className={`relative mx-auto mb-8 ${size === 'short' ? 'w-28 h-28 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : 'w-64 h-64'}`}>
       <svg 
         ref={dialRef}
-        viewBox="0 0 280 280" 
+        viewBox={`0 0 ${svgSize} ${svgSize}`} 
         className="w-full h-full cursor-pointer"
         onMouseDown={(e) => {
           setIsDragging(true);
@@ -106,70 +109,129 @@ function CircularDial({ value, onChange, maxValue = 60 }: CircularDialProps) {
         onTouchEnd={() => setIsDragging(false)}
       >
         <defs>
-          <linearGradient id="dialGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="dialGradientLong" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#0051ae" />
             <stop offset="100%" stopColor="#0969da" />
+          </linearGradient>
+          <linearGradient id="dialGradientShort" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0a6148" />
+            <stop offset="100%" stopColor="#0d9668" />
           </linearGradient>
         </defs>
         
         <circle 
-          cx="140" 
-          cy="140" 
+          cx={center} 
+          cy={center} 
           r={radius} 
-          fill="none" 
+          fill={size === 'short' ? '#f7f9ff' : 'none'} 
           stroke="#e4e8f0" 
-          strokeWidth="12"
+          strokeWidth={size === 'short' ? 4 : 12}
         />
         
-        <circle 
-          cx="140" 
-          cy="140" 
-          r={radius} 
-          fill="none" 
-          stroke="url(#dialGradient)" 
-          strokeWidth="12"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference - progress}
-          transform="rotate(-90 140 140)"
-          className="transition-all duration-150"
-        />
+        {size === 'long' && (
+          <>
+            <circle 
+              cx={center} 
+              cy={center} 
+              r={radius} 
+              fill="none" 
+              stroke="url(#dialGradientLong)" 
+              strokeWidth="12"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference - (value / maxValue) * circumference}
+              transform={`rotate(-90 ${center} ${center})`}
+              className="transition-all duration-150"
+            />
+            
+            {Array.from({ length: maxValue }).map((_, i) => {
+              const angle = (i / maxValue) * 360;
+              const rad = angle * Math.PI / 180;
+              const x1 = center + (radius - 20) * Math.cos(rad);
+              const y1 = center + (radius - 20) * Math.sin(rad);
+              const x2 = center + (radius - 10) * Math.cos(rad);
+              const y2 = center + (radius - 10) * Math.sin(rad);
+              
+              if (i % 5 === 0) {
+                return (
+                  <line 
+                    key={i}
+                    x1={x1} y1={y1} x2={x2} y2={y2}
+                    stroke="#0051ae"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                );
+              }
+              return null;
+            })}
+          </>
+        )}
         
-        {Array.from({ length: maxValue }).map((_, i) => {
-          const angle = (i / maxValue) * 360;
-          const rad = angle * Math.PI / 180;
-          const x1 = 140 + (radius - 20) * Math.cos(rad);
-          const y1 = 140 + (radius - 20) * Math.sin(rad);
-          const x2 = 140 + (radius - 10) * Math.cos(rad);
-          const y2 = 140 + (radius - 10) * Math.sin(rad);
-          
-          if (i % 5 === 0) {
-            return (
-              <line 
-                key={i}
-                x1={x1} y1={y1} x2={x2} y2={y2}
-                stroke="#0051ae"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            );
-          }
-          return null;
-        })}
-        
-        <circle cx="140" cy="140" r="30" fill="#f7f9ff" stroke="#0051ae" strokeWidth="3" />
+        {size === 'short' && (
+          <>
+            <circle 
+              cx={center} 
+              cy={center} 
+              r={radius} 
+              fill="none" 
+              stroke="url(#dialGradientShort)" 
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference - (value / maxValue) * circumference}
+              transform={`rotate(-90 ${center} ${center})`}
+              className="transition-all duration-150"
+            />
+            
+            {/* Short dial tick marks every minute */}
+            {Array.from({ length: maxValue }).map((_, i) => {
+              const angle = (i / maxValue) * 360;
+              const rad = angle * Math.PI / 180;
+              const x1 = center + (radius - 6) * Math.cos(rad);
+              const y1 = center + (radius - 6) * Math.sin(rad);
+              const x2 = center + (radius - 3) * Math.cos(rad);
+              const y2 = center + (radius - 3) * Math.sin(rad);
+              
+              return (
+                <line 
+                  key={i}
+                  x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="#0a6148"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+          </>
+        )}
       </svg>
       
-      <div className="absolute inset-0 flex items-start justify-center pointer-events-none pt-14">
-        <div className="text-center">
-          <div className="font-mono text-5xl font-black text-[#171c22]">
-            {value}
-          </div>
-          <div className="text-sm font-bold text-[#424753] uppercase tracking-wider">
-            min
+      {size === 'long' && (
+        <div className="absolute top-24 left-0 right-0 flex justify-center pointer-events-none">
+          <div className="text-center">
+            <div className="font-mono text-5xl font-black text-[#171c22]">
+              {value}
+            </div>
+            <div className="text-sm font-bold text-[#424753] uppercase tracking-wider">
+              min
+            </div>
           </div>
         </div>
-      </div>
+      )}
+      
+      {size === 'short' && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="text-center">
+            <div className="font-mono text-2xl font-black text-[#0a6148]">
+              {value}
+            </div>
+            <div className="text-xs font-bold text-[#0a6148] uppercase tracking-wider">
+              min
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
