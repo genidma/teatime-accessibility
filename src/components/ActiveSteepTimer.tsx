@@ -14,7 +14,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { initDatabase, saveSession } from '../lib/database';
+import { initDatabase, saveSession } from './sqlite';
 
 export type SessionCategory = {
   id: string;
