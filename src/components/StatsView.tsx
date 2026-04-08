@@ -127,7 +127,7 @@ export default function StatsView() {
     async function loadSessions() {
       try {
         await initDatabase();
-        const dbSessions = getAllSessions();
+        const dbSessions = await getAllSessions();
         setSessions(dbSessions.length > 0 ? dbSessions : MOCK_SESSIONS);
       } catch (e) {
         setSessions(MOCK_SESSIONS);

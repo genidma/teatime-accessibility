@@ -227,7 +227,7 @@ export default function ActiveSteepTimer({
     initDatabase().catch(console.error);
   }, []);
 
-  const handleTimerComplete = useCallback(() => {
+  const handleTimerComplete = useCallback(async () => {
     console.log('Timer complete! Saving session...', selectedCategory, dialMinutes);
     const now = new Date();
     const session = {
@@ -239,7 +239,7 @@ export default function ActiveSteepTimer({
       duration: dialMinutes,
       notes: ''
     };
-    saveSession(session);
+    await saveSession(session);
     setSessionSaved(true);
     setTimeout(() => setSessionSaved(false), 3000);
     handleReset();
