@@ -1,0 +1,15 @@
+node:internal/process/promises:391
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+Error: ELOOP: too many symbolic links encountered, stat 'standardpath/build-dir/var/run/udev/watch/19'
+Emitted 'error' event on FSWatcher instance at:
+    at FSWatcher._handleError (file://standardpath/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:23896:10)
+    at NodeFsHandler._addToNodeFs (file://standardpath/node_modules/vite/dist/node/chunks/dep-Dq2t6Dq0.js:22711:18) {
+  errno: -40,
+  code: 'ELOOP',
+  syscall: 'stat',
+  path: 'standardpath/build-dir/var/run/udev/watch/19'
+}
+
+Node.js v20.19.4

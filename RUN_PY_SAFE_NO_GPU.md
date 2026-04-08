@@ -13,7 +13,7 @@ These commands run the script and only produce the text-based prioritization out
 Recommended (use the virtualenv Python directly):
 
 ```bash
-/vms_and_github/Github/teatime-accessibility/teatime-venv/bin/python3 bin/teatime-tasks-priority-test.py
+standardpath/teatime-venv/bin/python3 bin/teatime-tasks-priority-test.py
 ```
 
 Or activate the venv first, then run:
@@ -48,7 +48,7 @@ Generate the Gantt and attempt an auto-open (the script will copy the file to `/
 
 ```bash
 # use venv python so pandas/plotly are available; this will generate the chart
-OPEN_GANTT=1 BROWSER_NAME=chromium OPEN_GANTT_SERVER=1 /vms_and_github/Github/teatime-accessibility/teatime-venv/bin/python3 -u bin/teatime-tasks-priority-test.py
+OPEN_GANTT=1 BROWSER_NAME=chromium OPEN_GANTT_SERVER=1 standardpath/teatime-venv/bin/python3 -u bin/teatime-tasks-priority-test.py
 ```
 
 By default, the Gantt generation will show a limited initial set of tasks to avoid overwhelming the chart. To show all tasks in the Gantt, set:
@@ -64,7 +64,7 @@ Manual safe view options (if you prefer manual control):
 
 ```bash
 # from the repository root
-python3 -m http.server --directory /vms_and_github/Github/teatime-accessibility 8000
+python3 -m http.server --directory standardpath 8000
 
 # then launch Chromium with GPU-disabled flags (adjust path as needed):
 /snap/bin/chromium \
