@@ -468,11 +468,10 @@ export default function ActiveSteepTimer({
                    duration: 1,
                    notes: 'Test session'
                  };
-                 saveSession(testSession).then(() => {
-                   console.log('[test] Manual test session saved');
-                   setSessionSaved(true);
-                   setTimeout(() => setSessionSaved(false), 3000);
-                 });
+                 saveSession(testSession);
+                 console.log('[test] Manual test session saved');
+                 setSessionSaved(true);
+                 setTimeout(() => setSessionSaved(false), 3000);
                }}
                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
              >

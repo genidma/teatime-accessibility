@@ -4,7 +4,7 @@ import ActiveSteepTimer, { DEFAULT_CATEGORIES } from './components/ActiveSteepTi
 import SessionHistoryList from './components/SessionHistoryList';
 import StatsView from './components/StatsView';
 import ProfileView from './components/ProfileView';
-import { getCategoryStats, getWeeklyActivity, getProductiveRange, getHeatmapData } from './components/sqlite';
+import { getCategoryStats, getWeeklyActivity, getProductiveRange, getHeatmapData, getTodaySessions } from './components/sqlite';
 import { 
   BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend 
@@ -215,7 +215,18 @@ function TrendsView() {
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('timer');
-  const [sessionsCompleted] = useState(3);
+  const [sessionsCompleted, setSessionsCompleted] = useState(0);
+
+  useEffect(() => {
+    if (currentView === 'timer') {
+      try {
+        const today = getTodaySessions();
+        setSessionsCompleted(today.length);
+      } catch (e) {
+        console.error("Failed to load today sessions", e);
+      }
+    }
+  }, [currentView]);
 
   const renderView = () => {
     switch (currentView) {
