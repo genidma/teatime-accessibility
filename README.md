@@ -154,6 +154,12 @@ Data also backs up to browser localStorage.
 npm install
 ```
 
+**"Failed to resolve import 'recharts'" or "Could not resolve 'react-is'" error in Vite?**
+If you encounter this when running the frontend, especially across a VM or WSL, you may need to force install the charting dependencies to satisfy strict peer dependency requirements:
+```bash
+npm install recharts react-is --save --legacy-peer-deps
+```
+
 **Want to test timer is saving?**
 1. Open DevTools (F12) → Console tab
 2. Run a 1-minute timer
