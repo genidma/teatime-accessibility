@@ -1,9 +1,14 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { ArrowLeft, Settings, Zap, Flame, Target } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getCategoryStyle, type CategoryStyle } from './categories';
-import { initDatabase, getAllSessions, type Session } from '../lib/database';
+import {
+  getAllSessions,
+  getSessionDateLabel,
+  initDatabase,
+  subscribeToSessionChanges,
+  type Session,
+} from '../lib/database';
 
 const MOCK_SESSIONS: Session[] = [
   {
@@ -120,7 +125,7 @@ function WeeklySummaryCard({
 }: { 
   label: string; 
   value: string; 
-  icon: React.ReactNode; 
+  icon: ReactNode; 
   colorClass: string;
 }) {
   return (
@@ -158,14 +163,18 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
         setLoading(false);
       }
     }
+
     loadSessions();
+    return subscribeToSessionChanges(loadSessions);
   }, []);
 
   const groupedSessions = sessions.reduce((acc, session) => {
-    if (!acc[session.date]) {
-      acc[session.date] = [];
+    const dateLabel = getSessionDateLabel(session);
+
+    if (!acc[dateLabel]) {
+      acc[dateLabel] = [];
     }
-    acc[session.date].push(session);
+    acc[dateLabel].push(session);
     return acc;
   }, {} as Record<string, Session[]>);
 
@@ -238,10 +247,9 @@ export default function SessionHistoryList({ onBack }: SessionHistoryListProps) 
               </h3>
               <div className="space-y-3">
                 {groupedSessions[date].map((session) => (
-                  <SessionCard 
-                    key={session.id} 
-                    session={session}
-                  />
+                  <div key={session.id}>
+                    <SessionCard session={session} />
+                  </div>
                 ))}
               </div>
             </div>

@@ -1,8 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { ArrowLeft, Settings, Zap, Flame, Target, TrendingUp, Brain, Sparkles, Heart, Clock, Calendar, BarChart3 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getCategoryStyle } from './categories';
-import { initDatabase, getAllSessions, type Session } from '../lib/database';
+import {
+  getAllSessions,
+  initDatabase,
+  isSessionFromToday,
+  subscribeToSessionChanges,
+  type Session,
+} from '../lib/database';
 
 const MOCK_SESSIONS: Session[] = [
   { id: '1', categoryId: 'deep-work', title: 'Deep Work', date: 'Today', time: '10:30 AM', duration: 60 },
@@ -24,7 +30,7 @@ function StatCard({
 }: { 
   label: string; 
   value: string; 
-  icon: React.ReactNode; 
+  icon: ReactNode; 
   colorClass: string;
   bgColor?: string;
 }) {
@@ -133,10 +139,12 @@ export default function StatsView() {
         setSessions(MOCK_SESSIONS);
       }
     }
+
     loadSessions();
+    return subscribeToSessionChanges(loadSessions);
   }, []);
   
-  const todaySessions = sessions.filter(s => s.date === 'Today');
+  const todaySessions = sessions.filter(isSessionFromToday);
   const totalMinutes = sessions.reduce((sum, s) => sum + s.duration, 0);
   const totalHours = Math.floor(totalMinutes / 60);
   const totalMins = totalMinutes % 60;
@@ -149,6 +157,9 @@ export default function StatsView() {
     acc[session.categoryId].duration += session.duration;
     return acc;
   }, {} as Record<string, { sessions: number; duration: number }>);
+  const categoryEntries = Object.entries(categoryBreakdown) as Array<
+    [string, { sessions: number; duration: number }]
+  >;
 
   return (
     <div className="min-h-screen bg-[#f7f9ff] text-[#171c22] font-sans pb-32">
@@ -241,13 +252,14 @@ export default function StatsView() {
         <section className="mb-12">
           <h3 className="text-3xl font-bold tracking-tight mb-8">Today's Steeps</h3>
           <div className="space-y-4">
-            {Object.entries(categoryBreakdown).map(([categoryId, data]) => (
-              <CategoryBreakdown 
-                key={categoryId}
-                categoryId={categoryId}
-                sessions={data.sessions}
-                totalDuration={data.duration}
-              />
+            {categoryEntries.map(([categoryId, data]) => (
+              <div key={categoryId}>
+                <CategoryBreakdown
+                  categoryId={categoryId}
+                  sessions={data.sessions}
+                  totalDuration={data.duration}
+                />
+              </div>
             ))}
           </div>
         </section>

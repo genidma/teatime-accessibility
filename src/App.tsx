@@ -4,7 +4,15 @@ import ActiveSteepTimer, { DEFAULT_CATEGORIES } from './components/ActiveSteepTi
 import SessionHistoryList from './components/SessionHistoryList';
 import StatsView from './components/StatsView';
 import ProfileView from './components/ProfileView';
-import { getCategoryStats, getWeeklyActivity, getProductiveRange, getHeatmapData, getTodaySessions } from './components/sqlite';
+import {
+  getCategoryStats,
+  getHeatmapData,
+  getProductiveRange,
+  getTodaySessions,
+  getWeeklyActivity,
+  initDatabase,
+  subscribeToSessionChanges,
+} from './lib/database';
 import { 
   BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend 
@@ -47,33 +55,37 @@ function TrendsView() {
   const [heatmap, setHeatmap] = useState<{date: string, count: number}[]>([]);
   
   useEffect(() => {
-    // 1. Category Allocation
-    const stats = getCategoryStats();
-    const mappedAllocation = stats.map(s => {
-      const cat = DEFAULT_CATEGORIES.find(c => c.id === s.categoryId);
-      // Strip Tailwind classes to get hex colors for Recharts
-      let hexColor = '#424753'; // default gray
-      if (cat?.bgColor.includes('0969da')) hexColor = '#0969da';
-      else if (cat?.bgColor.includes('2e7a5f')) hexColor = '#2e7a5f';
-      else if (cat?.bgColor.includes('fd8a42')) hexColor = '#fd8a42';
-      
-      return {
-        name: cat?.name || s.categoryId,
-        value: s.duration,
-        color: hexColor
-      };
+    async function loadTrends() {
+      await initDatabase();
+
+      const stats = await getCategoryStats();
+      const mappedAllocation = stats.map((s) => {
+        const cat = DEFAULT_CATEGORIES.find((c) => c.id === s.categoryId);
+        let hexColor = '#424753';
+        if (cat?.bgColor.includes('0969da')) hexColor = '#0969da';
+        else if (cat?.bgColor.includes('2e7a5f')) hexColor = '#2e7a5f';
+        else if (cat?.bgColor.includes('fd8a42')) hexColor = '#fd8a42';
+        
+        return {
+          name: cat?.name || s.categoryId,
+          value: s.duration,
+          color: hexColor
+        };
+      });
+
+      setAllocation(mappedAllocation);
+      setWeekly(await getWeeklyActivity());
+      setProductiveRange(await getProductiveRange());
+      setHeatmap(await getHeatmapData());
+    }
+
+    loadTrends().catch((error) => {
+      console.error('Failed to load trends', error);
+      setAllocation([]);
+      setWeekly([]);
+      setProductiveRange('No data');
+      setHeatmap([]);
     });
-    setAllocation(mappedAllocation);
-    
-    // 2. Weekly Bar
-    const weekData = getWeeklyActivity();
-    setWeekly(weekData);
-
-    // 3. Productive Range
-    setProductiveRange(getProductiveRange());
-
-    // 4. Heatmap
-    setHeatmap(getHeatmapData());
   }, []);
 
   const totalSessions = useMemo(() => heatmap.reduce((acc, curr) => acc + curr.count, 0), [heatmap]);
@@ -218,14 +230,21 @@ export default function App() {
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
 
   useEffect(() => {
-    if (currentView === 'timer') {
+    async function loadTodaySessions() {
       try {
-        const today = getTodaySessions();
+        await initDatabase();
+        const today = await getTodaySessions();
         setSessionsCompleted(today.length);
       } catch (e) {
-        console.error("Failed to load today sessions", e);
+        console.error('Failed to load today sessions', e);
       }
     }
+
+    if (currentView === 'timer') {
+      loadTodaySessions();
+    }
+
+    return subscribeToSessionChanges(loadTodaySessions);
   }, [currentView]);
 
   const renderView = () => {

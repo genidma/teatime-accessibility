@@ -296,10 +296,11 @@ export default function ActiveSteepTimer({
       id: `session-${Date.now()}`,
       categoryId: selectedCategory.id,
       title: selectedCategory.name,
-      date: 'Today',
+      date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
       time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
       duration: dialMinutes,
-      notes: ''
+      notes: '',
+      createdAt: now.toISOString(),
     };
     await saveSession(session);
     setSessionSaved(true);
@@ -459,14 +460,16 @@ export default function ActiveSteepTimer({
            <div className="mb-4">
              <button 
                onClick={() => {
+                 const now = new Date();
                  const testSession = {
                    id: `test-${Date.now()}`,
                    categoryId: selectedCategory.id,
                    title: selectedCategory.name,
-                   date: 'Today',
-                   time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+                   date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
+                   time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
                    duration: 1,
-                   notes: 'Test session'
+                   notes: 'Test session',
+                   createdAt: now.toISOString(),
                  };
                  saveSession(testSession);
                  console.log('[test] Manual test session saved');
