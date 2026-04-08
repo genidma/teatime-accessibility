@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('TeaTime App', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.clear();
+    });
+  });
+
   test('app loads and shows timer page', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByText('Active Steep')).toBeVisible();
@@ -48,5 +54,24 @@ test.describe('TeaTime App', () => {
     await page.goto('/');
     await page.locator('nav').getByText('Profile').click();
     await expect(page.getByText('Preferences')).toBeVisible();
+  });
+
+  test('timer session save flows into sessions stats and trends', async ({ page }) => {
+    await page.goto('/');
+
+    await page.getByRole('button', { name: /test save session/i }).click();
+    await expect(page.getByText('Session saved!')).toBeVisible();
+
+    await page.locator('nav').getByText('Sessions').click();
+    await expect(page.getByText('Test session')).toBeVisible();
+    await expect(page.getByText('Deep Work')).toBeVisible();
+
+    await page.locator('nav').getByText('Stats').click();
+    await expect(page.getByText('0h 1m').first()).toBeVisible();
+    await expect(page.getByText('1 Sessions')).toBeVisible();
+
+    await page.locator('nav').getByText('Trends').click();
+    await expect(page.getByText('No category data yet. Complete some sessions!')).not.toBeVisible();
+    await expect(page.getByText('Hit your first session to start the chain!')).not.toBeVisible();
   });
 });
