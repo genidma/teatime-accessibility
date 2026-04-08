@@ -165,7 +165,7 @@ function TrendsView() {
                    <div 
                     key={i} 
                     className={`w-3 h-3 rounded-sm ${bgClass}`}
-                    title={dayData ? \`\${dayData.date}: \${dayData.count} sessions\` : 'No activity'}
+                    title={dayData ? `${dayData.date}: ${dayData.count} sessions` : 'No activity'}
                    />
                  );
                })
