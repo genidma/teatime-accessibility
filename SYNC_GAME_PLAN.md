@@ -37,14 +37,32 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
 - [x] Click "Continue" to go to project overview
 
 **Step 2: Enable Authentication**
-- [ ] In left sidebar, click "Authentication"
-- [ ] Click "Get started" button
-- [ ] Click "Sign-in method" tab
-- [ ] Enable required providers:
-  - [ ] **Email/Password**: Enable and optionally enable email link as alternative
-  - [ ] **Google**: Enable (recommended for easy login)
-  - [ ] **GitHub** (optional): Enable for developer convenience
-- [ ] Save changes
+
+- [ ] **Navigate to Authentication**
+  - [ ] In the Firebase Console left sidebar, click on **"Authentication"**
+  - [ ] If not visible, expand the sidebar using the three-line menu icon (☰) in the top-left corner
+  - [ ] Look for the Authentication icon (key 🔒 or person 👤)
+
+- [ ] **Start Setting Up**
+  - [ ] On the Authentication screen, click the **"Get started"** button (blue button in center)
+  - [ ] This enables the Authentication service for your project
+
+- [ ] **Configure Sign-in Methods**
+  - [ ] Click on the **"Sign-in method"** tab (near top, next to "Users")
+  - [ ] Enable **Email/Password**:
+    - [ ] Find "Email/Password" in the list
+    - [ ] Toggle it to **"Enabled"**
+    - [ ] Optionally enable "Email link" as an alternative login method
+    - [ ] Scroll down and click **"Save"**
+  - [ ] Enable **Google** (recommended):
+    - [ ] Scroll to the Google provider
+    - [ ] Toggle it to **"Enabled"**
+    - [ ] Scroll down and click **"Save"**
+  - [ ] **Important Notes**:
+    - [ ] After each provider, always scroll down and click **"Save"** to apply changes
+    - [ ] For production, configure OAuth consent screen in Google Cloud Console
+    - [ ] Firebase free tier includes auth for up to 10,000 active users/month
+    - [ ] If a provider is missing, click "Add method" at bottom for more options
 
 **Step 3: Create Firestore Database**
 - [ ] In left sidebar, click "Firestore Database"
