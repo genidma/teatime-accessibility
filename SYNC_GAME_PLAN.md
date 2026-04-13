@@ -27,14 +27,14 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
 #### Firebase Project Setup
 
 **Step 1: Create Firebase Project**
-- [ ] Go to [Firebase Console](https://console.firebase.google.com/)
-- [ ] Click "Start new project" or "Create project"
-- [ ] Enter project name: "TeaTime-Sync"
-- [ ] Select default account if prompted
-- [ ] Accept Firebase terms and conditions
-- [ ] Click "Create project"
-- [ ] Wait for project creation to complete (few minutes)
-- [ ] Click "Continue" to go to project overview
+- [x] note: using the gv...mul.. account: Go to [Firebase Console](https://console.firebase.google.com/)
+- [x] Click "Start new project" or "Create project"
+- [x] Enter project name: "electron-main-dev-sync"
+- [x] Select default account if prompted
+- [x] Accept Firebase terms and conditions
+- [x] Click "Create project"
+- [x] Wait for project creation to complete (few minutes)
+- [x] Click "Continue" to go to project overview
 
 **Step 2: Enable Authentication**
 - [ ] In left sidebar, click "Authentication"
