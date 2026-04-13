@@ -73,8 +73,8 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
 - [ ] Click "Enable" (or "Create") and wait for the database to provision
 
 **Step 4: Configure Firestore Security Rules**
-- [ ] In Firestore Database section, click "Rules" tab
-- [ ] Replace default rules with initial rules (will be updated in code):
+- [x] In Firestore Database section, click "Rules" tab
+- [x] Replace default rules with initial rules (will be updated in code):
   ```
   rules_version = '2';
   service cloud.firestore {
@@ -85,14 +85,15 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
     }
   }
   ```
-- [ ] Click "Publish" (will be updated later when implementing security logic)
+- [x] Click "Publish" (will be updated later when implementing security logic)
 
 **Step 5: Get Firebase Config for Application**
-- [ ] In project settings (gear icon), go to "Your apps" section
-- [ ] Click the web icon ("</>") to register web app
-- [ ] Enter app nickname (e.g., "TeaTime-Web")
-- [ ] Click "Register app"
-- [ ] Copy the Firebase config object:
+- [ ] Click on **Project Overview** (house icon in the top left)
+- [ ] Look for "Get started by adding Firebase to your app" and click the modern **Web icon (`</>`)**
+  - *(If you don't see this, click the gear icon ⚙ -> **Project settings** -> scroll down to "Your apps" -> click `</>`)*
+- [ ] Enter an App nickname (e.g., "TeaTime-Web")
+- [ ] Leave "Also set up Firebase Hosting" unchecked and click **Register app**
+- [ ] Under "Add Firebase SDK", look for the code block. Copy just the `firebaseConfig` object:
   ```javascript
   const firebaseConfig = {
     apiKey: "AIza...",
@@ -103,7 +104,7 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
     appId: "1:123456789:web:abcdef123456"
   };
   ```
-- [ ] Save this config in your application (e.g., `src/firebase/config.ts`)
+- [ ] Click **Continue to console**. (We'll save this config in the codebase when we proceed to the code-writing phase.)
 
 **Step 6: Enable Required APIs**
 - [ ] In project settings, go to "Cloud Firestore" tab
