@@ -65,12 +65,12 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
   - [x] If a provider is missing, click "Add method" at bottom for more options
   
  **Step 3: Create Firestore Database**
-- [ ] In left sidebar, click "Firestore Database"
-- [ ] Click "Create database" button
-- [ ] Choose "Start in production mode"
+- [ ] In left sidebar under "Build", click "Firestore Database"
+- [ ] Click the "Create database" button on the landing page
+- [ ] Choose "Start in production mode" (This responsibly locks your DB; we'll add custom rules connecting it in Step 4)
 - [ ] Click "Next"
-- [ ] Set up security rules (initially use default rules, will be updated later in code)
-- [ ] Click "Enable"
+- [ ] Select a Cloud Firestore location (Default is fine, e.g., nam5. Note: this cannot be changed later)
+- [ ] Click "Enable" (or "Create") and wait for the database to provision
 
 **Step 4: Configure Firestore Security Rules**
 - [ ] In Firestore Database section, click "Rules" tab
