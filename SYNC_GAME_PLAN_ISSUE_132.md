@@ -256,4 +256,5 @@ These rules ensure users can only access documents where `userId` matches their 
 *Last updated: 2026-04-13T17:53:54-04:00*
     * created by kilo ai code [link](kilo.ai/install)
     * via: arcee trinity large thinking model [link](https://www.arcee.ai/trinity#trinity-large-thinking)
+    * co-steward @Antigravity
     * collaborator @genidma 
