@@ -1089,8 +1089,6 @@ class TeaTimerApp(Gtk.Application):
                 }}
                 """
             self.css_provider.load_from_data(css.encode())
-        except Exception as e:
-            print(f"Error applying font size: {e}")
 
     def _update_font_size_announcement(self):
         """Updates the accessible description for the font size buttons."""
