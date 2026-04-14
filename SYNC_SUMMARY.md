@@ -1,6 +1,6 @@
 # Note: This document outlines steps to be undertaken via [issue #134](https://github.com/genidma/teatime-accessibility/issues/134) directly via GitHub
 
-## Repository Restructuring Plan - Sync Across Devices
+## Repository Restructuring Plan - kc-rhythm
 
 **Author:** kilo (Trinity Large Thinking model by Arcee AI)  
 **Requestor/Collaborator:** @genidma
@@ -34,11 +34,11 @@ git push origin --delete electron-photosensitive-dev 2>/dev/null || true
 ### 2. Create New Standalone Repository from `electron-main-dev`
 - [ ] Create repository from `electron-main-dev` branch:
   ```bash
-  gh repo create teatime-sync --description "TeaTime Sync - Cross-Device Cloud Sync" --public --source=.
+  gh repo create kc-rhythm --description "Cross-Device Cloud Sync - kc-rhythm" --public --source=.
   ```
 - [ ] Push to new repository:
   ```bash
-  git push teatime-sync electron-main-dev:main --force
+  git push kc-rhythm electron-main-dev:main --force
   ```
 - [ ] Set upstream tracking:
   ```bash
@@ -46,7 +46,7 @@ git push origin --delete electron-photosensitive-dev 2>/dev/null || true
   ```
 
 *Alternative name options:*
-- [ ] `kcresonance` (distinct)
+- [ ] `kc-rhythm` (distinct)
 - [ ] `teatime-electron-sync` (specific)
 
 ### 3. Update README and Documentation
@@ -55,7 +55,7 @@ git push origin --delete electron-photosensitive-dev 2>/dev/null || true
 - [ ] Update any references to old repository
 
 ### 4. Verify Repository
-- [ ] Clone test: `git clone https://github.com/yourusername/teatime-sync.git`
+- [ ] Clone test: `git clone https://github.com/yourusername/kc-rhythm.git`
 - [ ] Verify history: `git log --oneline` (should show `electron-main-dev` history)
 
 ### 5. Clean Up Local Branches
