@@ -4,6 +4,7 @@ import ActiveSteepTimer, { DEFAULT_CATEGORIES } from './components/ActiveSteepTi
 import SessionHistoryList from './components/SessionHistoryList';
 import StatsView from './components/StatsView';
 import ProfileView from './components/ProfileView';
+import SyncStatus from './components/SyncStatus';
 import { useAuth } from './hooks/useAuth';
 import {
   getCategoryStats,
@@ -278,6 +279,7 @@ export default function App() {
 
   return (
     <div>
+      <SyncStatus />
       {renderView()}
       
       <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#f7f9ff]/80 backdrop-blur-xl rounded-t-[0.75rem]" style={{ boxShadow: '0px 24px 48px rgba(23, 28, 34, 0.06)' }}>

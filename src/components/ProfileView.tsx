@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Settings, Zap, User, Clock, Flame, Target, Calendar, Bell, Moon, Palette, Shield, HelpCircle, LogOut, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Settings, Zap, User, Clock, Flame, Target, Calendar, Bell, Moon, Palette, Shield, HelpCircle, LogOut, Mail, Lock, AlertCircle, Loader2, Download } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../hooks/useAuth';
+import { exportDataToCsv } from '../lib/database';
 
 function SettingItem({ 
   icon: Icon, 
@@ -221,7 +222,12 @@ export default function ProfileView() {
                 <SettingItem icon={Shield} label="Privacy" />
                 <SettingItem icon={HelpCircle} label="Help & Support" />
                 <SettingItem 
-                  icon={LogOut} 
+                  icon={Download} 
+                  label="Export Data (CSV)" 
+                  onClick={exportDataToCsv}
+                />
+                <SettingItem 
+                  icon={LogOut}  
                   label="Sign Out" 
                   onClick={async () => {
                     await logout();

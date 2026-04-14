@@ -639,3 +639,32 @@ export async function getProductiveRange(): Promise<string> {
 
   return `${formatHour(startHour)} - ${formatHour(endHour)}`;
 }
+
+export async function exportDataToCsv(): Promise<void> {
+  const sessions = await getAllSessions();
+  if (sessions.length === 0) {
+    alert("No data available to export.");
+    return;
+  }
+
+  const headers = ['id', 'categoryId', 'title', 'date', 'time', 'duration_minutes', 'notes', 'createdAt'];
+  const rows = sessions.map(s => 
+    [s.id, s.categoryId, s.title, s.date, s.time, s.duration, s.notes || '', s.createdAt || ''].map(val => {
+      const sanitized = String(val).replace(/"/g, '""');
+      return `"${sanitized}"`;
+    }).join(',')
+  );
+  
+  const csvContent = [headers.join(','), ...rows].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'teatime_sessions.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
