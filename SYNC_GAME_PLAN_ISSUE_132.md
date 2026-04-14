@@ -104,7 +104,7 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
     appId: "1:123456789:web:abcdef123456"
   };
   ```
-- [ ] Click **Continue to console**. (We'll save this config in the codebase when we proceed to the code-writing phase.)
+- [x] Click **Continue to console**. (We'll save this config in the codebase when we proceed to the code-writing phase.)
 
 **Step 6: Enable Required APIs (Auto-Completed)**
 - [x] In modern Firebase, the Firestore and Auth APIs are automatically enabled the moment you use Steps 2 and 3 to initialize them in the console! Nothing left to configure here.
