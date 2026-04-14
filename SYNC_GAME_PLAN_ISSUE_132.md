@@ -106,11 +106,8 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
   ```
 - [ ] Click **Continue to console**. (We'll save this config in the codebase when we proceed to the code-writing phase.)
 
-**Step 6: Enable Required APIs**
-- [ ] In project settings, go to "Cloud Firestore" tab
-- [ ] Ensure the Firestore API is enabled (usually enabled by default)
-- [ ] Go to Google Cloud Console for your project
-- [ ] Enable "Firebase Authentication API" if not already enabled
+**Step 6: Enable Required APIs (Auto-Completed)**
+- [x] In modern Firebase, the Firestore and Auth APIs are automatically enabled the moment you use Steps 2 and 3 to initialize them in the console! Nothing left to configure here.
 
 **Step 7: Set Up Billing (if needed)**
 - [ ] Firebase free tier is generous, but if you exceed limits:

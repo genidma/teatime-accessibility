@@ -131,3 +131,12 @@ release/
 *.tsbuildinfo
 .eslintcache
 .stylelintcache
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# AI Extensions
+.claude/
+.continue/
