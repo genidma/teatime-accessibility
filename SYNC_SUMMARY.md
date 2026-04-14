@@ -9,35 +9,29 @@
 
 **Checklist:**
 
-### 1. Clean Up Stale Repositories
+### 1. Clean Up Stale Branches in Main Repository
+Before creating the new repository, clean up stale branches in the main repository:
 
-**Using GitHub CLI (recommended):**
+**Using Git CLI:**
 ```bash
-# List all repositories to identify stale ones
-gh repo list --repo genidma/teatime-accessibility --limit 20
+# List branches to identify stale ones
+git branch -r | grep electron
 
-# Delete obsolete electron repositories
-gh repo delete electron-kcresonance --confirm
-gh repo delete electron-photosensitive-dev --confirm
+# Delete stale branches locally (if they exist)
+git push origin --delete electron-kcresonance 2>/dev/null || true
+git push origin --delete electron-photosensitive-dev 2>/dev/null || true
 ```
 
-**Alternative: Using GitHub Website**
-1. Go to GitHub.com and navigate to your repositories
-2. For each stale repository (e.g., `electron-kcresonance`, `electron-photosensitive-dev`):
-   - Open the repository page
-   - Click **Settings** (gear icon)
-   - Scroll down and click **"Delete this repository"**
-   - Type the repository name to confirm deletion
+**Using GitHub Website:**
+1. Go to GitHub.com and navigate to the main repository
+2. Click on **"Branches"** in the left sidebar
+3. Find stale branches (`electron-kcresonance`, `electron-photosensitive-dev`)
+4. Click the **trash can icon** next to each branch to delete
+5. Confirm deletion
 
-**Important**: Ensure you no longer need these repositories before deleting. Export any necessary data first.
+**Important**: Ensure you no longer need these branches before deleting. Export any necessary data first.
 
-*Checklist:*
-- [ ] Identify stale electron repositories
-- [ ] Delete `electron-kcresonance` (if exists)
-- [ ] Delete `electron-photosensitive-dev` (if exists)
-- [ ] Verify deletion in GitHub UI
-
-### 2. Create New Standalone Repository
+### 2. Create New Standalone Repository from `electron-main-dev`
 - [ ] Create repository from `electron-main-dev` branch:
   ```bash
   gh repo create teatime-sync --description "TeaTime Sync - Cross-Device Cloud Sync" --public --source=.
