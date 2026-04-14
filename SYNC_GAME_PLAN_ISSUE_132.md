@@ -134,11 +134,11 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
   ```
 
 **Step 10: Verify Setup**
-- [ ] tackle #133 and then come back here
-- [ ] Run your application
-- [ ] Check Firebase Console for active users and database writes
-- [ ] Verify authentication is working
-- [ ] Check Firestore for session documents being created
+- [x] tackle #133 and then come back here
+- [x] Run your application (`npm run dev`)
+- [x] Check Firebase Console for active users (Success!)
+- [x] Verify authentication is working natively via the Profile tab
+- [ ] Check Firestore for session documents being created (Pending Phase 2: Data Sync)
 
 #### 1. Data Model
 
@@ -200,11 +200,11 @@ These rules ensure users can only access documents where `userId` matches their 
 ### Implementation Tasks
 
 #### Phase 1: Setup & Authentication
-- [ ] 1. Create Firebase project and enable required services
-- [ ] 2. Install Firebase SDK: `npm install firebase`
-- [ ] 3. Create Firebase config file with API keys
-- [ ] 4. Implement authentication UI (login, logout, signup)
-- [ ] 5. Add authentication state persistence
+- [x] 1. Create Firebase project and enable required services
+- [x] 2. Install Firebase SDK: `npm install firebase`
+- [x] 3. Create Firebase config file with API keys
+- [x] 4. Implement authentication UI (login, logout, signup)
+- [x] 5. Add authentication state persistence
 
 #### Phase 2: Data Sync Infrastructure
 - [ ] 6. Initialize Firestore in the app
