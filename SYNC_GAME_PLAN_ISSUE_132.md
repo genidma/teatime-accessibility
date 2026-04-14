@@ -109,19 +109,17 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
 **Step 6: Enable Required APIs (Auto-Completed)**
 - [x] In modern Firebase, the Firestore and Auth APIs are automatically enabled the moment you use Steps 2 and 3 to initialize them in the console! Nothing left to configure here.
 
-**Step 7: Set Up Billing (if needed)**
-- [ ] Firebase free tier is generous, but if you exceed limits:
-- [ ] In project settings, click "Use Google Cloud Platform"
-- [ ] Enable billing if needed (free tier should be sufficient for development)
+**Step 7: Set Up Billing (if needed) [SKIPPED]**
+- [x] Firebase free tier is extremely generous. You do NOT need to set up billing to use the required features for this app. We are entirely skipping this step.
 
-**Step 8: Install Firebase SDK**
-- [ ] In your project terminal:
+**Step 8: Install Firebase SDK (Completed via AI Assistant)**
+- [x] In your project terminal:
   ```bash
   npm install firebase
   ```
 
-**Step 9: Initialize Firebase in Code**
-- [ ] Create initialization file (e.g., `src/firebase/index.ts`):
+**Step 9: Initialize Firebase in Code (Completed via AI Assistant)**
+- [x] Create initialization file (e.g., `src/firebase/index.ts`):
   ```typescript
   import { initializeApp } from 'firebase/app';
   import { getAuth } from 'firebase/auth';
