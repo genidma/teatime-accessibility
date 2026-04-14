@@ -4,6 +4,7 @@ import ActiveSteepTimer, { DEFAULT_CATEGORIES } from './components/ActiveSteepTi
 import SessionHistoryList from './components/SessionHistoryList';
 import StatsView from './components/StatsView';
 import ProfileView from './components/ProfileView';
+import { useAuth } from './hooks/useAuth';
 import {
   getCategoryStats,
   getHeatmapData,
@@ -12,6 +13,8 @@ import {
   getWeeklyActivity,
   initDatabase,
   subscribeToSessionChanges,
+  syncUserData,
+  stopSync
 } from './lib/database';
 import { 
   BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -228,6 +231,15 @@ function TrendsView() {
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('timer');
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      syncUserData(user.uid);
+    } else {
+      stopSync();
+    }
+  }, [user]);
 
   useEffect(() => {
     async function loadTodaySessions() {

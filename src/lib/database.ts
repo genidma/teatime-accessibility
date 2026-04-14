@@ -1,4 +1,6 @@
 import initSqlJs, { Database } from 'sql.js';
+import { auth, db as firestore } from '../firebase/index';
+import { collection, doc, setDoc, query, where, onSnapshot } from 'firebase/firestore';
 
 export interface Session {
   id: string;
@@ -9,6 +11,8 @@ export interface Session {
   duration: number;
   notes?: string;
   createdAt?: string;
+  updatedAt?: string;
+  userId?: string;
 }
 
 declare global {
@@ -186,6 +190,15 @@ function ensureSchema(database: Database): void {
       WHERE createdAt IS NULL
     `);
   }
+
+  if (!columns.includes('updatedAt')) {
+    database.run('ALTER TABLE sessions ADD COLUMN updatedAt TEXT');
+    database.run('UPDATE sessions SET updatedAt = createdAt WHERE updatedAt IS NULL');
+  }
+
+  if (!columns.includes('userId')) {
+    database.run('ALTER TABLE sessions ADD COLUMN userId TEXT');
+  }
 }
 
 function getSessionCount(database: Database): number {
@@ -222,8 +235,8 @@ function migrateLegacySessions(database: Database): void {
       const normalizedDate = normalizeDateValue(typeof session.date === 'string' ? session.date : undefined, createdAt);
 
       database.run(
-        `INSERT OR REPLACE INTO sessions (id, categoryId, title, date, time, duration, notes, createdAt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT OR REPLACE INTO sessions (id, categoryId, title, date, time, duration, notes, createdAt, updatedAt, userId)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           session.id,
           session.categoryId,
@@ -233,6 +246,8 @@ function migrateLegacySessions(database: Database): void {
           Number(session.duration ?? 0),
           session.notes ?? null,
           createdAt,
+          createdAt,
+          null
         ],
       );
     });
@@ -343,7 +358,7 @@ async function getDatabase(): Promise<Database> {
 
 function mapSessionRows(database: Database): Session[] {
   const results = database.exec(`
-    SELECT id, categoryId, title, date, time, duration, notes, createdAt
+    SELECT id, categoryId, title, date, time, duration, notes, createdAt, updatedAt, userId
     FROM sessions
   `);
 
@@ -361,6 +376,8 @@ function mapSessionRows(database: Database): Session[] {
       duration: Number(row[5]),
       notes: row[6] ? String(row[6]) : undefined,
       createdAt: row[7] ? String(row[7]) : undefined,
+      updatedAt: row[8] ? String(row[8]) : undefined,
+      userId: row[9] ? String(row[9]) : undefined,
     }))
     .sort((left, right) => {
       const leftTime = parseSessionDate(left)?.getTime() ?? 0;
@@ -372,12 +389,16 @@ function mapSessionRows(database: Database): Session[] {
 export async function saveSession(session: Session): Promise<void> {
   const database = await getDatabase();
   const createdAt = session.createdAt ?? new Date().toISOString();
+  const updatedAt = session.updatedAt ?? new Date().toISOString();
   const normalizedDate = normalizeDateValue(session.date, createdAt);
+  
+  const currentUser = auth.currentUser;
+  const sessionUserId = session.userId || (currentUser ? currentUser.uid : undefined);
 
   try {
     database.run(
-      `INSERT OR REPLACE INTO sessions (id, categoryId, title, date, time, duration, notes, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT OR REPLACE INTO sessions (id, categoryId, title, date, time, duration, notes, createdAt, updatedAt, userId)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         session.id,
         session.categoryId,
@@ -387,14 +408,102 @@ export async function saveSession(session: Session): Promise<void> {
         session.duration,
         session.notes ?? null,
         createdAt,
+        updatedAt,
+        sessionUserId ?? null,
       ],
     );
 
     await persistDatabase();
+    
+    // Sync to Firestore if logged in
+    if (currentUser && sessionUserId === currentUser.uid) {
+      try {
+        const docRef = doc(firestore, 'sessions', session.id);
+        const payload = {
+          ...session,
+          date: normalizedDate,
+          createdAt,
+          updatedAt,
+          userId: currentUser.uid
+        };
+        // Clean out undefined values for Firebase
+        Object.keys(payload).forEach(key => payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]);
+        
+        await setDoc(docRef, payload, { merge: true });
+      } catch (fbErr) {
+        console.error('[database] Failed to push to Firestore:', fbErr);
+      }
+    }
+    
     emitSessionsChanged();
   } catch (error) {
     console.error('[database] Failed to save session:', error);
     throw error;
+  }
+}
+
+// Global Sync State
+let activeSyncListener: (() => void) | null = null;
+
+export async function syncUserData(userId: string): Promise<void> {
+  try {
+    const database = await getDatabase();
+    
+    // 1. Wipe previous local data upon login as requested (ensures clean slate for Firebase hydration)
+    database.run('DELETE FROM sessions');
+    await persistDatabase();
+    
+    // 2. Realtime sync down from Firestore
+    if (activeSyncListener) {
+      activeSyncListener();
+    }
+    
+    const q = query(collection(firestore, 'sessions'), where('userId', '==', userId));
+    
+    activeSyncListener = onSnapshot(q, async (snapshot) => {
+      let changed = false;
+      const dbInstance = await getDatabase();
+      
+      snapshot.docChanges().forEach((change) => {
+         const data = change.doc.data() as Session;
+         if (change.type === 'added' || change.type === 'modified') {
+           dbInstance.run(
+              `INSERT OR REPLACE INTO sessions (id, categoryId, title, date, time, duration, notes, createdAt, updatedAt, userId)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                data.id,
+                data.categoryId,
+                data.title,
+                data.date,
+                data.time,
+                data.duration,
+                data.notes ?? null,
+                data.createdAt ?? new Date().toISOString(),
+                data.updatedAt ?? new Date().toISOString(),
+                data.userId ?? userId,
+              ]
+           );
+           changed = true;
+         }
+      });
+      
+      if (changed) {
+        await persistDatabase();
+        emitSessionsChanged();
+      }
+    }, (error) => {
+      console.error('[database] Realtime sync error:', error);
+    });
+    
+  } catch (err) {
+    console.error('[database] Sync initialization failed:', err);
+  }
+}
+
+export function stopSync() {
+  if (activeSyncListener) {
+    activeSyncListener();
+    activeSyncListener = null;
   }
 }
 

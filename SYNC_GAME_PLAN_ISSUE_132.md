@@ -184,12 +184,23 @@ service cloud.firestore {
 
 These rules ensure users can only access documents where `userId` matches their authenticated ID.
 
-#### 4. Sync Logic
+#### 4. Sync Logic (Offline-First Architecture)
 
-- **Initial sync**: Download all user sessions on first login
-- **Real-time sync**: Listen to Firestore updates for live synchronization
-- **Push changes**: Save sessions to Firestore on any modification
-- **Conflict resolution**: Use `updatedAt` timestamps (last write wins)
+**How it works seamlessly across multiple machines:**
+Because the app is built on a **Local-First (Offline-First) Architecture**, writing to SQLite *alongside* Firebase is actually much safer and significantly faster than relying purely on a cloud database. 
+
+1. **Zero Latency**: When you hit "Stop" on a timer, it saves to SQLite in 0 milliseconds and updates the UI instantly. If you are on an airplane with no Wi-Fi, the app continues to work flawlessly. 
+2. **Background Sync**: After the local save, it silently pushes the payload to Firebase. If you have no internet, it fails safely, but your data is preserved locally.
+3. **Cross-Device Real-Time Magic**: If Machine A and Machine B are both open:
+   - Machine A saves a session locally and pushes it to Firebase.
+   - Firebase instantly pushes an `onSnapshot` trigger down to Machine B in the background.
+   - Machine B receives the packet, performs an `INSERT OR REPLACE` into its own local SQLite storage, and refreshes the graphs. 
+
+This ensures that the app never suffers from network lag while maintaining perfect synchronization across all global instances!
+
+- **Initial sync**: Wipes local SQLite on login (per Electron branch logic) and downloads all user sessions.
+- **Real-time sync**: Listens to Firestore updates (`onSnapshot`) for live synchronization.
+- **Push changes**: Saves sessions to local SQLite first, then pushes to Firestore.
 
 #### 5. UI Components
 
