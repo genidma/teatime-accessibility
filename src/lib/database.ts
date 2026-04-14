@@ -26,6 +26,31 @@ declare global {
 }
 
 export const SESSIONS_CHANGED_EVENT = 'teatime:sessions-changed';
+export const SYNC_STATUS_CHANGED_EVENT = 'teatime:sync-status-changed';
+
+export type SyncState = 'idle' | 'syncing';
+let currentSyncState: SyncState = 'idle';
+const syncStateListeners = new Set<(state: SyncState) => void>();
+
+function setSyncState(state: SyncState) {
+  if (currentSyncState !== state) {
+    currentSyncState = state;
+    syncStateListeners.forEach(listener => listener(state));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(SYNC_STATUS_CHANGED_EVENT));
+    }
+  }
+}
+
+export function subscribeToSyncStatus(onChange: (state: SyncState) => void): () => void {
+  syncStateListeners.add(onChange);
+  onChange(currentSyncState);
+  return () => syncStateListeners.delete(onChange);
+}
+
+export function getSyncStatus(): SyncState {
+  return currentSyncState;
+}
 
 const DB_STORAGE_KEY = 'teatime_db';
 const LEGACY_SESSIONS_KEY = 'teatime_sessions';
@@ -417,6 +442,7 @@ export async function saveSession(session: Session): Promise<void> {
     
     // Sync to Firestore if logged in
     if (currentUser && sessionUserId === currentUser.uid) {
+      setSyncState('syncing');
       try {
         const docRef = doc(firestore, 'sessions', session.id);
         const payload = {
@@ -430,8 +456,8 @@ export async function saveSession(session: Session): Promise<void> {
         Object.keys(payload).forEach(key => payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]);
         
         await setDoc(docRef, payload, { merge: true });
-      } catch (fbErr) {
-        console.error('[database] Failed to push to Firestore:', fbErr);
+      } finally {
+        setSyncState('idle');
       }
     }
     
@@ -458,9 +484,12 @@ export async function syncUserData(userId: string): Promise<void> {
       activeSyncListener();
     }
     
+    setSyncState('syncing');
+    
     const q = query(collection(firestore, 'sessions'), where('userId', '==', userId));
     
     activeSyncListener = onSnapshot(q, async (snapshot) => {
+      setSyncState('syncing');
       let changed = false;
       const dbInstance = await getDatabase();
       
@@ -491,8 +520,10 @@ export async function syncUserData(userId: string): Promise<void> {
         await persistDatabase();
         emitSessionsChanged();
       }
+      setSyncState('idle');
     }, (error) => {
       console.error('[database] Realtime sync error:', error);
+      setSyncState('idle');
     });
     
   } catch (err) {
