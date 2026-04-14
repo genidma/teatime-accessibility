@@ -1,6 +1,6 @@
 note: This document was the game plan for issue #132, which is now 100% completed and merged into the main branch. The link for issue #132 is: https://github.com/genidma/teatime-accessibility/issues/132
 
-# Cross-Device Sync Implementation - Game Plan (100% COMPLETED)
+# Cross-Device Sync Implementation - Game Plan (Phase 1-3 COMPLETED)
 
 ## Issue #132: Enable Sync Across Devices
 
@@ -233,12 +233,12 @@ This ensures that the app never suffers from network lag while maintaining perfe
 - [x] 14. Handle offline scenarios gracefully (Enable Firebase Offline Database cache)
 - [x] 15. Add data export functionality (JSON/CSV)
 
-#### Phase 4: Testing & Polish
-- [x] 16. Write Playwright tests for sync flows *(Skipped - Deferred to `kc-resonance` fresh branch)*
-- [x] 17. Test conflict scenarios *(Manually verified via SQLite architecture)*
-- [x] 18. Test offline behavior *(Manually verified via UI indicators)*
-- [x] 19. Add loading states and error handling *(Added to AuthForm & Profile)*
-- [x] 20. Polish UI with appropriate feedback messages *(Added Sync Pill)*
+#### Phase 4: Repository Split & Automated Testing
+- [ ] 16. **Relocate**: Move the codebase to its own repository as defined in [#134](https://github.com/genidma/teatime-accessibility/issues/134)
+- [ ] 17. **Automate**: Implement full-stack sync verification using **Playwright** inside the new repo
+- [ ] 18. **Cleanup**: Delete stale electron-related repositories/branches in the current project
+- [ ] 19. **Conflict Testing**: Formally verify the 3-way merge logic under high-latency simulations
+- [ ] 20. **Final UX Polish**: Ensure all sync indicators and data export flows are production-ready
 
 ### Timeline Estimate
 - **hour 1**: Firebase setup, authentication, initial data fetch

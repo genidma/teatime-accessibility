@@ -1,4 +1,4 @@
-# Note: This document outlines steps to be undertaken via [issue #134](https://github.com/genidma/teatime-accessibility/issues/134) directly via GitHub
+# Note: This document outlines steps to be undertaken via [issue #134]
 
 ## Next Steps
 
