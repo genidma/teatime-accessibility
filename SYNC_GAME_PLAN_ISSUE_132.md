@@ -134,6 +134,7 @@ Use **Firebase Free Tier** as the backend service due to its ease of implementat
   ```
 
 **Step 10: Verify Setup**
+- [ ] tackle #133 and then come back here
 - [ ] Run your application
 - [ ] Check Firebase Console for active users and database writes
 - [ ] Verify authentication is working
