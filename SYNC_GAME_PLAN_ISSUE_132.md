@@ -218,17 +218,17 @@ This ensures that the app never suffers from network lag while maintaining perfe
 - [x] 5. Add authentication state persistence
 
 #### Phase 2: Data Sync Infrastructure
-- [ ] 6. Initialize Firestore in the app
-- [ ] 7. Create data mappers for Session ↔ Firestore document conversion
-- [ ] 8. Implement initial data fetch on login
-- [ ] 9. Set up real-time listeners for session changes
-- [ ] 10. Implement session save with Firestore writes
+- [x] 6. Initialize Firestore in the app
+- [x] 7. Create data mappers for Session ↔ Firestore document conversion
+- [x] 8. Implement initial data fetch on login
+- [x] 9. Set up real-time listeners for session changes
+- [x] 10. Implement session save with Firestore writes
 
 #### Phase 3: Conflict Handling & UX
-- [ ] 11. Add `updatedAt` timestamps to session objects
-- [ ] 12. Implement conflict detection using timestamps
+- [x] 11. Add `updatedAt` timestamps to session objects
+- [x] 12. Implement conflict detection using timestamps
 - [ ] 13. Add sync status indicator in UI (top bar or settings)
-- [ ] 14. Handle offline scenarios gracefully
+- [ ] 14. Handle offline scenarios gracefully (Enable Firebase Offline Database cache)
 - [ ] 15. Add data export functionality (JSON/CSV)
 
 #### Phase 4: Testing & Polish
