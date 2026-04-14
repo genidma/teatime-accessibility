@@ -10,9 +10,32 @@
 **Checklist:**
 
 ### 1. Clean Up Stale Repositories
-- [ ] Delete obsolete electron repositories:
-  - [ ] `electron-kcresonance`
-  - [ ] `electron-photosensitive-dev`
+
+**Using GitHub CLI (recommended):**
+```bash
+# List all repositories to identify stale ones
+gh repo list --repo genidma/teatime-accessibility --limit 20
+
+# Delete obsolete electron repositories
+gh repo delete electron-kcresonance --confirm
+gh repo delete electron-photosensitive-dev --confirm
+```
+
+**Alternative: Using GitHub Website**
+1. Go to GitHub.com and navigate to your repositories
+2. For each stale repository (e.g., `electron-kcresonance`, `electron-photosensitive-dev`):
+   - Open the repository page
+   - Click **Settings** (gear icon)
+   - Scroll down and click **"Delete this repository"**
+   - Type the repository name to confirm deletion
+
+**Important**: Ensure you no longer need these repositories before deleting. Export any necessary data first.
+
+*Checklist:*
+- [ ] Identify stale electron repositories
+- [ ] Delete `electron-kcresonance` (if exists)
+- [ ] Delete `electron-photosensitive-dev` (if exists)
+- [ ] Verify deletion in GitHub UI
 
 ### 2. Create New Standalone Repository
 - [ ] Create repository from `electron-main-dev` branch:
