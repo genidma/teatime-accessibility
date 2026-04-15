@@ -3,15 +3,24 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+function getRequiredEnvVar(name: keyof ImportMetaEnv): string {
+  const value = import.meta.env[name];
+
+  if (!value) {
+    throw new Error(`[firebase] Missing required environment variable: ${name}`);
+  }
+
+  return value;
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCeQeBzYRICCexeiZvPhoQX5UBDLBc6ZWY",
-  authDomain: "electron-main-dev-sync.firebaseapp.com",
-  projectId: "electron-main-dev-sync",
-  storageBucket: "electron-main-dev-sync.firebasestorage.app",
-  messagingSenderId: "973402365427",
-  appId: "1:973402365427:web:158cc70d2f66e80f69c686",
-  measurementId: "G-87Y08LM8WC"
+  apiKey: getRequiredEnvVar("VITE_FIREBASE_API_KEY"),
+  authDomain: getRequiredEnvVar("VITE_FIREBASE_AUTH_DOMAIN"),
+  projectId: getRequiredEnvVar("VITE_FIREBASE_PROJECT_ID"),
+  storageBucket: getRequiredEnvVar("VITE_FIREBASE_STORAGE_BUCKET"),
+  messagingSenderId: getRequiredEnvVar("VITE_FIREBASE_MESSAGING_SENDER_ID"),
+  appId: getRequiredEnvVar("VITE_FIREBASE_APP_ID"),
+  measurementId: getRequiredEnvVar("VITE_FIREBASE_MEASUREMENT_ID"),
 };
 
 // Initialize Firebase Application
