@@ -41,6 +41,8 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        # Use the custom config to filter out gi.repository false positives
+        config-file: .github/codeql/codeql-config.yml
         # Keep the scan focused on the application code path that has been stable here.
         queries: security-and-quality
 
