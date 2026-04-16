@@ -36,9 +36,9 @@ apps:
 parts:
   teatime:
     plugin: dump
-    source: ..
+    source: .
     stage:
       - bin
     override-build: |
       craftctl default
-      chmod +x $CRAFT_PART_BUILD/bin/teatime.py
+      chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
