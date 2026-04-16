@@ -488,7 +488,7 @@ class StatisticsWindow(Gtk.Window):
             # Use idle_add to ensure the UI is fully initialized before starting
             GLib.idle_add(self._auto_start_timer)
 
-            self.window.add(main_box)
+            self.window.add(self.main_box)
 
         self.window.show_all()
 
