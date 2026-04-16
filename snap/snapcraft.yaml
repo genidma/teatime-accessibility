@@ -40,4 +40,5 @@ parts:
     stage:
       - bin
     override-build: |
-      craftctl build
+      craftctl default
+      chmod +x $CRAFT_PART_BUILD/bin/teatime.py
