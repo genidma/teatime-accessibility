@@ -44,7 +44,6 @@ class TeaTimerApp(Gtk.Application):
         self.font_scale_factor = DEFAULT_FONT_SCALE
         # Check if duration was set via environment variable
         import os
-        env_duration = os.environ.get('TEATIME_DURATION')
         # If seconds mode is active (developer/test), use duration as-is
         if getattr(self, 'use_seconds', False):
             self.last_duration = duration  # already in seconds
