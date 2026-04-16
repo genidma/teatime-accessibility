@@ -9,24 +9,17 @@ __pycache__/
 *.pyc
 
 # Distribution / packaging
+# The 'lib' directory seems to be for vendored dependencies, which is not a good practice.
+# Using a venv and requirements.txt is preferred.
 build/
 dist/
 *.egg-info/
-# TODO: Migrate legacy vendored dependencies to virtual environment.
-# Tracked in GitHub Issue: https://github.com/genidma/teatime-accessibility/issues/128
-# Action Items:
-# 1. Audit 'lib/' for unique patches or libraries not yet in requirements.txt.
-# 2. Add any missing dependencies to requirements.txt.
-# 3. Delete 'lib/' and 'lib64/' directories once the venv is verified.
 lib/
 lib64/
 
 # exported csv files
 *.csv
 
-# =============== #
-# Application-specific user data (not typically in repo, but good to ignore if it appears)
-teatime_stats.json
 # =============== #
 # Unity generated #
 # =============== #
@@ -119,7 +112,16 @@ npm-debug.log*
 package-lock.json
 yarn.lock
 
-# ====================== #
-# Test-generated output  #
-# ====================== #
-tests/atspi_dump.txt
+# AI tool configurations
+.claude/
+.continue/
+
+# Environment files
+.env.local
+
+# Build logs
+build_log.txt
+
+# Build outputs and cache
+release/
+tsconfig.tsbuildinfo
