@@ -5,7 +5,6 @@ Script to create a GIF from sprite frames.
 
 from PIL import Image
 import glob
-import os
 
 def create_gif():
     # Get all sprite frames
