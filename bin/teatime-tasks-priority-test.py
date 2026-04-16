@@ -427,8 +427,9 @@ def main():
                 try:
                     with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                         df.write((f"[{datetime.now().isoformat()}] Auto-open envs: OPEN_GANTT={open_env}, BROWSER_NAME={browser_override}, ALLOW_NO_SANDBOX={os.getenv('ALLOW_NO_SANDBOX')}\n").encode())
-                except Exception:
-                    pass
+                except Exception as e:
+                    # Best-effort debug logging must not interrupt execution.
+                    print(f"DEBUG: could not write /tmp/tt-gantt-debug.log: {e}")
                 try:
                     # Use filesystem path for subprocess invocations to avoid ERR_FILE_NOT_FOUND
                     file_path = os.path.abspath(gantt_path)
