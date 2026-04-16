@@ -44,5 +44,5 @@ parts:
       - gir1.2-gdkpixbuf-2.0
       - gir1.2-pango-1.0
     override-build: |
-      snapcraftctl build
-      chmod +x bin/teatime.py
+      craftctl default
+      chmod +x $CRAFT_PART_BUILD/bin/teatime.py
