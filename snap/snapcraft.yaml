@@ -13,6 +13,12 @@ description: |
 
 grade: stable
 confinement: strict
+title: Tea Time Accessibility
+contact: https://github.com/genidma/teatime-accessibility
+license: GPL-3.0
+website: https://github.com/genidma/teatime-accessibility
+issues: https://github.com/genidma/teatime-accessibility/issues
+source-code: https://github.com/genidma/teatime-accessibility
 
 apps:
   teatime-accessibility:
