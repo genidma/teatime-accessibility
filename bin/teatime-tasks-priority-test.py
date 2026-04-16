@@ -552,7 +552,7 @@ def main():
                                         server_cmd = [sys.executable, '-m', 'http.server', str(port)]
                                         try:
                                             # open the log file via fd, pass it to the subprocess, and close in parent
-                                            log_fd = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644)
+                                            log_fd = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
                                             try:
                                                 os.write(log_fd, (f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
                                                 server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=log_fd, stderr=log_fd)
