@@ -508,8 +508,8 @@ def main():
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Created {tmp_dir} and copied to {tmp_copy_path}\n").encode())
-                                    except Exception:
-                                        pass
+                                    except Exception as log_err:
+                                        print(f"Warning: failed to write debug log: {log_err}", file=sys.stderr)
                                 except Exception as e:
                                     # If copy fails, fall back to original file path but log clearly.
                                     print(f"Failed to copy gantt file to {tmp_copy_path}: {e}")
