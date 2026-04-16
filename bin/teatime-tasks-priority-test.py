@@ -616,8 +616,8 @@ def main():
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Launch failed: {e}\n").encode())
-                                    except Exception:
-                                        pass
+                                    except Exception as log_err:
+                                        print(f"Non-fatal: could not write debug log '/tmp/tt-gantt-debug.log': {log_err}", file=sys.stderr)
                         else:
                             try:
                                 webbrowser.get(browser_override).open_new_tab(file_url)
