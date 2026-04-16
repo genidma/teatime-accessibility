@@ -35,16 +35,26 @@ apps:
 
 parts:
   teatime:
-    plugin: dump
-    source: ..             # Go up to the root
-    source-depth: 1        # ONLY look at the top layer (prevents the crash loop)
-    source-filter:         # ONLY take the bin folder, ignore the rest
-      - bin/*
+    plugin: python
+    source: .
+    source-type: local
+    # We tell it specifically to look one level up for the files
+    build-environment:
+      - SNAPCRAFT_PART_SRC: .. 
+    build-packages:
+      - libgirepository1.0-dev
+      - libcairo2-dev
+      - pkg-config
+      - gcc
+    stage-packages:
+      - libgirepository-1.0-1
+      - libcairo2
+      - gir1.2-gtk-3.0
+      - gir1.2-gdkpixbuf-2.0
+      - gir1.2-pango-1.0
     override-build: |
       craftctl default
-      chmod +x $CRAFT_PART_INSTALL/bin/teatime.py  
-    python-packages:
-      - -r requirements.txt
+      chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
     stage:
       - bin
       - lib
