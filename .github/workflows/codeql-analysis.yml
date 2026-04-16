@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python', 'actions' ]
+        language: [ 'python', 'actions', 'csharp' ]
 
     steps:
     - name: Checkout repository
@@ -41,6 +41,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        build-mode: autobuild
         # Focus exclusively on Python analysis and skip unnecessary configurations
         queries: security-and-quality
 
