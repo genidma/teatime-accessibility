@@ -35,10 +35,12 @@ apps:
 
 parts:
   teatime:
-    plugin: dump
+    plugin: python
     source: .
+    python-packages:
+      - -r requirements.txt
     stage:
       - bin
-    override-build: |
-      craftctl default
-      chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
+      - lib
+      - share
+      - etc
