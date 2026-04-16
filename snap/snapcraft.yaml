@@ -52,12 +52,14 @@ parts:
       - gir1.2-pango-1.0
     override-build: |
       craftctl default
-      mkdir -p $CRAFT_PART_INSTALL/bin
-      cp $CRAFT_PROJECT_DIR/../bin/teatime.py $CRAFT_PART_INSTALL/bin/teatime.py
-      cp -r $CRAFT_PROJECT_DIR/../bin/teatime $CRAFT_PART_INSTALL/bin/teatime
-      chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
+      mkdir -p "$CRAFT_PART_INSTALL/bin" "$CRAFT_PART_INSTALL/assets"
+      cp "$CRAFT_PART_SRC/bin/teatime.py" "$CRAFT_PART_INSTALL/bin/teatime.py"
+      cp -r "$CRAFT_PART_SRC/bin/teatime" "$CRAFT_PART_INSTALL/bin/teatime"
+      cp -r "$CRAFT_PART_SRC/assets/." "$CRAFT_PART_INSTALL/assets/"
+      chmod +x "$CRAFT_PART_INSTALL/bin/teatime.py"
     stage:
       - bin
+      - assets
       - lib
       - share
       - etc
