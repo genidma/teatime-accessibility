@@ -35,19 +35,9 @@ apps:
 
 parts:
   teatime:
-    plugin: python
+    plugin: dump
     source: ..
-    build-packages:
-      - libgirepository1.0-dev
-      - libcairo2-dev
-      - pkg-config
-      - gcc
-      - gir1.2-gtk-3.0
-    stage-packages:
-      - libgirepository-1.0-1
-      - libcairo2
-      - gir1.2-gtk-3.0
-      - gir1.2-gdkpixbuf-2.0
-      - gir1.2-pango-1.0
+    stage:
+      - bin
     override-build: |
       craftctl build
