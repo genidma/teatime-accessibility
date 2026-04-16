@@ -551,11 +551,13 @@ def main():
                                         s.close()
                                         server_cmd = [sys.executable, '-m', 'http.server', str(port)]
                                         try:
-                                            # open the log file and keep the handle open for the server subprocess
-                                            server_logf = open(log_path, 'ab')
-                                            server_logf.write((f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
-                                            server_logf.flush()
-                                            server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=server_logf, stderr=server_logf)
+                                            # open the log file via fd, pass it to the subprocess, and close in parent
+                                            log_fd = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+                                            try:
+                                                os.write(log_fd, (f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
+                                                server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=log_fd, stderr=log_fd)
+                                            finally:
+                                                os.close(log_fd)
                                             # give server a moment to start
                                             time.sleep(0.2)
                                             http_url = f'http://127.0.0.1:{port}/gantt-chart.html'
@@ -567,7 +569,6 @@ def main():
                                                 pass
                                             # Replace file_url with http_url so Chromium opens HTTP endpoint
                                             file_url = http_url
-                                            # Note: server_logf intentionally not closed here so the server keeps writing to the file
                                             # And set a short timeout for server liveness check later if needed
                                         except Exception as e:
                                             print(f"Failed to start local HTTP server fallback: {e}")
