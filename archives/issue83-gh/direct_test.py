@@ -12,7 +12,9 @@ from gi.repository import Gtk, GLib
 
 class TestApp(TeaTimerApp):
     def __init__(self):
-        # Initialize without creating the full GUI
+        # Initialize superclass state first
+        super().__init__()
+        # Override for this direct test
         self.current_timer_duration = 5  # 5 minutes
         
     def test_logging(self):
