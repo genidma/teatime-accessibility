@@ -36,7 +36,7 @@ apps:
 parts:
   teatime:
     plugin: python
-    source: ..
+    source: .
     source-type: local
     build-packages:
       - libgirepository1.0-dev
@@ -55,7 +55,7 @@ parts:
       # The python plugin handles teatime.py via setup.py scripts.
       # We manually ensure the assets folder is copied to the snap's root-equivalent install dir.
       mkdir -p "$CRAFT_PART_INSTALL/assets"
-      cp -r "$CRAFT_PART_SRC/assets/." "$CRAFT_PART_INSTALL/assets/"
+      cp -rv assets/. "$CRAFT_PART_INSTALL/assets/"
     stage:
       - bin
       - assets
