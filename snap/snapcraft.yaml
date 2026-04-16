@@ -35,8 +35,14 @@ apps:
 
 parts:
   teatime:
-    plugin: python
-    source: .
+    plugin: dump
+    source: ..             # Go up to the root
+    source-depth: 1        # ONLY look at the top layer (prevents the crash loop)
+    source-filter:         # ONLY take the bin folder, ignore the rest
+      - bin/*
+    override-build: |
+      craftctl default
+      chmod +x $CRAFT_PART_INSTALL/bin/teatime.py  
     python-packages:
       - -r requirements.txt
     stage:
