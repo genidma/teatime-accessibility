@@ -51,11 +51,10 @@ parts:
       - gir1.2-gdkpixbuf-2.0
       - gir1.2-pango-1.0
     override-build: |
-      echo "=== CRAFT_PART_SRC root ==="
-      ls -la $CRAFT_PART_SRC/
       craftctl default
       mkdir -p $CRAFT_PART_INSTALL/bin
-      cp $CRAFT_PART_SRC/bin/teatime.py $CRAFT_PART_INSTALL/bin/teatime.py
+      cp $CRAFT_PROJECT_DIR/../bin/teatime.py $CRAFT_PART_INSTALL/bin/teatime.py
+      cp -r $CRAFT_PROJECT_DIR/../bin/teatime $CRAFT_PART_INSTALL/bin/teatime
       chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
     stage:
       - bin
