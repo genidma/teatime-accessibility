@@ -585,10 +585,6 @@ class TeaTimerApp(Gtk.Application):
         """Handles the activation of the about action."""
         self.show_about_dialog()
 
-    def on_toggle_sound_activated(self, action, parameter):
-        """Callback for sound toggle action."""
-        self.toggle_sound()
-
     def on_mini_mode_toggled(self, widget):
         """Callback for mini-mode toggle."""
         self.mini_mode = self.mini_mode_toggle.get_active()
