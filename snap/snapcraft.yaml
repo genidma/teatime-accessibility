@@ -52,6 +52,8 @@ parts:
       - gir1.2-pango-1.0
     override-build: |
       craftctl default
+      echo "=== CRAFT_PART_SRC contents ===" 
+      ls -la $CRAFT_PART_SRC/bin/
       mkdir -p $CRAFT_PART_INSTALL/bin
       cp $CRAFT_PART_SRC/bin/teatime.py $CRAFT_PART_INSTALL/bin/teatime.py
       chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
