@@ -53,7 +53,7 @@ parts:
     override-build: |
       craftctl default
       mkdir -p $CRAFT_PART_INSTALL/bin
-      cp $CRAFT_PART_SRC/teatime.py $CRAFT_PART_INSTALL/bin/teatime.py
+      cp $CRAFT_PART_SRC/bin/teatime.py $CRAFT_PART_INSTALL/bin/teatime.py
       chmod +x $CRAFT_PART_INSTALL/bin/teatime.py
     stage:
       - bin
