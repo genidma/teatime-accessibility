@@ -119,6 +119,9 @@ yarn.lock
 # Environment files
 .env.local
 
+# Build logs
+build_log.txt
+
 # Build outputs and cache
 release/
 tsconfig.tsbuildinfo
