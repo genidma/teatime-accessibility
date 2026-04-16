@@ -8,7 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'bin'))
 from teatime import TeaTimerApp
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib
 
 class TestApp(TeaTimerApp):
     def __init__(self):
