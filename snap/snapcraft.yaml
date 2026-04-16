@@ -36,16 +36,14 @@ apps:
 parts:
   teatime:
     plugin: python
-    source: .
+    source: ..
     source-type: local
-    # We tell it specifically to look one level up for the files
-    build-environment:
-      - SNAPCRAFT_PART_SRC: .. 
     build-packages:
       - libgirepository1.0-dev
       - libcairo2-dev
       - pkg-config
       - gcc
+      - gir1.2-gtk-3.0
     stage-packages:
       - libgirepository-1.0-1
       - libcairo2

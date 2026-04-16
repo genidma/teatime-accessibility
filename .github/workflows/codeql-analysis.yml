@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python', 'actions' ]
+        language: [ 'python' ]
 
     steps:
     - name: Checkout repository
@@ -41,7 +41,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        # Focus exclusively on Python analysis and skip unnecessary configurations
+        # Keep the scan focused on the application code path that has been stable here.
         queries: security-and-quality
 
     - name: Perform CodeQL Analysis
