@@ -111,3 +111,17 @@ npm-debug.log*
 .npm/
 package-lock.json
 yarn.lock
+
+# AI tool configurations
+.claude/
+.continue/
+
+# Environment files
+.env.local
+
+# Build logs
+build_log.txt
+
+# Build outputs and cache
+release/
+tsconfig.tsbuildinfo
