@@ -16,24 +16,24 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v6
+       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - name: Build Snap
-        uses: snapcore/action-build@v1
-        id: build
-        with:
-          path: .
+       - name: Build Snap
+         uses: snapcore/action-build@3bdaa03e1ba6bf59a65f84a751d943d549a54e79
+         id: build
+         with:
+           path: .
 
-      - name: Upload Snap Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: teatime-accessibility-snap
-          path: ${{ steps.build.outputs.snap }}
+       - name: Upload Snap Artifact
+         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+         with:
+           name: teatime-accessibility-snap
+           path: ${{ steps.build.outputs.snap }}
 
-      - name: Publish to Snap Store
-        # This step will only run if the SNAPCRAFT_TOKEN secret is present
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/photosensitive-version' || github.ref == 'refs/heads/kcresonance')
-        uses: snapcore/action-publish@v1
+       - name: Publish to Snap Store
+         # This step will only run if the SNAPCRAFT_TOKEN secret is present
+         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/photosensitive-version' || github.ref == 'refs/heads/kcresonance')
+         uses: snapcore/action-publish@214b86e5ca036ead1668c79afb81e550e6c54d40
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
         with:
