@@ -373,8 +373,8 @@ sudo snap install teatime-accessibility --channel=latest/stable
 sudo snap install teatime-accessibility --channel=photosensitive/stable
 ```
 
-### Flatpak Installation
-TeaTime Accessibility is also available as a Flatpak for sandboxed installation.
+### Flatpak Installation (not setup at the moment)
+the app is not on flatpak as of yet. the instructions below for flatpak only are not going to work at the moment. I apologize for the inconvenience this may cause. you can download the app directly via github or via snap store (snap craft by canonical), above.
 
 #### Standard Version (main branch)
 ```bash
