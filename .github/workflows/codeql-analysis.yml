@@ -29,7 +29,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.13'
+        python-version: '3.12'
 
     - name: Install system dependencies for PyGObject
       run: |
@@ -41,7 +41,9 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        # Focus exclusively on Python analysis and skip unnecessary configurations
+        # Use the custom config to filter out gi.repository false positives
+        config-file: .github/codeql/codeql-config.yml
+        # Keep the scan focused on the application code path that has been stable here.
         queries: security-and-quality
 
     - name: Perform CodeQL Analysis

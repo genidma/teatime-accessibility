@@ -15,7 +15,7 @@ import sys
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
+from gi.repository import Gtk, GLib, Gio, Gdk, GdkPixbuf
 
 import argparse
 
@@ -44,7 +44,6 @@ class TeaTimerApp(Gtk.Application):
         self.font_scale_factor = DEFAULT_FONT_SCALE
         # Check if duration was set via environment variable
         import os
-        env_duration = os.environ.get('TEATIME_DURATION')
         # If seconds mode is active (developer/test), use duration as-is
         if getattr(self, 'use_seconds', False):
             self.last_duration = duration  # already in seconds
@@ -60,7 +59,6 @@ class TeaTimerApp(Gtk.Application):
         self.css_provider = Gtk.CssProvider()
         self._stats_window = None
         self.rainbow_hue = 0
-        self._stats_window = None
         self.focus_hue = 0 # Hue for the focus glow, 0-359
         self.sprite_window = None  # Reference to sprite animation window
         self.sprite_frames = []    # Storage for sprite frames
@@ -585,10 +583,6 @@ class TeaTimerApp(Gtk.Application):
         """Handles the activation of the about action."""
         self.show_about_dialog()
 
-    def on_toggle_sound_activated(self, action, parameter):
-        """Callback for sound toggle action."""
-        self.toggle_sound()
-
     def on_mini_mode_toggled(self, widget):
         """Callback for mini-mode toggle."""
         self.mini_mode = self.mini_mode_toggle.get_active()
@@ -1089,8 +1083,6 @@ class TeaTimerApp(Gtk.Application):
                 }}
                 """
             self.css_provider.load_from_data(css.encode())
-        except Exception as e:
-            print(f"Error applying font size: {e}")
 
     def _update_font_size_announcement(self):
         """Updates the accessible description for the font size buttons."""

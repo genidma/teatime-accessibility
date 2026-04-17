@@ -1,0 +1,9 @@
+name: "TeaTime CodeQL Config"
+
+query-filters:
+  - exclude:
+      id: py/import-error
+      msg: "/^No module named gi.repository/"
+  - exclude:
+      id: py/unresolved-import
+      msg: "/^Unresolved import gi.repository/"

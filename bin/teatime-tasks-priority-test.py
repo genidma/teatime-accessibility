@@ -427,8 +427,9 @@ def main():
                 try:
                     with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                         df.write((f"[{datetime.now().isoformat()}] Auto-open envs: OPEN_GANTT={open_env}, BROWSER_NAME={browser_override}, ALLOW_NO_SANDBOX={os.getenv('ALLOW_NO_SANDBOX')}\n").encode())
-                except Exception:
-                    pass
+                except Exception as e:
+                    # Best-effort debug logging must not interrupt execution.
+                    print(f"DEBUG: could not write /tmp/tt-gantt-debug.log: {e}")
                 try:
                     # Use filesystem path for subprocess invocations to avoid ERR_FILE_NOT_FOUND
                     file_path = os.path.abspath(gantt_path)
@@ -507,8 +508,8 @@ def main():
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Created {tmp_dir} and copied to {tmp_copy_path}\n").encode())
-                                    except Exception:
-                                        pass
+                                    except Exception as log_err:
+                                        print(f"Warning: failed to write debug log: {log_err}", file=sys.stderr)
                                 except Exception as e:
                                     # If copy fails, fall back to original file path but log clearly.
                                     print(f"Failed to copy gantt file to {tmp_copy_path}: {e}")
@@ -551,11 +552,13 @@ def main():
                                         s.close()
                                         server_cmd = [sys.executable, '-m', 'http.server', str(port)]
                                         try:
-                                            # open the log file and keep the handle open for the server subprocess
-                                            server_logf = open(log_path, 'ab')
-                                            server_logf.write((f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
-                                            server_logf.flush()
-                                            server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=server_logf, stderr=server_logf)
+                                            # open the log file via fd, pass it to the subprocess, and close in parent
+                                            log_fd = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+                                            try:
+                                                os.write(log_fd, (f"[{datetime.now().isoformat()}] Starting local HTTP server: {' '.join(server_cmd)} (cwd={tmp_dir})\n").encode())
+                                                server_proc = subprocess.Popen(server_cmd, cwd=tmp_dir, stdout=log_fd, stderr=log_fd)
+                                            finally:
+                                                os.close(log_fd)
                                             # give server a moment to start
                                             time.sleep(0.2)
                                             http_url = f'http://127.0.0.1:{port}/gantt-chart.html'
@@ -567,7 +570,6 @@ def main():
                                                 pass
                                             # Replace file_url with http_url so Chromium opens HTTP endpoint
                                             file_url = http_url
-                                            # Note: server_logf intentionally not closed here so the server keeps writing to the file
                                             # And set a short timeout for server liveness check later if needed
                                         except Exception as e:
                                             print(f"Failed to start local HTTP server fallback: {e}")
@@ -614,8 +616,8 @@ def main():
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Launch failed: {e}\n").encode())
-                                    except Exception:
-                                        pass
+                                    except Exception as log_err:
+                                        print(f"Non-fatal: could not write debug log '/tmp/tt-gantt-debug.log': {log_err}", file=sys.stderr)
                         else:
                             try:
                                 webbrowser.get(browser_override).open_new_tab(file_url)

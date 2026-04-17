@@ -360,7 +360,8 @@ If you prefer to install manually:
    ```
 
 ### Snap Installation
-TeaTime Accessibility is available as a Snap package for easy installation on Ubuntu and other Linux distributions.
+* TeaTime Accessibility is available as a Snap package [link via snapcrafti.io](https://snapcraft.io/teatime-accessibility) for easy installation on Ubuntu and other Linux distributions.
+* this is the very first app that I have had the opportunity to publish on the snap store. I made a very brief blogpost about this, which can be found on my karma conscience dot org blog [here](https://karmaconscience.org/blog/tool-use/my-first-app-on-the-ubuntu-snap-store).
 
 #### Standard Version (main branch)
 ```bash
