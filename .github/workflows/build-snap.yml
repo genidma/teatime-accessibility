@@ -1,10 +1,11 @@
-name: Build Snap Package
+name: Build and Release Snap
 
 on:
   push:
     branches:
       - main
       - 'photosensitive-version'
+      - 'kcresonance'
 
 permissions:
   contents: read
@@ -28,3 +29,13 @@ jobs:
         with:
           name: teatime-accessibility-snap
           path: ${{ steps.build.outputs.snap }}
+
+      - name: Publish to Snap Store
+        # This step will only run if the SNAPCRAFT_TOKEN secret is present
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/photosensitive-version' || github.ref == 'refs/heads/kcresonance')
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: ${{ github.ref == 'refs/heads/main' && 'stable' || (github.ref == 'refs/heads/photosensitive-version' && 'beta' || 'edge') }}
