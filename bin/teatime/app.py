@@ -59,7 +59,6 @@ class TeaTimerApp(Gtk.Application):
         self.css_provider = Gtk.CssProvider()
         self._stats_window = None
         self.rainbow_hue = 0
-        self._stats_window = None
         self.focus_hue = 0 # Hue for the focus glow, 0-359
         self.sprite_window = None  # Reference to sprite animation window
         self.sprite_frames = []    # Storage for sprite frames
