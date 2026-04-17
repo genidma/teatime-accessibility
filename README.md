@@ -360,7 +360,7 @@ If you prefer to install manually:
    ```
 
 ### Snap Installation
-TeaTime Accessibility is available as a Snap package for easy installation on Ubuntu and other Linux distributions.
+TeaTime Accessibility is available as a Snap package [link via snapcrafti.io](https://snapcraft.io/teatime-accessibility) for easy installation on Ubuntu and other Linux distributions.
 
 #### Standard Version (main branch)
 ```bash
