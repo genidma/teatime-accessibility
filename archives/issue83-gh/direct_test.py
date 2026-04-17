@@ -11,10 +11,8 @@ gi.require_version("Gtk", "3.0")
 
 class TestApp(TeaTimerApp):
     def __init__(self):
-        # Initialize superclass state first
-        super().__init__()
-        # Override for this direct test
-        self.current_timer_duration = 5  # 5 minutes
+        # Initialize superclass state with direct-test duration
+        super().__init__(current_timer_duration=5)  # 5 minutes
         
     def test_logging(self):
         print("Testing _log_timer_completion directly...")
