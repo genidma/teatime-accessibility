@@ -782,7 +782,7 @@ class TeaTimerApp(Gtk.Application):
                 try:
                     print("\a", end="", flush=True)
                     return True
-                except:
+                except Exception:
                     return False
 
             strategies = [strategy_paplay, strategy_aplay, strategy_system_beep]
