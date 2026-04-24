@@ -2,5 +2,5 @@
 requests
 pandas
 plotly
-setuptools>=80.9.0
+setuptools>=82.0.1
 wheel
