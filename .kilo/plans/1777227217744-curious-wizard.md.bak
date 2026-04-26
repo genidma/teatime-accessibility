@@ -182,6 +182,57 @@ The electron-main-dev branch contains the Firebase integration work that needs t
 
 ---
 
+## Implementation Roadmap
+
+### Phase 1: Core Decoupling (Weeks 1-2) - ❌ NOT STARTED
+- [ ] Create `shared/` folder with timer math and accessibility utilities ❌
+- [ ] Extract timer engine from bin/teatime/core.py to TypeScript ❌
+- [ ] `npx create-next-app@latest` with TypeScript, Tailwind, App Router ❌
+- [ ] Firebase project setup with Firestore, Auth, Functions ❌
+- [ ] Capacitor initialization (`npx cap init`) for multi-platform ❌
+- [ ] Firestore schema: /users/{uid}/settings, /users/{uid}/stats ❌
+- [ ] ESLint + Prettier + TypeScript strict mode configuration ❌
+
+### Phase 2: Web Frontend (Weeks 3-5) - ❌ NOT STARTED
+- [ ] Port Electron React components to Next.js `/app` directory ❌
+- [ ] Firebase Auth integration for cross-device user persistence ❌
+- [ ] Firestore real-time listeners for settings and statistics ❌
+- [ ] Timer display components (normal/mini/nano modes) ❌
+- [ ] Settings dialog with Firestore cloud persistence ❌
+- [ ] Statistics page with Firestore aggregation queries ❌
+- [ ] Web Audio API engine for notification sounds ❌
+- [ ] Keyboard shortcuts and ARIA accessibility implementation ❌
+- [ ] Deploy to Firebase Hosting for web access ❌
+
+### Phase 3: Mobile Transformation (Weeks 6-8) - ❌ NOT STARTED
+- [ ] Install Capacitor platforms: `@capacitor/android`, `@capacitor/ios` ❌
+- [ ] Configure desktop builds (Windows/macOS/Linux via Capacitor) ❌
+- [ ] Implement `npx cap sync` workflow for code synchronization ❌
+- [ ] Native plugins: tray, notifications, window controls ❌
+- [ ] Push Notifications for timer completion alerts ❌
+- [ ] Build and test Android/iOS mobile applications ❌
+- [ ] Create desktop builds (Electron wrapper through Capacitor) ❌
+
+### Phase 4: Backend Logic (Weeks 9-10) - ❌ NOT STARTED
+- [ ] Identify Python backend code for cloud migration ❌
+- [ ] Port to Firebase Cloud Functions (Python runtime) ❌
+- [ ] Create REST API endpoints for frontend integration ❌
+- [ ] Scheduled functions for statistics aggregation ❌
+- [ ] Firebase Security Rules for data protection ❌
+
+### Phase 5: Polish & Launch (Weeks 11-14) - ❌ NOT STARTED
+- [ ] Performance optimization (lazy loading, code splitting) ❌
+- [ ] Cross-browser testing (Chrome, Firefox, Safari, Edge) ❌
+- [ ] Cross-platform testing (Web, Android, iOS, Win, Mac, Linux) ❌
+- [ ] Accessibility audit (axe-core, screen reader testing) ❌
+- [ ] RAM usage benchmarking (target < 300MB) ❌
+- [ ] Beta testing with existing user base ❌
+- [ ] Documentation (setup, migration, user guide) ❌
+- [ ] Production deployment (Vercel web, Capacitor desktop/mobile) ❌
+- [ ] GTK/Electron deprecation announcement ❌
+
+---
+
 ## Success Metrics
 
 ### Technical
