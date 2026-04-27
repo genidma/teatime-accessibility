@@ -1,9 +1,12 @@
-# CodeQL Analysis Configuration
-
-version: 2.1
-
-# Set the matrix of languages to be analyzed
-# Updated to include C# alongside Python
-language: [ 'python', 'csharp' ]
-
-# Additional configurations...
+name: CodeQL
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  analyze:
+    name: Analyze
+    uses: github/codeql-action/analyze@v2
+    with:
+      languages: ['python', 'csharp']
