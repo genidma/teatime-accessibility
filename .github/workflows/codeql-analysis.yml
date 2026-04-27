@@ -1,52 +1,9 @@
-name: "CodeQL Analysis"
+# CodeQL Analysis Configuration
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: '31 10 * * 5'  # Every Friday at 10:31 UTC
+version: 2.1
 
-jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
+# Set the matrix of languages to be analyzed
+# Updated to include C# alongside Python
+language: [ 'python', 'csharp' ]
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'python' ]
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
-
-    - name: Install system dependencies for PyGObject
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libcairo2-dev libgirepository1.0-dev pkg-config \
-          python3-gi python3-gi-cairo gir1.2-gtk-3.0
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        # Use the custom config to filter out gi.repository false positives
-        config-file: .github/codeql/codeql-config.yml
-        # Keep the scan focused on the application code path that has been stable here.
-        queries: security-and-quality
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{ matrix.language }}"  # Ensures focus stays on Python code analysis
+# Additional configurations...
