@@ -5,7 +5,7 @@ import json
 import gi
 # Use GTK 3 for better compatibility
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio, Gdk, Pango, GdkPixbuf
+from gi.repository import Gtk, GLib, Gdk
 
 from .core import STATS_LOG_FILE, StatsManager
 
