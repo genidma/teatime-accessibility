@@ -1,23 +1,28 @@
 name: CodeQL
+
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  security-events: write
+  contents: read
+
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'python', 'actions' ]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v1
         with:
-          languages: ${{ matrix.language }}
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+          languages: 'javascript'
+      - name: Autocomplete CodeQL
+        uses: github/codeql-action/autocomplete@v1
+      - name: Running CodeQL
+        uses: github/codeql-action/run-full-detected-scan@v1
+      - name: Upload CodeQL results
+        uses: github/codeql-action/upload-results@v1
