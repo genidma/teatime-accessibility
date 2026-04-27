@@ -1,28 +1,34 @@
-name: CodeQL
+name: "CodeQL"
 
 on:
   push:
-    branches: [ main ]
+    branches: ["main"]
   pull_request:
-    branches: [ main ]
+    branches: ["main"]
 
 permissions:
-  security-events: write
+  actions: write
   contents: read
+  security-events: read
 
 jobs:
   analyze:
-    name: Analyze
+    name: "Analyze"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+
+      - name: "Set up CodeQL"
+        uses: github/codeql-action/setup@v2
         with:
-          languages: 'javascript'
-      - name: Autocomplete CodeQL
-        uses: github/codeql-action/autocomplete@v1
-      - name: Running CodeQL
-        uses: github/codeql-action/run-full-detected-scan@v1
-      - name: Upload CodeQL results
-        uses: github/codeql-action/upload-results@v1
+          languages: ["python"]
+
+      - name: "Autobuild"
+        uses: github/codeql-action/autobuild@v2
+
+      - name: "Run CodeQL"
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "security"
+          upload: true
