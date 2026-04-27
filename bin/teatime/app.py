@@ -29,7 +29,6 @@ from .core import (
     MIN_FONT_SCALE,
     MAX_FONT_SCALE,
     ConfigManager,
-    StatsManager,
 )
 from .stats import StatisticsWindow
 
