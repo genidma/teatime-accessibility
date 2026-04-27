@@ -32,7 +32,7 @@ jobs:
 
        - name: Publish to Snap Store
          # This step will only run if the SNAPCRAFT_TOKEN secret is present
-         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/photosensitive-version' || github.ref == 'refs/heads/kcresonance')
+         if: github.event_name == 'push' && secrets.SNAPCRAFT_TOKEN != '' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/photosensitive-version' || github.ref == 'refs/heads/kcresonance')
          uses: snapcore/action-publish@214b86e5ca036ead1668c79afb81e550e6c54d40
          env:
            SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
