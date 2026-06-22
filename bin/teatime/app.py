@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 
-import time
 import json
-import locale
 import subprocess
 import os
 from pathlib import Path
 from datetime import datetime
 import colorsys
-import csv
 import threading
 import sys
+
 
 import gi
 # Use GTK 3 for better compatibility

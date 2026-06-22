@@ -34,9 +34,9 @@ Created: October 2025
 """
 
 import sys
-import os
 import argparse
 from pathlib import Path
+
 
 # Parse command line arguments before GTK processes them
 parser = argparse.ArgumentParser(description='Test Tea Timer with custom duration')

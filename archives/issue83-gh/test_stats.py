@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import json
-import os
 from pathlib import Path
 from datetime import datetime
+
 
 # Test script to check stats file writing
 STATS_LOG_FILE = Path.home() / ".local/share/teatime_stats.json"
