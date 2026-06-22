@@ -246,6 +246,10 @@ class StatisticsWindow(Gtk.Window):
         except (json.JSONDecodeError, IOError):
             return
 
+        # Ensure logs is a list
+        if not isinstance(logs, list):
+            logs = []
+
         # Clear existing data
         self.store.clear()
         
@@ -254,24 +258,47 @@ class StatisticsWindow(Gtk.Window):
         # Sort logs by timestamp correctly using datetime objects
         def get_datetime(log):
             """Helper function to convert log timestamp to datetime object."""
+            if not isinstance(log, dict):
+                return datetime.min
             timestamp_str = log.get("timestamp", "")
+            if not isinstance(timestamp_str, str):
+                return datetime.min
             try:
                 return datetime.fromisoformat(timestamp_str)
-            except ValueError:
+            except (ValueError, TypeError):
                 return datetime.min  # Use minimum datetime for invalid timestamps
 
+        # Filter out completely malformed log entries that are not dicts
+        valid_logs = [log for log in logs if isinstance(log, dict)]
+
         # Sort logs by timestamp (newest first) for display
-        sorted_logs = sorted(logs, key=get_datetime, reverse=True)
+        sorted_logs = sorted(valid_logs, key=get_datetime, reverse=True)
 
         for log in sorted_logs:
             timestamp_str = log.get("timestamp", "")
+            if not isinstance(timestamp_str, str):
+                timestamp_str = ""
+            
             duration = log.get("duration", 0)
+            if duration is None:
+                duration = 0
+            else:
+                try:
+                    duration = int(duration)
+                except (ValueError, TypeError):
+                    duration = 0
+
+            # Verify presence/type of category field (can be anything or null, doesn't affect list store/display)
+            category = log.get("category", None)
 
             try:
-                dt_object = datetime.fromisoformat(timestamp_str)
-                friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
-            except ValueError:
-                friendly_date = timestamp_str  # Use raw string if parsing fails
+                if timestamp_str:
+                    dt_object = datetime.fromisoformat(timestamp_str)
+                    friendly_date = dt_object.strftime("%Y-%m-%d %H:%M")
+                else:
+                    friendly_date = "Unknown Date"
+            except (ValueError, TypeError):
+                friendly_date = timestamp_str if timestamp_str else "Unknown Date"  # Use raw string or default
 
             # Append to the store. This is more efficient than insert(0, ...)
             # and since we sorted newest-first, this will display newest-first.

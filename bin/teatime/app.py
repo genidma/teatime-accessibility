@@ -891,21 +891,48 @@ class TeaTimerApp(Gtk.Application):
             try:
                 with open(CONFIG_FILE, 'r') as f:
                     config = json.load(f)
+                    
                     # Load font scale
                     scale = config.get("font_scale_factor", DEFAULT_FONT_SCALE)
+                    if scale is None or not isinstance(scale, (int, float)):
+                        scale = DEFAULT_FONT_SCALE
                     self.font_scale_factor = max(MIN_FONT_SCALE, min(MAX_FONT_SCALE, scale))
+                    
                     # Only load last_duration from config if not set via command line
                     env_duration = os.environ.get('TEATIME_DURATION')
                     if env_duration is None:
-                        self.last_duration = config.get("last_duration", 5)
+                        last_dur = config.get("last_duration", 5)
+                        if last_dur is None or not isinstance(last_dur, int):
+                            try:
+                                last_dur = int(last_dur)
+                            except (ValueError, TypeError):
+                                last_dur = 5
+                        self.last_duration = last_dur
+                        
                     # Load preferred animation
-                    self.preferred_animation = config.get("preferred_animation", "puppy_animation")
+                    pref_anim = config.get("preferred_animation", "puppy_animation")
+                    if pref_anim is None or not isinstance(pref_anim, str):
+                        pref_anim = "puppy_animation"
+                    self.preferred_animation = pref_anim
+                    
                     # Load preferred skin
-                    self.preferred_skin = config.get("preferred_skin", "default")
+                    pref_skin = config.get("preferred_skin", "default")
+                    if pref_skin is None or not isinstance(pref_skin, str):
+                        pref_skin = "default"
+                    self.preferred_skin = pref_skin
+                    
                     # Load mini-mode preference
-                    self.mini_mode = config.get("mini_mode", False)
+                    mini = config.get("mini_mode", False)
+                    if mini is None or not isinstance(mini, bool):
+                        mini = bool(mini)
+                    self.mini_mode = mini
+                    
                     # Load nano-mode preference
-                    self.nano_mode = config.get("nano_mode", False)
+                    nano = config.get("nano_mode", False)
+                    if nano is None or not isinstance(nano, bool):
+                        nano = bool(nano)
+                    self.nano_mode = nano
+                    
                     # Initialize nano mode tracking (not persisted)
                     self.pre_timer_mode = None
             except (json.JSONDecodeError, KeyError, TypeError) as e:
