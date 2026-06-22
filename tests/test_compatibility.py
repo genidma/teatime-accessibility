@@ -14,18 +14,14 @@ gi_repository = MagicMock()
 class DummyApplication:
     def __init__(self, *args, **kwargs):
         pass
-    def add_action(self, *args):
-        pass
-    def set_accels_for_action(self, *args):
-        pass
+    def __getattr__(self, name):
+        return MagicMock()
 
 class DummyWindow:
     def __init__(self, *args, **kwargs):
         pass
-    def connect(self, *args):
-        pass
-    def show_all(self, *args):
-        pass
+    def __getattr__(self, name):
+        return MagicMock()
 
 gi_repository.Gtk.Application = DummyApplication
 gi_repository.Gtk.Window = DummyWindow
