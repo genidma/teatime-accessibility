@@ -22,7 +22,6 @@ The Gantt chart will be saved as 'teatime-gantt-chart.html' in the project root 
 """
 
 import requests
-import json
 import os
 from collections import defaultdict
 from datetime import datetime
@@ -404,7 +403,7 @@ def main():
             # Debug: show which browser controllers are registered
             try:
                 print("Registered browser controllers:", list(webbrowser._browsers.keys()))
-            except Exception:
+            except (AttributeError, KeyError):
                 # webbrowser internals may differ across Python builds; ignore failures here
                 pass
 
@@ -464,7 +463,7 @@ def main():
                             try:
                                 with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                     df.write((f"[{datetime.now().isoformat()}] which_results={which_results}\n").encode())
-                            except Exception:
+                            except OSError:
                                 pass
 
                             if not exe:
@@ -509,22 +508,23 @@ def main():
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Created {tmp_dir} and copied to {tmp_copy_path}\n").encode())
                                     except Exception as log_err:
-                                        print(f"Warning: failed to write debug log: {log_err}", file=sys.stderr)
-                                except Exception as e:
+                                    except OSError:
+                                        print(f"Warning: failed to write debug log", file=sys.stderr)
+                                except OSError as e:
                                     # If copy fails, fall back to original file path but log clearly.
                                     print(f"Failed to copy gantt file to {tmp_copy_path}: {e}")
                                     print("Attempting to open the original path directly (may fail under snap confinement).")
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Copy failed: {e}\n").encode())
-                                    except Exception:
+                                    except OSError:
                                         pass
                                     tmp_copy_path = file_path
                                 # Use pathname2url to create a proper file:// URL without over-quoting
                                 try:
                                     from urllib.request import pathname2url
                                     file_url = 'file://' + pathname2url(os.path.abspath(tmp_copy_path))
-                                except Exception:
+                                except OSError:
                                     # Fallback: basic quoting
                                     import urllib.parse
                                     file_url = 'file://' + urllib.parse.quote(os.path.abspath(tmp_copy_path))
@@ -566,20 +566,20 @@ def main():
                                             try:
                                                 with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                                     df.write((f"[{datetime.now().isoformat()}] Started HTTP server PID {server_proc.pid} port {port}\n").encode())
-                                            except Exception:
+                                            except OSError:
                                                 pass
                                             # Replace file_url with http_url so Chromium opens HTTP endpoint
                                             file_url = http_url
                                             # And set a short timeout for server liveness check later if needed
-                                        except Exception as e:
+                                        except OSError as e:
                                             print(f"Failed to start local HTTP server fallback: {e}")
                                             try:
                                                 with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                                     df.write((f"[{datetime.now().isoformat()}] HTTP server start failed: {e}\n").encode())
-                                            except Exception:
+                                            except OSError:
                                                 pass
-                                except Exception:
-                                    pass
+                                except OSError as server_err:
+                                    print(f"Server fallback setup failed: {server_err}")
                                 cmd.extend([
                                     '--user-data-dir=/tmp/tt-gantt-userdata',
                                     '--no-first-run',
@@ -601,7 +601,7 @@ def main():
                                         try:
                                             with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                                 df.write((f"[{datetime.now().isoformat()}] Launched PID {proc.pid}\n").encode())
-                                        except Exception:
+                                        except OSError:
                                             pass
                                         # Wait briefly to detect immediate exit/crash
                                         try:
@@ -611,18 +611,18 @@ def main():
                                         except subprocess.TimeoutExpired:
                                             print("Chromium is still running (no immediate crash detected).")
                                             print(f"See {log_path} for ongoing stdout/stderr.")
-                                except Exception as e:
+                                except OSError as e:
                                     print(f"Failed to launch Chromium subprocess: {e}")
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Launch failed: {e}\n").encode())
-                                    except Exception as log_err:
-                                        print(f"Non-fatal: could not write debug log '/tmp/tt-gantt-debug.log': {log_err}", file=sys.stderr)
+                                    except OSError:
+                                        pass
                         else:
                             try:
                                 webbrowser.get(browser_override).open_new_tab(file_url)
                                 print(f"Opened Gantt chart with: {browser_override}")
-                            except Exception as e:
+                            except (webbrowser.Error, OSError) as e:
                                 print(f"Failed to open with {browser_override}: {e}")
                                 print("Falling back to system default browser...")
                                 webbrowser.open_new_tab(file_url)
@@ -634,7 +634,7 @@ def main():
                         else:
                             print("Using system default browser to open the file")
                             webbrowser.open_new_tab(file_url)
-                except Exception as e:
+                except (FileNotFoundError, OSError) as e:
                     print(f"Could not open browser automatically: {e}")
                     print("Please open the file manually in your browser")
             else:
@@ -651,7 +651,7 @@ def main():
                 # Point users at the included README with detailed safe commands
                 try:
                     print(f"\nFor full safe-open instructions, see: {README_SAFE_OPEN}")
-                except Exception:
+                except NameError:
                     pass
 
         else:
