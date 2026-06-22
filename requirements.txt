@@ -5,4 +5,6 @@ plotly
 setuptools>=82.0.1
 wheel
 urllib3>=2.7.0
+idna>=3.15
+
 
