@@ -8,9 +8,31 @@ from unittest.mock import MagicMock, patch
 # Add bin to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bin')))
 
-# Mock GI dependencies minimally to allow module import even though we don't use them for manager tests
+# Create a mock for gi.repository and define dummy classes for Gtk base classes
+gi_repository = MagicMock()
+
+class DummyApplication:
+    def __init__(self, *args, **kwargs):
+        pass
+    def add_action(self, *args):
+        pass
+    def set_accels_for_action(self, *args):
+        pass
+
+class DummyWindow:
+    def __init__(self, *args, **kwargs):
+        pass
+    def connect(self, *args):
+        pass
+    def show_all(self, *args):
+        pass
+
+gi_repository.Gtk.Application = DummyApplication
+gi_repository.Gtk.Window = DummyWindow
+
+# Set in sys.modules before any imports of teatime
 sys.modules['gi'] = MagicMock()
-sys.modules['gi.repository'] = MagicMock()
+sys.modules['gi.repository'] = gi_repository
 
 import teatime
 
