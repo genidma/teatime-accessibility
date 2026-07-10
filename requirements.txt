@@ -2,7 +2,7 @@
 requests
 pandas
 plotly
-setuptools>=82.0.1
+setuptools>=83.0.0
 wheel
 urllib3>=2.7.0
 idna>=3.15
