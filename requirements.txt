@@ -4,7 +4,7 @@ pandas
 plotly
 setuptools>=83.0.0
 wheel
-urllib3>=2.7.0
+urllib3>=2.8.0
 idna>=3.18
 
 
