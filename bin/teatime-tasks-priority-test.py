@@ -464,6 +464,7 @@ def main():
                                 with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                     df.write((f"[{datetime.now().isoformat()}] which_results={which_results}\n").encode())
                             except OSError:
+                                # Ignore debug log failures - non-critical
                                 pass
 
                             if not exe:
@@ -507,8 +508,8 @@ def main():
                                     try:
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Created {tmp_dir} and copied to {tmp_copy_path}\n").encode())
-                                    except Exception as log_err:
                                     except OSError:
+                                        # Ignore debug log write failures - non-critical output
                                         print(f"Warning: failed to write debug log", file=sys.stderr)
                                 except OSError as e:
                                     # If copy fails, fall back to original file path but log clearly.
@@ -518,6 +519,7 @@ def main():
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Copy failed: {e}\n").encode())
                                     except OSError:
+                                        # Ignore debug log failures - non-critical
                                         pass
                                     tmp_copy_path = file_path
                                 # Use pathname2url to create a proper file:// URL without over-quoting
@@ -567,6 +569,7 @@ def main():
                                                 with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                                     df.write((f"[{datetime.now().isoformat()}] Started HTTP server PID {server_proc.pid} port {port}\n").encode())
                                             except OSError:
+                                                # Ignore debug log failures - non-critical
                                                 pass
                                             # Replace file_url with http_url so Chromium opens HTTP endpoint
                                             file_url = http_url
@@ -577,6 +580,7 @@ def main():
                                                 with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                                     df.write((f"[{datetime.now().isoformat()}] HTTP server start failed: {e}\n").encode())
                                             except OSError:
+                                                # Ignore debug log failures - non-critical
                                                 pass
                                 except OSError as server_err:
                                     print(f"Server fallback setup failed: {server_err}")
@@ -602,6 +606,7 @@ def main():
                                             with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                                 df.write((f"[{datetime.now().isoformat()}] Launched PID {proc.pid}\n").encode())
                                         except OSError:
+                                            # Ignore debug log failures - non-critical
                                             pass
                                         # Wait briefly to detect immediate exit/crash
                                         try:
@@ -617,6 +622,7 @@ def main():
                                         with open('/tmp/tt-gantt-debug.log', 'ab') as df:
                                             df.write((f"[{datetime.now().isoformat()}] Launch failed: {e}\n").encode())
                                     except OSError:
+                                        # Ignore debug log failures - non-critical
                                         pass
                         else:
                             try:
@@ -652,6 +658,7 @@ def main():
                 try:
                     print(f"\nFor full safe-open instructions, see: {README_SAFE_OPEN}")
                 except NameError:
+                    # README_SAFE_OPEN may not be defined in all contexts - ignore
                     pass
 
         else:
