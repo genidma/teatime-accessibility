@@ -1,5 +1,13 @@
 # Simple Timer - Photosensitive Safe Version
 
+> [!CAUTION]
+> **Sunset Notice — This repository (photosensitive safe version) has been sunset as of 2026-03-30.** No further feature development. Tracked in #156.
+> - You may be interested in the online timer and productivity app at https://kc-rhythm.web.app/
+> - No new security updates will be applied after Dec 31st, 2026.
+> See [Releases](https://github.com/genidma/teatime-accessibility/releases) for final builds.
+
+
+
 A simple, accessible Ubuntu timer with no animations, designed for photosensitive epilepsy.
 
 ## Features
