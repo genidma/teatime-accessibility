@@ -3,7 +3,8 @@
 > [!CAUTION]
 > **Sunset Notice — This repository has been sunset as of 2026-03-30.** No further feature development. Tracked in #156.
 > - Best effort will be made to apply security fixes, but this is not guaranteed as the app has been sunset.
-> - No new security updates will be applied after Dec 31st, 2026. You may be interested in the online timer and productivity app at https://kc-rhythm.web.app/
+> - No new security updates will be applied after Dec 31st, 2026.
+>   You may be interested in the online timer and productivity app at https://kc-rhythm.web.app/
 > See [Releases](https://github.com/genidma/teatime-accessibility/releases) for final builds.
 
 
