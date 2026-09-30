@@ -12,6 +12,7 @@
 ## notable contributors
 
 - [@shanaya-gupta](https://github.com/shanaya-gupta) Main contributor for the original photosensitive version of the code. :low_brightness:
+- Vedant Agarwal — Fix #107: Prepend `=` to stats values >1 for spreadsheet compatibility (`bin/teatime/stats.py` `e3a26eb` 2026-02-10)
     - The latest 'photosensitive' version can be located via the [Releases](https://github.com/genidma/teatime-accessibility/tags) section. Or [here with description](https://github.com/genidma/teatime-accessibility/releases)
 
 ## tool use

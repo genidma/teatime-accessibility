@@ -1,5 +1,10 @@
 # TeaTime Accessibility
 
+> [!CAUTION]
+> **Sunset Notice — This repository has been sunset as of 2026-09-30.** No further feature development; security fixes only. See [Releases](https://github.com/genidma/teatime-accessibility/releases) for final builds. Tracked in #156.
+
+
+
 - a GUI (graphical user interface) based timer application (app) for the Ubuntu (Desktop) environment.
 - ability to make the buttons inside larger and more visible
 - presets for time, reminders (  including audible bell(s)  ), basic statistics
