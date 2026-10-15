@@ -1,6 +1,7 @@
 # Simple Timer - Photosensitive Safe Version
 
-> [!CAUTION] This repository (photosensitive safe version) has been sunset — see [SUNSET.md](./SUNSET.md) for details (sunset `2026-03-30`, tracked in #156).
+> [!CAUTION]
+> This repository (photosensitive safe version) has been sunset — see [SUNSET.md](./SUNSET.md) for details (sunset `2026-03-30`, tracked in #156).
 
 
 
