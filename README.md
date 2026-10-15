@@ -1,5 +1,8 @@
 # TeaTime Accessibility
 
+> [!CAUTION]
+> This repository (kcresonance branch) has been sunset — see [SUNSET.md](https://github.com/genidma/teatime-accessibility/blob/main/SUNSET.md) for details (sunset `2026-03-30`, tracked in #156).
+
 - a GUI (graphical user interface) based timer application (app) for the Ubuntu (Desktop) environment.
 - ability to make the buttons inside larger and more visible
 - presets for time, reminders (  including audible bell(s)  ), basic statistics
